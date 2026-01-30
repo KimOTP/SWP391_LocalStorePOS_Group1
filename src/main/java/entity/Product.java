@@ -3,6 +3,8 @@ package entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Entity
 @Data
 @Table(name = "Product")

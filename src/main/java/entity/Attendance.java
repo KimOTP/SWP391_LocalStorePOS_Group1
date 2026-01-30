@@ -3,6 +3,9 @@ package entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @Table(name = "Attendance")
