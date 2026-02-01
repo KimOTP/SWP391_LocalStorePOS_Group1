@@ -1,0 +1,9 @@
+ body {
+     background-color: ivory;
+ }
+
+ .error{
+     color:red;
+     text-align: center;
+     text-decoration-line: blink;
+ }
