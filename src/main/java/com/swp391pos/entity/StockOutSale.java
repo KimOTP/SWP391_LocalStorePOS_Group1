@@ -11,12 +11,26 @@ import java.time.LocalDateTime;
 public class StockOutSale {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long saleStockOutId;
-    @ManyToOne
-    @JoinColumn(name = "orderId")
+    @Column(name = "stock_out_sale_id")
+    private Long stockOutSaleId;
+
+    // FK -> Order
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "order_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "FK_StockOutSale_Order")
+    )
     private Order order;
-    @ManyToOne
-    @JoinColumn(name = "stockOutId")
-    private StockOut stockOut;
-    private LocalDateTime craeteTime;
+
+    @Column(name = "stock_out_id", nullable = false)
+    private Integer stockOutId;
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

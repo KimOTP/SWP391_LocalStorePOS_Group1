@@ -12,20 +12,63 @@ import java.time.LocalDateTime;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ordeId")
     private Long orderId;
-    @ManyToOne
-    @JoinColumn(name = "cashierId")
-    private Employee cashier;
-    @ManyToOne
-    @JoinColumn(name = "customerId")
+
+    // FK -> Employee(employee_id)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "cashierId",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "FK_Order_Employee")
+    )
+    private Employee employee;
+
+    // FK -> Customer(customer_id)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "customerId",
+            foreignKey = @ForeignKey(name = "FK_Order_Customer")
+    )
     private Customer customer;
-    @ManyToOne
-    @JoinColumn(name = "orderStatusId")
-    private OrderStatus status;
+
+    // FK -> OrderStatus(order_status_id)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "orderStatusId",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "FK_Order_OrderStatus")
+    )
+    private OrderStatus orderStatus;
+
+    @Column(name = "totalAmount", nullable = false, precision = 15, scale = 2)
     private BigDecimal totalAmount;
-    private String paymentMethod;
+
+    @Column(name = "discountAmount", precision = 15, scale = 2)
+    private BigDecimal discountAmount = BigDecimal.ZERO;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "paymentMethod", length = 20)
+    private PaymentMethod paymentMethod;
+
+    @Column(name = "createdAt", updatable = false)
     private LocalDateTime createdAt;
-    private BigDecimal discountAmount;
+
+    @Column(name = "paid_at")
     private LocalDateTime paidAt;
-    private LocalDateTime cancelAt;
+
+    @Column(name = "cancelledAt")
+    private LocalDateTime cancelledAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        if (this.discountAmount == null) {
+            this.discountAmount = BigDecimal.ZERO;
+        }
+    }
+    public enum PaymentMethod {
+        CASH,
+        ONLINE
+    }
 }

@@ -12,13 +12,50 @@ import java.time.LocalDateTime;
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "payment_id")
     private Long paymentId;
-    @OneToOne
-    @JoinColumn(name = "orderId")
-    private Order orderId;
-    private String paymentMethod;
+
+    // FK -> Order
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "order_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "FK_Payment_Order")
+    )
+    private Order order;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_method", nullable = false, length = 20)
+    private PaymentMethod paymentMethod;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_status", nullable = false, length = 20)
+    private PaymentStatus paymentStatus;
+
+    @Column(name = "gateway_reference", length = 255)
+    private String gatewayReference;
+
+    @Column(name = "amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal amount;
-    private String transactionStatus;
-    private String gateWayReference;
-    private LocalDateTime createdDate;
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public enum PaymentMethod {
+        CASH,
+        ONLINE
+    }
+
+    public enum PaymentStatus {
+        PENDING,
+        SUCCESS,
+        FAIL,
+        TIMEOUT
+    }
+
 }

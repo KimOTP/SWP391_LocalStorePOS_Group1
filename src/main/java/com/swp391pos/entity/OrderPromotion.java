@@ -11,12 +11,27 @@ import java.math.BigDecimal;
 public class OrderPromotion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderPromoId;
-    @ManyToOne
-    @JoinColumn(name = "orderId")
-    private Order orderId;
-    @ManyToOne
-    @JoinColumn(name = "promotionId")
-    private Promotion promotionId;
-    private BigDecimal appliedValue;
+    @Column(name = "order_promotion_id")
+    private Long orderPromotionId;
+
+    // FK -> Order
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "order_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "FK_OrderPromotion_Order")
+    )
+    private Order order;
+
+    // FK -> Promotion
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "promotion_id",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "FK_OrderPromotion_Promotion")
+    )
+    private Promotion promotion;
+
+    @Column(name = "discount_amount", nullable = false, precision = 15, scale = 2)
+    private BigDecimal discountAmount;
 }
