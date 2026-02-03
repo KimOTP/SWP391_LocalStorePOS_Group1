@@ -3,6 +3,8 @@ package com.swp391pos.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Entity
 @Data
 @Table(name = "StockOutDetail")
@@ -12,13 +14,15 @@ public class StockOutDetail {
     private Long detailId;
 
     @ManyToOne
-    @JoinColumn(name = "stock_out_id", nullable = false)
+    @JoinColumn(name = "stockOutId", nullable = false)
     private StockOut stockOut;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "productId", nullable = false)
     private Product product;
 
     @Column(nullable = false)
     private Integer quantity;
+    private String reason;
+    private BigDecimal costAtExport;
 }

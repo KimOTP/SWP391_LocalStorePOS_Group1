@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -13,9 +14,11 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long paymentId;
     @OneToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @JoinColumn(name = "orderId")
+    private Order orderId;
     private String paymentMethod;
     private BigDecimal amount;
     private String transactionStatus;
+    private String gateWayReference;
+    private LocalDateTime createdDate;
 }

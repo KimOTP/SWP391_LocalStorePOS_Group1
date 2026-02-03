@@ -14,15 +14,18 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
     @ManyToOne
-    @JoinColumn(name = "cashier_id")
+    @JoinColumn(name = "cashierId")
     private Employee cashier;
     @ManyToOne
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name = "customerId")
     private Customer customer;
     @ManyToOne
-    @JoinColumn(name = "order_status_id")
+    @JoinColumn(name = "orderStatusId")
     private OrderStatus status;
     private BigDecimal totalAmount;
     private String paymentMethod;
     private LocalDateTime createdAt;
+    private BigDecimal discountAmount;
+    private LocalDateTime paidAt;
+    private LocalDateTime cancelAt;
 }
