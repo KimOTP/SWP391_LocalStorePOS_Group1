@@ -35,7 +35,7 @@ public class ShiftChangeRequest {
     @JoinColumn(name = "requestedShiftId", nullable = false)
     private WorkShift requestedShift;
 
-    @Column(name = "reason", columnDefinition = "VARCHAR(MAX)")
+    @Column(name = "reason", columnDefinition = "VARCHAR(255)")
     private String reason;
 
     @Column(name = "status", nullable = false)
