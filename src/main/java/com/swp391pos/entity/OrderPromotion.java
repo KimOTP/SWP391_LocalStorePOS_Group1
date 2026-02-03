@@ -13,10 +13,10 @@ public class OrderPromotion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderPromoId;
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @JoinColumn(name = "orderId")
+    private Order orderId;
     @ManyToOne
-    @JoinColumn(name = "promotion_id")
-    private Promotion promotion;
+    @JoinColumn(name = "promotionId")
+    private Promotion promotionId;
     private BigDecimal appliedValue;
 }
