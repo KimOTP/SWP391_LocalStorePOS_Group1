@@ -13,19 +13,20 @@ public class StockIn {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer stockInId;
     @ManyToOne
-    @JoinColumn(name = "supplier_id")
+    @JoinColumn(name = "supplierId")
     private Supplier supplier;
     @ManyToOne
-    @JoinColumn(name = "requester_id")
+    @JoinColumn(name = "requesterId")
     private Employee requester;
     @ManyToOne
-    @JoinColumn(name = "staff_id")
+    @JoinColumn(name = "staffId")
     private Employee staff;
     @ManyToOne
-    @JoinColumn(name = "approver_id")
+    @JoinColumn(name = "approverId")
     private Employee approver;
     @ManyToOne
-    @JoinColumn(name = "transaction_status_id")
+    @JoinColumn(name = "transactionStatusId")
     private TransactionStatus status;
     private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime receivedAt;
 }

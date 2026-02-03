@@ -3,6 +3,7 @@ package com.swp391pos.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,13 +14,22 @@ public class InvLogHeader {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long logHeaderId;
     @ManyToOne
-    @JoinColumn(name = "action_type_id")
+    @JoinColumn(name = "actionTypeId")
     private ActionType actionType;
     @ManyToOne
-    @JoinColumn(name = "staff_id")
+    @JoinColumn(name = "staffId")
     private Employee staff;
     @ManyToOne
-    @JoinColumn(name = "approver_id")
+    @JoinColumn(name = "approverId")
     private Employee approver;
-    private LocalDateTime createdAt;
+    @ManyToOne
+    @JoinColumn(name = "stockInId")
+    private StockIn stockInId;
+    @ManyToOne
+    @JoinColumn(name = "StockOutId")
+    private StockOut stockOut;
+    @ManyToOne
+    @JoinColumn(name = "auditSessionId")
+    private AuditSession auditSession;
+    private LocalDateTime createdAt = LocalDateTime.now();
 }
