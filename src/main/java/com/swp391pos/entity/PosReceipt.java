@@ -3,7 +3,6 @@ package com.swp391pos.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -13,35 +12,35 @@ import java.time.LocalDateTime;
         uniqueConstraints = {
                 @UniqueConstraint(
                         name = "UK_PosReceipt_ReceiptNumber",
-                        columnNames = "receipt_number"
+                        columnNames = "receiptNumber"
                 )
         }
 )
 public class PosReceipt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "receipt_id")
+    @Column(name = "receiptId")
     private Long receiptId;
 
     // FK -> Order
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
-            name = "order_id",
+            name = "orderId",
             nullable = false,
             foreignKey = @ForeignKey(name = "FK_PosReceipt_Order")
     )
     private Order order;
 
-    @Column(name = "receipt_number", nullable = false, length = 50, unique = true)
+    @Column(name = "receiptNumber", nullable = false, length = 50, unique = true)
     private String receiptNumber;
 
-    @Column(name = "printed_at")
+    @Column(name = "printedAt")
     private LocalDateTime printedAt;
 
     // FK -> Employee
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
-            name = "printed_by",
+            name = "printedBy",
             nullable = false,
             foreignKey = @ForeignKey(name = "FK_PosReceipt_Employee")
     )

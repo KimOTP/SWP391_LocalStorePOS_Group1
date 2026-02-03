@@ -11,22 +11,22 @@ import java.time.LocalDateTime;
 public class StockOutSale {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "stock_out_sale_id")
+    @Column(name = "stockOutSaleId")
     private Long stockOutSaleId;
 
     // FK -> Order
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
-            name = "order_id",
+            name = "orderId",
             nullable = false,
             foreignKey = @ForeignKey(name = "FK_StockOutSale_Order")
     )
     private Order order;
 
-    @Column(name = "stock_out_id", nullable = false)
+    @Column(name = "stockOutId", nullable = false)
     private Integer stockOutId;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "createdAt", updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist

@@ -54,7 +54,7 @@ public class Order {
     @Column(name = "createdAt", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "paid_at")
+    @Column(name = "paidAt")
     private LocalDateTime paidAt;
 
     @Column(name = "cancelledAt")

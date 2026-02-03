@@ -9,12 +9,12 @@ import lombok.Data;
 public class OrderStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_status_id")
+    @Column(name = "orderStatusId")
     private Integer orderStatusId;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "order_status_name", nullable = false, length = 30)
-    private OrderStatus orderStatusName;
+    @Column(name = "orderStatusName", nullable = false, length = 30)
+    private OrderStatusName orderStatusName;
 
     public enum OrderStatusName {
         DRAFT,

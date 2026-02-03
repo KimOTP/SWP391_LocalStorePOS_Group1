@@ -12,33 +12,33 @@ import java.time.LocalDateTime;
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "payment_id")
+    @Column(name = "paymentId")
     private Long paymentId;
 
     // FK -> Order
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(
-            name = "order_id",
+            name = "orderId",
             nullable = false,
             foreignKey = @ForeignKey(name = "FK_Payment_Order")
     )
     private Order order;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_method", nullable = false, length = 20)
+    @Column(name = "paymentMethod", nullable = false, length = 20)
     private PaymentMethod paymentMethod;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payment_status", nullable = false, length = 20)
+    @Column(name = "paymentStatus", nullable = false, length = 20)
     private PaymentStatus paymentStatus;
 
-    @Column(name = "gateway_reference", length = 255)
+    @Column(name = "gatewayReference", length = 254)
     private String gatewayReference;
 
     @Column(name = "amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal amount;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "createdAt", updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
