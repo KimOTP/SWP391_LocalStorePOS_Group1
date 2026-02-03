@@ -13,13 +13,13 @@ public class AuditSession {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer auditId;
     @ManyToOne
-    @JoinColumn(name = "staff_id")
+    @JoinColumn(name = "staffId")
     private Employee staff;
     @ManyToOne
-    @JoinColumn(name = "approver_id")
+    @JoinColumn(name = "approverId")
     private Employee approver;
     @ManyToOne
-    @JoinColumn(name = "transaction_status_id")
+    @JoinColumn(name = "transactionStatusId")
     private TransactionStatus status;
     private LocalDateTime auditDate;
 }

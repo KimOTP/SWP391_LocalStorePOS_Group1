@@ -13,10 +13,10 @@ public class Product {
     @Column(length = 50)
     private String productId;
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "categoryId")
     private Category category;
     @ManyToOne
-    @JoinColumn(name = "product_status_id")
+    @JoinColumn(name = "productStatusId")
     private ProductStatus status;
     private String productName;
     private String unit;

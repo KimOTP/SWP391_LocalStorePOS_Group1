@@ -3,6 +3,8 @@ package com.swp391pos.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Entity
 @Data
 @Table(name = "AuditDetail")
@@ -12,11 +14,11 @@ public class AuditDetail {
     private Long auditDetailId;
 
     @ManyToOne
-    @JoinColumn(name = "audit_id", nullable = false)
+    @JoinColumn(name = "auditId", nullable = false)
     private AuditSession auditSession;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "productId", nullable = false)
     private Product product;
 
     @Column(nullable = false)
@@ -26,4 +28,6 @@ public class AuditDetail {
     private Integer actualQuantity;   // Số lượng kiểm kê thực tế
 
     private String discrepancyReason; // Lý do sai lệch (nếu có)
+
+    private BigDecimal unitCostAtAudit;
 }
