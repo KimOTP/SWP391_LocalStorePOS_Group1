@@ -13,11 +13,12 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderItemId;
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @JoinColumn(name = "orderId")
+    private Order orderId;
     @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @JoinColumn(name = "productId")
+    private Product productId;
     private Integer quantity;
     private BigDecimal unitPrice;
+    private BigDecimal subTotal;
 }
