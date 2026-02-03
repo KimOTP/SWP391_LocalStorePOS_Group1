@@ -14,15 +14,18 @@ public class StockInDetail {
     private Long detailId;
 
     @ManyToOne
-    @JoinColumn(name = "stock_in_id", nullable = false)
+    @JoinColumn(name = "stockInId", nullable = false)
     private StockIn stockIn;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "productId", nullable = false)
     private Product product;
 
     @Column(nullable = false)
-    private Integer quantity;
+    private Integer requestedQuantity;
+
+    @Column(nullable = false)
+    private Integer receivedQuantity;
 
     @Column(precision = 15, scale = 2, nullable = false)
     private BigDecimal unitCost;

@@ -11,13 +11,41 @@ import java.math.BigDecimal;
 public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "orderItemId")
     private Long orderItemId;
-    @ManyToOne
-    @JoinColumn(name = "order_id")
+
+    // FK -> Order(order_id)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "orderId",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "FK_OrderItem_Order")
+    )
     private Order order;
-    @ManyToOne
-    @JoinColumn(name = "product_id")
+
+    // FK -> Product(product_id)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(
+            name = "productId",
+            nullable = false,
+            foreignKey = @ForeignKey(name = "FK_OrderItem_Product")
+    )
     private Product product;
+
+    @Column(name = "quantity", nullable = false)
     private Integer quantity;
+
+    @Column(name = "unitIrice", nullable = false, precision = 15, scale = 2)
     private BigDecimal unitPrice;
+
+    @Column(name = "subtotal", nullable = false, precision = 15, scale = 2)
+    private BigDecimal subtotal;
+
+    @PrePersist
+    @PreUpdate
+    private void validateQuantity() {
+        if (quantity == null || quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than 0");
+        }
+    }
 }

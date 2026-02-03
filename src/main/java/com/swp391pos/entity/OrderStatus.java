@@ -1,8 +1,6 @@
 package com.swp391pos.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -10,6 +8,19 @@ import lombok.Data;
 @Table(name = "OrderStatus")
 public class OrderStatus {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "orderStatusId")
     private Integer orderStatusId;
-    private String orderStatusName;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "orderStatusName", nullable = false, length = 30)
+    private OrderStatusName orderStatusName;
+
+    public enum OrderStatusName {
+        DRAFT,
+        PENDING_PAYMENT,
+        PAID,
+        CANCELLED
+    }
+
 }

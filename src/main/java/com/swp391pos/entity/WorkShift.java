@@ -11,9 +11,15 @@ import java.time.LocalTime;
 public class WorkShift {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "shiftId")
     private Integer shiftId;
-    @Column(nullable = false, length = 50)
+
+    @Column(name = "shiftName", nullable = false, length = 50)
     private String shiftName;
+
+    @Column(name = "startTime", nullable = false)
     private LocalTime startTime;
+
+    @Column(name = "endTime", nullable = false)
     private LocalTime endTime;
 }

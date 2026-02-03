@@ -13,13 +13,14 @@ public class StockOut {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer stockOutId;
     @ManyToOne
-    @JoinColumn(name = "requester_id")
+    @JoinColumn(name = "requesterId")
     private Employee requester;
     @ManyToOne
-    @JoinColumn(name = "approver_id")
+    @JoinColumn(name = "approverId")
     private Employee approver;
     @ManyToOne
-    @JoinColumn(name = "transaction_status_id")
+    @JoinColumn(name = "transactionStatusId")
     private TransactionStatus status;
+    private String generalReason;
     private LocalDateTime createdAt;
 }

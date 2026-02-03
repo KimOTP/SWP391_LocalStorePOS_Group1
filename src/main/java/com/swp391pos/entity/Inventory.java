@@ -13,7 +13,7 @@ public class Inventory {
     private String productId;
     @OneToOne
     @MapsId
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "productId")
     private Product product;
     private Integer currentQuantity = 0;
     private BigDecimal unitCost = BigDecimal.ZERO;

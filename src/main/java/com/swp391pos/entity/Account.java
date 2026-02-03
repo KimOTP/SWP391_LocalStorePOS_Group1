@@ -11,12 +11,19 @@ import java.time.LocalDateTime;
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "accountId")
     private Integer accountId;
+
     @OneToOne
-    @JoinColumn(name = "employee_id", unique = true)
+    @JoinColumn(name = "employeeId", unique = true)
     private Employee employee;
-    @Column(nullable = false, unique = true, length = 50)
+
+    @Column(name = "username", nullable = false, unique = true, length = 50)
     private String username;
+
+    @Column(name = "passwordHash", nullable = false)
     private String passwordHash;
+
+    @Column(name = "lastLogin")
     private LocalDateTime lastLogin;
 }
