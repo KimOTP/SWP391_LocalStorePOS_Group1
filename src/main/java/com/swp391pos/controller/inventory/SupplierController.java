@@ -1,4 +1,4 @@
-package com.swp391pos.controller;
+package com.swp391pos.controller.inventory;
 
 import com.swp391pos.entity.Supplier;
 import com.swp391pos.service.SupplierService;
@@ -18,7 +18,7 @@ public class SupplierController {
     public String viewSupplierList(Model model) {
         // Đổ danh sách kèm tổng giá trị vào bảng
         model.addAttribute("suppliers", supplierService.getSuppliersDashboardData());
-        return "supplier-list";
+        return "inventory/supplier-list";
     }
 
     @PostMapping("/add")
