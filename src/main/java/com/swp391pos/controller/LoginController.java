@@ -59,8 +59,6 @@ public class LoginController {
                 return "hr/manager/profile";
             case "CASHIER":
                 return "hr/cashier/profile";
-            case "SUPPLIER":
-                return "hr/supplier/profile";
             default:
                 model.addAttribute("error", "Invalid role");
                 return "auth/login";
