@@ -1,63 +1,51 @@
-/* Layout Adjustment - Né Sidebar & Header */
+/* Container chính né Sidebar & Header */
 .main-content {
     margin-top: 70px;
     margin-left: 80px;
     padding: 30px;
-    transition: margin-left 0.3s;
     background-color: #f8f9fa;
     min-height: 100vh;
 }
 
-/* Stats Card Style - Màu xám theo Mockup */
+/* 2 DIV Thống kê tổng hợp */
+.summary-container {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 30px;
+}
+
 .stat-card {
-    background-color: #e9ecef;
+    background-color: #d9d9d9; /* Màu xám đậm hơn một chút theo mockup */
     border: none;
-    border-radius: 12px;
+    border-radius: 15px;
     padding: 24px;
-    height: 100%;
-    transition: transform 0.2s;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-.stat-value {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #212529;
+    min-width: 300px;
+    flex: 0 1 auto;
 }
 
 .stat-title {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 600;
-    color: #495057;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 5px;
+}
+
+.stat-desc {
+    font-size: 0.85rem;
+    color: #666;
 }
 
 /* Table Style */
-.table thead th {
-    background-color: #ffffff;
-    border-bottom: 1px solid #dee2e6;
-    color: #333;
-    font-weight: 600;
-    padding: 15px;
-}
-
-.table tbody td {
-    padding: 15px;
-    vertical-align: middle;
-}
-
-.btn-action {
-    color: #6c757d;
-    transition: color 0.2s;
-}
-
-.btn-action:hover {
-    color: #0d6efd;
-}
-
-.text-danger:hover {
-    color: #dc3545 !important;
+.table-container {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
