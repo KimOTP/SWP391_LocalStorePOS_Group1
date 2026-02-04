@@ -1,4 +1,4 @@
-package com.swp391pos.controller;
+package com.swp391pos.controller.login;
 
 import jakarta.servlet.http.HttpSession;
 import com.swp391pos.entity.Account;
