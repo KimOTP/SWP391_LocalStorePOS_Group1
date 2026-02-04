@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
-    @Query("SELECT s.supplierId, s.supplierName, s.contactName, s.email, " +
+    @Query("SELECT s.supplierId, s.supplierName, s.contactNumber, s.email, " +
             "SUM(sid.receivedQuantity * sid.unitCost) " +
             "FROM Supplier s " +
             "LEFT JOIN StockIn si ON s.supplierId = si.supplier.supplierId " +
             "LEFT JOIN StockInDetail sid ON si.stockInId = sid.stockIn.stockInId " +
-            "GROUP BY s.supplierId,s.supplierName, s.contactName, s.email")
+            "GROUP BY s.supplierId,s.supplierName, s.contactNumber, s.email")
     List<Object[]> findAllSuppliersWithTotalValue();
 }

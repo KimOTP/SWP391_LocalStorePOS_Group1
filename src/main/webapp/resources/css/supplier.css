@@ -1,4 +1,4 @@
-/* Layout Adjustment - Né Header (70px) và Sidebar (80px) */
+/* Layout Adjustment */
 .main-content {
     margin-top: 70px;
     margin-left: 80px;
@@ -7,46 +7,12 @@
     min-height: 100vh;
 }
 
-/* Stats Dashboard - 2 Thẻ tổng hợp màu xám */
-.summary-container {
-    display: flex;
-    gap: 24px;
-    margin-bottom: 30px;
-}
-
-.stat-card {
-    background-color: #d9d9d9; /* Màu xám theo mockup */
-    border: none;
-    border-radius: 12px;
-    padding: 24px;
-    min-width: 320px;
-}
-
+/* Stats Dashboard */
+.summary-container { display: flex; gap: 24px; margin-bottom: 30px; }
+.stat-card { background-color: #d9d9d9; border: none; border-radius: 12px; padding: 24px; min-width: 320px; }
 .stat-title { font-size: 0.95rem; font-weight: 600; color: #333; margin-bottom: 12px; }
-.stat-value { font-size: 1.8rem; font-weight: 700; color: #000; margin-bottom: 4px; }
-.stat-desc { font-size: 0.85rem; color: #666; }
+.stat-value { font-size: 1.8rem; font-weight: 700; color: #000; }
 
 /* Table Section */
-.table-container {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-}
-
-.table thead th {
-    background-color: #ffffff;
-    border-bottom: 1px solid #dee2e6;
-    color: #495057;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    padding: 15px;
-}
-
-.table tbody td { padding: 15px; vertical-align: middle; }
-
-/* Modal Customization */
-.modal-content { border-radius: 15px; border: none; }
-.modal-header { border-bottom: 1px solid #eee; padding: 20px 25px; }
-.modal-footer { border-top: none; padding: 20px 25px; }
+.table-container { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.table thead th { background-color: #ffffff; border-bottom: 1px solid #dee2e6; color: #495057; font-weight: 600; text-transform: uppercase; font-size: 0.8rem; padding: 15px; }

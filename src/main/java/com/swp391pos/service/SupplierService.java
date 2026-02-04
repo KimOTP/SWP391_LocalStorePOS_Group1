@@ -19,7 +19,7 @@ public class SupplierService {
             Map<String, Object> map = new HashMap<>();
             map.put("supplierId", row[0]);
             map.put("supplierName", row[1]);
-            map.put("contactName", row[2]);
+            map.put("contactNumber", row[2]);
             map.put("email", row[3]);
             map.put("totalValue", row[4] != null ? row[4] : 0.0); // Tổng đặt hàng
             data.add(map);
