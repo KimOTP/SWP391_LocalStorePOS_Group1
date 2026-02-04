@@ -16,7 +16,7 @@
 </head>
 <body>
 
-<form action="${pageContext.request.contextPath}/login" method="post">
+<form action="${pageContext.request.contextPath}/auth/login" method="post">
     <div class="overlay">
         <div class="login-box">
 

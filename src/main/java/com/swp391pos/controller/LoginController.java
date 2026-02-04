@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Controller
+@RequestMapping("/auth")
 public class LoginController {
 
     private final AccountRepository accountRepository;
@@ -22,7 +23,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String showLogin() {
-        return "login";
+        return "auth/login";
     }
 
     @PostMapping("/login")
@@ -36,13 +37,17 @@ public class LoginController {
 
         if (account == null) {
             model.addAttribute("error", "Account does not exist.");
-            return "login";
+            return "auth/login";
         }
 
-        // ✅ SO SÁNH BẰNG HASH
         if (!passwordEncoder.matches(password, account.getPasswordHash())) {
             model.addAttribute("error", "Wrong password");
-            return "login";
+            return "auth/login";
+        }
+
+        if (account.getEmployee() == null) {
+            model.addAttribute("error", "Account has no employee info");
+            return "auth/login";
         }
 
         String role = account.getEmployee().getRole();
@@ -51,14 +56,14 @@ public class LoginController {
 
         switch (role) {
             case "MANAGER":
-                return "manager/home";
+                return "hr/manager/profile";
             case "CASHIER":
-                return "cashier/home";
+                return "hr/cashier/profile";
             case "SUPPLIER":
-                return "supplier/home";
+                return "hr/supplier/profile";
             default:
                 model.addAttribute("error", "Invalid role");
-                return "login";
+                return "auth/login";
         }
     }
 }
