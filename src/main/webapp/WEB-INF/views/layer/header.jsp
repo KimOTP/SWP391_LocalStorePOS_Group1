@@ -44,7 +44,8 @@
 
         // Format ngày: Thứ Tư, 04/02/2026
         const options = { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' };
-        const dateString = now.toLocaleDateString('vi-VN', options);
+        // Sử dụng 'en-US' để hiển thị tiếng Anh
+        const dateString = now.toLocaleDateString('en-US', options);
 
         document.getElementById('realtime-clock').textContent = timeString;
         document.getElementById('realtime-date').textContent = dateString;
