@@ -35,4 +35,10 @@ public class CustomerService {
         if(count == 0) return BigDecimal.ZERO;
         return total.divide(BigDecimal.valueOf(count), 0, RoundingMode.HALF_UP);
     }
+    public List<Customer> getCustomers(String keyword) {
+        if(keyword != null && !keyword.trim().isEmpty()) {
+            return customerRepository.searchByNameOrPhone(keyword);
+        }
+        return customerRepository.findAll();
+    }
 }

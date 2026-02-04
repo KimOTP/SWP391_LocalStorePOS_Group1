@@ -36,9 +36,9 @@
 </head>
 <body>
 
-<jsp:include page="header.jsp" />
+<jsp:include page="../layer/header.jsp" />
 
-<jsp:include page="sidebar.jsp" />
+<jsp:include page="../layer/sidebar.jsp" />
 
 <div class="main-content">
 
@@ -97,10 +97,19 @@
 
             <div class="row g-3 mb-4">
                 <div class="col-md-4">
-                    <div class="input-group">
-                        <span class="input-group-text bg-white border-end-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
-                        <input type="text" class="form-control border-start-0" placeholder="Search customer name, phone...">
-                    </div>
+                    <form action="/customers" method="get">
+                        <div class="input-group">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                </span>
+
+                            <input type="text"
+                                   name="keyword"
+                                   value="${keyword}"
+                                   class="form-control border-start-0"
+                                   placeholder="Search name or phone..."
+                                   onchange="this.form.submit()"> </div>
+                    </form>
                 </div>
                 <div class="col-md-2">
                     <select class="form-select">
