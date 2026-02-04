@@ -1,0 +1,76 @@
+/* Reset */
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5f5f5;
+}
+
+/* Căn giữa màn hình */
+.overlay {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Khung login (không viền) */
+.login-box {
+    width: 320px;
+    text-align: center;
+}
+
+/* Logo Store */
+.logo {
+    display: inline-block;
+    padding: 25px 40px;
+    background-color: #2f66eb;
+    color: white;
+    font-size: 36px;
+    font-weight: 500;
+    border-radius: 25px;
+    margin-bottom: 40px;
+}
+
+/* Label */
+.login-box label {
+    display: block;
+    text-align: left;
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+/* Input */
+.login-box input {
+    width: 100%;
+    padding: 12px 18px;
+    font-size: 14px;
+    border: none;
+    border-radius: 20px;
+    background-color: #d6d6d6;
+    outline: none;
+    margin-bottom: 25px;
+}
+
+/* Button */
+.login-box button {
+    width: 140px;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    background-color: #2f66eb;
+    color: white;
+    cursor: pointer;
+}
+
+.login-box button:hover {
+    background-color: #244fc0;
+}
+
+/* Error */
+.error {
+    text-align: center;
+    margin-top: 15px;
+    color: red;
+}
