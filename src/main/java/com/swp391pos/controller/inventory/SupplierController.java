@@ -16,7 +16,7 @@ public class SupplierController {
 
     @GetMapping
     public String viewSupplierList(Model model) {
-        // Đổ danh sách kèm tổng giá trị vào bảng
+        // Put all data to a model
         model.addAttribute("suppliers", supplierService.getSuppliersDashboardData());
         return "inventory/supplier-list";
     }

@@ -13,15 +13,17 @@ public class SupplierService {
 
     public List<Map<String, Object>> getSuppliersDashboardData() {
         List<Object[]> results = supplierRepository.findAllSuppliersWithTotalValue();
+        //Create a data with data outside of entity
         List<Map<String, Object>> data = new ArrayList<>();
 
         for (Object[] row : results) {
+            //put data into List with an easy name to call from front-end
             Map<String, Object> map = new HashMap<>();
             map.put("supplierId", row[0]);
             map.put("supplierName", row[1]);
             map.put("contactNumber", row[2]);
             map.put("email", row[3]);
-            map.put("totalValue", row[4] != null ? row[4] : 0.0); // Tổng đặt hàng
+            map.put("totalValue", row[4] != null ? row[4] : 0.0);
             data.add(map);
         }
         return data;
