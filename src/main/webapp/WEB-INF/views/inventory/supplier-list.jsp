@@ -52,6 +52,7 @@
                     <th>ID</th>
                     <th>Supplier name</th>
                     <th>Phone number</th> <th>Email</th>
+                    <th>Total order value</th>
                     <th class="text-end">Action</th>
                 </tr>
                 </thead>
@@ -60,7 +61,11 @@
                     <tr>
                         <td>#${s.supplierId}</td>
                         <td class="fw-bold">${s.supplierName}</td>
-                        <td>${s.contactNumber}</td> <td>${s.email}</td>
+                        <td>${s.contactNumber}</td>
+                        <td>${s.email}</td>
+                        <td class="fw-bold text-primary">
+                            <fmt:formatNumber value="${s.totalValue}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
+                        </td>
                         <td class="text-end">
                             <button class="btn btn-sm btn-light border me-1"
                                     data-id="${s.supplierId}" data-name="${s.supplierName}"
