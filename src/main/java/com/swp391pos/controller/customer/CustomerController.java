@@ -24,7 +24,7 @@ public class CustomerController {
         model.addAttribute("customers", customers);
         model.addAttribute("keyword", keyword);
         model.addAttribute("totalCustomer", customerService.getTotalCustomers());
-        model.addAttribute("totalPoint", customerService.getTotalPoints());
+        model.addAttribute("totalPoints", customerService.getTotalPoints());
         model.addAttribute("totalSpending", customerService.getTotalSpending());
         model.addAttribute("avgSpending", customerService.getAverageSpending());
         return "customer/customer-list";
