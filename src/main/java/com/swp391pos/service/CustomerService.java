@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -35,10 +37,31 @@ public class CustomerService {
         if(count == 0) return BigDecimal.ZERO;
         return total.divide(BigDecimal.valueOf(count), 0, RoundingMode.HALF_UP);
     }
-    public List<Customer> getCustomers(String keyword) {
-        if(keyword != null && !keyword.trim().isEmpty()) {
-            return customerRepository.searchByNameOrPhone(keyword);
+    public List<Customer> getCustomers(String keyword, Integer minPoint, Integer status, String timePeriod) {
+
+        LocalDateTime startDate = null;
+
+        // Logic quy đổi Time Period thành Ngày bắt đầu
+        if (timePeriod != null && !timePeriod.isEmpty()) {
+            LocalDate today = LocalDate.now();
+            switch (timePeriod) {
+                case "month": // Tháng này
+                    // Lấy ngày mùng 1 của tháng hiện tại, lúc 00:00:00
+                    startDate = today.withDayOfMonth(1).atStartOfDay();
+                    break;
+                case "year": // Năm nay
+                    // Lấy ngày 1/1 của năm hiện tại
+                    startDate = today.withDayOfYear(1).atStartOfDay();
+                    break;
+                case "last_30_days": // 30 ngày gần đây
+                    startDate = today.minusDays(30).atStartOfDay();
+                    break;
+                default:
+                    startDate = null; // Chọn "All time"
+            }
         }
-        return customerRepository.findAll();
+
+        // Gọi Repository với đủ 4 tham số
+        return customerRepository.searchFullFilter(keyword, minPoint, status, startDate);
     }
 }

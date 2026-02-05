@@ -95,38 +95,50 @@
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
 
-            <div class="row g-3 mb-4">
-                <div class="col-md-4">
-                    <form action="/customers" method="get">
-                        <div class="input-group">
-                <span class="input-group-text bg-white border-end-0">
-                    <i class="fa-solid fa-magnifying-glass text-muted"></i>
-                </span>
+            <form action="/customers" method="get" id="filterForm">
+                <div class="row g-3 mb-4">
 
-                            <input type="text"
-                                   name="keyword"
-                                   value="${keyword}"
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                            </span>
+                            <input type="text" name="keyword" value="${keyword}"
                                    class="form-control border-start-0"
                                    placeholder="Search name or phone..."
-                                   onchange="this.form.submit()"> </div>
-                    </form>
+                                   onchange="document.getElementById('filterForm').submit()">
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <select name="minPoint" class="form-select" onchange="document.getElementById('filterForm').submit()">
+                            <option value="">All score</option>
+                            <option value="200"  ${minPoint == 200 ? 'selected' : ''}>>= 200 points</option>
+                            <option value="500"  ${minPoint == 500 ? 'selected' : ''}>>= 500 points</option>
+                            <option value="1000" ${minPoint == 1000 ? 'selected' : ''}>>= 1000 points</option>
+                            <option value="2000" ${minPoint == 2000 ? 'selected' : ''}>>= 2000 points</option>
+                            <option value="5000" ${minPoint == 5000 ? 'selected' : ''}>>= 5000 points</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <select name="status" class="form-select" onchange="document.getElementById('filterForm').submit()">
+                            <option value="">All status</option>
+                            <option value="1" ${status == 1 ? 'selected' : ''}>Active</option>
+                            <option value="0" ${status == 0 ? 'selected' : ''}>Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 ms-auto"> <select name="timePeriod" class="form-select" onchange="document.getElementById('filterForm').submit()">
+                            <option value="">All time</option>
+                            <option value="month" ${timePeriod == 'month' ? 'selected' : ''}>This Month</option>
+                            <option value="year"  ${timePeriod == 'year' ? 'selected' : ''}>This Year</option>
+                            <option value="last_30_days" ${timePeriod == 'last_30_days' ? 'selected' : ''}>Last 30 Days</option>
+                        </select>
+                    </div>
+
                 </div>
-                <div class="col-md-2">
-                    <select class="form-select">
-                        <option>Filter by Score</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <select class="form-select">
-                        <option>Status: All</option>
-                    </select>
-                </div>
-                <div class="col-md-3 ms-auto">
-                    <select class="form-select">
-                        <option>Time: This Month</option>
-                    </select>
-                </div>
-            </div>
+            </form>
 
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
