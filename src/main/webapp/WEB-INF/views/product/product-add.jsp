@@ -102,19 +102,25 @@
                             <div class="image-upload-wrapper mb-3" onclick="document.getElementById('imageInput').click()" style="cursor: pointer;">
                                 <div class="image-preview-placeholder">
                                     <div class="inner-box shadow-sm" id="previewContainer">
-                                        <%-- Ảnh sẽ hiện ở đây --%>
+                                        <i class="fa-solid fa-camera text-muted fs-2" id="placeholderIcon"></i>
                                     </div>
                                 </div>
                             </div>
                             <div class="d-flex flex-column align-items-start gap-2">
                                 <input type="file" name="imageFile" id="imageInput" class="d-none" accept="image/*">
-                                <button type="button" class="btn btn-light border fw-bold px-4 py-2" onclick="document.getElementById('imageInput').click()">
-                                    Choose File
-                                </button>
+
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-light border fw-bold px-3 py-2" onclick="document.getElementById('imageInput').click()">
+                                        Choose File
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm d-none" id="removeImgBtn" onclick="removeImage(event)">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
                                 <span class="text-muted small">(PNG, JPG, GIF max 5MB)</span>
                             </div>
                         </div>
-                    </div>
+
 
                     <div class="d-flex justify-content-end gap-3 mt-5 pt-4 border-top">
                         <a href="<c:url value='/product'/>" class="btn btn-light px-5 py-2 border fw-bold" style="border-radius: 8px;">Cancel</a>
@@ -132,11 +138,26 @@
         document.getElementById('imageInput').onchange = function(evt) {
             const file = evt.target.files[0];
             if (file) {
+                // 1. Tạo URL ảnh
                 const imgUrl = URL.createObjectURL(file);
+                console.log("Image URL created:", imgUrl);
+
+                // 2. Tìm container
                 const container = document.getElementById('previewContainer');
 
-                // Cập nhật HTML và đảm bảo ảnh fit
-                container.innerHTML = `<img src="${imgUrl}" style="width: 100%; height: 100%; object-fit: cover; display: block;">`;
+                // 3. Xóa nội dung cũ (icon hoặc ảnh cũ)
+                container.innerHTML = '';
+
+                // 4. Tạo thẻ img bằng Object (Cách này an toàn nhất, không lo sai dấu ngoặc)
+                const newImg = document.createElement('img');
+                newImg.src = imgUrl; // Gán URL vào src
+                newImg.style.width = '100%';
+                newImg.style.height = '100%';
+                newImg.style.objectFit = 'cover';
+                newImg.style.display = 'block';
+
+                // 5. Thêm vào ô vuông trắng
+                container.appendChild(newImg);
             }
         };
     </script>
