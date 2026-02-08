@@ -12,35 +12,28 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
-    <style>
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
-
-        /* Layout Adjustment */
-        .main-content {
-            margin-top: 70px; /* Né Header */
-            margin-left: 80px; /* Né Sidebar (khi thu gọn) */
-            padding: 30px;
-            transition: margin-left 0.3s;
-        }
-
-        /* Stats Card Style */
-        .stat-card { background-color: #e9ecef; border: none; border-radius: 12px; padding: 20px; height: 100%; transition: transform 0.2s; }
-        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .stat-value { font-size: 1.8rem; font-weight: bold; color: #212529; }
-        .stat-title { font-size: 0.9rem; font-weight: 600; color: #495057; }
-
-        /* Table Style */
-        .badge-active { background-color: #198754; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; }
-        .badge-inactive { background-color: #ffc107; color: #000; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; }
-    </style>
+    <link href="${pageContext.request.contextPath}/resources/css/customer/customer.css" rel="stylesheet">
 </head>
 <body>
 
 <jsp:include page="../layer/header.jsp" />
-
 <jsp:include page="../layer/sidebar.jsp" />
 
 <div class="main-content">
+
+    <c:if test="${not empty error}">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i> ${error}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </c:if>
+
+        <c:if test="${not empty success}">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-check-circle me-2"></i> ${success}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </c:if>
 
     <div class="d-flex justify-content-between align-items-end mb-4">
         <div>
@@ -105,13 +98,12 @@
                             </span>
                             <input type="text" name="keyword" value="${keyword}"
                                    class="form-control border-start-0"
-                                   placeholder="Search name or phone..."
-                                   onchange="document.getElementById('filterForm').submit()">
+                                   placeholder="Search name or phone...">
                         </div>
                     </div>
 
                     <div class="col-md-2">
-                        <select name="minPoint" class="form-select" onchange="document.getElementById('filterForm').submit()">
+                        <select name="minPoint" class="form-select">
                             <option value="">All score</option>
                             <option value="200"  ${minPoint == 200 ? 'selected' : ''}>>= 200 points</option>
                             <option value="500"  ${minPoint == 500 ? 'selected' : ''}>>= 500 points</option>
@@ -122,14 +114,15 @@
                     </div>
 
                     <div class="col-md-2">
-                        <select name="status" class="form-select" onchange="document.getElementById('filterForm').submit()">
+                        <select name="status" class="form-select">
                             <option value="">All status</option>
                             <option value="1" ${status == 1 ? 'selected' : ''}>Active</option>
                             <option value="0" ${status == 0 ? 'selected' : ''}>Inactive</option>
                         </select>
                     </div>
 
-                    <div class="col-md-3 ms-auto"> <select name="timePeriod" class="form-select" onchange="document.getElementById('filterForm').submit()">
+                    <div class="col-md-3 ms-auto">
+                        <select name="timePeriod" class="form-select">
                             <option value="">All time</option>
                             <option value="month" ${timePeriod == 'month' ? 'selected' : ''}>This Month</option>
                             <option value="year"  ${timePeriod == 'year' ? 'selected' : ''}>This Year</option>
@@ -181,7 +174,25 @@
                                 </c:choose>
                             </td>
                             <td class="text-end pe-3">
-                                <button class="btn btn-sm btn-light border"><i class="fa-solid fa-ellipsis"></i></button>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-light border rounded-circle" type="button" data-bs-toggle="dropdown">
+                                        <i class="fa-solid fa-ellipsis"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
+                                        <li>
+                                            <a class="dropdown-item py-2" href="#"
+                                               onclick="openEditModal('${cust.customerId}', '${cust.fullName}', '${cust.phoneNumber}', '${cust.status}', '${cust.currentPoint}')">
+                                                <i class="fa-solid fa-pen-to-square text-primary me-2"></i> Edit
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item py-2 text-danger" href="#"
+                                               onclick="confirmDelete('${cust.customerId}', '${cust.fullName}')">
+                                                <i class="fa-solid fa-trash me-2"></i> Delete
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </td>
                         </tr>
                     </c:forEach>
@@ -192,24 +203,56 @@
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg"> <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title fw-bold">Add New Customer</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <div class="text-center py-5 text-muted">
-                <i class="fa-solid fa-person-digging fs-1 mb-3"></i>
-                <p>Giao diện nhập thông tin khách hàng sẽ ở đây.</p>
-                <p class="small">(Chức năng đang được xây dựng...)</p>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-4">Add customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
+            <form action="/customers/add" method="post">
+                <div class="modal-body pt-2">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium text-secondary">Name:</label>
+                        <input type="text" class="form-control rounded-3 py-2"
+                               name="fullName" placeholder="Input name..." required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium text-secondary">Phone number:</label>
+                        <input type="text" class="form-control rounded-3 py-2"
+                               name="phoneNumber" placeholder="Phone number..." required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-medium text-secondary">Status:</label>
+                        <select class="form-select rounded-3 py-2" name="status">
+                            <option value="1" selected>Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn text-white w-50 py-2 fw-bold rounded-3"
+                                style="background-color: #2e8b57;">
+                            Confirm
+                        </button>
+
+                        <button type="button" class="btn text-white w-50 py-2 fw-bold rounded-3"
+                                style="background-color: #b20000;"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary">Save Customer</button>
-        </div>
-    </div>
     </div>
 </div>
 
@@ -237,6 +280,57 @@
     </div>
 </div>
 
+<div class="modal fade" id="editCustomerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-4">Edit customer <i class="fa-solid fa-right-from-bracket ms-2 text-muted" style="font-size: 1rem;"></i></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="/customers/update" method="post">
+                <div class="modal-body pt-2">
+                    <input type="hidden" id="editId" name="customerId">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium text-secondary">Name:</label>
+                        <input type="text" class="form-control rounded-3 py-2" id="editName" name="fullName" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium text-secondary">Phone number:</label>
+                        <input type="text" class="form-control rounded-3 py-2" id="editPhone" name="phoneNumber" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium text-secondary">Status:</label>
+                        <select class="form-select rounded-3 py-2" id="editStatus" name="status">
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-medium text-secondary">Point:</label>
+                        <input type="number" class="form-control rounded-3 py-2" id="editPoint" name="currentPoint">
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn text-white w-50 py-2 fw-bold rounded-3"
+                                style="background-color: #2e8b57;">Confirm</button>
+                        <button type="button" class="btn text-white w-50 py-2 fw-bold rounded-3"
+                                style="background-color: #b20000;" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="${pageContext.request.contextPath}/resources/js/customer/customer.js"></script>
+
 </body>
 </html>

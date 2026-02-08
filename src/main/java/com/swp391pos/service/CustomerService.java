@@ -64,4 +64,33 @@ public class CustomerService {
         // Gọi Repository với đủ 4 tham số
         return customerRepository.searchFullFilter(keyword, minPoint, status, startDate);
     }
+
+    public void saveCustomer(Customer customer) {
+        // Nếu ID tồn tại -> Đây là Update -> Cần lấy dữ liệu cũ để giữ lại Điểm và Tổng tiền (nếu form không gửi lên)
+        if (customer.getCustomerId() != null) {
+            Customer oldCustomer = customerRepository.findById(customer.getCustomerId()).orElse(null);
+            if (oldCustomer != null) {
+                // Nếu form edit không gửi điểm (null), thì giữ nguyên điểm cũ
+                if (customer.getCurrentPoint() == null) {
+                    customer.setCurrentPoint(oldCustomer.getCurrentPoint());
+                }
+                // Nếu form edit không gửi tổng tiền (null), thì giữ nguyên tiền cũ
+                if (customer.getTotalSpending() == null) {
+                    customer.setTotalSpending(oldCustomer.getTotalSpending());
+                }
+                // Giữ nguyên ngày tạo, v.v...
+            }
+        } else {
+            // Đây là Thêm mới (ID null) -> Gán mặc định
+            if (customer.getCurrentPoint() == null) customer.setCurrentPoint(0);
+            if (customer.getTotalSpending() == null) customer.setTotalSpending(BigDecimal.ZERO);
+            if (customer.getStatus() == null) customer.setStatus(1);
+        }
+
+        customerRepository.save(customer);
+    }
+
+    public void deleteById(Long id) {
+        customerRepository.deleteById(id);
+    }
 }
