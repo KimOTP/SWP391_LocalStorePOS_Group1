@@ -1,9 +1,12 @@
 package com.swp391pos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -45,4 +48,8 @@ public class Customer {
     // DEFAULT GETDATE() -> Gán thời gian hiện tại khi tạo mới
     @Column(name = "createdAt")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // (Tùy chọn) Giúp tránh lỗi Lazy Loading khi convert JSON
+    private List<PointHistory> pointHistories;
 }

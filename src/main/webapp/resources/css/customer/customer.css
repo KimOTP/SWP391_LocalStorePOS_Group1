@@ -55,3 +55,8 @@ body {
     border-radius: 20px;
     font-size: 0.8rem;
 }
+
+/* Style cho Tab Detail */
+#detailTab { background-color: #f8f9fa; border: 1px solid #eee; }
+#detailTab .nav-link { color: #495057; font-weight: 500; }
+#detailTab .nav-link.active { background-color: white !important; color: black !important; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }

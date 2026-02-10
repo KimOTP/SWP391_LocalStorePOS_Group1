@@ -2,6 +2,7 @@ package com.swp391pos.controller.customer;
 
 
 import com.swp391pos.entity.Customer;
+import com.swp391pos.entity.PointHistory;
 import com.swp391pos.service.CustomerService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -81,7 +83,7 @@ public class CustomerController {
         return "redirect:/customers";
     }
 
-    // 2. Update
+    //Update
     @PostMapping("/update")
     public String updateCustomer(@Valid @ModelAttribute Customer customer, //Thêm @Valid
                                  BindingResult result,                     //Thêm BindingResult
@@ -110,5 +112,16 @@ public class CustomerController {
         }
 
         return "redirect:/customers";
+    }
+
+    // API: Lấy lịch sử giao dịch (Trả về JSON)
+    @GetMapping("/{id}/history")
+    @ResponseBody
+    public List<PointHistory> getCustomerHistory(@PathVariable Long id) {
+        Customer customer = customerService.findById(id).orElse(null);
+        if (customer != null) {
+            return customer.getPointHistories();
+        }
+        return new ArrayList<>();
     }
 }

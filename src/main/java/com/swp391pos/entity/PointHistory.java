@@ -1,5 +1,6 @@
 package com.swp391pos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ public class PointHistory {
     // FK tới Customer
     @ManyToOne
     @JoinColumn(name = "customerId", nullable = false)
+    @JsonIgnore
     private Customer customer;
 
     // FK tới Order (Có thể NULL)

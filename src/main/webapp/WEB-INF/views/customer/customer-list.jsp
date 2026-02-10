@@ -181,10 +181,18 @@
                                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
                                         <li>
                                             <a class="dropdown-item py-2" href="#"
+                                               onclick="openDetailModal('${cust.customerId}', '${cust.fullName}', '${cust.phoneNumber}', '${cust.currentPoint}', '${cust.totalSpending}', '${cust.lastTransactionDate}')">
+                                                <i class="fa-solid fa-circle-info text-info me-2"></i> Detail
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a class="dropdown-item py-2" href="#"
                                                onclick="openEditModal('${cust.customerId}', '${cust.fullName}', '${cust.phoneNumber}', '${cust.status}', '${cust.currentPoint}')">
                                                 <i class="fa-solid fa-pen-to-square text-primary me-2"></i> Edit
                                             </a>
                                         </li>
+
                                         <li>
                                             <a class="dropdown-item py-2 text-danger" href="#"
                                                onclick="confirmDelete('${cust.customerId}', '${cust.fullName}')">
@@ -324,6 +332,61 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="detailCustomerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow" style="border-radius: 15px;">
+
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-4">Customer detail <i class="fa-solid fa-right-from-bracket ms-2 text-muted fs-6"></i></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <ul class="nav nav-pills nav-fill mb-4 p-1 rounded-pill" id="detailTab" role="tablist">
+                    <li class="nav-item"><button class="nav-link active rounded-pill" data-bs-toggle="pill" data-bs-target="#personal-info">Personal information</button></li>
+                    <li class="nav-item"><button class="nav-link rounded-pill" data-bs-toggle="pill" data-bs-target="#point-info">Point</button></li>
+                    <li class="nav-item"><button class="nav-link rounded-pill" data-bs-toggle="pill" data-bs-target="#history-info">Transaction history</button></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="personal-info">
+                        <div class="d-flex align-items-start mb-4">
+                            <i class="fa-solid fa-user fs-1 me-3 text-secondary"></i>
+                            <div>
+                                <div class="text-muted small">Code: <span class="fw-bold text-dark" id="detailCode"></span></div>
+                                <div class="fw-bold fs-5" id="detailName"></div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-4">
+                            <i class="fa-solid fa-phone fs-4 me-3 ms-1 text-secondary"></i>
+                            <div><div class="text-muted small">Phone number:</div><div class="fw-bold fs-5" id="detailPhone"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="point-info">
+                        <div class="row g-3">
+                            <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #fffacd;"><div class="fw-medium mb-2"><i class="fa-solid fa-gift me-2"></i>Current point</div><div class="fw-bold fs-4" id="detailPoint">0</div></div></div>
+                            <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #d1e7dd;"><div class="fw-medium mb-2"><i class="fa-solid fa-money-bill-wave me-2"></i>Total spending</div><div class="fw-bold fs-4" id="detailSpending">0 đ</div></div></div>
+                            <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #e0f7fa;"><div class="fw-medium mb-2"><i class="fa-solid fa-clock-rotate-left me-2"></i>Last purchase</div><div class="fw-bold fs-4" id="detailLastDate">-</div></div></div>
+                            <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #f3e5f5;"><div class="fw-medium mb-2"><i class="fa-solid fa-basket-shopping me-2"></i>Total order</div><div class="fw-bold fs-4">N/A</div></div></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="history-info">
+                        <h6 class="mb-3 text-muted">Transaction history</h6>
+                        <table class="table table-borderless">
+                            <thead class="text-muted border-bottom">
+                                <tr><th>Description/Order</th><th>Date</th><th>Point</th><th class="text-end">Total Amount</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
