@@ -29,12 +29,15 @@ public class PointHistory {
     @Column(name = "pointAmount", nullable = false)
     private Integer pointAmount;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "actionType", length = 50, nullable = false)
-    private String actionType;
-
-    @Column(name = "description")
-    private String description;
-
+    private ActionType actionType;
+    //Bỏ table description
     @Column(name = "createdAt")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    public enum ActionType {
+        EARN,
+        USE
+    }
 }

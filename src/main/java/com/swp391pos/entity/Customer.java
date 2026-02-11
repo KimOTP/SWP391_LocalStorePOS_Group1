@@ -1,5 +1,6 @@
 package com.swp391pos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -52,4 +53,8 @@ public class Customer {
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // (Tùy chọn) Giúp tránh lỗi Lazy Loading khi convert JSON
     private List<PointHistory> pointHistories;
+
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
+    @JsonIgnore // Chặn JSON để tránh lặp vào vòng luẩn quẩn
+    private List<Order> orders;
 }

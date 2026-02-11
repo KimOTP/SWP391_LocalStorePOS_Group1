@@ -1,5 +1,6 @@
 package com.swp391pos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ordeId")
+    @Column(name = "orderId")
     private Long orderId;
 
     // FK -> Employee(employee_id)
@@ -22,6 +23,7 @@ public class Order {
             nullable = false,
             foreignKey = @ForeignKey(name = "FK_Order_Employee")
     )
+    @JsonIgnore
     private Employee employee;
 
     // FK -> Customer(customer_id)
@@ -30,6 +32,8 @@ public class Order {
             name = "customerId",
             foreignKey = @ForeignKey(name = "FK_Order_Customer")
     )
+
+    @JsonIgnore
     private Customer customer;
 
     // FK -> OrderStatus(order_status_id)
@@ -39,6 +43,8 @@ public class Order {
             nullable = false,
             foreignKey = @ForeignKey(name = "FK_Order_OrderStatus")
     )
+
+    @JsonIgnore
     private OrderStatus orderStatus;
 
     @Column(name = "totalAmount", nullable = false, precision = 15, scale = 2)

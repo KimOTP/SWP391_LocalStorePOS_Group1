@@ -43,7 +43,7 @@ const formatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 
 
 function openDetailModal(id, name, phone, point, spending, lastDate) {
     // 1. Điền thông tin TAB 1 & 2 (Dữ liệu có sẵn trên bảng)
-    document.getElementById('detailCode').innerText = "KH00" + id;
+    document.getElementById('detailCode').innerText = id;
     document.getElementById('detailName').innerText = name;
     document.getElementById('detailPhone').innerText = phone;
     document.getElementById('detailPoint').innerText = point;
@@ -56,54 +56,86 @@ function openDetailModal(id, name, phone, point, spending, lastDate) {
     } else {
         document.getElementById('detailLastDate').innerText = "-";
     }
+    // Reset về 0 hoặc Loading trước khi gọi API
+    document.getElementById('detailTotalOrder').innerText = "...";
+    // Gọi API lấy số lượng đơn hàng
+        fetch('/customers/' + id + '/order-count')
+            .then(response => response.json())
+            .then(count => {
+                document.getElementById('detailTotalOrder').innerText = count;
+            })
+            .catch(error => {
+                console.error(error);
+                document.getElementById('detailTotalOrder').innerText = "0";
+            });
 
     // 2. Load lịch sử TAB 3 (Gọi API)
     const historyTableBody = document.querySelector('#history-info tbody');
-    historyTableBody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">Loading history...</td></tr>';
+        historyTableBody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">Loading history...</td></tr>';
 
-    fetch('/customers/' + id + '/history')
-        .then(response => response.json())
-        .then(data => {
-            historyTableBody.innerHTML = '';
+        fetch('/customers/' + id + '/history')
+            .then(response => {
+                if (!response.ok) throw new Error('Server error');
+                return response.json();
+            })
+            .then(data => {
+                historyTableBody.innerHTML = '';
 
-            if (!data || data.length === 0) {
-                historyTableBody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">No transaction history found.</td></tr>';
-            } else {
-                data.forEach(item => {
-                    // Date
-                    let dateStr = item.createdAt ? new Date(item.createdAt).toLocaleString('vi-VN') : '-';
+                if (!data || data.length === 0) {
+                    historyTableBody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">No transaction history found.</td></tr>';
+                } else {
+                    data.forEach(item => {
+                        // 1. XỬ LÝ DỮ LIỆU TỪ ORDER (QUAN TRỌNG)
+                        let orderIdDisplay = '-';
+                        let dateDisplay = '-';
+                        let totalAmountDisplay = '-';
 
-                    // Point Color
-                    let pointClass = item.pointAmount >= 0 ? 'text-success' : 'text-danger';
-                    let pointSign = item.pointAmount > 0 ? '+' : '';
+                        // Kiểm tra xem bản ghi này có gắn với Order nào không?
+                        if (item.order) {
+                            // Order ID: Thêm tiền tố HD cho giống ảnh
+                            orderIdDisplay =  item.order.orderId;
 
-                    // Order Info (Kiểm tra null)
-                    let orderAmount = 0;
-                    let descDisplay = item.description || item.actionType;
+                            // Date: Lấy ngày tạo của ORDER (item.order.createdAt)
+                            if (item.order.createdAt) {
+                                dateDisplay = new Date(item.order.createdAt).toLocaleString('vi-VN');
+                            }
 
-                    if (item.order) {
-                        // SỬA CHỖ NÀY: Thay 'totalAmount' bằng tên field thật trong Entity Order của bạn
-                        orderAmount = item.order.totalAmount || 0;
-                        descDisplay = 'Order #' + (item.order.orderId || '');
-                    }
+                            // Total Amount: Lấy tổng tiền của ORDER
+                            if (item.order.totalAmount) {
+                                totalAmountDisplay = formatter.format(item.order.totalAmount);
+                            }
+                        } else {
+                            // Trường hợp không có Order (ví dụ: Admin cộng điểm tay)
+                            orderIdDisplay = 'System';
+                            // Lấy ngày tạo của lịch sử nếu không có order
+                            dateDisplay = new Date(item.createdAt).toLocaleString('vi-VN');
+                        }
 
-                    let row = `
-                        <tr class="border-bottom">
-                            <td>${descDisplay}</td>
-                            <td>${dateStr}</td>
-                            <td class="${pointClass} fw-bold">${pointSign}${item.pointAmount}</td>
-                            <td class="text-end">${formatter.format(orderAmount)}</td>
-                        </tr>
-                    `;
-                    historyTableBody.insertAdjacentHTML('beforeend', row);
-                });
-            }
-            document.querySelector('#history-info h6').innerText = `Transaction history (${data.length})`;
-        })
-        .catch(error => {
-            console.error(error);
-            historyTableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Failed to load history.</td></tr>';
-        });
+                        // 2. XỬ LÝ ĐIỂM (POINT)
+                        // Logic: Action EARN hoặc số dương là màu xanh, USE hoặc số âm là màu đỏ
+                        let pointClass = item.pointAmount >= 0 ? 'text-success' : 'text-danger';
+                        let pointSign = item.pointAmount > 0 ? '+' : '';
+
+                        // 3. VẼ DÒNG HTML (Chuẩn theo 4 cột trong ảnh)
+                        let row = `
+                            <tr class="border-bottom">
+                                <td class="fw-medium">${orderIdDisplay}</td>
+                                <td>${dateDisplay}</td>
+                                <td class="${pointClass} fw-bold">${pointSign}${item.pointAmount}</td>
+                                <td class="text-end text-dark">${totalAmountDisplay}</td>
+                            </tr>
+                        `;
+                        historyTableBody.insertAdjacentHTML('beforeend', row);
+                    });
+                }
+
+                // Cập nhật số lượng bản ghi
+                document.querySelector('#history-info h6').innerText = `Transaction history (${data.length})`;
+            })
+            .catch(error => {
+                console.error(error);
+                historyTableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Failed to load history.</td></tr>';
+            });
 
     // 3. Hiện Modal
     new bootstrap.Modal(document.getElementById('detailCustomerModal')).show();

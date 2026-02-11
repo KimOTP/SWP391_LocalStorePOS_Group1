@@ -372,7 +372,7 @@
                             <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #fffacd;"><div class="fw-medium mb-2"><i class="fa-solid fa-gift me-2"></i>Current point</div><div class="fw-bold fs-4" id="detailPoint">0</div></div></div>
                             <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #d1e7dd;"><div class="fw-medium mb-2"><i class="fa-solid fa-money-bill-wave me-2"></i>Total spending</div><div class="fw-bold fs-4" id="detailSpending">0 đ</div></div></div>
                             <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #e0f7fa;"><div class="fw-medium mb-2"><i class="fa-solid fa-clock-rotate-left me-2"></i>Last purchase</div><div class="fw-bold fs-4" id="detailLastDate">-</div></div></div>
-                            <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #f3e5f5;"><div class="fw-medium mb-2"><i class="fa-solid fa-basket-shopping me-2"></i>Total order</div><div class="fw-bold fs-4">N/A</div></div></div>
+                            <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #f3e5f5;"><div class="fw-medium mb-2"><i class="fa-solid fa-basket-shopping me-2"></i>Total order</div><div class="fw-bold fs-4" id="detailTotalOrder">0</div></div></div>
                         </div>
                     </div>
 
@@ -380,7 +380,7 @@
                         <h6 class="mb-3 text-muted">Transaction history</h6>
                         <table class="table table-borderless">
                             <thead class="text-muted border-bottom">
-                                <tr><th>Description/Order</th><th>Date</th><th>Point</th><th class="text-end">Total Amount</th></tr>
+                                <tr><th>OrderID</th><th>Date</th><th>Point</th><th class="text-end">Total Amount</th></tr>
                             </thead>
                             <tbody></tbody>
                         </table>

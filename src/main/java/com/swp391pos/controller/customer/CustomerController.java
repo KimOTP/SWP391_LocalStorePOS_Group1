@@ -124,4 +124,20 @@ public class CustomerController {
         }
         return new ArrayList<>();
     }
+
+    // API: Đếm tổng số đơn hàng của khách (Trả về số lượng)
+    @GetMapping("/{id}/order-count")
+    @ResponseBody
+    public Integer getCustomerOrderCount(@PathVariable Long id) {
+        // Tìm khách hàng
+        Customer customer = customerService.findById(id).orElse(null);
+
+        // Nếu có khách hàng và danh sách đơn không null -> Trả về kích thước list (số đơn)
+        if (customer != null && customer.getOrders() != null) {
+            return customer.getOrders().size();
+        }
+
+        // Nếu không có -> Trả về 0
+        return 0;
+    }
 }
