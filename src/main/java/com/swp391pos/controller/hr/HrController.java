@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/hr")
 public class HrController {
 
-    @GetMapping("/manager/manager-profile")
+    @GetMapping("/manager/manager_profile")
     public String managerProfile() {
-        return "hr/manager/manager-profile";
+        return "hr/manager/manager_profile";
     }
 
-    @GetMapping("/cashier/cashier-profile")
+    @GetMapping("/cashier/cashier_profile")
     public String cashierProfile() {
-        return "hr/cashier/cashier-profile";
+        return "hr/cashier/cashier_profile";
     }
 }
 

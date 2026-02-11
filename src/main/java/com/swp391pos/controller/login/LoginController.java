@@ -114,9 +114,9 @@ public class LoginController {
 
         switch (role) {
             case "MANAGER":
-                return "redirect:/hr/manager/manager-profile";
+                return "redirect:/hr/manager/manager_profile";
             case "CASHIER":
-                return "redirect:/hr/cashier/cashier-profile";
+                return "redirect:/hr/cashier/cashier_profile";
             default:
                 model.addAttribute("error", "Invalid role");
                 return "auth/login";

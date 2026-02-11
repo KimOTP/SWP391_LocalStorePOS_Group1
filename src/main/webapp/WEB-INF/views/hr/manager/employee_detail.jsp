@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: tranp
-  Date: 2/6/2026
-  Time: 8:53 PM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
@@ -22,74 +15,77 @@
 <jsp:include page="/WEB-INF/views/layer/sidebar.jsp" />
 
 <div class="main-content">
+
     <div class="profile-wrapper">
 
+        <!-- TITLE -->
+        <div class="section-title">Employee Detail</div>
+        <div class="section-subtitle">
+            Information (Can not change ID, Creation time)
+        </div>
+
         <div class="row">
-            <!-- LEFT: CHANGE INFO -->
+
+            <!-- LEFT COLUMN -->
             <div class="col-md-6">
-                <div class="section-title">Change Info</div>
-                <div class="section-subtitle">Basic Info</div>
 
                 <div class="info-label">Id</div>
-                <div class="info-box">3</div>
+                <div class="info-box">
+                    <input class="info-input" value="3" readonly />
+                </div>
 
                 <div class="info-label">Full Name</div>
                 <div class="info-box">
-                    <input class="info-input" value="Tran Phu"/>
+                    <input class="info-input" value="Tran Phu" />
                 </div>
 
                 <div class="info-label">Login Name</div>
                 <div class="info-box">
-                    <input class="info-input" value="Cashier1"/>
+                    <input class="info-input" value="Cashier1" />
                 </div>
 
-                <div class="info-label">Role</div>
-                <div class="info-box">Cashier</div>
-
-                <div class="info-label">E-Mail</div>
+                <div class="info-label">Password</div>
                 <div class="info-box">
-                    <input class="info-input" value="cashier1@gmail.com"/>
+                    <input type="password" class="info-input" value="********" />
                 </div>
-
-                <div class="info-label">Status</div>
-                <div class="info-box">Active / Deactive</div>
 
                 <button class="btn-change mt-2">Save</button>
                 <div class="success-text">Save Successfully!</div>
+
             </div>
 
-            <!-- RIGHT: CHANGE PASSWORD -->
+            <!-- RIGHT COLUMN -->
             <div class="col-md-6">
-                <div class="section-title">Change Password</div>
-                <div class="section-subtitle">ㅤ</div>
 
-                <div class="info-label">Old Password</div>
+                <div class="info-label">Role</div>
                 <div class="info-box">
-                    <input type="password" class="info-input"/>
+                    <input class="info-input" value="Cashier" />
                 </div>
 
-                <div class="info-label">New Password</div>
+                <div class="info-label">E-Mail</div>
                 <div class="info-box">
-                    <input type="password" class="info-input"/>
+                    <input class="info-input" value="cashier1@gmail.com" />
                 </div>
 
-                <div class="info-label">Confirm New Password</div>
+                <div class="info-label">Status</div>
                 <div class="info-box">
-                    <input type="password" class="info-input"/><br/>
+                    <input class="info-input" value="Active" />
                 </div>
 
-                <button class="btn-change mt-2">Change</button>
-                <div class="success-text">Change Successfully!</div>
+                <div class="info-label">Account Creation Time</div>
+                <div class="info-box">
+                    <input class="info-input" value="01/01/2026 - 07:03" readonly />
+                </div>
+
             </div>
         </div>
 
-        <!-- BACK LINK: PHẢI MÀN HÌNH -->
-        <div class="text-end mt-4">
-            <a href="/profile" class="back-link">← Back To Profile</a>
-        </div>
+        <!-- BACK -->
+        <a href="/employee/list" class="back-link">← Back</a>
 
     </div>
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>

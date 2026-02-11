@@ -2,11 +2,11 @@
   Created by IntelliJ IDEA.
   User: tranp
   Date: 2/4/2026
-  Time: 10:48 AM
+  Time: 11:06 AM
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
     <title>Profile</title>
@@ -29,15 +29,16 @@
         <div class="section-subtitle">Basic Information</div>
 
         <div class="row">
+            <!-- LEFT -->
             <div class="col-md-6">
                 <div class="info-label">Id</div>
-                <div class="info-box">1</div>
+                <div class="info-box">3</div>
 
-                <div class="info-label">Full Name</div>
-                <div class="info-box">Tran Minh</div>
+                <div class="info-label">Name</div>
+                <div class="info-box">Tran Phu</div>
 
                 <div class="info-label">Login Name</div>
-                <div class="info-box">Manager1</div>
+                <div class="info-box">Cashier1</div>
 
                 <div class="info-label">Password</div>
                 <div class="info-box">********</div>
@@ -45,51 +46,57 @@
                 <button class="btn-change mt-2">Change Info</button>
             </div>
 
+            <!-- RIGHT -->
             <div class="col-md-6">
                 <div class="info-label">Role</div>
-                <div class="info-box">Manager</div>
+                <div class="info-box">Cashier</div>
 
                 <div class="info-label">E-Mail</div>
-                <div class="info-box">manager1@gmail.com</div>
+                <div class="info-box">cashier1@gmail.com</div>
 
                 <div class="info-label">Status</div>
-                <div class="info-box">Active</div>
+                <div class="info-box">Active / Deactive</div>
 
                 <div class="info-label">Last Login</div>
-                <div class="info-box">26/01/2026 - 07:10</div>
+                <div class="info-box">20/01/2026 - 12:03</div>
             </div>
         </div>
 
-        <!-- MANAGE -->
-        <div class="section-divider">Manage</div>
+        <!-- SHIFT INFO -->
+        <div class="section-divider">Shift Info</div>
 
         <div class="row">
             <div class="col-md-6">
-                <div class="info-label">Employee List</div>
+                <div class="info-label">Current Shift</div>
                 <div class="info-box">
-                    <span class="link-detail">Detail</span>
-                </div>
-
-                <div class="info-label">Shifts</div>
-                <div class="info-box">
-                    <span class="link-detail">Detail</span>
-                </div>
-
-                <div class="info-label">Employee Shift</div>
-                <div class="info-box">
-                    <span class="link-detail">Detail</span>
+                    Afternoon
+                    <a href="/shift/cashier/change_shift" class="link-detail">Change Shift</a>
                 </div>
             </div>
 
             <div class="col-md-6">
-                <div class="info-label">Create Employee Accounts</div>
+                <div class="info-label">Work schedule</div>
                 <div class="info-box">
-                    <span class="link-detail">Detail</span>
+                    <a href="/shift/cashier/work_schedule" class="link-detail">Detail</a>
                 </div>
+            </div>
+        </div>
 
-                <div class="info-label">Attendance</div>
+        <!-- ATTENDANCE -->
+        <div class="section-divider">Attendance Info</div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="info-label">Attendance Record</div>
                 <div class="info-box">
-                    <span class="link-detail">Detail</span>
+                    <a href="/hr/cashier/attendance_record" class="link-detail">Detail</a>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="info-label">Shift Change History</div>
+                <div class="info-box">
+                    <a href="/hr/cashier/shift_change_history" class="link-detail">Detail</a>
                 </div>
             </div>
         </div>
@@ -99,8 +106,9 @@
         </div>
 
     </div>
-</div>
 
+</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
