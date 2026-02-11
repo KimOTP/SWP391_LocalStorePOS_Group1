@@ -11,6 +11,7 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerService {
@@ -92,5 +93,8 @@ public class CustomerService {
 
     public void deleteById(Long id) {
         customerRepository.deleteById(id);
+    }
+    public Optional<Customer> findById(Long id) {
+        return customerRepository.findById(id);
     }
 }

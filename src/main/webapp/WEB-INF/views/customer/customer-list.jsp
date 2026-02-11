@@ -41,7 +41,7 @@
             <span class="text-muted">Manage your customer data and loyalty points</span>
         </div>
         <div class="d-flex gap-2">
-            <button class="btn btn-primary px-4 fw-medium" style="background-color: #0d6efd;" data-bs-toggle="modal" data-bs-target="#configPointModal">
+            <button class="btn btn-primary px-4 fw-medium" style="background-color: #0d6efd;" onclick="openConfigModal()">
                 <i class="fa-solid fa-gear me-2"></i>Config Point
             </button>
             <button class="btn btn-primary px-4 fw-medium" style="background-color: #0d6efd;" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
@@ -181,10 +181,18 @@
                                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
                                         <li>
                                             <a class="dropdown-item py-2" href="#"
+                                               onclick="openDetailModal('${cust.customerId}', '${cust.fullName}', '${cust.phoneNumber}', '${cust.currentPoint}', '${cust.totalSpending}', '${cust.lastTransactionDate}')">
+                                                <i class="fa-solid fa-circle-info text-info me-2"></i> Detail
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a class="dropdown-item py-2" href="#"
                                                onclick="openEditModal('${cust.customerId}', '${cust.fullName}', '${cust.phoneNumber}', '${cust.status}', '${cust.currentPoint}')">
                                                 <i class="fa-solid fa-pen-to-square text-primary me-2"></i> Edit
                                             </a>
                                         </li>
+
                                         <li>
                                             <a class="dropdown-item py-2 text-danger" href="#"
                                                onclick="confirmDelete('${cust.customerId}', '${cust.fullName}')">
@@ -258,24 +266,71 @@
 
 <div class="modal fade" id="configPointModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Point Configuration</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-4">Point Configuration <i class="fa-solid fa-gear ms-2 text-muted" style="font-size: 1rem;"></i></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <div class="alert alert-info">
-                    Cấu hình quy đổi điểm thưởng.
+
+            <form action="/customers/config/update" method="post">
+                <div class="modal-body pt-2">
+                    <p class="text-muted small mb-3">Set up rules for earning and redeeming loyalty points.</p>
+
+                    <h6 class="fw-bold mb-2">Accumulate Points:</h6>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small mb-1">For each invoice:</label>
+                        <div class="d-flex align-items-center bg-light p-2 rounded-3">
+                            <input type="number" name="earningRate" id="confEarning"
+                                   class="form-control fw-bold text-center border-0 py-2 shadow-sm"
+                                   style="background-color: #fff9c4; width: 120px; color: #333;" required>
+                            <span class="fw-bold mx-3">VNĐ &nbsp; = &nbsp; 1 Point</span>
+                        </div>
+                    </div>
+
+                    <hr class="text-muted opacity-25 my-3">
+
+                    <h6 class="fw-bold mb-2">Deduct Point & Redemption:</h6>
+
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small mb-1">Each point in the account:</label>
+                        <div class="d-flex align-items-center bg-light p-2 rounded-3">
+                            <span class="fw-bold me-3">1 Point &nbsp; = </span>
+                            <input type="number" name="redemptionValue" id="confRedemption"
+                                   class="form-control fw-bold text-center border-0 py-2 shadow-sm"
+                                   style="background-color: #fff9c4; width: 120px; color: #333;" required>
+                            <span class="fw-bold ms-3">VNĐ</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small mb-1">Max payment percentage by points:</label>
+                        <div class="d-flex align-items-center bg-light p-2 rounded-3">
+                            <input type="number" name="maxRedeemPercent" id="confMaxPercent"
+                                   class="form-control fw-bold text-center border-0 py-2 shadow-sm"
+                                   style="background-color: #fff9c4; width: 120px; color: #333;" max="100" required>
+                            <span class="fw-bold mx-3">% of Total Bill</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-secondary small mb-1">Min points required to redeem:</label>
+                        <div class="d-flex align-items-center bg-light p-2 rounded-3">
+                            <input type="number" name="minPointRedeem" id="confMinPoint"
+                                   class="form-control fw-bold text-center border-0 py-2 shadow-sm"
+                                   style="background-color: #fff9c4; width: 120px; color: #333;" required>
+                            <span class="fw-bold mx-3">Points</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 pt-2">
+                        <button type="submit" class="btn text-white w-50 py-2 fw-bold rounded-3"
+                                style="background-color: #2e8b57;">Confirm</button>
+                        <button type="button" class="btn text-white w-50 py-2 fw-bold rounded-3"
+                                style="background-color: #b20000;" data-bs-dismiss="modal">Cancel</button>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Tỷ lệ quy đổi (VND sang Điểm)</label>
-                    <input type="text" class="form-control" value="10,000 VND = 1 Point" disabled>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Update Config</button>
-            </div>
+            </form>
         </div>
     </div>
 </div>
@@ -324,6 +379,61 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="detailCustomerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow" style="border-radius: 15px;">
+
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-4">Customer detail <i class="fa-solid fa-right-from-bracket ms-2 text-muted fs-6"></i></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body">
+                <ul class="nav nav-pills nav-fill mb-4 p-1 rounded-pill" id="detailTab" role="tablist">
+                    <li class="nav-item"><button class="nav-link active rounded-pill" data-bs-toggle="pill" data-bs-target="#personal-info">Personal information</button></li>
+                    <li class="nav-item"><button class="nav-link rounded-pill" data-bs-toggle="pill" data-bs-target="#point-info">Point</button></li>
+                    <li class="nav-item"><button class="nav-link rounded-pill" data-bs-toggle="pill" data-bs-target="#history-info">Transaction history</button></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="personal-info">
+                        <div class="d-flex align-items-start mb-4">
+                            <i class="fa-solid fa-user fs-1 me-3 text-secondary"></i>
+                            <div>
+                                <div class="text-muted small">Code: <span class="fw-bold text-dark" id="detailCode"></span></div>
+                                <div class="fw-bold fs-5" id="detailName"></div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-4">
+                            <i class="fa-solid fa-phone fs-4 me-3 ms-1 text-secondary"></i>
+                            <div><div class="text-muted small">Phone number:</div><div class="fw-bold fs-5" id="detailPhone"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="point-info">
+                        <div class="row g-3">
+                            <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #fffacd;"><div class="fw-medium mb-2"><i class="fa-solid fa-gift me-2"></i>Current point</div><div class="fw-bold fs-4" id="detailPoint">0</div></div></div>
+                            <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #d1e7dd;"><div class="fw-medium mb-2"><i class="fa-solid fa-money-bill-wave me-2"></i>Total spending</div><div class="fw-bold fs-4" id="detailSpending">0 đ</div></div></div>
+                            <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #e0f7fa;"><div class="fw-medium mb-2"><i class="fa-solid fa-clock-rotate-left me-2"></i>Last purchase</div><div class="fw-bold fs-4" id="detailLastDate">-</div></div></div>
+                            <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #f3e5f5;"><div class="fw-medium mb-2"><i class="fa-solid fa-basket-shopping me-2"></i>Total order</div><div class="fw-bold fs-4" id="detailTotalOrder">0</div></div></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="history-info">
+                        <h6 class="mb-3 text-muted">Transaction history</h6>
+                        <table class="table table-borderless">
+                            <thead class="text-muted border-bottom">
+                                <tr><th>OrderID</th><th>Date</th><th>Point</th><th class="text-end">Total Amount</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
