@@ -140,3 +140,28 @@ function openDetailModal(id, name, phone, point, spending, lastDate) {
     // 3. Hiện Modal
     new bootstrap.Modal(document.getElementById('detailCustomerModal')).show();
 }
+
+// Modal Config Point
+function openConfigModal() {
+    // 1. Fetch dữ liệu từ API
+    fetch('/customers/config')
+        .then(response => response.json())
+        .then(data => {
+            // 2. Điền dữ liệu vào form (Dùng key trong Map trả về)
+            if (data) {
+                document.getElementById('confEarning').value = data.POINT_EARNING_RATE || 10000;
+                document.getElementById('confRedemption').value = data.POINT_REDEMPTION_VALUE || 100;
+                document.getElementById('confMaxPercent').value = data.MAX_REDEEM_PERCENT || 50;
+                document.getElementById('confMinPoint').value = data.MIN_POINT_TO_REDEEM || 10;
+            }
+            // 3. Show Modal
+            var configModal = new bootstrap.Modal(document.getElementById('configPointModal'));
+            configModal.show();
+        })
+        .catch(error => {
+            console.error('Lỗi load config:', error);
+            // Vẫn hiện modal dù lỗi để người dùng nhập tay
+            var configModal = new bootstrap.Modal(document.getElementById('configPointModal'));
+            configModal.show();
+        });
+}

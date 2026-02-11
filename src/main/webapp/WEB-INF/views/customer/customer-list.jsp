@@ -41,7 +41,7 @@
             <span class="text-muted">Manage your customer data and loyalty points</span>
         </div>
         <div class="d-flex gap-2">
-            <button class="btn btn-primary px-4 fw-medium" style="background-color: #0d6efd;" data-bs-toggle="modal" data-bs-target="#configPointModal">
+            <button class="btn btn-primary px-4 fw-medium" style="background-color: #0d6efd;" onclick="openConfigModal()">
                 <i class="fa-solid fa-gear me-2"></i>Config Point
             </button>
             <button class="btn btn-primary px-4 fw-medium" style="background-color: #0d6efd;" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
@@ -266,24 +266,71 @@
 
 <div class="modal fade" id="configPointModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Point Configuration</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-4">Point Configuration <i class="fa-solid fa-gear ms-2 text-muted" style="font-size: 1rem;"></i></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <div class="alert alert-info">
-                    Cấu hình quy đổi điểm thưởng.
+
+            <form action="/customers/config/update" method="post">
+                <div class="modal-body pt-2">
+                    <p class="text-muted small mb-3">Set up rules for earning and redeeming loyalty points.</p>
+
+                    <h6 class="fw-bold mb-2">Accumulate Points:</h6>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small mb-1">For each invoice:</label>
+                        <div class="d-flex align-items-center bg-light p-2 rounded-3">
+                            <input type="number" name="earningRate" id="confEarning"
+                                   class="form-control fw-bold text-center border-0 py-2 shadow-sm"
+                                   style="background-color: #fff9c4; width: 120px; color: #333;" required>
+                            <span class="fw-bold mx-3">VNĐ &nbsp; = &nbsp; 1 Point</span>
+                        </div>
+                    </div>
+
+                    <hr class="text-muted opacity-25 my-3">
+
+                    <h6 class="fw-bold mb-2">Deduct Point & Redemption:</h6>
+
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small mb-1">Each point in the account:</label>
+                        <div class="d-flex align-items-center bg-light p-2 rounded-3">
+                            <span class="fw-bold me-3">1 Point &nbsp; = </span>
+                            <input type="number" name="redemptionValue" id="confRedemption"
+                                   class="form-control fw-bold text-center border-0 py-2 shadow-sm"
+                                   style="background-color: #fff9c4; width: 120px; color: #333;" required>
+                            <span class="fw-bold ms-3">VNĐ</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small mb-1">Max payment percentage by points:</label>
+                        <div class="d-flex align-items-center bg-light p-2 rounded-3">
+                            <input type="number" name="maxRedeemPercent" id="confMaxPercent"
+                                   class="form-control fw-bold text-center border-0 py-2 shadow-sm"
+                                   style="background-color: #fff9c4; width: 120px; color: #333;" max="100" required>
+                            <span class="fw-bold mx-3">% of Total Bill</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-secondary small mb-1">Min points required to redeem:</label>
+                        <div class="d-flex align-items-center bg-light p-2 rounded-3">
+                            <input type="number" name="minPointRedeem" id="confMinPoint"
+                                   class="form-control fw-bold text-center border-0 py-2 shadow-sm"
+                                   style="background-color: #fff9c4; width: 120px; color: #333;" required>
+                            <span class="fw-bold mx-3">Points</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 pt-2">
+                        <button type="submit" class="btn text-white w-50 py-2 fw-bold rounded-3"
+                                style="background-color: #2e8b57;">Confirm</button>
+                        <button type="button" class="btn text-white w-50 py-2 fw-bold rounded-3"
+                                style="background-color: #b20000;" data-bs-dismiss="modal">Cancel</button>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Tỷ lệ quy đổi (VND sang Điểm)</label>
-                    <input type="text" class="form-control" value="10,000 VND = 1 Point" disabled>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Update Config</button>
-            </div>
+            </form>
         </div>
     </div>
 </div>
