@@ -12,7 +12,7 @@
 <html>
 <head>
     <title>Login</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/login.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/login/login.css">
 </head>
 <body>
 
@@ -20,7 +20,12 @@
     <div class="overlay">
         <div class="login-box">
 
-            <div class="logo">Store</div>
+<%--            <div class="logo">Store</div>--%>
+            <a class="navbar-brand p-0 me-3" href="${pageContext.request.contextPath}/">
+                <img src="${pageContext.request.contextPath}/resources/static/images/pos-logo.png"
+                     alt="POS System Logo"
+                     style="height: 100px; width: auto;">
+            </a>
 
             <label>Username</label>
             <input type="text" name="username" placeholder="Enter your login name">

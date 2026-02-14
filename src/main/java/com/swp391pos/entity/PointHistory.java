@@ -1,5 +1,6 @@
 package com.swp391pos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ public class PointHistory {
     // FK tới Customer
     @ManyToOne
     @JoinColumn(name = "customerId", nullable = false)
+    @JsonIgnore
     private Customer customer;
 
     // FK tới Order (Có thể NULL)
@@ -27,12 +29,15 @@ public class PointHistory {
     @Column(name = "pointAmount", nullable = false)
     private Integer pointAmount;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "actionType", length = 50, nullable = false)
-    private String actionType;
-
-    @Column(name = "description")
-    private String description;
-
+    private ActionType actionType;
+    //Bỏ table description
     @Column(name = "createdAt")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    public enum ActionType {
+        EARN,
+        USE
+    }
 }
