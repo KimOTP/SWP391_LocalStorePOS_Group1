@@ -35,7 +35,7 @@ public class OrderItem {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @Column(name = "unitIrice", nullable = false, precision = 15, scale = 2)
+    @Column(name = "unitPrice", nullable = false, precision = 15, scale = 2)
     private BigDecimal unitPrice;
 
     @Column(name = "subtotal", nullable = false, precision = 15, scale = 2)
