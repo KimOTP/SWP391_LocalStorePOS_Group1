@@ -24,9 +24,16 @@ public class Promotion {
     private LocalDateTime endDate;
 
     // DEFAULT 'ACTIVE'
-    @Column(name = "status", length = 20)
-    private String status = "ACTIVE";
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 20, nullable = false)
+    private PromotionStatus status = PromotionStatus.ACTIVE;
 
     @Column(name = "createdAt")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    public enum PromotionStatus {
+        ACTIVE,
+        INACTIVE,
+        EXPIRED
+    }
 }

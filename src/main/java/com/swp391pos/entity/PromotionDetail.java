@@ -30,6 +30,12 @@ public class PromotionDetail {
     @Column(name = "discountValue", nullable = false)
     private BigDecimal discountValue;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "discountType", length = 20, nullable = false)
-    private String discountType;
+    private DiscountType discountType;
+
+    public enum DiscountType {
+        PERCENT,
+        AMOUNT
+    }
 }

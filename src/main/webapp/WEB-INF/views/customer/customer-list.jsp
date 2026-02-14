@@ -175,7 +175,10 @@
                             </td>
                             <td class="text-end pe-3">
                                 <div class="dropdown">
-                                    <button class="btn btn-sm btn-light border rounded-circle" type="button" data-bs-toggle="dropdown">
+                                    <button class="btn btn-sm btn-light border rounded-circle" type="button"
+                                    data-bs-toggle="dropdown"
+                                    data-bs-boundary="window"
+                                    data-bs-popper-config='{"strategy":"fixed"}'>
                                         <i class="fa-solid fa-ellipsis"></i>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
