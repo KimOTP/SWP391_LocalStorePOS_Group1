@@ -12,35 +12,28 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
-    <style>
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
-
-        /* Layout Adjustment */
-        .main-content {
-            margin-top: 70px; /* Né Header */
-            margin-left: 80px; /* Né Sidebar (khi thu gọn) */
-            padding: 30px;
-            transition: margin-left 0.3s;
-        }
-
-        /* Stats Card Style */
-        .stat-card { background-color: #e9ecef; border: none; border-radius: 12px; padding: 20px; height: 100%; transition: transform 0.2s; }
-        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .stat-value { font-size: 1.8rem; font-weight: bold; color: #212529; }
-        .stat-title { font-size: 0.9rem; font-weight: 600; color: #495057; }
-
-        /* Table Style */
-        .badge-active { background-color: #198754; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; }
-        .badge-inactive { background-color: #ffc107; color: #000; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; }
-    </style>
+    <link href="${pageContext.request.contextPath}/resources/css/customer/customer.css" rel="stylesheet">
 </head>
 <body>
 
 <jsp:include page="../layer/header.jsp" />
-
 <jsp:include page="../layer/sidebar.jsp" />
 
 <div class="main-content">
+
+    <c:if test="${not empty error}">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-triangle-exclamation me-2"></i> ${error}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </c:if>
+
+        <c:if test="${not empty success}">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa-solid fa-check-circle me-2"></i> ${success}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </c:if>
 
     <div class="d-flex justify-content-between align-items-end mb-4">
         <div>
@@ -48,7 +41,7 @@
             <span class="text-muted">Manage your customer data and loyalty points</span>
         </div>
         <div class="d-flex gap-2">
-            <button class="btn btn-primary px-4 fw-medium" style="background-color: #0d6efd;" data-bs-toggle="modal" data-bs-target="#configPointModal">
+            <button class="btn btn-primary px-4 fw-medium" style="background-color: #0d6efd;" onclick="openConfigModal()">
                 <i class="fa-solid fa-gear me-2"></i>Config Point
             </button>
             <button class="btn btn-primary px-4 fw-medium" style="background-color: #0d6efd;" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
@@ -95,38 +88,50 @@
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
 
-            <div class="row g-3 mb-4">
-                <div class="col-md-4">
-                    <form action="/customers" method="get">
-                        <div class="input-group">
-                <span class="input-group-text bg-white border-end-0">
-                    <i class="fa-solid fa-magnifying-glass text-muted"></i>
-                </span>
+            <form action="/customers" method="get" id="filterForm">
+                <div class="row g-3 mb-4">
 
-                            <input type="text"
-                                   name="keyword"
-                                   value="${keyword}"
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                            </span>
+                            <input type="text" name="keyword" value="${keyword}"
                                    class="form-control border-start-0"
-                                   placeholder="Search name or phone..."
-                                   onchange="this.form.submit()"> </div>
-                    </form>
+                                   placeholder="Search name or phone...">
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <select name="minPoint" class="form-select">
+                            <option value="">All score</option>
+                            <option value="200"  ${minPoint == 200 ? 'selected' : ''}>>= 200 points</option>
+                            <option value="500"  ${minPoint == 500 ? 'selected' : ''}>>= 500 points</option>
+                            <option value="1000" ${minPoint == 1000 ? 'selected' : ''}>>= 1000 points</option>
+                            <option value="2000" ${minPoint == 2000 ? 'selected' : ''}>>= 2000 points</option>
+                            <option value="5000" ${minPoint == 5000 ? 'selected' : ''}>>= 5000 points</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-2">
+                        <select name="status" class="form-select">
+                            <option value="">All status</option>
+                            <option value="1" ${status == 1 ? 'selected' : ''}>Active</option>
+                            <option value="0" ${status == 0 ? 'selected' : ''}>Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 ms-auto">
+                        <select name="timePeriod" class="form-select">
+                            <option value="">All time</option>
+                            <option value="month" ${timePeriod == 'month' ? 'selected' : ''}>This Month</option>
+                            <option value="year"  ${timePeriod == 'year' ? 'selected' : ''}>This Year</option>
+                            <option value="last_30_days" ${timePeriod == 'last_30_days' ? 'selected' : ''}>Last 30 Days</option>
+                        </select>
+                    </div>
+
                 </div>
-                <div class="col-md-2">
-                    <select class="form-select">
-                        <option>Filter by Score</option>
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <select class="form-select">
-                        <option>Status: All</option>
-                    </select>
-                </div>
-                <div class="col-md-3 ms-auto">
-                    <select class="form-select">
-                        <option>Time: This Month</option>
-                    </select>
-                </div>
-            </div>
+            </form>
 
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
@@ -169,7 +174,33 @@
                                 </c:choose>
                             </td>
                             <td class="text-end pe-3">
-                                <button class="btn btn-sm btn-light border"><i class="fa-solid fa-ellipsis"></i></button>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-light border rounded-circle" type="button" data-bs-toggle="dropdown">
+                                        <i class="fa-solid fa-ellipsis"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
+                                        <li>
+                                            <a class="dropdown-item py-2" href="#"
+                                               onclick="openDetailModal('${cust.customerId}', '${cust.fullName}', '${cust.phoneNumber}', '${cust.currentPoint}', '${cust.totalSpending}', '${cust.lastTransactionDate}')">
+                                                <i class="fa-solid fa-circle-info text-info me-2"></i> Detail
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a class="dropdown-item py-2" href="#"
+                                               onclick="openEditModal('${cust.customerId}', '${cust.fullName}', '${cust.phoneNumber}', '${cust.status}', '${cust.currentPoint}')">
+                                                <i class="fa-solid fa-pen-to-square text-primary me-2"></i> Edit
+                                            </a>
+                                        </li>
+
+                                        <li>
+                                            <a class="dropdown-item py-2 text-danger" href="#"
+                                               onclick="confirmDelete('${cust.customerId}', '${cust.fullName}')">
+                                                <i class="fa-solid fa-trash me-2"></i> Delete
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </td>
                         </tr>
                     </c:forEach>
@@ -180,51 +211,236 @@
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg"> <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title fw-bold">Add New Customer</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <div class="text-center py-5 text-muted">
-                <i class="fa-solid fa-person-digging fs-1 mb-3"></i>
-                <p>Giao diện nhập thông tin khách hàng sẽ ở đây.</p>
-                <p class="small">(Chức năng đang được xây dựng...)</p>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-4">Add customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
+            <form action="/customers/add" method="post">
+                <div class="modal-body pt-2">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium text-secondary">Name:</label>
+                        <input type="text" class="form-control rounded-3 py-2"
+                               name="fullName" placeholder="Input name..." required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium text-secondary">Phone number:</label>
+                        <input type="text" class="form-control rounded-3 py-2"
+                               name="phoneNumber" placeholder="Phone number..." required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-medium text-secondary">Status:</label>
+                        <select class="form-select rounded-3 py-2" name="status">
+                            <option value="1" selected>Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn text-white w-50 py-2 fw-bold rounded-3"
+                                style="background-color: #2e8b57;">
+                            Confirm
+                        </button>
+
+                        <button type="button" class="btn text-white w-50 py-2 fw-bold rounded-3"
+                                style="background-color: #b20000;"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary">Save Customer</button>
-        </div>
-    </div>
     </div>
 </div>
 
 <div class="modal fade" id="configPointModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Point Configuration</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-4">Point Configuration <i class="fa-solid fa-gear ms-2 text-muted" style="font-size: 1rem;"></i></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
+
+            <form action="/customers/config/update" method="post">
+                <div class="modal-body pt-2">
+                    <p class="text-muted small mb-3">Set up rules for earning and redeeming loyalty points.</p>
+
+                    <h6 class="fw-bold mb-2">Accumulate Points:</h6>
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small mb-1">For each invoice:</label>
+                        <div class="d-flex align-items-center bg-light p-2 rounded-3">
+                            <input type="number" name="earningRate" id="confEarning"
+                                   class="form-control fw-bold text-center border-0 py-2 shadow-sm"
+                                   style="background-color: #fff9c4; width: 120px; color: #333;" required>
+                            <span class="fw-bold mx-3">VNĐ &nbsp; = &nbsp; 1 Point</span>
+                        </div>
+                    </div>
+
+                    <hr class="text-muted opacity-25 my-3">
+
+                    <h6 class="fw-bold mb-2">Deduct Point & Redemption:</h6>
+
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small mb-1">Each point in the account:</label>
+                        <div class="d-flex align-items-center bg-light p-2 rounded-3">
+                            <span class="fw-bold me-3">1 Point &nbsp; = </span>
+                            <input type="number" name="redemptionValue" id="confRedemption"
+                                   class="form-control fw-bold text-center border-0 py-2 shadow-sm"
+                                   style="background-color: #fff9c4; width: 120px; color: #333;" required>
+                            <span class="fw-bold ms-3">VNĐ</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-secondary small mb-1">Max payment percentage by points:</label>
+                        <div class="d-flex align-items-center bg-light p-2 rounded-3">
+                            <input type="number" name="maxRedeemPercent" id="confMaxPercent"
+                                   class="form-control fw-bold text-center border-0 py-2 shadow-sm"
+                                   style="background-color: #fff9c4; width: 120px; color: #333;" max="100" required>
+                            <span class="fw-bold mx-3">% of Total Bill</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-secondary small mb-1">Min points required to redeem:</label>
+                        <div class="d-flex align-items-center bg-light p-2 rounded-3">
+                            <input type="number" name="minPointRedeem" id="confMinPoint"
+                                   class="form-control fw-bold text-center border-0 py-2 shadow-sm"
+                                   style="background-color: #fff9c4; width: 120px; color: #333;" required>
+                            <span class="fw-bold mx-3">Points</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 pt-2">
+                        <button type="submit" class="btn text-white w-50 py-2 fw-bold rounded-3"
+                                style="background-color: #2e8b57;">Confirm</button>
+                        <button type="button" class="btn text-white w-50 py-2 fw-bold rounded-3"
+                                style="background-color: #b20000;" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editCustomerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-4">Edit customer <i class="fa-solid fa-right-from-bracket ms-2 text-muted" style="font-size: 1rem;"></i></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="/customers/update" method="post">
+                <div class="modal-body pt-2">
+                    <input type="hidden" id="editId" name="customerId">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium text-secondary">Name:</label>
+                        <input type="text" class="form-control rounded-3 py-2" id="editName" name="fullName" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium text-secondary">Phone number:</label>
+                        <input type="text" class="form-control rounded-3 py-2" id="editPhone" name="phoneNumber" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-medium text-secondary">Status:</label>
+                        <select class="form-select rounded-3 py-2" id="editStatus" name="status">
+                            <option value="1">Active</option>
+                            <option value="0">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-medium text-secondary">Point:</label>
+                        <input type="number" class="form-control rounded-3 py-2" id="editPoint" name="currentPoint">
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn text-white w-50 py-2 fw-bold rounded-3"
+                                style="background-color: #2e8b57;">Confirm</button>
+                        <button type="button" class="btn text-white w-50 py-2 fw-bold rounded-3"
+                                style="background-color: #b20000;" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="detailCustomerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow" style="border-radius: 15px;">
+
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-4">Customer detail <i class="fa-solid fa-right-from-bracket ms-2 text-muted fs-6"></i></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
             <div class="modal-body">
-                <div class="alert alert-info">
-                    Cấu hình quy đổi điểm thưởng.
+                <ul class="nav nav-pills nav-fill mb-4 p-1 rounded-pill" id="detailTab" role="tablist">
+                    <li class="nav-item"><button class="nav-link active rounded-pill" data-bs-toggle="pill" data-bs-target="#personal-info">Personal information</button></li>
+                    <li class="nav-item"><button class="nav-link rounded-pill" data-bs-toggle="pill" data-bs-target="#point-info">Point</button></li>
+                    <li class="nav-item"><button class="nav-link rounded-pill" data-bs-toggle="pill" data-bs-target="#history-info">Transaction history</button></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane fade show active" id="personal-info">
+                        <div class="d-flex align-items-start mb-4">
+                            <i class="fa-solid fa-user fs-1 me-3 text-secondary"></i>
+                            <div>
+                                <div class="text-muted small">Code: <span class="fw-bold text-dark" id="detailCode"></span></div>
+                                <div class="fw-bold fs-5" id="detailName"></div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-4">
+                            <i class="fa-solid fa-phone fs-4 me-3 ms-1 text-secondary"></i>
+                            <div><div class="text-muted small">Phone number:</div><div class="fw-bold fs-5" id="detailPhone"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="point-info">
+                        <div class="row g-3">
+                            <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #fffacd;"><div class="fw-medium mb-2"><i class="fa-solid fa-gift me-2"></i>Current point</div><div class="fw-bold fs-4" id="detailPoint">0</div></div></div>
+                            <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #d1e7dd;"><div class="fw-medium mb-2"><i class="fa-solid fa-money-bill-wave me-2"></i>Total spending</div><div class="fw-bold fs-4" id="detailSpending">0 đ</div></div></div>
+                            <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #e0f7fa;"><div class="fw-medium mb-2"><i class="fa-solid fa-clock-rotate-left me-2"></i>Last purchase</div><div class="fw-bold fs-4" id="detailLastDate">-</div></div></div>
+                            <div class="col-md-6"><div class="p-3 rounded-3" style="background-color: #f3e5f5;"><div class="fw-medium mb-2"><i class="fa-solid fa-basket-shopping me-2"></i>Total order</div><div class="fw-bold fs-4" id="detailTotalOrder">0</div></div></div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="history-info">
+                        <h6 class="mb-3 text-muted">Transaction history</h6>
+                        <table class="table table-borderless">
+                            <thead class="text-muted border-bottom">
+                                <tr><th>OrderID</th><th>Date</th><th>Point</th><th class="text-end">Total Amount</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Tỷ lệ quy đổi (VND sang Điểm)</label>
-                    <input type="text" class="form-control" value="10,000 VND = 1 Point" disabled>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Update Config</button>
             </div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="${pageContext.request.contextPath}/resources/js/customer/customer.js"></script>
+
 </body>
 </html>
