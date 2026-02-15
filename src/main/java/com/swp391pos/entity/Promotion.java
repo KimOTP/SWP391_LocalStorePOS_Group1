@@ -2,8 +2,10 @@ package com.swp391pos.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import java.time.LocalDateTime;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import org.springframework.format.annotation.DateTimeFormat;
 @Entity
 @Data
 @Table(name = "Promotion")
@@ -18,10 +20,12 @@ public class Promotion {
     private String promoName;
 
     @Column(name = "startDate", nullable = false)
-    private LocalDateTime startDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate startDate;
 
     @Column(name = "endDate", nullable = false)
-    private LocalDateTime endDate;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private LocalDate endDate;
 
     // DEFAULT 'ACTIVE'
     @Enumerated(EnumType.STRING)

@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.swp391pos.entity.Promotion.PromotionStatus;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -45,4 +45,56 @@ public class PromotionController {
 
         return "promotion/promotion-list";
     }
+
+    @PostMapping("/add")
+    public String addPromotion(@ModelAttribute Promotion promotion, RedirectAttributes redirectAttributes) {
+        try {
+            promotionService.savePromotion(promotion);
+            redirectAttributes.addFlashAttribute("success", "Add promotion successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Failed to add promotion.");
+        }
+        return "redirect:/promotions";
+    }
+
+    @PostMapping("/update")
+    public String updatePromotion(@ModelAttribute Promotion promotion, RedirectAttributes redirectAttributes) {
+        try {
+            promotionService.savePromotion(promotion);
+            redirectAttributes.addFlashAttribute("success", "Update promotion successfully!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Failed to update promotion.");
+        }
+        return "redirect:/promotions";
+    }
+
+    @GetMapping("/delete")
+    public String deletePromotion(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
+        try {
+            promotionService.deletePromotion(id);
+            redirectAttributes.addFlashAttribute("success", "Deleted promotion successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to delete promotion.");
+        }
+        return "redirect:/promotions";
+    }
+
+    @GetMapping("/status")
+    public String updatePromotionStatus(@RequestParam Integer id,
+                                        @RequestParam String status,
+                                        RedirectAttributes redirectAttributes) {
+        try {
+            // Convert String -> Enum
+            PromotionStatus newStatus = PromotionStatus.valueOf(status);
+            promotionService.updateStatus(id, newStatus);
+            String msg = (newStatus == PromotionStatus.ACTIVE) ? "Activated promotion!" : "Inactivated promotion!";
+            redirectAttributes.addFlashAttribute("success", msg);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to update status.");
+        }
+        return "redirect:/promotions";
+    }
+
 }

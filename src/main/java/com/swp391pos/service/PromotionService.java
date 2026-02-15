@@ -22,7 +22,7 @@ public class PromotionService {
     // Sửa tham số: Nhận LocalDate thay vì timePeriod String
     public List<Promotion> getPromotions(String keyword, String statusStr, LocalDate fromDate, LocalDate toDate) {
 
-        // 1. Xử lý Status (Giữ nguyên)
+        // Xử lý Status
         PromotionStatus statusEnum = null;
         if (statusStr != null && !statusStr.isEmpty()) {
             try {
@@ -30,21 +30,8 @@ public class PromotionService {
             } catch (IllegalArgumentException e) {}
         }
 
-        // 2. Xử lý Ngày (Convert LocalDate -> LocalDateTime)
-        LocalDateTime startDateTime = null;
-        LocalDateTime endDateTime = null;
-
-        if (fromDate != null) {
-            // Ngày bắt đầu: Lấy từ 00:00:00
-            startDateTime = fromDate.atStartOfDay();
-        }
-
-        if (toDate != null) {
-            // Ngày kết thúc: Lấy đến 23:59:59 của ngày đó
-            endDateTime = toDate.atTime(23, 59, 59);
-        }
-
-        return promotionRepository.searchPromotions(keyword, statusEnum, startDateTime, endDateTime);
+        // Gọi Repository
+        return promotionRepository.searchPromotions(keyword, statusEnum, fromDate, toDate);
     }
 
     public long getTotalPromotions() {
@@ -59,4 +46,28 @@ public class PromotionService {
 
     }
 
+    // Hàm thêm mới hoặc cập nhật
+    public void savePromotion(Promotion promotion) {
+        // Kiểm tra nếu là Update (có ID) -> giữ lại createdAt cũ
+        if (promotion.getPromotionId() != null) {
+            Promotion oldPromo = promotionRepository.findById(promotion.getPromotionId()).orElse(null);
+            if (oldPromo != null) {
+                promotion.setCreatedAt(oldPromo.getCreatedAt());
+            }
+        }
+        // Lưu xuống DB
+        promotionRepository.save(promotion);
+    }
+
+    public void deletePromotion(Integer id) {
+        promotionRepository.deleteById(id);
+    }
+
+    public void updateStatus(Integer id, PromotionStatus newStatus) {
+        Promotion promotion = promotionRepository.findById(id).orElse(null);
+        if(promotion!=null) {
+            promotion.setStatus(newStatus);
+            promotionRepository.save(promotion);
+        }
+    }
 }

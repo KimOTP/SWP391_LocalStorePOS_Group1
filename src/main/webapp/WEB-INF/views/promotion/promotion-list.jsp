@@ -26,8 +26,9 @@
             <span class="text-muted">Manage your marketing campaigns and deals</span>
         </div>
         <div>
-            <button class="btn btn-primary px-4 fw-medium" style="background-color: #0d6efd;">
-                <i class="fa-solid fa-plus me-2"></i>Add promotion
+            <button class="btn btn-primary px-4 fw-medium" style="background-color: #0d6efd;"
+                data-bs-toggle="modal" data-bs-target="#addPromotionModal">
+                    <i class="fa-solid fa-plus me-2"></i>Add promotion
             </button>
         </div>
     </div>
@@ -164,10 +165,41 @@
                                     </button>
 
                                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow">
+                                        <li>
+                                             <a class="dropdown-item py-2" href="#"
+                                                   onclick="openEditPromotionModal('${promo.promotionId}', '${promo.promoName}', '${promo.status}', '${promo.startDate}', '${promo.endDate}')">
+                                                    <i class="fa-solid fa-pen-to-square text-primary me-2"></i> Edit
+                                             </a>
+                                        </li>
                                         <li><a class="dropdown-item py-2" href="#"><i class="fa-solid fa-eye text-warning me-2"></i> View details</a></li>
-                                        <li><a class="dropdown-item py-2" href="#"><i class="fa-solid fa-pause text-secondary me-2"></i> Inactive</a></li>
+                                        <li>
+                                                <c:choose>
+                                                    <%-- Nếu đang ACTIVE -> Inactive để tắt --%>
+                                                    <c:when test="${promo.status == 'ACTIVE'}">
+                                                        <a class="dropdown-item py-2"
+                                                           href="/promotions/status?id=${promo.promotionId}&status=INACTIVE"
+                                                           onclick="return confirm('Are you sure you want to pause this promotion?')">
+                                                            <i class="fa-solid fa-pause text-secondary me-2"></i> Inactive
+                                                        </a>
+                                                    </c:when>
+
+                                                    <%-- Nếu đang INACTIVE -> Hiện nút Active--%>
+                                                    <c:when test="${promo.status == 'INACTIVE'}">
+                                                        <a class="dropdown-item py-2"
+                                                           href="/promotions/status?id=${promo.promotionId}&status=ACTIVE"
+                                                           onclick="return confirm('Are you sure you want to activate this promotion?')">
+                                                            <i class="fa-solid fa-play text-success me-2"></i> Active
+                                                        </a>
+                                                    </c:when>
+                                                </c:choose>
+                                            </li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item py-2 text-danger" href="#"><i class="fa-solid fa-trash me-2"></i> Delete</a></li>
+                                        <li>
+                                             <a class="dropdown-item py-2 text-danger" href="/promotions/delete?id=${promo.promotionId}"
+                                                   onclick="return confirm('Are you sure you want to delete this promotion?')">
+                                                    <i class="fa-solid fa-trash me-2"></i> Delete
+                                             </a>
+                                        </li>
                                     </ul>
                                 </div>
                             </td>
@@ -177,6 +209,103 @@
                 </table>
             </div>
 
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addPromotionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg"> <div class="modal-content border-0 shadow">
+
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-3">Add promotion <i class="fa-solid fa-right-from-bracket ms-2 text-muted" style="font-size: 1rem;"></i></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="/promotions/add" method="post" onsubmit="return validatePromotionForm(this)">
+                <div class="modal-body pt-3">
+                    <div class="row g-4"> <div class="col-md-6">
+                            <label class="form-label fw-bold fs-5">Name:</label>
+                            <input type="text" name="promoName" class="form-control rounded-pill py-2 px-3" placeholder="Nhập tên" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold fs-5">Status:</label>
+                            <select name="status" class="form-select rounded-pill py-2 px-3">
+                                <option value="ACTIVE">Active</option>
+                                <option value="INACTIVE">Inactive</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold fs-5">Start date:</label>
+                            <input type="date" name="startDate" class="form-control rounded-pill py-2 px-3" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold fs-5">End date:</label>
+                            <input type="date" name="endDate" class="form-control rounded-pill py-2 px-3" required>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 mt-5">
+                        <button type="submit" class="btn text-white w-50 py-2 fw-bold rounded-3 fs-5"
+                                style="background-color: #34a853;">Confirm</button>
+                        <button type="button" class="btn text-white w-50 py-2 fw-bold rounded-3 fs-5"
+                                style="background-color: #b20000;" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editPromotionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-3">Edit promotion <i class="fa-solid fa-pen ms-2 text-muted" style="font-size: 1rem;"></i></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form action="/promotions/update" method="post" onsubmit="return validatePromotionForm(this)">
+                <div class="modal-body pt-3">
+                    <input type="hidden" id="editPromoId" name="promotionId">
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold fs-5">Name:</label>
+                            <input type="text" id="editPromoName" name="promoName" class="form-control rounded-pill py-2 px-3" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold fs-5">Status:</label>
+                            <select id="editStatus" name="status" class="form-select rounded-pill py-2 px-3">
+                                <option value="ACTIVE">Active</option>
+                                <option value="INACTIVE">Inactive</option>
+                                <option value="EXPIRED">Expired</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold fs-5">Start date:</label>
+                            <input type="date" id="editStartDate" name="startDate" class="form-control rounded-pill py-2 px-3" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold fs-5">End date:</label>
+                            <input type="date" id="editEndDate" name="endDate" class="form-control rounded-pill py-2 px-3" required>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 mt-5">
+                        <button type="submit" class="btn text-white w-50 py-2 fw-bold rounded-3 fs-5"
+                                style="background-color: #34a853;">Confirm</button>
+                        <button type="button" class="btn text-white w-50 py-2 fw-bold rounded-3 fs-5"
+                                style="background-color: #b20000;" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>

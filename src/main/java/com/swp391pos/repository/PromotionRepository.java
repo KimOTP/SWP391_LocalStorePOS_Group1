@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import com.swp391pos.entity.Promotion.PromotionStatus;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,8 +21,8 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
             "AND (:toDate IS NULL OR p.startDate <= :toDate)") // Lọc trong khoảng ngày bắt đầu
     List<Promotion> searchPromotions(@Param("keyword") String keyword,
                                      @Param("status") PromotionStatus status,
-                                     @Param("fromDate") LocalDateTime fromDate,
-                                     @Param("toDate") LocalDateTime toDate);
+                                     @Param("fromDate") LocalDate fromDate,
+                                     @Param("toDate") LocalDate toDate);
 
     long countByStatus(PromotionStatus status);
 }
