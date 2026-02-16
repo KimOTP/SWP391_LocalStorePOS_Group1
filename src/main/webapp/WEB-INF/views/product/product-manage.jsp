@@ -12,7 +12,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<c:url value='/resources/css/product/product-manage.css' />">
-
 </head>
 <body>
 
@@ -64,9 +63,9 @@
                     <h5 class="fw-bold mb-0">Products List</h5>
                     <small class="text-muted">Manage all products in system.</small>
                 </div>
-                <button class="btn btn-add px-4 py-2" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                <a href="<c:url value='/products/add'/>" class="btn btn-add px-4 py-2 d-inline-flex align-items-center text-decoration-none">
                     <i class="fa-solid fa-plus me-2"></i>Add Product
-                </button>
+                </a>
             </div>
 
             <div class="row g-2 mb-4">
@@ -101,7 +100,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <%-- Vòng lặp lấy dữ liệu từ listProducts được gửi từ Controller --%>
                         <c:forEach var="p" items="${listProducts}">
                             <tr>
                                 <td class="text-muted small">${p.productId}</td>
@@ -131,25 +129,6 @@
                 </table>
             </div>
 
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold">Add New Product</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center py-5">
-                <i class="fa-solid fa-box-open fs-1 mb-3 text-muted"></i>
-                <p>Giao diện nhập thông tin sản phẩm mới.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary">Save Product</button>
-            </div>
         </div>
     </div>
 </div>

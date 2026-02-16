@@ -165,3 +165,39 @@ function openConfigModal() {
             configModal.show();
         });
 }
+
+function openEditPromotionModal(id, name, status, startDate, endDate) {
+    // 1. Điền ID, Name, Status
+    document.getElementById('editPromoId').value = id;
+    document.getElementById('editPromoName').value = name;
+    document.getElementById('editStatus').value = status;
+
+    // 2. Xử lý ngày tháng (Cắt chuỗi lấy 10 ký tự đầu: yyyy-MM-dd)
+    if (startDate && startDate.length >= 10) {
+        document.getElementById('editStartDate').value = startDate.substring(0, 10);
+    }
+    if (endDate && endDate.length >= 10) {
+        document.getElementById('editEndDate').value = endDate.substring(0, 10);
+    }
+
+    // 3. Hiện Modal
+    var editModal = new bootstrap.Modal(document.getElementById('editPromotionModal'));
+    editModal.show();
+}
+//Logic check startDate và endDate
+function validatePromotionForm(form) {
+    // Lấy giá trị từ các ô input trong form đang submit
+    // form.querySelector để tìm input bên trong form đó (xử lý cho cả Add và Edit)
+    let startDateInput = form.querySelector("input[name='startDate']");
+    let endDateInput = form.querySelector("input[name='endDate']");
+
+    let startDate = new Date(startDateInput.value);
+    let endDate = new Date(endDateInput.value);
+
+    // So sánh ngày
+    if (endDate < startDate) {
+        alert("Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu!");
+        return false; // Chặn không cho submit
+    }
+    return true; // Cho phép submit
+}
