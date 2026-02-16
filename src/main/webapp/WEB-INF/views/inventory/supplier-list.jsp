@@ -26,6 +26,7 @@
         <div class="stat-card">
             <div class="stat-title">Total suppliers</div>
             <div class="stat-value">${suppliers.size()}</div>
+            <div class="stat-title">Total number of suppliers</div>
         </div>
         <div class="stat-card">
             <div class="stat-title">Total order value</div>
@@ -34,6 +35,7 @@
                 <c:forEach var="s" items="${suppliers}"><c:set var="grandTotal" value="${grandTotal + s.totalValue}" /></c:forEach>
                 <fmt:formatNumber value="${grandTotal}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
             </div>
+            <div class="stat-title">Total value of orders of all suppliers</div>
         </div>
     </div>
 
@@ -51,7 +53,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Supplier name</th>
-                    <th>Phone number</th> <th>Email</th>
+                    <th>Address</th> <th>Email</th>
                     <th>Total order value</th>
                     <th class="text-end">Action</th>
                 </tr>
@@ -92,7 +94,7 @@
                 <div class="modal-header"><h5>Add New Supplier</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body p-4">
                     <div class="mb-3"><label class="form-label fw-bold">Supplier Name</label><input type="text" name="supplierName" class="form-control" required></div>
-                    <div class="mb-3"><label class="form-label fw-bold">Phone Number</label><input type="text" name="contactNumber" class="form-control"></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Address</label><input type="text" name="contactNumber" class="form-control"></div>
                     <div class="mb-3"><label class="form-label fw-bold">Email</label><input type="email" name="email" class="form-control"></div>
                 </div>
                 <div class="modal-footer"><button type="submit" class="btn btn-primary px-4">Add</button></div>
@@ -109,7 +111,7 @@
                 <div class="modal-body p-4">
                     <input type="hidden" name="supplierId" id="editSupplierId">
                     <div class="mb-3"><label class="form-label fw-bold">Supplier Name</label><input type="text" name="supplierName" id="editSupplierName" class="form-control" required></div>
-                    <div class="mb-3"><label class="form-label fw-bold">Phone Number</label><input type="text" name="contactNumber" id="editContactNumber" class="form-control"></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Address</label><input type="text" name="contactNumber" id="editContactNumber" class="form-control"></div>
                     <div class="mb-3"><label class="form-label fw-bold">Email</label><input type="email" name="email" id="editEmail" class="form-control"></div>
                 </div>
                 <div class="modal-footer"><button type="submit" class="btn btn-success px-4">Save Changes</button></div>
