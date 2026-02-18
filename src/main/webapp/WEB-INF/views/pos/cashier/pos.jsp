@@ -5,17 +5,20 @@
 <html>
 <head>
     <title>POS Screen</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="<c:url value='/resources/css/pos/pos.css' />">
 </head>
 <body>
 
-<jsp:include page="header.jsp"/>
-<jsp:include page="sidebar.jsp"/>
+<jsp:include page="../layer/header.jsp" />
+
+<jsp:include page="../layer/sidebar.jsp" />
 
 <div class="pos-container">
 
     <!-- TOP BAR -->
-    <div class="pos-top-bar">
+    <div class="pos-top-bar flex-wrap gap-2">
         <c:if test="${sessionScope.currentUser.role eq 'MANAGER'}">
             <button class="btn-outline" onclick="openPrintTemplate()">Setting print template</button>
             <button class="btn-outline" onclick="openBankConfig()">Account banking configuration</button>
@@ -28,7 +31,7 @@
     </div>
 
     <!-- MAIN CONTENT -->
-    <div class="pos-content">
+    <div class="pos-content flex-column flex-lg-row">
 
         <!-- PRODUCT LIST -->
         <div class="product-area">
@@ -69,7 +72,7 @@
                     </div>
                 </div>
 
-                <button class="btn-pay">Pay</button>
+                <button class="btn-pay w-100">Pay</button>
             </div>
         </div>
     </div>
@@ -94,7 +97,7 @@
         </div>
 
         <!-- BODY -->
-        <div class="print-template-body">
+        <div class="print-template-body flex-column flex-md-row">
 
             <!-- LEFT FORM -->
             <div class="template-form">
@@ -123,12 +126,12 @@
                 <label>Address</label>
                 <input type="text" value="Hồ Chí Minh, Việt Nam">
 
-                <div class="row-2">
-                    <div>
+                <div class="row-2 flex-column flex-sm-row">
+                    <div class="flex-fill">
                         <label>Phone number</label>
                         <input type="text" value="0966666666">
                     </div>
-                    <div>
+                    <div class="flex-fill">
                         <label>Email</label>
                         <input type="text" value="info@gmail.com">
                     </div>
@@ -146,7 +149,7 @@
                     <img src="/resources/img/receipt-demo.png" alt="Receipt preview">
                 </div>
 
-                <button class="btn-apply">Apply</button>
+                <button class="btn-apply w-100">Apply</button>
             </div>
 
         </div>
@@ -181,6 +184,7 @@
 </div>
 
 <!-- ================= JS ================= -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const userRole = '${sessionScope.currentUser.role}';
     let cart = [];
