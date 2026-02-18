@@ -11,17 +11,17 @@
 
         <a href="/" class="sidebar-item text-decoration-none" title="Home">
             <i class="fa-solid fa-house"></i>
-            <span class="ms-3 sidebar-text">Dashboard</span>
+            <span class="ms-3 sidebar-text">Home</span>
         </a>
 
         <a href="/pos" class="sidebar-item text-decoration-none" title="POS">
             <i class="fa-solid fa-cart-shopping"></i>
-            <span class="ms-3 sidebar-text">Sale Counter</span>
+            <span class="ms-3 sidebar-text">POS & Sales</span>
         </a>
 
         <a href="/products" class="sidebar-item text-decoration-none" title="Products">
             <i class="fa-solid fa-store"></i>
-            <span class="ms-3 sidebar-text">Products</span>
+            <span class="ms-3 sidebar-text">Menu & Products</span>
         </a>
 
         <c:set var="isCrmActive" value="${pageContext.request.requestURI.contains('/customers') or pageContext.request.requestURI.contains('/promotions')}" />
