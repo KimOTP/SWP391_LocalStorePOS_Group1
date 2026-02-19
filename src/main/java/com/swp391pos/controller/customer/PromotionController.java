@@ -2,7 +2,9 @@ package com.swp391pos.controller.customer;
 
 
 import com.swp391pos.entity.Promotion;
+import com.swp391pos.entity.PromotionDetail;
 import com.swp391pos.service.PromotionService;
+import com.swp391pos.service.PromotionDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,8 @@ import java.util.List;
 public class PromotionController {
     @Autowired
     private PromotionService promotionService;
+    @Autowired
+    private PromotionDetailService promotionDetailService;
     @GetMapping
     public String listPromotions(Model model,
                                  @RequestParam(required = false) String keyword,
@@ -97,4 +101,26 @@ public class PromotionController {
         return "redirect:/promotions";
     }
 
+    @GetMapping("/detail")
+    public String viewPromotionDetail(@RequestParam Integer id,
+                                      @RequestParam(required = false) String keyword,
+                                      @RequestParam(required = false) String productName, // Đổi tham số
+                                      @RequestParam(required = false) String discountType,
+                                      Model model) {
+
+        Promotion promotion = promotionService.getPromotionById(id);
+        List<PromotionDetail> details = promotionDetailService.searchDetails(id, keyword, productName, discountType);
+
+        List<String> productNamesList = promotionDetailService.getProductNamesInPromotion(id);
+        model.addAttribute("productNamesList", productNamesList);
+
+        model.addAttribute("promotion", promotion);
+        model.addAttribute("details", details);
+
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("productName", productName); // Trả về lại JSP
+        model.addAttribute("discountType", discountType);
+
+        return "promotion/promotion-detail";
+    }
 }

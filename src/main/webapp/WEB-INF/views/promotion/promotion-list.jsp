@@ -171,7 +171,7 @@
                                                     <i class="fa-solid fa-pen-to-square text-primary me-2"></i> Edit
                                              </a>
                                         </li>
-                                        <li><a class="dropdown-item py-2" href="#"><i class="fa-solid fa-eye text-warning me-2"></i> View details</a></li>
+                                        <li><a class="dropdown-item py-2" href="/promotions/detail?id=${promo.promotionId}"><i class="fa-solid fa-eye text-warning me-2"></i> View details</a></li>
                                         <li>
                                                 <c:choose>
                                                     <%-- Nếu đang ACTIVE -> Inactive để tắt --%>

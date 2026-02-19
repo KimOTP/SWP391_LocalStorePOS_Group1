@@ -70,4 +70,8 @@ public class PromotionService {
             promotionRepository.save(promotion);
         }
     }
+
+    public Promotion getPromotionById(Integer id) {
+        return promotionRepository.findById(id).orElse(null);
+    }
 }
