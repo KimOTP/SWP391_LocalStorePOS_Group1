@@ -17,18 +17,25 @@
         <div class="dropdown">
             <button class="btn btn-light d-flex align-items-center gap-2 border-0" type="button" data-bs-toggle="dropdown">
                 <div class="text-end" style="line-height: 1.2;">
-                    <span class="d-block fw-bold small">Admin User</span>
-                    <span class="d-block text-muted" style="font-size: 11px;">Store Manager</span>
+                    <span class="d-block fw-bold small">${account.username}</span>
+                    <span class="d-block text-muted" style="font-size: 11px;">${account.employee.role}</span>
                 </div>
                 <div class="bg-secondary rounded-circle text-white d-flex align-items-center justify-content-center" style="width: 35px; height: 35px;">
                     <i class="fa-solid fa-user"></i>
                 </div>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li>
+                    <a class="dropdown-item"
+                       href="${employee.role == 'MANAGER'
+                            ? pageContext.request.contextPath.concat('/hr/manager/manager_profile')
+                            : pageContext.request.contextPath.concat('/hr/cashier/cashier_profile')}">
+                        Profile
+                    </a>
+                </li>
                 <li><a class="dropdown-item" href="#">Settings</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" href="/auth/login">← Logout</a></li>
+                <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/auth/logout">← Logout</a></li>
             </ul>
         </div>
     </div>

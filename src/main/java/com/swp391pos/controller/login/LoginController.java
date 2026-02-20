@@ -8,6 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDateTime;
+
 //@Controller
 //@RequestMapping("/auth")
 //public class LoginController {
@@ -109,7 +111,19 @@ public class LoginController {
         }
 
         String role = account.getEmployee().getRole();
+        //Lấy thời gian login cũ
+        LocalDateTime previousLogin = account.getLastLogin();
+
+        //Lưu vào session
+        session.setAttribute("previousLogin", previousLogin);
+
+        //Update login mới
+        account.setLastLogin(LocalDateTime.now());
+        accountRepository.save(account);
+
+        //Lưu account vào session
         session.setAttribute("account", account);
+        session.setAttribute("loggedInAccount", account);
         session.setAttribute("role", role);
 
         switch (role) {
@@ -122,4 +136,11 @@ public class LoginController {
                 return "auth/login";
         }
     }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.invalidate();   //huỷ toàn bộ session
+        return "redirect:/auth/login";
+    }
+
 }
