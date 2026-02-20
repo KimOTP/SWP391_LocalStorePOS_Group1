@@ -30,32 +30,61 @@
                 <div class="section-title">Change Info</div>
                 <div class="section-subtitle">Basic Info</div>
 
+            <form action="<c:url value='/hr/common/update_information'/>" method="post">
                 <div class="info-label">Id</div>
-                <div class="info-box">3</div>
+                <div class="info-box">
+                    <input type="text" name="id" class="info-input"
+                           value="${account.accountId}" readonly />
+                </div>
 
                 <div class="info-label">Full Name</div>
                 <div class="info-box">
-                    <input class="info-input" value="Tran Phu"/>
+                    <input type="text" name="fullName" class="info-input"
+                           value="${account.employee.fullName}" required />
                 </div>
 
                 <div class="info-label">Login Name</div>
                 <div class="info-box">
-                    <input class="info-input" value="Cashier1"/>
+                    <input type="text" name="username" class="info-input"
+                           value="${account.username}" required />
                 </div>
 
                 <div class="info-label">Role</div>
-                <div class="info-box">Cashier</div>
+                <div class="info-box">
+                    <input type="text" class="info-input" value="${account.employee.role}" readonly />
+                </div>
 
                 <div class="info-label">E-Mail</div>
                 <div class="info-box">
-                    <input class="info-input" value="cashier1@gmail.com"/>
+                    <input type="email" name="email" class="info-input"
+                           value="${account.employee.email}" required />
                 </div>
 
                 <div class="info-label">Status</div>
-                <div class="info-box">Active / Deactive</div>
+                <div class="info-box">
+                    <c:choose>
+                        <c:when test="${account.employee.status}">
+                            <span style="color: green;">Active</span>
+                        </c:when>
+                        <c:otherwise>
+                            <span style="color: red;">Deactive</span>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
 
-                <button class="btn-change mt-2">Save</button>
-                <div class="success-text">Save Successfully!</div>
+                <button type="submit" class="btn-change mt-2">Save</button>
+                <c:if test="${not empty success}">
+                    <p style="color: green; margin-top: 10px;">
+                        ${success}
+                    </p>
+                </c:if>
+
+                <c:if test="${not empty error}">
+                    <p style="color: red; margin-top: 10px;">
+                        ${error}
+                    </p>
+                </c:if>
+            </form>
             </div>
 
             <!-- RIGHT: CHANGE PASSWORD -->
@@ -63,29 +92,54 @@
                 <div class="section-title">Change Password</div>
                 <div class="section-subtitle">ㅤ</div>
 
+            <form action="<c:url value='/hr/common/change_password'/>" method="post">
+
                 <div class="info-label">Old Password</div>
                 <div class="info-box">
-                    <input type="password" class="info-input"/>
+                    <input type="password" name="oldPassword" class="info-input" required />
                 </div>
 
                 <div class="info-label">New Password</div>
                 <div class="info-box">
-                    <input type="password" class="info-input"/>
+                    <input type="password" name="newPassword" class="info-input" required />
                 </div>
 
                 <div class="info-label">Confirm New Password</div>
                 <div class="info-box">
-                    <input type="password" class="info-input"/><br/>
+                    <input type="password" name="confirmPassword" class="info-input" required />
                 </div>
 
-                <button class="btn-change mt-2">Change</button>
-                <div class="success-text">Change Successfully!</div>
+                <button type="submit" class="btn-change mt-2">Change</button>
+                <c:if test="${not empty successPass}">
+                    <p style="color: green; margin-top: 10px;">
+                        ${successPass}
+                    </p>
+                </c:if>
+
+                <c:if test="${not empty errorPass}">
+                    <p style="color: red; margin-top: 10px;">
+                        ${errorPass}
+                    </p>
+                </c:if>
+            </form>
             </div>
         </div>
 
         <!-- BACK LINK: PHẢI MÀN HÌNH -->
         <div class="text-end mt-4">
-            <a href="/profile" class="back-link">← Back To Profile</a>
+            <c:choose>
+                <c:when test="${sessionScope.account.employee.role == 'MANAGER'}">
+                    <a href="/hr/manager/manager_profile" class="back-link">← Back To Profile</a>
+                </c:when>
+
+                <c:when test="${sessionScope.account.employee.role == 'CASHIER'}">
+                    <a href="/hr/cashier/cashier_profile" class="back-link">← Back To Profile</a>
+                </c:when>
+
+                <c:otherwise>
+                    <a href="/profile" class="back-link">← Back To Profile</a>
+                </c:otherwise>
+            </c:choose>
         </div>
 
     </div>

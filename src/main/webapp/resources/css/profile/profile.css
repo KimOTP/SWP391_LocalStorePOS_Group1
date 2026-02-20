@@ -92,3 +92,11 @@
     color: green;
     margin-top: 6px;
 }
+
+.status-active {
+    color: #28a745;
+}
+
+.status-deactive {
+    color: #dc3545;
+}

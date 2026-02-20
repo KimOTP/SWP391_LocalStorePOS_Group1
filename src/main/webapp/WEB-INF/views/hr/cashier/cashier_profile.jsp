@@ -29,36 +29,48 @@
         <div class="section-subtitle">Basic Information</div>
 
         <div class="row">
-            <!-- LEFT -->
             <div class="col-md-6">
                 <div class="info-label">Id</div>
-                <div class="info-box">3</div>
+                <div class="info-box">${account.accountId}</div>
 
-                <div class="info-label">Name</div>
-                <div class="info-box">Tran Phu</div>
+                <div class="info-label">Full Name</div>
+                <div class="info-box">${account.employee.fullName}</div>
 
                 <div class="info-label">Login Name</div>
-                <div class="info-box">Cashier1</div>
+                <div class="info-box">${account.username}</div>
 
                 <div class="info-label">Password</div>
                 <div class="info-box">********</div>
 
-                <button class="btn-change mt-2">Change Info</button>
+                <button class="btn-change mt-2"
+                onclick="window.location.href='${pageContext.request.contextPath}/hr/common/change_information'">
+                    Change Info
+                </button>
             </div>
 
-            <!-- RIGHT -->
             <div class="col-md-6">
                 <div class="info-label">Role</div>
-                <div class="info-box">Cashier</div>
+                <div class="info-box">${account.employee.role}</div>
 
                 <div class="info-label">E-Mail</div>
-                <div class="info-box">cashier1@gmail.com</div>
+                <div class="info-box">${account.employee.email}</div>
 
                 <div class="info-label">Status</div>
-                <div class="info-box">Active / Deactive</div>
+                <div class="info-box">
+                    <c:choose>
+                        <c:when test="${account.employee.status}">
+                            <span class="status-active">Active</span>
+                        </c:when>
+                        <c:otherwise>
+                            <span class="status-deactive">Deactive</span>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
 
                 <div class="info-label">Last Login</div>
-                <div class="info-box">20/01/2026 - 12:03</div>
+                <div class="info-box">
+                    ${lastLoginFormatted}
+                </div>
             </div>
         </div>
 

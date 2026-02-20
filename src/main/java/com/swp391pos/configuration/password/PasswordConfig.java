@@ -1,4 +1,4 @@
-package com.swp391pos.configuration;
+package com.swp391pos.configuration.password;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
