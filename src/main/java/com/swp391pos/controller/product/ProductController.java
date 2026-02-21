@@ -1,10 +1,7 @@
 package com.swp391pos.controller.product;
 
 import com.cloudinary.*;
-import com.cloudinary.utils.ObjectUtils;
-import com.swp391pos.entity.Category;
 import com.swp391pos.entity.Product;
-import com.swp391pos.entity.ProductStatus;
 import com.swp391pos.repository.CategoryRepository;
 import com.swp391pos.repository.ProductRepository;
 import com.swp391pos.service.ProductService;
@@ -15,9 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping("/products")
@@ -25,10 +20,6 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
-
-    @Autowired
-    private Cloudinary cloudinary;
-
     @Autowired
     private ProductRepository productRepository;
     @Autowired
