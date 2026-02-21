@@ -28,4 +28,14 @@ public class PromotionDetailService {
     public List<String> getProductNamesInPromotion(Integer promotionId) {
         return promotionDetailRepository.findDistinctProductNamesByPromotionId(promotionId);
     }
+
+    public void savePromotionDetail(PromotionDetail detail) {
+        promotionDetailRepository.save(detail);
+    }
+
+    public void deletePromotionDetail(Long promoDetailId) {
+        promotionDetailRepository.deleteById(promoDetailId);
+    }
+
+
 }

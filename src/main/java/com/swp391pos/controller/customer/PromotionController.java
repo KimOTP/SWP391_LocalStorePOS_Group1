@@ -1,8 +1,10 @@
 package com.swp391pos.controller.customer;
 
 
+import com.swp391pos.entity.Product;
 import com.swp391pos.entity.Promotion;
 import com.swp391pos.entity.PromotionDetail;
+import com.swp391pos.service.ProductService;
 import com.swp391pos.service.PromotionService;
 import com.swp391pos.service.PromotionDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.swp391pos.entity.Promotion.PromotionStatus;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,6 +26,9 @@ public class PromotionController {
     private PromotionService promotionService;
     @Autowired
     private PromotionDetailService promotionDetailService;
+    @Autowired
+    private ProductService productService;
+
     @GetMapping
     public String listPromotions(Model model,
                                  @RequestParam(required = false) String keyword,
@@ -121,6 +127,88 @@ public class PromotionController {
         model.addAttribute("productName", productName); // Trả về lại JSP
         model.addAttribute("discountType", discountType);
 
+        //danh sach san pham de hien thi ơ add PromoDetail
+        model.addAttribute("allProducts", productService.getAllProducts());
+
         return "promotion/promotion-detail";
+    }
+
+    @PostMapping("/detail/add")
+    public String addPromotionDetail(
+            @RequestParam Integer promotionId,
+            @RequestParam String productId, // Theo comment của bạn, productId là String
+            @RequestParam Integer minQuantity,
+            @RequestParam BigDecimal discountValue,
+            @RequestParam String discountType,
+            RedirectAttributes redirectAttributes) {
+        try {
+            // Tìm Promotion và Product tương ứng
+            Promotion promotion = promotionService.getPromotionById(promotionId);
+            Product product = productService.getProductById(productId);
+
+            // Tạo đối tượng Detail mới và set giá trị
+            PromotionDetail detail = new PromotionDetail();
+            detail.setPromotion(promotion);
+            detail.setProduct(product);
+            detail.setMinQuantity(minQuantity);
+            detail.setDiscountValue(discountValue);
+            detail.setDiscountType(PromotionDetail.DiscountType.valueOf(discountType));
+
+            // Lưu xuống DB
+            promotionDetailService.savePromotionDetail(detail);
+            redirectAttributes.addFlashAttribute("success", "Thêm sản phẩm khuyến mãi thành công!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Lỗi khi thêm sản phẩm khuyến mãi.");
+        }
+
+        // Trở lại trang detail của chính promotion đó
+        return "redirect:/promotions/detail?id=" + promotionId;
+    }
+
+    //API EDIT
+    @PostMapping("/detail/update")
+    public String updatePromotionDetail(
+            @RequestParam Long promoDetailId, // Bắt buộc phải có ID để update
+            @RequestParam Integer promotionId,
+            @RequestParam String productId,
+            @RequestParam Integer minQuantity,
+            @RequestParam BigDecimal discountValue,
+            @RequestParam String discountType,
+            RedirectAttributes redirectAttributes) {
+        try {
+            Promotion promotion = promotionService.getPromotionById(promotionId);
+            Product product = productService.getProductById(productId);
+
+            PromotionDetail detail = new PromotionDetail();
+            detail.setPromoDetailId(promoDetailId); // <-- Set ID để Spring JPA hiểu là Cập nhật
+            detail.setPromotion(promotion);
+            detail.setProduct(product);
+            detail.setMinQuantity(minQuantity);
+            detail.setDiscountValue(discountValue);
+            detail.setDiscountType(PromotionDetail.DiscountType.valueOf(discountType));
+
+            promotionDetailService.savePromotionDetail(detail);
+            redirectAttributes.addFlashAttribute("success", "Cập nhật sản phẩm khuyến mãi thành công!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("error", "Lỗi khi cập nhật sản phẩm khuyến mãi.");
+        }
+        return "redirect:/promotions/detail?id=" + promotionId;
+    }
+
+    //API DELETE
+    @GetMapping("/detail/delete")
+    public String deletePromotionDetail(
+            @RequestParam Long detailId,
+            @RequestParam Integer promotionId, // Truyền kèm cái này để biết đường redirect về
+            RedirectAttributes redirectAttributes) {
+        try {
+            promotionDetailService.deletePromotionDetail(detailId);
+            redirectAttributes.addFlashAttribute("success", "Xóa sản phẩm khỏi đợt khuyến mãi thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Lỗi khi xóa sản phẩm.");
+        }
+        return "redirect:/promotions/detail?id=" + promotionId;
     }
 }

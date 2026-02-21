@@ -201,3 +201,16 @@ function validatePromotionForm(form) {
     }
     return true; // Cho phép submit
 }
+
+function openEditDetailModal(detailId, productId, minQty, discountVal, discountType) {
+        // Gán dữ liệu vào các ô input trong Modal
+        document.getElementById('editPromoDetailId').value = detailId;
+        document.getElementById('editProductId').value = productId;
+        document.getElementById('editMinQuantity').value = minQty;
+        document.getElementById('editDiscountValue').value = discountVal;
+        document.getElementById('editDiscountType').value = discountType;
+
+        // Bật Modal lên
+        var editModal = new bootstrap.Modal(document.getElementById('editDetailModal'));
+        editModal.show();
+    }
