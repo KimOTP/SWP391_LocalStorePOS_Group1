@@ -7,4 +7,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProductRepository extends JpaRepository<Product,Integer> {
 
+    Product findProductByProductId(String id);
+
+    // Đếm tổng số sản phẩm
+    long count();
+
+    // Đếm theo tên trạng thái
+    long countByStatus_ProductStatusName(String statusName);
 }
