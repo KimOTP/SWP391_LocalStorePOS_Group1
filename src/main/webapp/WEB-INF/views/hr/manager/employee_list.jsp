@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
 <head>
     <title>Change Information</title>
@@ -22,41 +23,64 @@
         <div class="section-title">Employee List</div>
 
         <!-- FILTER -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="info-label">Full Name</div>
-                <div class="info-box">
-                    <input class="info-input"/>
+        <form id="searchForm" method="get" action="<c:url value='/hr/manager/employee_list'/>">
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="info-label">Full Name</div>
+                    <div class="info-box">
+                        <input class="info-input" name="fullName" value="${param.fullName}"/>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-3">
-                <div class="info-label">Role</div>
-                <div class="info-box">
-                    <select class="info-input" name="role">
-                        <option>Cashier</option>
-                        <option>Manager</option>
-                    </select>
+                <div class="col-md-3">
+                    <div class="info-label">Role</div>
+                    <div class="info-box">
+                        <select class="info-input" name="role">
+                            <option value="">All</option>
+                            <option value="Cashier"
+                                ${param.role == 'Cashier' ? 'selected' : ''}>
+                                Cashier
+                            </option>
+                            <option value="Manager"
+                                ${param.role == 'Manager' ? 'selected' : ''}>
+                                Manager
+                            </option>
+                            <option value="Supplier"
+                                ${param.role == 'Supplier' ? 'selected' : ''}>
+                                Supplier
+                            </option>
+                        </select>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-3">
-                <div class="info-label">Status</div>
-                <div class="info-box">
-                    <select class="info-input" name="status">
-                        <option>Active</option>
-                        <option>Deactive</option>
-                    </select>
+                <div class="col-md-3">
+                    <div class="info-label">Status</div>
+                    <div class="info-box">
+                        <select class="info-input" name="status">
+                            <option value="">All</option>
+                            <option value="true"
+                                ${param.status == 'true' ? 'selected' : ''}>
+                                Active
+                            </option>
+                            <option value="false"
+                                ${param.status == 'false' ? 'selected' : ''}>
+                                Deactive
+                            </option>
+                        </select>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-3">
-                <div class="info-label">Creation Time</div>
-                <div class="info-box">
-                    <input type="date" name="creationTime" class="info-input" value="2026-01-21">
+                <div class="col-md-3">
+                    <div class="info-label">Creation Time</div>
+                    <div class="info-box">
+                        <input type="date"
+                               name="creationDate"
+                               class="info-input"
+                               value="${param.creationDate}">
+                    </div>
                 </div>
             </div>
-        </div>
+        </form>
 
         <!-- TABLE -->
         <div class="info-box" style="height:auto; padding:0;">
@@ -74,43 +98,61 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>05</td>
-                    <td>Tran Phu 2</td>
-                    <td>cashier5</td>
-                    <td>cashier5@gmail.com</td>
-                    <td>Cashier</td>
-                    <td class="text-success">Active</td>
-                    <td>01/01/2026 - 07:23</td>
-                    <td>
-                        <button class="btn-change">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>04</td>
-                    <td>Tran Phu 1</td>
-                    <td>cashier4</td>
-                    <td>cashier4@gmail.com</td>
-                    <td>Cashier</td>
-                    <td class="text-success">Active</td>
-                    <td>01/01/2026 - 07:12</td>
-                    <td>
-                        <button class="btn-change">Edit</button>
-                    </td>
-                </tr>
+                <c:forEach var="emp" items="${employees}">
+                    <tr>
+                        <td>${emp.employeeId}</td>
+                        <td>${emp.fullName}</td>
+                        <td>
+                            <c:set var="foundUsername" value="false"/>
+
+                            <c:forEach var="acc" items="${accounts}">
+                                <c:if test="${acc.employee.employeeId == emp.employeeId}">
+                                    ${acc.username}
+                                    <c:set var="foundUsername" value="true"/>
+                                </c:if>
+                            </c:forEach>
+
+                            <c:if test="${foundUsername == false}">
+                                --
+                            </c:if>
+                        </td>
+                        <td>${emp.email}</td>
+                        <td>${emp.role}</td>
+
+                        <td class="${emp.status ? 'text-success' : 'text-danger'}">
+                            ${emp.status ? 'Active' : 'Deactive'}
+                        </td>
+
+                        <td>
+                            ${fn:substring(fn:replace(emp.createdAt, 'T', ' '), 0, 16)}
+                        </td>
+
+                        <td>
+                            <a href="<c:url value='/hr/manager/employee_detail/${emp.employeeId}'/>"
+                               class="btn-change">
+                                Edit
+                            </a>
+                        </td>
+                    </tr>
+                </c:forEach>
                 </tbody>
             </table>
         </div>
 
         <!-- PAGINATION -->
         <div class="d-flex justify-content-center gap-2 mt-4">
-            <button class="btn btn-light">&laquo;</button>
-            <button class="btn btn-light">&lsaquo;</button>
-            <button class="btn btn-primary">1</button>
-            <button class="btn btn-light">2</button>
-            <button class="btn btn-light">3</button>
-            <button class="btn btn-light">&rsaquo;</button>
-            <button class="btn btn-light">&raquo;</button>
+            <c:if test="${employeePage.totalPages > 1}">
+                <c:forEach begin="0"
+                           end="${employeePage.totalPages - 1}"
+                           var="i">
+
+                    <a href="?page=${i}"
+                       class="btn ${i == currentPage ? 'btn-primary' : 'btn-light'}">
+                        ${i + 1}
+                    </a>
+
+                </c:forEach>
+            </c:if>
         </div>
 
         <!-- BACK -->
@@ -119,8 +161,7 @@
     </div>
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="<c:url value='/resources/js/manage/employee_list.js'/>"></script>
 </body>
 </html>

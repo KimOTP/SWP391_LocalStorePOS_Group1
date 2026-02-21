@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
 <head>
     <title>Change Information</title>
@@ -24,32 +25,35 @@
             Information (Can not change ID, Creation time)
         </div>
 
+        <form method="post" action="<c:url value='/hr/manager/edit_employee'/>">
         <div class="row">
-
             <!-- LEFT COLUMN -->
             <div class="col-md-6">
 
                 <div class="info-label">Id</div>
                 <div class="info-box">
-                    <input class="info-input" value="3" readonly />
+                    <!-- gửi về backend -->
+                    <input type="hidden" name="employeeId" value="${employee.employeeId}" />
+                    <!-- hiển thị -->
+                    <input class="info-input" value="${employee.employeeId}" readonly />
                 </div>
 
                 <div class="info-label">Full Name</div>
                 <div class="info-box">
-                    <input class="info-input" value="Tran Phu" />
+                    <input class="info-input" name="fullName" value="${employee.fullName}" />
                 </div>
 
                 <div class="info-label">Login Name</div>
                 <div class="info-box">
-                    <input class="info-input" value="Cashier1" />
+                    <input class="info-input" name="username" value="${account.username}" />
                 </div>
 
                 <div class="info-label">Password</div>
                 <div class="info-box">
-                    <input type="password" class="info-input" value="********" />
+                    <input type="password" class="info-input" name="password" placeholder="Leave blank if not change" />
                 </div>
 
-                <button class="btn-change mt-2">Save</button>
+                <button type="submit" class="btn-change mt-2">Save</button>
                 <div class="success-text">Save Successfully!</div>
 
             </div>
@@ -59,26 +63,48 @@
 
                 <div class="info-label">Role</div>
                 <div class="info-box">
-                    <input class="info-input" value="Cashier" />
+                    <select class="info-input" name="role">
+                        <option value="CASHIER"
+                            ${employee.role == 'CASHIER' ? 'selected' : ''}>
+                            CASHIER
+                        </option>
+                        <option value="MANAGER"
+                            ${employee.role == 'MANAGER' ? 'selected' : ''}>
+                            MANAGER
+                        </option>
+                    </select>
                 </div>
 
                 <div class="info-label">E-Mail</div>
                 <div class="info-box">
-                    <input class="info-input" value="cashier1@gmail.com" />
+                    <input class="info-input"
+                           name="email"
+                           value="${employee.email}" />
                 </div>
 
                 <div class="info-label">Status</div>
                 <div class="info-box">
-                    <input class="info-input" value="Active" />
+                    <select class="info-input" name="status">
+                        <option value="true"
+                            ${employee.status ? 'selected' : ''}>
+                            Active
+                        </option>
+                        <option value="false"
+                            ${!employee.status ? 'selected' : ''}>
+                            Deactive
+                        </option>
+                    </select>
                 </div>
 
                 <div class="info-label">Account Creation Time</div>
                 <div class="info-box">
-                    <input class="info-input" value="01/01/2026 - 07:03" readonly />
+                    <input class="info-input"
+                           value="${fn:substring(fn:replace(employee.createdAt, 'T', ' '), 0, 16)}"
+                           readonly />
                 </div>
-
             </div>
         </div>
+        </form>
 
         <!-- BACK -->
         <a href="/employee/list" class="back-link">← Back</a>
