@@ -28,28 +28,31 @@
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="stat-title mb-2">Total Products</div>
-                <div class="stat-value">100</div>
-                <div class="small text-muted mt-1">Active: 98 | Stop: 2</div>
+                <div class="stat-value">${totalProducts}</div>
+                <div class="small text-muted mt-1">Active: ${activeCount} | Stop: ${stopCount}</div>
             </div>
         </div>
+
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="stat-title mb-2">Categories</div>
-                <div class="stat-value">3</div>
+                <div class="stat-value">${categoryCount}</div>
                 <div class="small text-muted mt-1">Product Categories</div>
             </div>
         </div>
+
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="stat-title mb-2">Out of Stock</div>
-                <div class="stat-value">1</div>
-                <div class="small text-muted mt-1">Restock Required</div>
+                <div class="stat-value">${outOfStockCount}</div>
+                <div class="small text-muted mt-1">Status: Out of Stock</div>
             </div>
         </div>
+
         <div class="col-md-3">
             <div class="stat-card">
                 <div class="stat-title mb-2">Pending Approval</div>
-                <div class="stat-value">1</div>
+                <div class="stat-value">${pendingCount}</div>
                 <div class="small text-muted mt-1">Needs Approval</div>
             </div>
         </div>
@@ -63,7 +66,7 @@
                     <h5 class="fw-bold mb-0">Products List</h5>
                     <small class="text-muted">Manage all products in system.</small>
                 </div>
-                <a href="<c:url value='/products/add'>" class="btn btn-add px-4 py-2 d-inline-flex align-items-center text-decoration-none">
+                <a href="<c:url value='/products/add' />" class="btn btn-add px-4 py-2 d-inline-flex align-items-center text-decoration-none">
                     <i class="fa-solid fa-plus me-2"></i>Add Product
                 </a>
             </div>
@@ -103,7 +106,24 @@
                         <c:forEach var="p" items="${listProducts}">
                             <tr>
                                 <td class="text-muted small">${p.productId}</td>
-                                <td class="product-name">${p.productName}</td>
+                                <td class="product-name">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="product-img-container shadow-sm">
+                                            <c:choose>
+                                                <c:when test="${not empty p.imageUrl}">
+                                                    <img src="${p.imageUrl}" alt="Product" class="product-img-table">
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <i class="fa-solid fa-image no-image-icon"></i>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+
+                                        <div class="fw-bold">
+                                            ${p.productName}
+                                        </div>
+                                    </div>
+                                </td>
                                 <td class="text-muted">${p.attribute}</td>
                                 <td>
                                     <span class="badge border text-dark rounded-pill px-3 fw-normal">
@@ -130,9 +150,12 @@
                                             <li class="px-2 pb-1 text-muted small fw-bold">Action</li>
 
                                             <li>
-                                                <button class="dropdown-item rounded-2 py-2" type="button" onclick="viewProductDetails('${p.productId}')">
-                                                    <i class="fa-regular fa-eye me-2 text-primary" style="width: 18px;"></i>View
-                                                </button>
+                                                <button class="dropdown-item rounded-2 py-2 btn-view-detail"
+                                                            type="button"
+                                                            data-id="${p.productId}"
+                                                            data-url="<c:url value='/products/view'/>">
+                                                        <i class="fa-regular fa-eye me-2 text-primary" style="width: 18px;"></i>View
+                                                    </button>
                                             </li>
 
                                             <li>
@@ -185,29 +208,7 @@
     </div>
 </div>
 
-<script>
-function viewProductDetails(productId) {
-    const modal = new bootstrap.Modal(document.getElementById('productDetailModal'));
-    modal.show();
+<script src="<c:url value='/resources/js/product/product-app.js' />"></script>
 
-    // Sửa đường dẫn: Bỏ dấu / ở cuối URL trong thẻ c:url
-    // và đảm bảo URL được nối đúng: /context-path/products/view/ID
-    const viewUrl = "<c:url value='/products/view'/>" + "/" + productId;
-
-    fetch(viewUrl)
-        .then(response => {
-            if (!response.ok) throw new Error('Network response was not ok');
-            return response.text();
-        })
-        .then(html => {
-            document.getElementById('modalBodyContent').innerHTML = html;
-        })
-        .catch(err => {
-            console.error(err);
-            document.getElementById('modalBodyContent').innerHTML =
-                '<div class="alert alert-danger">Error loading data: ' + err.message + '</div>';
-        });
-}
-</script>
 </body>
 </html>

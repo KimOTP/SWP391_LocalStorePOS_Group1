@@ -31,8 +31,8 @@
                         <%-- Cột 1: Basic Info --%>
                         <div class="col-md-4 border-end">
                             <div class="mb-4">
-                                <label class="form-label text-muted fw-bold small">Product Code (SKU)</label>
-                                <input type="text" name="productId" class="form-control input-custom" placeholder="P001..." required>
+                                <label class="form-label text-muted fw-bold small">Product Code (SKU) - Auto Generate</label>
+                                <input type="text" name="productId" class="form-control input-custom" placeholder="SKU_PRODUCTNAME_ATTRIBUTE" readonly>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Product Name</label>
@@ -115,16 +115,8 @@
         </div>
     </div>
 
-    <script>
-        // JS xem trước ảnh trước khi upload
-        document.getElementById('imageInput').onchange = function(evt) {
-            const file = evt.target.files[0];
-            if (file) {
-                const imgUrl = URL.createObjectURL(file);
-                const container = document.getElementById('previewContainer');
-                container.innerHTML = `<img src="${imgUrl}" style="width:100%; height:100%; object-fit:cover; display:block;">`;
-            }
-        };
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="<c:url value='/resources/js/product/product-app.js' />"></script>
+</body>
 </body>
 </html>

@@ -35,7 +35,7 @@
                         <div class="col-md-4 border-end">
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Product Code (SKU)</label>
-                                <input type="text" name="productId" class="form-control input-custom bg-light"
+                                <input type="text" name="oldId" class="form-control input-custom bg-light"
                                        value="${product.productId}" readonly>
                             </div>
                             <div class="mb-4">
@@ -45,7 +45,7 @@
                             </div>
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Category</label>
-                                <select name="category.categoryId" class="form-select input-custom">
+                                <select name="categoryId" class="form-select input-custom">
                                     <c:forEach var="cat" items="${categories}">
                                         <option value="${cat.categoryId}" ${cat.categoryId == product.category.categoryId ? 'selected' : ''}>
                                             ${cat.categoryName}
@@ -83,7 +83,7 @@
                                 <div class="status-option-container">
                                     <c:forEach var="st" items="${statuses}">
                                         <div class="status-item">
-                                            <input type="radio" name="status.productStatusId" id="st-${st.productStatusId}"
+                                            <input type="radio" name="statusId" id="st-${st.productStatusId}"
                                                    value="${st.productStatusId}" ${st.productStatusId == product.status.productStatusId ? 'checked' : ''}>
                                             <label for="st-${st.productStatusId}">${st.productStatusName}</label>
                                         </div>
@@ -100,8 +100,8 @@
                                     <div class="inner-box shadow-sm" id="previewContainer">
                                         <c:choose>
                                             <c:when test="${not empty product.imageUrl}">
-                                                <img src="<c:url value='/resources/images/products/${product.imageUrl}'/>"
-                                                     style="width:100%; height:100%; object-fit:cover; display:block;">
+                                                <img src="${product.imageUrl}"
+                                                                 style="width:100%; height:100%; object-fit:cover; display:block;">
                                             </c:when>
                                             <c:otherwise>
                                                 <i class="fa-solid fa-camera text-muted fs-2" id="placeholderIcon"></i>
@@ -135,23 +135,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // JS Xử lý xem trước ảnh khi chọn file mới
-        document.getElementById('imageInput').onchange = function(evt) {
-            const file = evt.target.files[0];
-            if (file) {
-                const imgUrl = URL.createObjectURL(file);
-                const container = document.getElementById('previewContainer');
-                container.innerHTML = '';
-                const newImg = document.createElement('img');
-                newImg.src = imgUrl;
-                newImg.style.width = '100%';
-                newImg.style.height = '100%';
-                newImg.style.objectFit = 'cover';
-                newImg.style.display = 'block';
-                container.appendChild(newImg);
-            }
-        };
-    </script>
+    <script src="<c:url value='/resources/js/product/product-app.js' />"></script>
 </body>
 </html>
