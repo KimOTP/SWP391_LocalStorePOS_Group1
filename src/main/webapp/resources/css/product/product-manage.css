@@ -80,3 +80,27 @@
     background-color: #1d4ed8;
     color: white;
 }
+
+/* CSS cho khung ảnh sản phẩm trong bảng */
+.product-img-container {
+    width: 45px;
+    height: 45px;
+    overflow: hidden;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-img-table {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-image-icon {
+    font-size: 1.2rem;
+    color: #ccc;
+}
