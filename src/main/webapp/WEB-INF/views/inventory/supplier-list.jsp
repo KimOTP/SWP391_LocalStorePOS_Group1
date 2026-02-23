@@ -90,7 +90,7 @@
 <div class="modal fade" id="addSupplierModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form id="addSupplierForm" action="/admin/suppliers/add" method="post">
+            <form id="addSupplierForm" action="/suppliers/admin/add" method="post">
                 <div class="modal-header"><h5>Add New Supplier</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body p-4">
                     <div class="mb-3"><label class="form-label fw-bold">Supplier Name</label><input type="text" name="supplierName" class="form-control" required></div>
@@ -106,7 +106,7 @@
 <div class="modal fade" id="editSupplierModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form action="/admin/suppliers/update" method="post">
+            <form action="/suppliers/admin/update" method="post">
                 <div class="modal-header bg-light"><h5>Update Supplier Information</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body p-4">
                     <input type="hidden" name="supplierId" id="editSupplierId">

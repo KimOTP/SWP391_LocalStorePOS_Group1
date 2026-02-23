@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/admin/suppliers")
+@RequestMapping("/suppliers")
 public class SupplierController {
 
     @Autowired
@@ -21,21 +21,21 @@ public class SupplierController {
         return "inventory/supplier-list";
     }
 
-    @PostMapping("/add")
+    @PostMapping("/admin/add")
     public String createSupplier(@ModelAttribute Supplier supplier) {
         supplierService.saveSupplier(supplier);
-        return "redirect:/admin/suppliers";
+        return "redirect:/suppliers";
     }
 
-    @PostMapping("/update")
+    @PostMapping("/admin/update")
     public String updateSupplier(@ModelAttribute Supplier supplier) {
         supplierService.updateSupplier(supplier);
-        return "redirect:/admin/suppliers";
+        return "redirect:/suppliers";
     }
 
-    @GetMapping("/delete/{id}")
+    @GetMapping("/admin/delete/{id}")
     public String removeSupplier(@PathVariable Integer id) {
         supplierService.deleteSupplier(id);
-        return "redirect:/admin/suppliers";
+        return "redirect:/suppliers";
     }
 }
