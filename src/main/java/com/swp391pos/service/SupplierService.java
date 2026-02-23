@@ -42,4 +42,12 @@ public class SupplierService {
     public void deleteSupplier(Integer id) {
         supplierRepository.deleteById(id);
     }
+    public Supplier findByName(String name) {
+        return supplierRepository.findBySupplierName(name).orElse(null);
+    }
+
+    public List<Supplier> searchSuppliersByName(String name) {
+        return supplierRepository.findBySupplierNameContainingIgnoreCase(name);
+    }
+
 }
