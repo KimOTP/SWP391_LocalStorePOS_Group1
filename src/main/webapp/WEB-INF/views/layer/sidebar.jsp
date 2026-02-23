@@ -40,14 +40,14 @@
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small m-0">
 
                     <li>
-                        <a href="/customers" class="sidebar-item text-decoration-none ps-5 d-flex align-items-center ${pageContext.request.requestURI.contains('/customers') ? 'text-primary fw-bold' : ''}" style="height: 45px;">
+                        <a href="/cus-promo/manager/customer" class="sidebar-item text-decoration-none ps-5 d-flex align-items-center ${pageContext.request.requestURI.contains('/customers') ? 'text-primary fw-bold' : ''}" style="height: 45px;">
                             <i class="fa-regular fa-user me-2 sidebar-text" style="font-size: 14px;"></i>
                             <span class="sidebar-text">Customer</span>
                         </a>
                     </li>
 
                     <li>
-                        <a href="/promotions" class="sidebar-item text-decoration-none ps-5 d-flex align-items-center ${pageContext.request.requestURI.contains('/promotions') ? 'text-primary fw-bold' : ''}" style="height: 45px;">
+                        <a href="/cus-promo/manager/promotion" class="sidebar-item text-decoration-none ps-5 d-flex align-items-center ${pageContext.request.requestURI.contains('/promotions') ? 'text-primary fw-bold' : ''}" style="height: 45px;">
                             <i class="fa-solid fa-tags me-2 sidebar-text" style="font-size: 14px;"></i>
                             <span class="sidebar-text">Promotion</span>
                         </a>

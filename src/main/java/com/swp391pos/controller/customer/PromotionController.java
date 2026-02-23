@@ -20,7 +20,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Controller
-@RequestMapping("/promotions")
+@RequestMapping("/cus-promo/manager/promotion")
 public class PromotionController {
     @Autowired
     private PromotionService promotionService;
@@ -65,7 +65,7 @@ public class PromotionController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Failed to add promotion.");
         }
-        return "redirect:/promotions";
+        return "redirect:/cus-promo/manager/promotion";
     }
 
     @PostMapping("/update")
@@ -77,7 +77,7 @@ public class PromotionController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Failed to update promotion.");
         }
-        return "redirect:/promotions";
+        return "redirect:/cus-promo/manager/promotion";
     }
 
     @GetMapping("/delete")
@@ -88,7 +88,7 @@ public class PromotionController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to delete promotion.");
         }
-        return "redirect:/promotions";
+        return "redirect:/cus-promo/manager/promotion";
     }
 
     @GetMapping("/status")
@@ -104,7 +104,7 @@ public class PromotionController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Failed to update status.");
         }
-        return "redirect:/promotions";
+        return "redirect:/cus-promo/manager/promotion";
     }
 
     @GetMapping("/detail")
@@ -163,7 +163,7 @@ public class PromotionController {
         }
 
         // Trở lại trang detail của chính promotion đó
-        return "redirect:/promotions/detail?id=" + promotionId;
+        return "redirect:/cus-promo/manager/promotion/detail?id=" + promotionId;
     }
 
     //API EDIT
@@ -194,7 +194,7 @@ public class PromotionController {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error", "Lỗi khi cập nhật sản phẩm khuyến mãi.");
         }
-        return "redirect:/promotions/detail?id=" + promotionId;
+        return "redirect:/cus-promo/manager/promotion/detail?id=" + promotionId;
     }
 
     //API DELETE
@@ -209,6 +209,6 @@ public class PromotionController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi khi xóa sản phẩm.");
         }
-        return "redirect:/promotions/detail?id=" + promotionId;
+        return "redirect:/cus-promo/manager/promotion/detail?id=" + promotionId;
     }
 }

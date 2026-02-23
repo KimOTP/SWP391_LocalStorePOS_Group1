@@ -71,7 +71,7 @@
                 <span class="text-muted small">Search and filter by criteria</span>
             </div>
 
-            <form action="/promotions" method="get" id="filterForm">
+            <form action="/cus-promo/manager/promotion" method="get" id="filterForm">
                 <div class="row g-3 mb-4">
 
                     <div class="col-md-4">
@@ -171,13 +171,13 @@
                                                     <i class="fa-solid fa-pen-to-square text-primary me-2"></i> Edit
                                              </a>
                                         </li>
-                                        <li><a class="dropdown-item py-2" href="/promotions/detail?id=${promo.promotionId}"><i class="fa-solid fa-eye text-warning me-2"></i> View details</a></li>
+                                        <li><a class="dropdown-item py-2" href="/cus-promo/manager/promotion/detail?id=${promo.promotionId}"><i class="fa-solid fa-eye text-warning me-2"></i> View details</a></li>
                                         <li>
                                                 <c:choose>
                                                     <%-- Nếu đang ACTIVE -> Inactive để tắt --%>
                                                     <c:when test="${promo.status == 'ACTIVE'}">
                                                         <a class="dropdown-item py-2"
-                                                           href="/promotions/status?id=${promo.promotionId}&status=INACTIVE"
+                                                           href="/cus-promo/manager/promotion/status?id=${promo.promotionId}&status=INACTIVE"
                                                            onclick="return confirm('Are you sure you want to pause this promotion?')">
                                                             <i class="fa-solid fa-pause text-secondary me-2"></i> Inactive
                                                         </a>
@@ -186,7 +186,7 @@
                                                     <%-- Nếu đang INACTIVE -> Hiện nút Active--%>
                                                     <c:when test="${promo.status == 'INACTIVE'}">
                                                         <a class="dropdown-item py-2"
-                                                           href="/promotions/status?id=${promo.promotionId}&status=ACTIVE"
+                                                           href="/cus-promo/manager/promotion/status?id=${promo.promotionId}&status=ACTIVE"
                                                            onclick="return confirm('Are you sure you want to activate this promotion?')">
                                                             <i class="fa-solid fa-play text-success me-2"></i> Active
                                                         </a>
@@ -195,7 +195,7 @@
                                             </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                             <a class="dropdown-item py-2 text-danger" href="/promotions/delete?id=${promo.promotionId}"
+                                             <a class="dropdown-item py-2 text-danger" href="/cus-promo/manager/promotion/delete?id=${promo.promotionId}"
                                                    onclick="return confirm('Are you sure you want to delete this promotion?')">
                                                     <i class="fa-solid fa-trash me-2"></i> Delete
                                              </a>
@@ -221,7 +221,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/promotions/add" method="post" onsubmit="return validatePromotionForm(this)">
+            <form action="/cus-promo/manager/promotion/add" method="post" onsubmit="return validatePromotionForm(this)">
                 <div class="modal-body pt-3">
                     <div class="row g-4"> <div class="col-md-6">
                             <label class="form-label fw-bold fs-5">Name:</label>
@@ -268,7 +268,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/promotions/update" method="post" onsubmit="return validatePromotionForm(this)">
+            <form action="/cus-promo/manager/promotion/update" method="post" onsubmit="return validatePromotionForm(this)">
                 <div class="modal-body pt-3">
                     <input type="hidden" id="editPromoId" name="promotionId">
 

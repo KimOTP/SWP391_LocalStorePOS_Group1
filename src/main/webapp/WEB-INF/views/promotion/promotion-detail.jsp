@@ -77,7 +77,7 @@
         <span class="text-muted small">Search and filter by criteria</span>
     </div>
 
-    <form action="/promotions/detail" method="get" id="filterForm">
+    <form action="/cus-promo/manager/promotion/detail" method="get" id="filterForm">
         <input type="hidden" name="id" value="${promotion.promotionId}">
 
         <div class="row g-3 mb-4">
@@ -155,7 +155,7 @@
 
                                 <li>
                                      <a class="dropdown-item py-2 text-danger"
-                                           href="/promotions/detail/delete?detailId=${detail.promoDetailId}&promotionId=${promotion.promotionId}"
+                                           href="/cus-promo/manager/promotion/detail/delete?detailId=${detail.promoDetailId}&promotionId=${promotion.promotionId}"
                                            onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi đợt khuyến mãi?')">
                                             <i class="fa-solid fa-trash me-2"></i> Delete
                                      </a>
@@ -179,7 +179,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/promotions/detail/add" method="post">
+            <form action="/cus-promo/manager/promotion/detail/add" method="post">
                 <div class="modal-body pt-3">
                     <input type="hidden" name="promotionId" value="${promotion.promotionId}">
 
@@ -233,7 +233,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/promotions/detail/update" method="post">
+            <form action="/cus-promo/manager/promotion/detail/update" method="post">
                 <div class="modal-body pt-3">
                     <input type="hidden" name="promoDetailId" id="editPromoDetailId">
                     <input type="hidden" name="promotionId" value="${promotion.promotionId}">
