@@ -21,7 +21,7 @@ public class SupplierService {
             Map<String, Object> map = new HashMap<>();
             map.put("supplierId", row[0]);
             map.put("supplierName", row[1]);
-            map.put("contactNumber", row[2]);
+            map.put("address", row[2]);
             map.put("email", row[3]);
             map.put("totalValue", row[4] != null ? row[4] : 0.0);
             data.add(map);

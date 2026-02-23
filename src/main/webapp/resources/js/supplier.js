@@ -1,7 +1,3 @@
-/**
- * LocalStorePOS - Supplier Management (Updated: Contact Number)
- */
-
 document.addEventListener('DOMContentLoaded', () => initLiveSearch());
 
 function prepareAddModal() {
@@ -13,13 +9,13 @@ function openEditModal(btn) {
     // Trích xuất dữ liệu từ data attributes
     const id = btn.getAttribute('data-id');
     const name = btn.getAttribute('data-name');
-    const phone = btn.getAttribute('data-phone'); // Lấy số điện thoại
+    const address = btn.getAttribute('data-address');
     const email = btn.getAttribute('data-email');
 
     // Đổ vào modal edit
     document.getElementById('editSupplierId').value = id;
     document.getElementById('editSupplierName').value = name;
-    document.getElementById('editContactNumber').value = phone; // Cập nhật ID field
+    document.getElementById('editAddress').value = address;
     document.getElementById('editEmail').value = email;
 
     new bootstrap.Modal(document.getElementById('editSupplierModal')).show();
