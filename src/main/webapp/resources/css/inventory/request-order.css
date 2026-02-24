@@ -1,0 +1,87 @@
+/* Main Layout adjustment for Sidebar & Header */
+.main-content {
+    margin-top: 70px;
+    margin-left: 80px;
+    padding: 30px;
+    background-color: #f4f7f6;
+    min-height: 100vh;
+}
+
+.request-wrapper {
+    display: flex;
+    gap: 25px;
+    align-items: flex-start;
+}
+
+/* Left Section: Input Form (70%) */
+.form-card {
+    flex: 7;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Right Section: Receipt Summary (30%) */
+.summary-card {
+    flex: 3;
+    background-color: #d9d9d9; /* Grey background as per mockup */
+    padding: 25px;
+    border-radius: 15px;
+    min-height: 550px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Component Styles */
+.input-custom {
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.form-select.input-custom {
+    cursor: pointer;
+}
+
+.btn-auto-fill {
+    background-color: #cccccc;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.btn-add-receipt {
+    background-color: #f0766d; /* Coral red button */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    width: 100%;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.receipt-table {
+    width: 100%;
+    font-size: 0.9rem;
+    margin-top: 15px;
+}
+
+.receipt-table th {
+    border-bottom: 1px solid #999;
+    padding-bottom: 8px;
+    text-align: left;
+}
+
+.text-danger.small {
+    display: block;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}

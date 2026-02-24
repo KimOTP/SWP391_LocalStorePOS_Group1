@@ -104,3 +104,151 @@
     font-size: 1.2rem;
     color: #ccc;
 }
+
+/* --- Bổ sung CSS cho Filter hiện đại --- */
+
+.btn-filter {
+    background: #fff;
+    border: 1px dashed #cbd5e1; /* Viền nét đứt như ảnh mẫu */
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #333;
+    transition: all 0.2s ease;
+}
+
+.btn-filter:hover {
+    border-color: #2563eb;
+    background-color: #f8fafc;
+}
+
+.filter-options-list {
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.filter-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.2s;
+    margin-bottom: 2px;
+}
+
+.filter-item:hover {
+    background-color: #f1f5f9;
+}
+
+.filter-item input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    accent-color: #2563eb; /* Màu xanh chuẩn cho checkbox */
+    cursor: pointer;
+    margin-right: 12px;
+}
+
+.tiny-icon {
+    font-size: 0.7rem;
+    color: #64748b;
+}
+
+/* Tùy chỉnh thanh Search Box */
+.search-box {
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
+
+/* 1. Sửa lỗi Action Menu bị che khuất */
+.table-responsive {
+    /* Cho phép các thành phần con hiển thị tràn ra ngoài khung bảng */
+    overflow: visible !important;
+}
+
+/* 2. Tăng cường độ ưu tiên hiển thị cho Dropdown Menu */
+.dropdown-menu {
+    z-index: 1060 !important; /* Đảm bảo nằm trên các thành phần khác */
+    border: none;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* 3. Tùy chỉnh hiệu ứng hover cho các mục trong Action */
+.dropdown-item {
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.dropdown-item:hover {
+    background-color: #f1f5f9;
+}
+
+/* 4. Đảm bảo nút Action tròn và đẹp */
+.btn-light.rounded-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #f1f5f9;
+}
+
+.btn-light.rounded-circle:hover {
+    background-color: #e2e8f0;
+    border-color: #cbd5e1;
+}
+
+/* Khung bao ngoài cùng cho toàn bộ khu vực Product List */
+.product-list-container {
+    border: 1px solid #e2e8f0; /* Viền xám nhạt */
+    border-radius: 12px;
+    background-color: #fff;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+/* Khung cuộn riêng cho bảng sản phẩm */
+.scrollable-table-container {
+    max-height: 500px; /* Chiều cao tối đa bạn muốn trượt */
+    overflow-y: auto;  /* Cho phép trượt dọc */
+    overflow-x: hidden;
+    border: 1px solid #f1f5f9; /* Viền nhẹ cho khu vực bảng */
+    border-radius: 8px;
+}
+
+/* Tùy chỉnh thanh cuộn cho đẹp (Webkit) */
+.scrollable-table-container::-webkit-scrollbar {
+    width: 6px;
+}
+.scrollable-table-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+.scrollable-table-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+.scrollable-table-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Giữ header bảng cố định khi trượt */
+.table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 10;
+    box-shadow: 0 1px 0 #eee; /* Đường kẻ dưới header */
+}
+
+/* Reset lại overflow để dropdown menu không bị cắt */
+.scrollable-table-container {
+    position: relative;
+}

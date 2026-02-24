@@ -27,9 +27,9 @@ public class InvLogHeader {
     private StockIn stockInId;
     @ManyToOne
     @JoinColumn(name = "StockOutId")
-    private StockOut stockOut;
+    private StockOut stockOutId;
     @ManyToOne
     @JoinColumn(name = "auditSessionId")
-    private AuditSession auditSession;
+    private AuditSession auditSessionId;
     private LocalDateTime createdAt = LocalDateTime.now();
 }

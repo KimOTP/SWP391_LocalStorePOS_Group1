@@ -59,45 +59,104 @@
     </div>
 
     <div class="card shadow-sm border-0">
-        <div class="card-body p-4">
+        <div class="card-body p-4 product-list-container">
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h5 class="fw-bold mb-0">Products List</h5>
-                    <small class="text-muted">Manage all products in system.</small>
-                </div>
-                <a href="<c:url value='/products/add' />" class="btn btn-add px-4 py-2 d-inline-flex align-items-center text-decoration-none">
-                    <i class="fa-solid fa-plus me-2"></i>Add Product
-                </a>
-            </div>
-
-            <div class="row g-2 mb-4">
-                <div class="col-md-3">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="Search products...">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h5 class="fw-bold mb-0">Products List</h5>
+                        <small class="text-muted">Manage all products in system.</small>
+                    </div>
+                    <div>
+                        <a href="<c:url value='/products/export-excel' />" class="btn btn-outline-success px-4 py-2">
+                            <i class="fa-solid fa-file-excel me-2"></i>Export Excel
+                        </a>
+                        <a href="<c:url value='/products/add' />" class="btn btn-add px-4 py-2 d-inline-flex align-items-center text-decoration-none">
+                            <i class="fa-solid fa-plus me-2"></i>Add Product
+                        </a>
                     </div>
                 </div>
-                <div class="col-md-2">
-                    <select class="form-select"><option>+ Status</option></select>
-                </div>
-                <div class="col-md-2">
-                    <select class="form-select"><option>+ Category</option></select>
-                </div>
-                <div class="col-md-2">
-                    <select class="form-select"><option>+ Unit</option></select>
+
+    <div class="row g-2 mb-4 align-items-center">
+        <div class="col-md-3">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="jsSearchInput" class="form-control ps-5" placeholder="Find by Name or SKU...">
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="dropdown">
+                <button class="btn btn-filter w-100 text-start d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                    <span>Status</span>
+                    <i class="fa-solid fa-chevron-down ms-1 tiny-icon"></i>
+                </button>
+                <div class="dropdown-menu shadow border-0 p-2" style="min-width: 200px;">
+                    <c:forEach var="st" items="${statuses}">
+                        <label class="dropdown-item d-flex align-items-center py-2" style="cursor: pointer;">
+                            <input type="checkbox" class="filter-checkbox status-cb" value="${st.productStatusName}">
+                            <span class="ms-2">${st.productStatusName}</span>
+                        </label>
+                    </c:forEach>
                 </div>
             </div>
+        </div>
 
+        <div class="col-md-2">
+            <div class="dropdown">
+                <button class="btn btn-filter w-100 text-start d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                    <span>Category</span>
+                    <i class="fa-solid fa-chevron-down ms-1 tiny-icon"></i>
+                </button>
+                <div class="dropdown-menu shadow border-0 p-2" style="min-width: 200px;">
+                    <c:forEach var="cat" items="${categories}">
+                        <label class="dropdown-item d-flex align-items-center py-2" style="cursor: pointer;">
+                            <input type="checkbox" class="filter-checkbox category-cb" value="${cat.categoryName}">
+                            <span class="ms-2">${cat.categoryName}</span>
+                        </label>
+                    </c:forEach>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="dropdown">
+                <button class="btn btn-filter w-100 text-start d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                    <span>Unit</span>
+                    <i class="fa-solid fa-chevron-down ms-1 tiny-icon"></i>
+                </button>
+                <div class="dropdown-menu shadow border-0 p-2" style="min-width: 150px;">
+                    <c:forEach var="u" items="${units}">
+                        <label class="dropdown-item d-flex align-items-center py-2" style="cursor: pointer;">
+                            <input type="checkbox" class="filter-checkbox unit-cb" value="${u}">
+                            <span class="ms-2">${u}</span>
+                        </label>
+                    </c:forEach>
+                </div>
+            </div>
+        </div>
+    </div>
             <div class="table-responsive">
                 <table class="table table-hover align-middle">
                     <thead>
                         <tr>
-                            <th>SKU <i class="fa-solid fa-arrow-up-z-a ms-1 small text-muted"></i></th>
-                            <th>Product Name <i class="fa-solid fa-arrow-up-z-a ms-1 small text-muted"></i></th>
+                            <th>
+                                <a href="?sortField=productId&sortDir=${reverseSortDir}${not empty param.keyword ? '&keyword='.concat(param.keyword) : ''}" class="text-decoration-none text-muted">
+                                    SKU <i class="fa-solid ${sortField == 'productId' ? (sortDir == 'asc' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort'} ms-1 small"></i>
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?sortField=productName&sortDir=${reverseSortDir}" class="text-decoration-none text-muted">
+                                    Product Name <i class="fa-solid ${sortField == 'productName' ? (sortDir == 'asc' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort'} ms-1 small"></i>
+                                </a>
+                            </th>
                             <th>Attribute</th>
                             <th>Category</th>
                             <th>Unit</th>
-                            <th>Unit Price <i class="fa-solid fa-arrow-up-z-a ms-1 small text-muted"></i></th>
+                            <th>
+                                <a href="?sortField=price&sortDir=${reverseSortDir}" class="text-decoration-none text-muted">
+                                    Unit Price <i class="fa-solid ${sortField == 'price' ? (sortDir == 'asc' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort'} ms-1 small"></i>
+                                </a>
+                            </th>
                             <th>Status</th>
                             <th class="text-end"></th>
                         </tr>
@@ -142,36 +201,31 @@
                                 </td>
                                 <td class="text-end">
                                     <div class="dropdown">
-                                        <button class="btn btn-light btn-sm rounded-circle shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 32px; height: 32px;">
+                                        <button class="btn btn-light btn-sm rounded-circle shadow-none"
+                                                type="button"
+                                                data-bs-toggle="dropdown"
+                                                data-bs-boundary="viewport"
+                                                aria-expanded="false"
+                                                style="width: 32px; height: 32px;">
                                             <i class="fa-solid fa-ellipsis-vertical"></i>
                                         </button>
 
-                                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-2" style="min-width: 160px; border-radius: 12px;">
+                                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-2" style="min-width: 160px; border-radius: 12px; z-index: 1060;">
                                             <li class="px-2 pb-1 text-muted small fw-bold">Action</li>
-
                                             <li>
                                                 <button class="dropdown-item rounded-2 py-2 btn-view-detail"
-                                                            type="button"
-                                                            data-id="${p.productId}"
-                                                            data-url="<c:url value='/products/view'/>">
-                                                        <i class="fa-regular fa-eye me-2 text-primary" style="width: 18px;"></i>View
-                                                    </button>
+                                                        type="button"
+                                                        data-id="${p.productId}"
+                                                        data-url="<c:url value='/products/view'/>">
+                                                    <i class="fa-regular fa-eye me-2 text-primary" style="width: 18px;"></i>View
+                                                </button>
                                             </li>
-
-                                            <li>
-                                                <a class="dropdown-item rounded-2 py-2" href="#">
-                                                    <i class="fa-regular fa-copy me-2 text-info" style="width: 18px;"></i> Copy SKU
-                                                </a>
-                                            </li>
-
                                             <li>
                                                 <a class="dropdown-item rounded-2 py-2" href="<c:url value='/products/update/${p.productId}'/>">
                                                     <i class="fa-regular fa-pen-to-square me-2 text-warning" style="width: 18px;"></i> Update
                                                 </a>
                                             </li>
-
                                             <li><hr class="dropdown-divider mx-2"></li>
-
                                             <li>
                                                 <a class="dropdown-item rounded-2 py-2 text-danger" href="<c:url value='/products/delete/${p.productId}'/>"
                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')">

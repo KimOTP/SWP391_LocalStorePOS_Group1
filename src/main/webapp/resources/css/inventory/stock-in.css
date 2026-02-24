@@ -1,0 +1,116 @@
+/* Tổng thể giao diện */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.main-content {
+    margin-left: 80px;
+    padding: 30px;
+    background-color: #ffffff;
+    min-height: 100vh;
+}
+
+/* Card thông tin phía trên (Phần xám) */
+.info-card {
+    background-color: #e9e9e9; /* Màu xám nhạt như hình */
+    border-radius: 15px;
+    padding: 25px;
+    border: none;
+}
+
+.info-label {
+    color: #333;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.info-value {
+    font-size: 1.1rem;
+    color: #000;
+    margin-bottom: 15px;
+}
+
+/* Badge Trạng thái In Progress */
+.status-badge {
+    background-color: #8e8e8e;
+    color: white;
+    padding: 8px 30px;
+    border-radius: 10px;
+    display: inline-block;
+    font-size: 0.9rem;
+}
+
+/* Phần Bảng */
+.table-section {
+    margin-top: 30px;
+    background-color: #e9e9e9; /* Nền xám cho cả vùng bảng */
+    border-radius: 15px;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.table {
+    margin-bottom: 0;
+    background-color: transparent !important;
+}
+
+/* Header của bảng */
+.table thead th {
+    border-bottom: 1px solid #ccc;
+    color: #555;
+    font-weight: 500;
+    padding: 15px;
+    background-color: transparent;
+}
+
+/* Dòng trong bảng */
+.table tbody td {
+    padding: 15px;
+    border: none;
+    vertical-align: middle;
+}
+
+/* Badge cho Expected Quantity */
+.expected-badge {
+    background-color: #8e8e8e;
+    color: white;
+    padding: 5px 25px;
+    border-radius: 12px;
+    min-width: 60px;
+    display: inline-block;
+}
+
+/* Input cho Actual Quantity */
+.input-actual {
+    border: none;
+    border-radius: 12px;
+    padding: 5px 10px;
+    width: 80px;
+    text-align: center;
+    background-color: white;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Nút bấm phía dưới */
+.btn-cancel {
+    background-color: #e0e0e0;
+    color: #000;
+    border-radius: 8px;
+    font-weight: 500;
+    border: none;
+}
+
+.btn-confirm {
+    background-color: #5c72e7; /* Màu xanh như hình */
+    color: white;
+    border-radius: 8px;
+    font-weight: 500;
+    border: none;
+}
+
+.btn-confirm:hover {
+    background-color: #4a5dc5;
+    color: white;
+}
