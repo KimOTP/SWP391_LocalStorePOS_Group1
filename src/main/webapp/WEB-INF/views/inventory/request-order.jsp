@@ -121,11 +121,20 @@
                         </div>
                     </form>
                 </div>
+                <c:if test="${not empty message}">
+                    <div class="alert alert-${status} alert-dismissible fade show shadow-sm" role="alert">
+                        <i class="fa-solid ${status == 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} me-2"></i>
+                        <strong>${message}</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </c:if>
             </div>
         </div>
 
     </div>
+
 </div>
+
 
 <script src="<c:url value='/resources/js/inventory/request-order.js'/>"></script>
 </body>

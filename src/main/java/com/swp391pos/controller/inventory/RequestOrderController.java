@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -65,7 +67,7 @@ public class RequestOrderController {
     public String submitOrder(
             @RequestParam String supplierName,
             @RequestParam String itemsJson,
-            HttpSession session) {
+            HttpSession session, RedirectAttributes ra) {
         try {
             Account account = (Account) session.getAttribute("loggedInAccount");
 //            if (account == null) return "redirect:/login";
@@ -74,11 +76,12 @@ public class RequestOrderController {
             List<Map<String, Object>> items = mapper.readValue(itemsJson, new TypeReference<List<Map<String, Object>>>(){});
 
             stockInService.createRequest(supplierName, items, account);
-            return "redirect:/requestOrder/admin/view";
-
+            ra.addFlashAttribute("message", "Product Request submitted successfully!");
+            ra.addFlashAttribute("status", "success");
         } catch (Exception e) {
-            e.printStackTrace();
-            return "redirect:/requestOrder/admin/view?error=" + e.getMessage();
+            ra.addFlashAttribute("message", "Error: " + e.getMessage());
+            ra.addFlashAttribute("status", "danger");
         }
+        return "redirect:/requestOrder/admin/view";
     }
 }
