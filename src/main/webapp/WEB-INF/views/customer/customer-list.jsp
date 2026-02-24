@@ -88,7 +88,7 @@
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
 
-            <form action="/customers" method="get" id="filterForm">
+            <form action="/cus-promo/manager/customer" method="get" id="filterForm">
                 <div class="row g-3 mb-4">
 
                     <div class="col-md-4">
@@ -224,7 +224,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form action="/customers/add" method="post">
+            <form action="/cus-promo/manager/customer/add" method="post">
                 <div class="modal-body pt-2">
 
                     <div class="mb-3">
@@ -276,7 +276,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/customers/config/update" method="post">
+            <form action="/cus-promo/manager/customer/config/update" method="post">
                 <div class="modal-body pt-2">
                     <p class="text-muted small mb-3">Set up rules for earning and redeeming loyalty points.</p>
 
@@ -347,7 +347,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/customers/update" method="post">
+            <form action="/cus-promo/manager/customer/update" method="post">
                 <div class="modal-body pt-2">
                     <input type="hidden" id="editId" name="customerId">
 

@@ -5,6 +5,8 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.format.annotation.DateTimeFormat;
 @Entity
 @Data
@@ -38,6 +40,7 @@ public class Promotion {
     public enum PromotionStatus {
         ACTIVE,
         INACTIVE,
-        EXPIRED
+        EXPIRED,
+        DELETED
     }
 }

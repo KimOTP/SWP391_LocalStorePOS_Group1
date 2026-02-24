@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/customers")
+@RequestMapping("/cus-promo/manager/customer")
 public class CustomerController {
     @Autowired
     private CustomerService customerService;
@@ -64,7 +64,7 @@ public class CustomerController {
             redirectAttributes.addFlashAttribute("error", errorMessage);
 
             // Quay về trang cũ
-            return "redirect:/customers";
+            return "redirect:/cus-promo/manager/customer";
         }
 
         // 2. Nếu dữ liệu ngon lành -> Lưu vào DB
@@ -73,7 +73,7 @@ public class CustomerController {
         // 3. Thông báo thành công
         redirectAttributes.addFlashAttribute("success", "Thêm khách hàng thành công!");
 
-        return "redirect:/customers";
+        return "redirect:/cus-promo/manager/customer";
     }
     // Delete
     @GetMapping("/delete/{id}")
@@ -84,7 +84,7 @@ public class CustomerController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi: Không thể xóa khách hàng này.");
         }
-        return "redirect:/customers";
+        return "redirect:/cus-promo/manager/customer";
     }
 
     //Update
@@ -102,7 +102,7 @@ public class CustomerController {
             redirectAttributes.addFlashAttribute("error", "Cập nhật thất bại: " + errorMessage);
 
             // Quay về trang danh sách
-            return "redirect:/customers";
+            return "redirect:/cus-promo/manager/customer";
         }
 
         //Nếu không có lỗi thì mới lưu
@@ -115,7 +115,7 @@ public class CustomerController {
             redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra trong quá trình lưu dữ liệu.");
         }
 
-        return "redirect:/customers";
+        return "redirect:/cus-promo/manager/customer";
     }
 
     // API: Lấy lịch sử giao dịch (Trả về JSON)
@@ -174,6 +174,6 @@ public class CustomerController {
             redirectAttributes.addFlashAttribute("error", "Lỗi cập nhật cấu hình.");
         }
 
-        return "redirect:/customers";
+        return "redirect:/cus-promo/manager/customer";
     }
 }
