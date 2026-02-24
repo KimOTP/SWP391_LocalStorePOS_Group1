@@ -35,29 +35,23 @@
                 </thead>
 
                 <tbody>
-                <tr>
-                    <td>3</td>
-                    <td>Afternoon</td>
-                    <td>21/01/2026</td>
-                    <td>12:00</td>
-                    <td>17:00</td>
-                </tr>
+                <c:forEach var="schedule" items="${scheduleList}">
+                    <tr>
+                        <td>${schedule.employee.employeeId}</td>
+                        <td>${schedule.shift.shiftName}</td>
+                        <td>${schedule.workDate}</td>
+                        <td>${schedule.shift.startTime}</td>
+                        <td>${schedule.shift.endTime}</td>
+                    </tr>
+                </c:forEach>
 
-                <tr>
-                    <td>3</td>
-                    <td>Afternoon</td>
-                    <td>22/01/2026</td>
-                    <td>12:00</td>
-                    <td>17:00</td>
-                </tr>
-
-                <tr>
-                    <td>3</td>
-                    <td>Afternoon</td>
-                    <td>23/01/2026</td>
-                    <td>12:00</td>
-                    <td>17:00</td>
-                </tr>
+                <c:if test="${empty scheduleList}">
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">
+                            No schedule available
+                        </td>
+                    </tr>
+                </c:if>
                 </tbody>
             </table>
         </div>

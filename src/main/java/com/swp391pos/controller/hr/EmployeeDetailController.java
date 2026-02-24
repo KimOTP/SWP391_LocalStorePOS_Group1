@@ -6,6 +6,7 @@ import com.swp391pos.repository.EmployeeRepository;
 import com.swp391pos.repository.AccountRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,8 @@ public class EmployeeDetailController {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     // ==============================
     // GET EMPLOYEE DETAIL
     // ==============================
@@ -107,8 +110,8 @@ public class EmployeeDetailController {
 
             // CHỈ ĐỔI PASSWORD NẾU KHÔNG RỖNG
             if (password != null && !password.trim().isEmpty()) {
-                account.setPasswordHash(password);
-                // Sau này nên encode password
+                String encodedPassword = passwordEncoder.encode(password);
+                account.setPasswordHash(encodedPassword);
             }
 
             accountRepository.save(account);
