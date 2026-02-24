@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swp391pos.entity.*;
 import com.swp391pos.repository.*;
-import com.swp391pos.service.InventoryService;
+import com.swp391pos.service.StockInService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,7 +20,7 @@ public class RequestOrderController {
     @Autowired private ProductRepository productRepo;
     @Autowired private InventoryRepository inventoryRepo;
     @Autowired private SupplierRepository supplierRepo;
-    @Autowired private InventoryService inventoryService;
+    @Autowired private StockInService stockInService;
 
     @GetMapping("/admin/view")
     public String showRequestOrderPage() {
@@ -73,11 +73,10 @@ public class RequestOrderController {
             ObjectMapper mapper = new ObjectMapper();
             List<Map<String, Object>> items = mapper.readValue(itemsJson, new TypeReference<List<Map<String, Object>>>(){});
 
-            inventoryService.createRequest(supplierName, items, account);
+            stockInService.createRequest(supplierName, items, account);
             return "redirect:/requestOrder/admin/view";
 
         } catch (Exception e) {
-            // In lỗi ra màn hình đen (Console) để xem nguyên nhân thực sự
             e.printStackTrace();
             return "redirect:/requestOrder/admin/view?error=" + e.getMessage();
         }
