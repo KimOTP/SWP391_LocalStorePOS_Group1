@@ -114,3 +114,33 @@ body {
     background-color: #4a5dc5;
     color: white;
 }
+
+/* Tạo kiểu dáng ô hiển thị giống input nhưng chỉ để xem */
+.view-only-box {
+    background-color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 15px;
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    color: #333;
+    font-weight: 500;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 8px 25px;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    min-width: 150px;
+    text-align: center;
+}
+
+/* Giữ nguyên các định dạng khối xám từ các màn hình trước */
+.info-card, .table-section {
+    background-color: #d9d9d9;
+    border-radius: 15px;
+    padding: 25px;
+}

@@ -104,4 +104,10 @@ public class StockInController {
         }
         return "redirect:/stockIn/inventory-staff/notifications";
     }
+    @GetMapping("/inventory-staff/stock-in-details")
+    public String viewDetailed(@RequestParam Integer id, Model model) {
+        StockIn stockIn = stockInService.getStockInById(id);
+        model.addAttribute("stockIn", stockIn);
+        return "inventory/inventoryStaff/stock-in-detail";
+    }
 }

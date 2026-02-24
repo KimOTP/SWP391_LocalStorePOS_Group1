@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,8 @@ public class StockInService {
     @Autowired private InventoryRepository inventoryRepo;
     @Autowired private ProductRepository productRepo;
     @Autowired private EmployeeRepository employeeRepo;
+    @Autowired private StockOutRepository stockOutRepo;
+    @Autowired private AuditSessionRepository auditRepo;
 
     // Request Order Process
     public Map<String, String> getSupplierEmail(String name) {
@@ -80,8 +83,6 @@ public class StockInService {
         return stockInRepo.findByStatusId(1);
     }
 
-
-
     // Stock-in process
     public StockIn getStockInForProcessing(Integer id) {
         return stockInRepo.findByStockInId(id);
@@ -105,20 +106,8 @@ public class StockInService {
         }
     }
 
-    // Giai đoạn 3: Manager duyệt (Trạng thái 4: Approved -> CẬP NHẬT KHO)
-    @Transactional
-    public void approveStockIn(Integer stockInId) {
-        StockIn si = stockInRepo.findById(stockInId).orElseThrow();
-        TransactionStatus status = transactionStatusRepo.findById(4)
-                .orElseThrow(() -> new RuntimeException("Status not found"));
-        si.setStatus(status); // Approved
-        stockInRepo.save(si);
-
-        List<StockInDetail> details = detailRepo.findByStockIn(si);
-        for (StockInDetail d : details) {
-            Inventory inventory = new Inventory();
-            inventory.setCurrentQuantity(inventory.getCurrentQuantity() + d.getReceivedQuantity());
-            inventoryRepo.save(inventory);
-        }
+    //stock-in detail
+    public StockIn getStockInById(Integer id) {
+        return stockInRepo.findById(id).orElseThrow();
     }
 }
