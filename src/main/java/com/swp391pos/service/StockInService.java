@@ -2,11 +2,13 @@ package com.swp391pos.service;
 
 import com.swp391pos.entity.*;
 import com.swp391pos.repository.*;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,12 +82,19 @@ public class StockInService {
 
 
 
-    // Giai đoạn 2: Staff nhập số lượng thực tế (Chuyển sang trạng thái 2: Approval-Pending)
+    // Stock-in process
+    public StockIn getStockInForProcessing(Integer id) {
+        return stockInRepo.findByStockInId(id);
+    }
+
     @Transactional
-    public void processStaffInput(Integer stockInId, List<Map<String, Object>> actualData) {
+    public void processStaffInput(Integer stockInId, List<Map<String, Object>> actualData, Account staffAccount) {
         StockIn si = stockInRepo.findById(stockInId).orElseThrow();
         TransactionStatus status = transactionStatusRepo.findById(2)
                 .orElseThrow(() -> new RuntimeException("Status not found"));
+        //si.sefStaff(staffAccount.getEmployee());
+        si.setStaff(employeeRepo.getEmployeeByEmployeeId(2));
+        si.setReceivedAt(LocalDateTime.now());
         si.setStatus(status);
         stockInRepo.save(si);
 

@@ -77,4 +77,31 @@ public class StockInController {
         model.addAttribute("totalPending", pendingList.size());
         return "inventory/inventoryStaff/notifications";
     }
+
+    //Stock In Process For InventoryStaff
+    @GetMapping("/inventory-staff/process")
+    public String showProcessPage(@RequestParam Integer id, Model model) {
+        model.addAttribute("stockIn", stockInService.getStockInForProcessing(id));
+        return "inventory/inventoryStaff/stock-in";
+    }
+
+    @PostMapping("/inventory-staff/submit-process")
+    public String submitProcess(
+            @RequestParam Integer stockInId,
+            @RequestParam String actualDataJson,
+            HttpSession session, RedirectAttributes ra) {
+        try {
+            Account staff = (Account) session.getAttribute("loggedInAccount");
+            ObjectMapper mapper = new ObjectMapper();
+            List<Map<String, Object>> actualData = mapper.readValue(actualDataJson, new TypeReference<>() {});
+
+            stockInService.processStaffInput(stockInId, actualData, staff);
+            ra.addFlashAttribute("message", "Stock-in data submitted for approval!");
+            ra.addFlashAttribute("status", "success");
+        } catch (Exception e) {
+            ra.addFlashAttribute("message", "Error: " + e.getMessage());
+            ra.addFlashAttribute("status", "danger");
+        }
+        return "redirect:/stockIn/inventory-staff/notifications";
+    }
 }

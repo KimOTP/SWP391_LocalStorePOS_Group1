@@ -10,5 +10,6 @@ import java.util.List;
 
 public interface StockInRepository extends JpaRepository<StockIn, Integer> {
     @Query("SELECT s FROM StockIn s WHERE s.status.transactionStatusId = :statusId")
-    List<StockIn> findByStatusId(@Param("statusId") Integer statusId);;
+    List<StockIn> findByStatusId(@Param("statusId") Integer statusId);
+    StockIn findByStockInId(int stockInId);
 }
