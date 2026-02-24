@@ -12,8 +12,8 @@
 </head>
 <body>
 
-<jsp:include page="../layer/header.jsp" />
-<jsp:include page="../layer/sidebar.jsp" />
+<jsp:include page="../../layer/header.jsp" />
+<jsp:include page="../../layer/sidebar.jsp" />
 
 <div class="main-content">
     <div class="request-wrapper">

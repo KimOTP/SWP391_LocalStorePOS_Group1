@@ -13,8 +13,8 @@
 </head>
 <body>
 
-<jsp:include page="../layer/header.jsp" />
-<jsp:include page="../layer/sidebar.jsp" />
+<jsp:include page="/WEB-INF/views/layer/header.jsp" />
+<jsp:include page="/WEB-INF/views/layer/sidebar.jsp" />
 
 <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">
