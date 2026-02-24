@@ -19,7 +19,7 @@
             <span class="ms-3 sidebar-text">POS & Sales</span>
         </a>
 
-        <a href="/products" class="sidebar-item text-decoration-none" title="Products">
+        <a href="/products/manage" class="sidebar-item text-decoration-none" title="Products">
             <i class="fa-solid fa-store"></i>
             <span class="ms-3 sidebar-text">Menu & Products</span>
         </a>
