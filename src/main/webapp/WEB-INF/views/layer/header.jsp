@@ -33,7 +33,6 @@
                         Profile
                     </a>
                 </li>
-                <li><a class="dropdown-item" href="#">Settings</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/auth/logout">← Logout</a></li>
             </ul>
