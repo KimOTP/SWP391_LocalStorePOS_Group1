@@ -23,28 +23,51 @@
         <div class="section-subtitle">Today's Attendance</div>
 
         <!-- FILTER -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="info-label">Employee</div>
-                <div class="info-box">
-                    <input class="info-input" value="Tran Phu"/>
-                </div>
-            </div>
+        <form id="searchForm" method="get" action="${pageContext.request.contextPath}/shift/manager/attendance">
 
-            <div class="col-md-3">
-                <div class="info-label">Shift</div>
-                <div class="info-box">
-                    <input class="info-input" placeholder="---"/>
-                </div>
-            </div>
+            <div class="row mb-4">
 
-            <div class="col-md-3">
-                <div class="info-label">Status</div>
-                <div class="info-box">
-                    <input class="info-input" placeholder="---"/>
+                <!-- Employee -->
+                <div class="col-md-3">
+                    <div class="info-label">Employee</div>
+                    <div class="info-box">
+                        <input class="info-input"
+                               type="text"
+                               name="fullName"
+                               value="${param.fullName}"
+                               placeholder="Search employee..."/>
+                    </div>
                 </div>
+
+                <!-- Shift -->
+                <div class="col-md-3">
+                    <div class="info-label">Shift</div>
+                    <div class="info-box">
+                        <select class="info-input" name="shift">
+                            <option value="">All</option>
+                            <option value="Morning" ${param.shift == 'Morning' ? 'selected' : ''}>Morning</option>
+                            <option value="Afternoon" ${param.shift == 'Afternoon' ? 'selected' : ''}>Afternoon</option>
+                            <option value="Evening" ${param.shift == 'Evening' ? 'selected' : ''}>Evening</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div class="col-md-3">
+                    <div class="info-label">Status</div>
+                    <div class="info-box">
+                        <select class="info-input" name="status">
+                            <option value="">All</option>
+                            <option value="Normal" ${param.status == 'Normal' ? 'selected' : ''}>Normal</option>
+                            <option value="Late" ${param.status == 'Late' ? 'selected' : ''}>Late</option>
+                            <option value="Early Leave" ${param.status == 'Early Leave' ? 'selected' : ''}>Early Leave</option>
+                            <option value="Expired" ${param.status == 'Expired' ? 'selected' : ''}>Expired</option>
+                        </select>
+                    </div>
+                </div>
+
             </div>
-        </div>
+        </form>
 
         <!-- TABLE -->
         <div class="info-box" style="height:auto; padding:0;">
@@ -63,65 +86,162 @@
                 </tr>
                 </thead>
                 <tbody>
+                <c:forEach var="a" items="${attendanceList}">
+                <tr id="row-${a.attendanceId}">
 
-                <tr>
-                    <td>5</td>
-                    <td>Tran Phu 2</td>
-                    <td>Cashier</td>
-                    <td>Morning</td>
-                    <td>20/01/2026</td>
-                    <td>07:02</td>
-                    <td>11:45</td>
-                    <td class="text-warning">Early Leave</td>
+                    <td>${a.employee.employeeId}</td>
+                    <td>${a.employee.fullName}</td>
+                    <td>${a.employee.role}</td>
+
+                    <!-- SHIFT -->
                     <td>
-                        <button class="btn-warning">Save</button>
-                        <button class="btn-danger">Cancel</button>
-                    </td>
-                </tr>
+                        <span class="view">${a.shift.shiftName}</span>
 
-                <tr>
-                    <td>3</td>
-                    <td>Tran Phu</td>
-                    <td>Cashier</td>
-                    <td>Afternoon</td>
-                    <td>20/01/2026</td>
-                    <td>12:03</td>
-                    <td>17:00</td>
-                    <td class="text-success">Normal</td>
+                        <select class="edit d-none form-select form-select-sm"
+                                id="shift-${a.attendanceId}">
+                            <c:forEach var="s" items="${shiftList}">
+                                <option value="${s.shiftId}"
+                                    ${s.shiftId == a.shift.shiftId ? 'selected' : ''}>
+                                    ${s.shiftName}
+                                </option>
+                            </c:forEach>
+                        </select>
+                    </td>
+
+                    <td>${a.workDate}</td>
+
+                    <!-- CHECK IN -->
                     <td>
-                        <button class="btn-change">Edit</button>
+                        <span class="view">${a.checkInTime.toString().replace('T',' ').substring(0,16)}</span>
+                        <input type="datetime-local"
+                               class="edit d-none form-control form-control-sm"
+                               id="checkin-${a.attendanceId}"
+                               value="${a.checkInTime != null ? a.checkInTime.toString().substring(0,16) : ''}">
                     </td>
-                </tr>
 
-                <tr>
-                    <td>4</td>
-                    <td>Tran Phu 1</td>
-                    <td>Cashier</td>
-                    <td>Evening</td>
-                    <td>20/01/2026</td>
-                    <td>17:11</td>
-                    <td>22:00</td>
-                    <td class="text-danger">Late</td>
+                    <!-- CHECK OUT -->
                     <td>
-                        <button class="btn-change">Edit</button>
+                        <span class="view">${a.checkOutTime.toString().replace('T',' ').substring(0,16)}</span>
+                        <input type="datetime-local"
+                               class="edit d-none form-control form-control-sm"
+                               id="checkout-${a.attendanceId}"
+                               value="${a.checkOutTime != null ? a.checkOutTime.toString().substring(0,16) : ''}">
                     </td>
-                </tr>
 
+                    <td>
+                        <c:choose>
+
+                            <c:when test="${a.autoCheckout}">
+                                <span class="text-danger">Expired</span>
+                            </c:when>
+
+                            <c:when test="${a.isLate and a.isEarlyLeave}">
+                                <span class="text-warning">Late, Early Leave</span>
+                            </c:when>
+
+                            <c:when test="${a.isLate}">
+                                <span class="text-warning">Late</span>
+                            </c:when>
+
+                            <c:when test="${a.isEarlyLeave}">
+                                <span class="text-warning">Early Leave</span>
+                            </c:when>
+
+                            <c:otherwise>
+                                <span class="text-success">Normal</span>
+                            </c:otherwise>
+
+                        </c:choose>
+                    </td>
+
+                    <td>
+                        <button class="btn btn-success btn-sm"
+                                onclick="editRow(${a.attendanceId})"
+                                id="editBtn-${a.attendanceId}">
+                            Edit
+                        </button>
+                    </td>
+
+                </tr>
+                </c:forEach>
                 </tbody>
             </table>
         </div>
 
+        <!-- PAGINATION -->
+        <div class="d-flex justify-content-center gap-2 mt-4">
+
+            <c:if test="${employeePage.totalPages > 1}">
+
+                <!-- << FIRST -->
+                <c:if test="${currentPage > 0}">
+                    <a href="?page=0"
+                       class="btn btn-light">
+                        <<
+                    </a>
+                </c:if>
+
+                <!-- < PREVIOUS -->
+                <c:if test="${currentPage > 0}">
+                    <a href="?page=${currentPage - 1}"
+                       class="btn btn-light">
+                        <
+                    </a>
+                </c:if>
+
+                <!-- PAGE NUMBERS -->
+                <c:forEach begin="0"
+                           end="${employeePage.totalPages - 1}"
+                           var="i">
+
+                    <a href="?page=${i}"
+                       class="btn ${i == currentPage ? 'page-active' : 'btn-light'}">
+                        ${i + 1}
+                    </a>
+
+                </c:forEach>
+
+                <!-- > NEXT -->
+                <c:if test="${currentPage < employeePage.totalPages - 1}">
+                    <a href="?page=${currentPage + 1}"
+                       class="btn btn-light">
+                        >
+                    </a>
+                </c:if>
+
+                <!-- >> LAST -->
+                <c:if test="${currentPage < employeePage.totalPages - 1}">
+                    <a href="?page=${employeePage.totalPages - 1}"
+                       class="btn btn-light">
+                        >>
+                    </a>
+                </c:if>
+            </c:if>
+        </div>
+
         <!-- ACTION -->
         <div class="mt-3">
-            <button class="btn-primary">View Attendance History</button>
+
+            <!-- View History -->
+            <button class="btn-primary"
+                onclick="window.location.href='${pageContext.request.contextPath}/shift/manager/attendance_history'">
+                View Attendance History
+            </button>
+
+            </form>
         </div>
+
+
 
         <!-- BACK -->
         <a href="/hr/manager/manager_profile" class="back-link">← Back To Profile</a>
 
     </div>
 </div>
-
+<script>
+    const contextPath = "${pageContext.request.contextPath}";
+</script>
+<script src="<c:url value='/resources/js/manage/attendance.js'/>"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -22,6 +22,14 @@
 
     <dependencies>
 
+        <!-- Added on 23/02/2026-->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.3</version>
+        </dependency>
+        <!-- __________________ -->
+
         <!-- Added on 06/02/2026-->
         <dependency>
             <groupId>com.cloudinary</groupId>

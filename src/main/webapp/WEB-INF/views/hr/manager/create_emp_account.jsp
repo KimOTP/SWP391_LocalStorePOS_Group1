@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
-    <title>Change Information</title>
+    <title>Create Employee Account</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -11,62 +11,79 @@
     <link rel="stylesheet" href="<c:url value='/resources/css/profile/profile.css'/>">
 </head>
 <body>
+
 <jsp:include page="/WEB-INF/views/layer/header.jsp" />
 <jsp:include page="/WEB-INF/views/layer/sidebar.jsp" />
 
 <div class="main-content">
-
     <div class="profile-wrapper">
 
-        <!-- TITLE -->
         <div class="section-title">Create Employee Account</div>
         <div class="section-subtitle">Information</div>
 
-        <div class="row">
-            <div class="col-md-6">
+        <!-- ✅ FORM BẮT ĐẦU -->
+        <form action="${pageContext.request.contextPath}/hr/manager/create_emp_account" method="post">
 
-                <div class="info-label">Employee Name</div>
-                <div class="info-box">
-                    <input class="info-input" name="fullName" placeholder="Enter employee name"/>
+            <div class="row">
+                <div class="col-md-6">
+
+                    <div class="info-label">Employee Name</div>
+                    <div class="info-box">
+                        <input class="info-input" type="text" name="fullName"
+                               placeholder="Enter employee name" required/>
+                    </div>
+
+                    <div class="info-label">Login Name</div>
+                    <div class="info-box">
+                        <input class="info-input" type="text" name="username"
+                               placeholder="Enter login name" required/>
+                    </div>
+
+                    <div class="info-label">Role</div>
+                    <div class="info-box">
+                        <select class="info-input" name="role" required>
+                            <option value="CASHIER">Cashier</option>
+                            <option value="MANAGER">Manager</option>
+                        </select>
+                    </div>
+
+                    <div class="info-label">E-Mail</div>
+                    <div class="info-box">
+                        <input class="info-input" type="email" name="email"
+                               placeholder="example@gmail.com" required/>
+                    </div>
+
+                    <div class="info-label">Password</div>
+                    <div class="info-box">
+                        <input type="password" class="info-input" name="password" required/>
+                    </div>
+
+                    <div class="info-label">Confirm Password</div>
+                    <div class="info-box">
+                        <input type="password" class="info-input" name="confirmPassword" required/>
+                    </div>
+
+                    <button type="submit" class="btn-change mt-2">Create</button>
+
+                    <!--  ERROR -->
+                    <c:if test="${not empty error}">
+                        <div class="text-danger mt-2">${error}</div>
+                    </c:if>
+
+                    <!--  SUCCESS -->
+                    <c:if test="${not empty success}">
+                        <div class="text-success mt-2">${success}</div>
+                    </c:if>
+
                 </div>
-
-                <div class="info-label">Login Name</div>
-                <div class="info-box">
-                    <input class="info-input" name="username" placeholder="Enter login name"/>
-                </div>
-
-                <div class="info-label">Role</div>
-                <div class="info-box">
-                    <select class="info-input" name="role">
-                        <option>Cashier</option>
-                        <option>Manager</option>
-                    </select>
-                </div>
-
-                <div class="info-label">E-Mail</div>
-                <div class="info-box">
-                    <input class="info-input" type="email" name="email"
-                           placeholder="example@gmail.com"/>
-                </div>
-
-                <div class="info-label">Password</div>
-                <div class="info-box">
-                    <input type="password" class="info-input" name="password"/>
-                </div>
-
-                <div class="info-label">Confirm Password</div>
-                <div class="info-box">
-                    <input type="password" class="info-input" name="confirmPassword"/>
-                </div>
-
-                <button class="btn-change mt-2">Create</button>
-                <div class="success-text">Create Successfully!</div>
-
             </div>
-        </div>
+
+        </form>
+        <!-- ✅ FORM KẾT THÚC -->
 
         <!-- BACK -->
-        <a href="/hr/manager/manager_profile" class="back-link">← Back To Profile</a>
+        <a href="${pageContext.request.contextPath}/hr/manager/manager_profile"
+           class="back-link">← Back To Profile</a>
 
     </div>
 </div>
