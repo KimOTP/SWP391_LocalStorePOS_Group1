@@ -5,8 +5,11 @@ body {
 }
 
 .pos-container {
-    margin-left: 220px;
-    padding: 16px;
+    margin-left: 90px;      /* Sidebar 80px + 10px gap */
+    padding-top: 86px;      /* Header 70px + 16px gap */
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-bottom: 16px;
 }
 
 /* TOP BAR */
@@ -295,8 +298,10 @@ body {
 /* Tablet (max 992px) */
 @media (max-width: 992px) {
     .pos-container {
-        margin-left: 0;
-        padding: 12px;
+        margin-left: 90px;   /* Giữ nguyên vì sidebar vẫn hiện */
+        padding-top: 86px;
+        padding-left: 12px;
+        padding-right: 12px;
     }
 
     .pos-content {
@@ -335,5 +340,58 @@ body {
 
     .modal-content.large {
         padding: 12px;
+    }
+    /* CART ITEM CONTROLS */
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        padding: 8px 0;
+        gap: 6px;
+    }
+
+    .item-name {
+        flex: 1;
+        font-size: 13px;
+    }
+
+    .item-qty-controls {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .qty-btn {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 1px solid #ccc;
+        background: #f0f0f0;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 1;
+    }
+
+    .qty-num {
+        min-width: 20px;
+        text-align: center;
+        font-size: 13px;
+    }
+
+    .item-price {
+        font-size: 13px;
+        font-weight: bold;
+        min-width: 60px;
+        text-align: right;
+    }
+
+    .item-remove {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #ff4d4f;
+        font-size: 14px;
+        padding: 0 4px;
     }
 }
