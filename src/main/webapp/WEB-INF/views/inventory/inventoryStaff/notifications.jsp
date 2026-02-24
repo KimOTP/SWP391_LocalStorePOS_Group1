@@ -49,9 +49,10 @@
               <fmt:formatDate value="${pDate}" pattern="dd/MM/yyyy HH:mm" />
             </td>
             <td class="text-center">
-              <a href="<c:url value='/inventory/process?id=${item.stockInId}'/>" class="action-link">
-                Start Stock-in
-              </a>
+              <c:url var="processUrl" value="/stockIn/inventory-staff/process">
+                <c:param name="id" value="${item.stockInId}" />
+              </c:url>
+              <a href="${processUrl}" class="action-link">Start Action</a>
             </td>
           </tr>
         </c:forEach>
