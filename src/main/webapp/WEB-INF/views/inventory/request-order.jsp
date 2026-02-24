@@ -109,12 +109,17 @@
                     <span id="finalGrandTotal" class="text-danger">0.00 đ</span>
                 </div>
                 <div class="d-flex gap-2">
-                    <button class="btn btn-outline-secondary flex-grow-1 py-2" onclick="location.reload()">
-                        Cancel
-                    </button>
-                    <button class="btn btn-primary flex-grow-1 py-2 fw-bold" id="btnSubmitRequest">
-                        Request
-                    </button>
+                    <form id="finalForm" action="/requestOrder/admin/stock-in" method="POST">
+                        <input type="hidden" id="hiddenSupplierName" name="supplierName">
+                        <input type="hidden" id="hiddenItemsJson" name="itemsJson">
+
+                        <div class="summary-card">
+                            <div class="d-flex gap-2 p-3">
+                                <button type="button" class="btn btn-light flex-grow-1" onclick="handleCancel()">Cancel</button>
+                                <button type="button" class="btn btn-primary flex-grow-1" onclick="submitFinalOrder()">Request</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

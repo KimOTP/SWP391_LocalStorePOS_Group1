@@ -111,11 +111,10 @@ function calculateRowTotal(row) {
 }
 
 function addItemToReceipt() {
-    const row = document.querySelector('.product-row');
-    const sku = document.getElementById('productSku').value; // Đây là productId từ select
-    const name = row.querySelector('.product-name').value;
-    const price = parseFloat(row.querySelector('.unit-price').value) || 0;
-    const qty = parseInt(row.querySelector('.quantity-input').value) || 0;
+    const sku = document.getElementById('productSku').value;
+    const name = document.getElementById('productName').value;
+    const price = parseFloat(document.getElementById('unitCost').value) || 0;
+    const qty = parseInt(document.getElementById('qty').value) || 0;;
 
     if (!sku || !name || qty <= 0) {
         alert("Vui lòng chọn sản phẩm và nhập số lượng hợp lệ!");
@@ -137,9 +136,8 @@ function addItemToReceipt() {
             total: qty * price
         });
     }
-
     renderSummary();
-    resetRow(row);
+    resetRow();
 }
 
 function renderSummary() {
@@ -173,8 +171,6 @@ function lockSupplierFields(isLocked) {
 
 function removeItem(index) {
     receiptItems.splice(index, 1);
-
-    // Nếu xóa hết sản phẩm, cho phép sửa lại Supplier
     if (receiptItems.length === 0) {
         lockSupplierFields(false);
     }
@@ -182,35 +178,26 @@ function removeItem(index) {
     renderSummary();
 }
 
-function resetRow(row) {
+function resetRow() {
     document.getElementById('productSku').value = '';
-    row.querySelector('.product-name').value = '';
-    row.querySelector('.unit-price').value = '';
-    row.querySelector('.quantity-input').value = '1';
-    row.querySelector('.total-amount').value = '0.00';
+    document.getElementById('productName').value = '';
+    document.getElementById('unitCost').value = '';
+    document.getElementById('qty').value = '1';
 }
 
 async function submitFinalOrder() {
-    const supplierName = document.getElementById('supplierName').value;
-    if (!supplierName || receiptItems.length === 0) {
-        alert("Please enter supplier details and add at least one product!");
+    const sName = document.getElementById('supplierName').value;
+    if (!sName || receiptItems.length === 0) {
+        alert("Please select a supplier and add at least one item!");
         return;
     }
+    document.getElementById('hiddenSupplierName').value = sName;
+    document.getElementById('hiddenItemsJson').value = JSON.stringify(receiptItems);
 
-    const payload = { supplierName, items: receiptItems };
-
-    try {
-        const res = await fetch('/requestOrder/admin/stock-in', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        if (res.ok) {
-            alert("Request submitted successfully! Status: Input-Pending");
-            location.reload();
-        }
-    } catch (err) {
-        alert("Server connection error!");
+    document.getElementById('finalForm').submit();
+}
+function handleCancel() {
+    if (confirm("Cancel this request? All data will be lost.")) {
+        window.location.href = '/requestOrder/admin/view'; // English Redirect
     }
 }

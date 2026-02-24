@@ -5,8 +5,6 @@ import com.swp391pos.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -18,30 +16,37 @@ public class InventoryService {
     @Autowired private SupplierRepository supplierRepo;
     @Autowired private InventoryRepository inventoryRepo;
     @Autowired private ProductRepository productRepo;
+    @Autowired private EmployeeRepository employeeRepo;
 
     // Request Order Process
     @Transactional
-    public void createRequest(Map<String, Object> data) {
+    public void createRequest(String supplierName, List<Map<String, Object>> items, Account requester) {
+        // 1. Lưu StockIn
         StockIn si = new StockIn();
-        String sName = (String) data.get("supplierName");
-        Supplier supplier = supplierRepo.findBySupplierName(sName)
-                .orElseThrow(() -> new RuntimeException("Cannot find supplier: " + sName));
-        si.setSupplier(supplier);
-        TransactionStatus status = transactionStatusRepo.findById(1)
-                .orElseThrow(() -> new RuntimeException("Status not found"));
-        si.setStatus(status);
-        StockIn saved = stockInRepo.save(si);
+        si.setRequester(employeeRepo.getEmployeeByEmployeeId(1));
+        si.setSupplier(supplierRepo.findBySupplierName(supplierName).get());
+        si.setCreatedAt(java.time.LocalDateTime.now());
+        si.setStatus(transactionStatusRepo.findById(1).get());
+        StockIn savedSi = stockInRepo.save(si);
 
-        List<Map<String, Object>> items = (List<Map<String, Object>>) data.get("items");
         for (Map<String, Object> item : items) {
-            StockInDetail detail = new StockInDetail();
-            detail.setStockIn(saved);
-            detail.setProduct(productRepo.findProductByProductId((String) item.get("productId")));
-            detail.setRequestedQuantity(Integer.parseInt(item.get("qty").toString()));
-            detail.setReceivedQuantity(0);
-            Inventory inventory = inventoryRepo.findByProductId((String) item.get("productId"));
-            detail.setUnitCost(inventory.getUnitCost());
-            detailRepo.save(detail);
+            StockInDetail sid = new StockInDetail();
+            sid.setStockIn(savedSi);
+            Product product = productRepo.findProductByProductId((String) item.get("sku"));
+            sid.setProduct(product);
+
+            Object priceObj = item.get("price");
+            if (priceObj != null) {
+                sid.setUnitCost(new java.math.BigDecimal(priceObj.toString()));
+            } else {
+                Inventory inv = inventoryRepo.findById(product.getProductId()).orElse(null);
+                sid.setUnitCost(inv != null ? inv.getUnitCost() : java.math.BigDecimal.ZERO);
+            }
+
+            sid.setRequestedQuantity(Integer.parseInt(item.get("qty").toString()));
+            sid.setReceivedQuantity(0);
+
+            detailRepo.save(sid);
         }
     }
 
