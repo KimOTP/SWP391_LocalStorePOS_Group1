@@ -2,6 +2,7 @@ package com.swp391pos.controller.pos;
 
 import com.swp391pos.entity.*;
 import com.swp391pos.repository.*;
+import com.swp391pos.service.CategoryService;
 import com.swp391pos.service.ProductService;
 import com.swp391pos.service.PromotionService;
 import jakarta.servlet.http.HttpSession;
@@ -31,6 +32,7 @@ public class posController {
     private final PromotionRepository promotionRepository;
     private final PromotionService promotionService;
     private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
     private final InventoryRepository inventoryRepository;
     private final PaymentRepository paymentRepository;
     private final EmployeeRepository employeeRepository;
@@ -41,11 +43,11 @@ public class posController {
     @GetMapping("")
     public String showPOS(Model model, HttpSession session) {
         // Lấy tất cả sản phẩm (hoặc có thể phân trang)
-        List<Product> products = productRepository.findAll();
+        List<Product> products = productService.getAllProducts();
         model.addAttribute("products", products);
 
         // Lấy tất cả danh mục
-        List<Category> categories = categoryRepository.findAll();
+        List<Category> categories = categoryService.getAllCategories();
         model.addAttribute("categories", categories);
 
         return "pos/cashier/pos";
@@ -62,10 +64,10 @@ public class posController {
         List<Product> products;
 
         if (categoryId != null && !categoryId.isEmpty()) {
-            // Lấy sản phẩm theo danh mục
             products = productRepository.findAll().stream()
                     .filter(p -> p.getCategory() != null &&
-                            p.getCategory().getCategoryId().equals(categoryId))
+                            // Dùng String.valueOf để tránh lỗi kiểu dữ liệu
+                            String.valueOf(p.getCategory().getCategoryId()).equals(categoryId))
                     .collect(Collectors.toList());
         } else {
             // Lấy tất cả sản phẩm
