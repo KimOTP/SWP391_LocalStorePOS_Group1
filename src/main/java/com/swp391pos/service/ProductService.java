@@ -8,10 +8,15 @@ import com.swp391pos.entity.ProductStatus;
 import com.swp391pos.repository.CategoryRepository;
 import com.swp391pos.repository.ProductRepository;
 import com.swp391pos.repository.ProductStatusRepository;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +42,7 @@ public class ProductService {
     public boolean addProduct(Product product, MultipartFile imageFile, Integer statusId, Integer categoryId) {
         try {
             // 1. Tự động tạo mã SKU
-            String generatedSku = generateSku(product.getProductName(), product.getAttribute());
+            String generatedSku = generateSku();
             product.setProductId(generatedSku);
 
             // 2. Xử lý Upload ảnh lên Cloudinary
@@ -70,17 +75,21 @@ public class ProductService {
         }
     }
 
-    // Format: SKU_TENSANPHAM_ATTRIBUTE
-    private String generateSku(String name, String attribute) {
-        String baseName = (name != null)
-                ? name.replace(" ", "").toUpperCase()
-                : "PRODUCT";
+    // Format: SKU-PROD-00?
+    private String generateSku() {
+        String lastSku = productRepository.findLastSku();
+        int nextNumber = 1;
+        if (lastSku != null && lastSku.contains("-")) {
+            try {
 
-        String attrName = (attribute != null && !attribute.isEmpty())
-                ? attribute.replace(" ", "").toUpperCase()
-                : "ORIGIN";
-
-        return "SKU_" + baseName + "_" + attrName;
+                String[] parts = lastSku.split("-");
+                String lastNumberStr = parts[parts.length - 1];
+                nextNumber = Integer.parseInt(lastNumberStr) + 1;
+            } catch (NumberFormatException e) {
+                nextNumber = 1;
+            }
+        }
+        return String.format("SKU-PROD-%03d", nextNumber);
     }
 
     public List<Product> getAllProducts() {
@@ -89,7 +98,6 @@ public class ProductService {
 
     public boolean updateProduct(String oldId, Product product, MultipartFile imageFile, Integer statusId, Integer categoryId) {
         try {
-            String newSku = generateSku(product.getProductName(), product.getAttribute());
             Product oldProduct = productRepository.findProductByProductId(oldId);
 
             if (imageFile != null && !imageFile.isEmpty()) {
@@ -114,16 +122,6 @@ public class ProductService {
             stat.setProductStatusId(statusId);
             product.setStatus(stat);
 
-            // 5. Kiểm tra nếu SKU thay đổi
-            if (!newSku.equals(oldId)) {
-                productRepository.delete(oldProduct);
-                product.setProductId(newSku);
-                productRepository.save(product);
-            } else {
-                // Nếu SKU không đổi, chỉ cần lưu đè lên ID cũ
-                product.setProductId(oldId);
-                productRepository.save(product);
-            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -153,4 +151,56 @@ public class ProductService {
         return categoryRepository.findAll();
     }
 
+
+    public List<Product> searchProductManager(String kw, List<String> sIds, List<String> cNames, List<String> units, Sort sort) {
+        // Xử lý nếu List rỗng thì truyền null vào Repository để bỏ qua điều kiện lọc
+        List<String> statuses = (sIds != null && sIds.isEmpty()) ? null : sIds;
+        List<String> categories = (cNames != null && cNames.isEmpty()) ? null : cNames;
+        List<String> unitList = (units != null && units.isEmpty()) ? null : units;
+
+        return productRepository.searchProductManager(kw, statuses, categories, unitList, sort);
+    }
+
+    public List<String> getAllDistinctUnits() {
+        return productRepository.findAllDistinctUnits();
+    }
+
+    // export to file exel
+    public void exportProductsToExcel(List<Product> products, HttpServletResponse response) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Products");
+
+        // 1. Tạo Header (Dòng tiêu đề)
+        Row headerRow = sheet.createRow(0);
+        String[] columns = {"SKU", "Product Name", "Category", "Attribute", "Unit", "Price", "Status"};
+
+        // Style cho Header
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(true);
+        headerStyle.setFont(font);
+
+        for (int i = 0; i < columns.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(columns[i]);
+            cell.setCellStyle(headerStyle);
+        }
+
+        // 2. Đổ dữ liệu từ danh sách products vào các dòng tiếp theo
+        int rowIdx = 1;
+        for (Product p : products) {
+            Row row = sheet.createRow(rowIdx++);
+            row.createCell(0).setCellValue(p.getProductId());
+            row.createCell(1).setCellValue(p.getProductName());
+            row.createCell(2).setCellValue(p.getCategory().getCategoryName());
+            row.createCell(3).setCellValue(p.getAttribute());
+            row.createCell(4).setCellValue(p.getUnit());
+            row.createCell(5).setCellValue(String.valueOf(p.getPrice()));
+            row.createCell(6).setCellValue(p.getStatus().getProductStatusName());
+        }
+
+        // 3. Xuất file về trình duyệt
+        workbook.write(response.getOutputStream());
+        workbook.close();
+    }
 }
