@@ -5,6 +5,9 @@ import com.swp391pos.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +22,27 @@ public class StockInService {
     @Autowired private EmployeeRepository employeeRepo;
 
     // Request Order Process
+    public Map<String, String> getSupplierEmail(String name) {
+        return supplierRepo.findBySupplierName(name)
+                .map(s -> Map.of("email", s.getEmail()))
+                .orElse(null);
+    }
+
+    public List<Product> getProductsBySupplier(String name) {
+        return productRepo.searchBySupplierName(name);
+    }
+
+    public Map<String, Object> getProductDetails(String sku) {
+        Product product = productRepo.findProductByProductId(sku);
+        if (product == null) return null;
+
+        Inventory inventory = inventoryRepo.findById(sku).orElse(null);
+        Map<String, Object> response = new HashMap<>();
+        response.put("productName", product.getProductName());
+        response.put("unitCost", (inventory != null) ? inventory.getUnitCost() : BigDecimal.ZERO);
+        return response;
+    }
+
     @Transactional
     public void createRequest(String supplierName, List<Map<String, Object>> items, Account requester) {
         // 1. Lưu StockIn
@@ -49,6 +73,12 @@ public class StockInService {
             detailRepo.save(sid);
         }
     }
+
+    public List<StockIn> getPendingNotifications() {
+        return stockInRepo.findByStatusId(1);
+    }
+
+
 
     // Giai đoạn 2: Staff nhập số lượng thực tế (Chuyển sang trạng thái 2: Approval-Pending)
     @Transactional

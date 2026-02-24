@@ -8,20 +8,17 @@ import com.swp391pos.service.StockInService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 @Controller
-@RequestMapping("/requestOrder")
-public class RequestOrderController {
+@RequestMapping("/stockIn")
+public class StockInController {
 
-    @Autowired private ProductRepository productRepo;
-    @Autowired private InventoryRepository inventoryRepo;
-    @Autowired private SupplierRepository supplierRepo;
     @Autowired private StockInService stockInService;
 
     @GetMapping("/admin/view")
@@ -32,35 +29,22 @@ public class RequestOrderController {
     @GetMapping("/admin/supplier-info")
     @ResponseBody
     public ResponseEntity<?> getSupplierInfo(@RequestParam String name) {
-        return supplierRepo.findBySupplierName(name)
-                .map(s -> {
-                    Map<String, String> res = new HashMap<>();
-                    res.put("email", s.getEmail());
-                    return ResponseEntity.ok((Object) res);
-                })
-                .orElse(ResponseEntity.status(404).body("Cannot find this supplier!"));
+        Map<String, String> data = stockInService.getSupplierEmail(name);
+        return (data != null) ? ResponseEntity.ok(data) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/admin/products-by-supplier")
     @ResponseBody
     public ResponseEntity<?> getProductsBySupplier(@RequestParam String name) {
-        List<Product> products = productRepo.searchBySupplierName(name);
-        if (products.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(products);
+        List<Product> products = stockInService.getProductsBySupplier(name);
+        return products.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(products);
     }
 
     @GetMapping("/admin/product-info")
     @ResponseBody
     public ResponseEntity<?> getSingleProductInfo(@RequestParam String sku) {
-        Product product = productRepo.findProductByProductId(sku);
-        if (product == null) return ResponseEntity.notFound().build();
-        Inventory inventory = inventoryRepo.findById(sku).orElse(null);
-        Map<String, Object> response = new HashMap<>();
-        response.put("productName", product.getProductName());
-        response.put("unitCost", (inventory != null) ? inventory.getUnitCost() : BigDecimal.ZERO);
-        return ResponseEntity.ok(response);
+        Map<String, Object> data = stockInService.getProductDetails(sku);
+        return (data != null) ? ResponseEntity.ok(data) : ResponseEntity.notFound().build();
     }
 
     @PostMapping("/admin/stock-in")
@@ -70,12 +54,11 @@ public class RequestOrderController {
             HttpSession session, RedirectAttributes ra) {
         try {
             Account account = (Account) session.getAttribute("loggedInAccount");
-//            if (account == null) return "redirect:/login";
-
             ObjectMapper mapper = new ObjectMapper();
-            List<Map<String, Object>> items = mapper.readValue(itemsJson, new TypeReference<List<Map<String, Object>>>(){});
-
+            List<Map<String, Object>> items = mapper.readValue(itemsJson, new TypeReference<>(){});
+            // Gọi Service xử lý toàn bộ logic
             stockInService.createRequest(supplierName, items, account);
+
             ra.addFlashAttribute("message", "Product Request submitted successfully!");
             ra.addFlashAttribute("status", "success");
         } catch (Exception e) {
@@ -83,5 +66,15 @@ public class RequestOrderController {
             ra.addFlashAttribute("status", "danger");
         }
         return "redirect:/requestOrder/admin/view";
+    }
+
+    //Stock In Notification For Inventory Staff
+    @GetMapping("/inventory-staff/notifications")
+    public String showNotifications(Model model) {
+        List<StockIn> pendingList = stockInService.getPendingNotifications();
+
+        model.addAttribute("pendingRequests", pendingList);
+        model.addAttribute("totalPending", pendingList.size());
+        return "inventory/inventoryStaff/notifications";
     }
 }
