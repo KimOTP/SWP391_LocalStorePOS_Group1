@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class InventoryService {
+public class StockInService {
     @Autowired private StockInRepository stockInRepo;
     @Autowired private StockInDetailRepository detailRepo;
     @Autowired private TransactionStatusRepository transactionStatusRepo;
@@ -28,7 +28,7 @@ public class InventoryService {
         si.setCreatedAt(java.time.LocalDateTime.now());
         si.setStatus(transactionStatusRepo.findById(1).get());
         StockIn savedSi = stockInRepo.save(si);
-
+        //2. Lưu StockInDetail
         for (Map<String, Object> item : items) {
             StockInDetail sid = new StockInDetail();
             sid.setStockIn(savedSi);
