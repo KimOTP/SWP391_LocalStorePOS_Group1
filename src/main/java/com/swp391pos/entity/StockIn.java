@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Data
@@ -27,6 +28,9 @@ public class StockIn {
     @ManyToOne
     @JoinColumn(name = "transactionStatusId")
     private TransactionStatus status;
+    @OneToMany(mappedBy = "stockIn", fetch = FetchType.EAGER)
+    private List<StockInDetail> details;
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime receivedAt;
+
 }

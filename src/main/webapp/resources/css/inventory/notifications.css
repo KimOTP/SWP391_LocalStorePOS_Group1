@@ -1,0 +1,107 @@
+/* Layout & Spacing */
+.main-content {
+    margin-top: 70px;
+    margin-left: 80px;
+    padding: 30px;
+    background-color: #fcfcfc;
+    min-height: 100vh;
+}
+
+.page-title {
+    font-weight: 800;
+    font-size: 1.75rem;
+    margin-bottom: 25px;
+    color: #111;
+}
+
+/* --- SUMMARY SECTION --- */
+.summary-section {
+    margin-bottom: 35px; /* Tạo khoảng cách lớn với bảng */
+}
+
+.stat-card {
+    background-color: #e0e0e0;
+    border-radius: 12px;
+    padding: 24px;
+    width: fit-content;
+    min-width: 350px;
+    border: 1px solid #d0d0d0;
+}
+
+.stat-value {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #000;
+    line-height: 1.2;
+}
+
+.stat-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #444;
+}
+
+.stat-description {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* --- TABLE SECTION --- */
+.table-section {
+    width: 100%;
+}
+
+.table-container {
+    background-color: #e0e0e0; /* Nền xám cho cả vùng bảng theo mockup */
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid #d0d0d0;
+}
+
+.table {
+    margin-bottom: 0;
+    background-color: transparent !important;
+}
+
+.table thead th {
+    color: #555;
+    font-weight: 700;
+    border-bottom: 2px solid #bbb;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    padding: 15px 10px;
+}
+
+.table tbody td {
+    padding: 18px 10px;
+    border-bottom: 1px solid #ccc;
+    font-size: 0.95rem;
+}
+
+/* Components trong bảng */
+.request-id {
+    font-weight: 700;
+    color: #222;
+}
+
+.badge-qty {
+    background-color: #555; /* Màu xám đậm nổi bật */
+    color: white;
+    padding: 6px 20px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    display: inline-block;
+}
+
+.action-link {
+    color: #2563eb;
+    font-weight: 700;
+    text-decoration: underline;
+    font-size: 0.9rem;
+}
+
+.action-link:hover {
+    color: #1d4ed8;
+}
