@@ -54,7 +54,7 @@
                 </div>
 
                 <button type="submit" class="btn-change mt-2">Save</button>
-                <div class="success-text">Save Successfully!</div>
+                <!--<div class="success-text">Save Successfully!</div>-->
 
             </div>
 
@@ -107,7 +107,7 @@
         </form>
 
         <!-- BACK -->
-        <a href="/employee/list" class="back-link">← Back</a>
+        <a href="/hr/manager/employee_list" class="back-link">← Back</a>
 
     </div>
 </div>

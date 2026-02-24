@@ -23,42 +23,66 @@
         <div class="section-subtitle">Attendance History</div>
 
         <!-- FILTER -->
+        <form id="searchForm" method="get">
+
         <div class="row mb-4">
+
             <div class="col-md-2">
                 <div class="info-label">From Date</div>
                 <div class="info-box">
-                    <input class="info-input" value="20/01/2026"/>
+                    <input type="date"
+                           name="fromDate"
+                           class="info-input"
+                           value="${fromDate}">
                 </div>
             </div>
 
             <div class="col-md-2">
                 <div class="info-label">To Date</div>
                 <div class="info-box">
-                    <input class="info-input" value="20/01/2026"/>
+                    <input type="date"
+                           name="toDate"
+                           class="info-input"
+                           value="${toDate}">
                 </div>
             </div>
 
             <div class="col-md-3">
                 <div class="info-label">Employee</div>
                 <div class="info-box">
-                    <input class="info-input" value="Tran Phu"/>
+                    <input type="text"
+                           name="fullName"
+                           class="info-input"
+                           value="${fullName}">
                 </div>
             </div>
 
             <div class="col-md-2">
                 <div class="info-label">Shift</div>
                 <div class="info-box">
-                    <input class="info-input" placeholder="---"/>
+                    <select name="shift" class="info-input">
+                        <option value="">---</option>
+                        <option value="Morning">Morning</option>
+                        <option value="Afternoon">Afternoon</option>
+                        <option value="Evening">Evening</option>
+                    </select>
                 </div>
             </div>
 
             <div class="col-md-2">
                 <div class="info-label">Status</div>
                 <div class="info-box">
-                    <input class="info-input" placeholder="---"/>
+                    <select name="status" class="info-input">
+                        <option value="">---</option>
+                        <option value="Normal">Normal</option>
+                        <option value="Late">Late</option>
+                        <option value="Early Leave">Early Leave</option>
+                    </select>
                 </div>
             </div>
+
         </div>
+        </form>
 
         <!-- TABLE -->
         <div class="info-box" style="height:auto; padding:0;">
@@ -77,38 +101,51 @@
                 </thead>
                 <tbody>
 
-                <tr>
-                    <td>5</td>
-                    <td>Tran Phu 2</td>
-                    <td>Cashier</td>
-                    <td>Morning</td>
-                    <td>20/01/2026</td>
-                    <td>20/01/2026 07:02</td>
-                    <td>20/01/2026 11:45</td>
-                    <td class="text-warning">Early Leave</td>
-                </tr>
+                <c:forEach var="a" items="${attendancePage.content}">
 
-                <tr>
-                    <td>3</td>
-                    <td>Tran Phu</td>
-                    <td>Cashier</td>
-                    <td>Afternoon</td>
-                    <td>20/01/2026</td>
-                    <td>20/01/2026 12:03</td>
-                    <td>20/01/2026 17:00</td>
-                    <td class="text-success">Normal</td>
-                </tr>
+                    <tr>
+                        <td>${a.employee.employeeId}</td>
+                        <td>${a.employee.fullName}</td>
+                        <td>${a.employee.role}</td>
+                        <td>${a.shift.shiftName}</td>
+                        <td>${a.workDate}</td>
+                        <td>${a.checkInTime.toString().replace('T',' ')}</td>
+                        <td>${a.checkOutTime.toString().replace('T',' ')}</td>
 
-                <tr>
-                    <td>4</td>
-                    <td>Tran Phu 1</td>
-                    <td>Cashier</td>
-                    <td>Evening</td>
-                    <td>20/01/2026</td>
-                    <td>20/01/2026 17:11</td>
-                    <td>20/01/2026 22:00</td>
-                    <td class="text-danger">Late</td>
-                </tr>
+                        <td>
+                            <c:choose>
+
+                                <c:when test="${a.autoCheckout == true}">
+                                    <span class="text-danger">Expired</span>
+                                </c:when>
+
+                                <c:when test="${a.isLate == true and a.isEarlyLeave == true}">
+                                    <span class="text-warning">Late, Early Leave</span>
+                                </c:when>
+
+                                <c:when test="${a.isLate == true}">
+                                    <span class="text-warning">Late</span>
+                                </c:when>
+
+                                <c:when test="${a.isEarlyLeave == true}">
+                                    <span class="text-warning">Early Leave</span>
+                                </c:when>
+
+                                <c:otherwise>
+                                    <span class="text-success">Normal</span>
+                                </c:otherwise>
+
+                            </c:choose>
+                        </td>
+                    </tr>
+
+                </c:forEach>
+
+                <c:if test="${attendancePage.totalElements == 0}">
+                    <tr>
+                        <td colspan="8" class="text-center">No data</td>
+                    </tr>
+                </c:if>
 
                 </tbody>
             </table>
@@ -116,13 +153,55 @@
 
         <!-- PAGINATION -->
         <div class="d-flex justify-content-center gap-2 mt-4">
-            <button class="btn btn-light">&laquo;</button>
-            <button class="btn btn-light">&lsaquo;</button>
-            <button class="btn btn-primary">1</button>
-            <button class="btn btn-light">2</button>
-            <button class="btn btn-light">3</button>
-            <button class="btn btn-light">&rsaquo;</button>
-            <button class="btn btn-light">&raquo;</button>
+
+            <c:if test="${attendancePage.totalPages > 1}">
+
+                <!-- << FIRST -->
+                <c:if test="${currentPage > 0}">
+                    <a href="?page=0"
+                       class="btn btn-light">
+                        <<
+                    </a>
+                </c:if>
+
+                <!-- < PREVIOUS -->
+                <c:if test="${currentPage > 0}">
+                    <a href="?page=${currentPage - 1}"
+                       class="btn btn-light">
+                        <
+                    </a>
+                </c:if>
+
+                <!-- PAGE NUMBERS -->
+                <c:forEach begin="0"
+                           end="${attendancePage.totalPages - 1}"
+                           var="i">
+
+                    <a href="?page=${i}"
+                       class="btn ${i == currentPage ? 'page-active' : 'btn-light'}">
+                        ${i + 1}
+                    </a>
+
+                </c:forEach>
+
+                <!-- > NEXT -->
+                <c:if test="${currentPage < attendancePage.totalPages - 1}">
+                    <a href="?page=${currentPage + 1}"
+                       class="btn btn-light">
+                        >
+                    </a>
+                </c:if>
+
+                <!-- >> LAST -->
+                <c:if test="${currentPage < attendancePage.totalPages - 1}">
+                    <a href="?page=${attendancePage.totalPages - 1}"
+                       class="btn btn-light">
+                        >>
+                    </a>
+                </c:if>
+
+            </c:if>
+
         </div>
 
         <!-- BACK -->
@@ -130,7 +209,7 @@
 
     </div>
 </div>
-
+<script src="<c:url value='/resources/js/manage/attendance_history.js'/>"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
