@@ -34,36 +34,37 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Morning</td>
-                    <td>07:00</td>
-                    <td>12:00</td>
-                    <td>5h</td>
-                    <td>
-                        <button class="btn-change">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Afternoon</td>
-                    <td>12:00</td>
-                    <td>17:00</td>
-                    <td>5h</td>
-                    <td>
-                        <button class="btn-change">Edit</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Evening</td>
-                    <td>17:00</td>
-                    <td>22:00</td>
-                    <td>5h</td>
-                    <td>
-                        <button class="btn-change">Edit</button>
-                    </td>
-                </tr>
+                <c:forEach var="s" items="${shiftList}">
+                    <tr id="row-${s.shiftId}">
+                        <td>${s.shiftId}</td>
+
+                        <td>
+                            <span class="view">${s.shiftName}</span>
+                            <input type="text" class="edit form-control d-none" value="${s.shiftName}">
+                        </td>
+
+                        <td>
+                            <span class="view">${s.startTime}</span>
+                            <input type="time" class="edit form-control d-none" value="${s.startTime}">
+                        </td>
+
+                        <td>
+                            <span class="view">${s.endTime}</span>
+                            <input type="time" class="edit form-control d-none" value="${s.endTime}">
+                        </td>
+
+                        <td class="duration">
+                            ${java.time.Duration.between(s.startTime, s.endTime).toHours()}h
+                        </td>
+
+                        <td>
+                            <button class="btn-change edit-btn"
+                                    onclick="editRow(${s.shiftId})">
+                                Edit
+                            </button>
+                        </td>
+                    </tr>
+                </c:forEach>
                 </tbody>
             </table>
         </div>
@@ -73,7 +74,10 @@
     </div>
 </div>
 
+<script>
+    const contextPath = "${pageContext.request.contextPath}";
+</script>
+<script src="<c:url value='/resources/js/manage/shift_management.js'/>"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

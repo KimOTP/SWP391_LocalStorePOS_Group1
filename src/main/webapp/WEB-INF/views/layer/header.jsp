@@ -27,13 +27,12 @@
             <ul class="dropdown-menu dropdown-menu-end">
                 <li>
                     <a class="dropdown-item"
-                       href="${employee.role == 'MANAGER'
+                       href="${account.employee.role == 'MANAGER'
                             ? pageContext.request.contextPath.concat('/hr/manager/manager_profile')
                             : pageContext.request.contextPath.concat('/hr/cashier/cashier_profile')}">
                         Profile
                     </a>
                 </li>
-                <li><a class="dropdown-item" href="#">Settings</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/auth/logout">← Logout</a></li>
             </ul>

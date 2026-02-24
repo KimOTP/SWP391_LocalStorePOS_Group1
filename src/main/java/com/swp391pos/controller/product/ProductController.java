@@ -5,13 +5,16 @@ import com.swp391pos.entity.Product;
 import com.swp391pos.repository.CategoryRepository;
 import com.swp391pos.repository.ProductRepository;
 import com.swp391pos.service.ProductService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -27,31 +30,51 @@ public class ProductController {
 
     // manage page
     @GetMapping("/manage")
-    public String manageProducts(Model model) {
-        // 1. Lấy danh sách hiển thị bảng
-        model.addAttribute("listProducts", productService.getAllProducts());
+    public String manageProducts(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) List<String> statusNames,
+            @RequestParam(required = false) List<String> categoryNames,
+            @RequestParam(required = false) List<String> units,
+            @RequestParam(defaultValue = "productId") String sortField,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            Model model) {
 
-        // 2. Tính toán các con số thống kê
-        long total = productRepository.count();
-        long active = productRepository.countByStatus_ProductStatusName("Active");
-        long discontinued = productRepository.countByStatus_ProductStatusName("Discontinued");
-        long outOfStock = productRepository.countByStatus_ProductStatusName("Out of Stock");
-        long pending = productRepository.countByStatus_ProductStatusName("Pending Approval");
+        // 1. Xử lý logic Sắp xếp (Sort)
+        // sortField phải khớp với tên thuộc tính trong Entity Product (vd: productName, price)
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortField).ascending()
+                : Sort.by(sortField).descending();
 
-        long catCount = categoryRepository.count();
+        // 2. Gọi Service để lọc và sắp xếp từ Database
+        List<Product> list = productService.searchProductManager(keyword, statusNames, categoryNames, units, sort);
 
-        List<Product> list = productService.getAllProducts();
-
-        // 3. Đẩy dữ liệu ra Model
-        model.addAttribute("totalProducts", total);
-        model.addAttribute("activeCount", active);
-        model.addAttribute("stopCount", discontinued);
-        model.addAttribute("categoryCount", catCount);
-        model.addAttribute("outOfStockCount", outOfStock);
-        model.addAttribute("pendingCount", pending);
-
+        // 3. Đổ dữ liệu sản phẩm ra bảng
         model.addAttribute("listProducts", list);
         model.addAttribute("totalCount", list.size());
+
+        // 4. Gửi ngược lại các giá trị lọc để giữ trạng thái Checkbox/Search trên giao diện
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("selectedStatuses", statusNames);
+        model.addAttribute("selectedCategories", categoryNames);
+        model.addAttribute("selectedUnits", units);
+
+        // 5. Gửi thông tin Sort để hiển thị Icon mũi tên trên Header
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
+        // 6. Lấy dữ liệu cho các bộ lọc Checkbox (Danh sách động từ DB)
+        model.addAttribute("statuses", productService.getAllProductStatuses());
+        model.addAttribute("categories", productService.getAllCategories());
+        model.addAttribute("units", productService.getAllDistinctUnits());
+
+        // 7. Thống kê số liệu (Cards trên cùng)
+        model.addAttribute("totalProducts", productRepository.count());
+        model.addAttribute("activeCount", productRepository.countByStatus_ProductStatusName("Active"));
+        model.addAttribute("stopCount", productRepository.countByStatus_ProductStatusName("Discontinued"));
+        model.addAttribute("outOfStockCount", productRepository.countByStatus_ProductStatusName("Out of Stock"));
+        model.addAttribute("pendingCount", productRepository.countByStatus_ProductStatusName("Pending Approval"));
+        model.addAttribute("categoryCount", categoryRepository.count());
 
         return "product/product-manage";
     }
@@ -121,6 +144,17 @@ public class ProductController {
         } else {
             return "redirect:/products/update/" + oldId + "?error";
         }
+    }
+
+    @GetMapping("/export-excel")
+    public void exportToExcel(HttpServletResponse response) throws IOException {
+        response.setContentType("application/octet-stream");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=products_list.xlsx";
+        response.setHeader(headerKey, headerValue);
+
+        List<Product> list = productService.getAllProducts();
+        productService.exportProductsToExcel(list, response);
     }
 
 }

@@ -110,13 +110,55 @@
 
         <!-- PAGINATION -->
         <div class="d-flex justify-content-center gap-2 mt-4">
-            <button class="btn btn-light">&laquo;</button>
-            <button class="btn btn-light">&lsaquo;</button>
-            <button class="btn btn-primary">1</button>
-            <button class="btn btn-light">2</button>
-            <button class="btn btn-light">3</button>
-            <button class="btn btn-light">&rsaquo;</button>
-            <button class="btn btn-light">&raquo;</button>
+
+            <c:if test="${employeePage.totalPages > 1}">
+
+                <!-- << FIRST -->
+                <c:if test="${currentPage > 0}">
+                    <a href="?page=0"
+                       class="btn btn-light">
+                        <<
+                    </a>
+                </c:if>
+
+                <!-- < PREVIOUS -->
+                <c:if test="${currentPage > 0}">
+                    <a href="?page=${currentPage - 1}"
+                       class="btn btn-light">
+                        <
+                    </a>
+                </c:if>
+
+                <!-- PAGE NUMBERS -->
+                <c:forEach begin="0"
+                           end="${employeePage.totalPages - 1}"
+                           var="i">
+
+                    <a href="?page=${i}"
+                       class="btn ${i == currentPage ? 'page-active' : 'btn-light'}">
+                        ${i + 1}
+                    </a>
+
+                </c:forEach>
+
+                <!-- > NEXT -->
+                <c:if test="${currentPage < employeePage.totalPages - 1}">
+                    <a href="?page=${currentPage + 1}"
+                       class="btn btn-light">
+                        >
+                    </a>
+                </c:if>
+
+                <!-- >> LAST -->
+                <c:if test="${currentPage < employeePage.totalPages - 1}">
+                    <a href="?page=${employeePage.totalPages - 1}"
+                       class="btn btn-light">
+                        >>
+                    </a>
+                </c:if>
+
+            </c:if>
+
         </div>
 
         <!-- BACK -->
