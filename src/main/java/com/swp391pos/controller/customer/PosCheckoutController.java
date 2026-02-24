@@ -21,24 +21,20 @@ public class PosCheckoutController {
     private PosService posService;
 
     // Khi ấn nút Pay ở màn POS, form sẽ POST vào đây
-    @PostMapping("/payment")
+    @PostMapping("/payment") // Đợi Việt Anh chốt đường dẫn khi ấn nút Pay
     public String processToPayment(@RequestParam("cartDataJson") String cartDataJson, Model model) {
         try {
             // Chuyển chuỗi JSON từ JS thành List<CartRequest> của Java
             ObjectMapper mapper = new ObjectMapper();
             List<CartRequest> cartItems = mapper.readValue(cartDataJson, new TypeReference<List<CartRequest>>(){});
-
             // Gọi Service tính tiền
             PaymentSummary summary = posService.calculateCheckout(cartItems);
-
             // Đẩy dữ liệu ra màn Payment
             model.addAttribute("summary", summary);
-
         } catch (Exception e) {
             e.printStackTrace();
             return "redirect:/pos?error=InvalidCart"; // Quay lại nếu lỗi
         }
-
-        return "pos/payment-screen"; // Trỏ đến file JSP của màn Payment
+        return "pos/payment-screen"; // Trỏ đến file JSP của màn Payment // VAnh chưa làm màn payment
     }
 }
