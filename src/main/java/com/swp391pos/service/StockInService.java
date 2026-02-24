@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,8 @@ public class StockInService {
     @Autowired private InventoryRepository inventoryRepo;
     @Autowired private ProductRepository productRepo;
     @Autowired private EmployeeRepository employeeRepo;
+    @Autowired private StockOutRepository stockOutRepo;
+    @Autowired private AuditSessionRepository auditRepo;
 
     // Request Order Process
     public Map<String, String> getSupplierEmail(String name) {
@@ -79,8 +82,6 @@ public class StockInService {
     public List<StockIn> getPendingNotifications() {
         return stockInRepo.findByStatusId(1);
     }
-
-
 
     // Stock-in process
     public StockIn getStockInForProcessing(Integer id) {
