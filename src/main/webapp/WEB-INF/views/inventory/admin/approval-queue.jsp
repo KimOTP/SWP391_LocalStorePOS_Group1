@@ -61,9 +61,10 @@
             </div>
           </td>
           <td class="text-center">
-            <a href="<c:url value='/inventory/admin/details?type=${item.type}&id=${item.id}'/>" class="action-link">
-              View Detailed
-            </a>
+            <c:url var="detailUrl" value="/stockIn/inventory-staff/stock-in-details">
+              <c:param name="id" value="${item.id}" />
+            </c:url>
+            <a href="${detailUrl}" class="action-link">View Detailed</a>
           </td>
         </tr>
       </c:forEach>
