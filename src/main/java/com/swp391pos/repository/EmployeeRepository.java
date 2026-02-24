@@ -45,4 +45,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
             @Param("to") LocalDateTime to,
             Pageable pageable
     );
+
+    Employee getEmployeeByEmployeeId(Integer employeeId);
 }
