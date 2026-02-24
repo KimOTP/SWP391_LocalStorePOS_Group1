@@ -15,7 +15,7 @@ import java.util.List;
 public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
 
     @Query("SELECT p FROM Promotion p WHERE p.status != 'DELETED' " +
-            "(:keyword IS NULL OR p.promoName LIKE %:keyword% OR CAST(p.promotionId AS string) LIKE %:keyword%) " +
+            "AND(:keyword IS NULL OR p.promoName LIKE %:keyword% OR CAST(p.promotionId AS string) LIKE %:keyword%) " +
             "AND (:status IS NULL OR p.status = :status) " +
             "AND (:fromDate IS NULL OR p.startDate >= :fromDate) " +
             "AND (:toDate IS NULL OR p.startDate <= :toDate)") // Lọc trong khoảng ngày bắt đầu
