@@ -56,10 +56,55 @@
                 </ul>
             </div>
         </div>
-        <a href="/inventory" class="sidebar-item text-decoration-none" title="Inventory">
-            <i class="fa-solid fa-building"></i>
-            <span class="ms-3 sidebar-text">Inventory</span>
-        </a>
+        <c:set var="isInventoryActive" value="${pageContext.request.requestURI.contains('/stockIn')
+                                      or pageContext.request.requestURI.contains('/suppliers')
+                                      or pageContext.request.requestURI.contains('/inventory/admin')}" />
+
+        <div class="nav-item">
+            <a href="#inventorySubmenu" data-bs-toggle="collapse"
+               class="sidebar-item text-decoration-none d-flex align-items-center justify-content-between ${isInventoryActive ? 'active' : ''}"
+               aria-expanded="${isInventoryActive}">
+                <div class="d-flex align-items-center">
+                    <i class="fa-solid fa-building"></i>
+                    <span class="ms-3 sidebar-text">Inventory</span>
+                </div>
+                <i class="fa-solid fa-chevron-down ms-auto sidebar-text small-arrow"></i>
+            </a>
+
+            <div class="collapse ${isInventoryActive ? 'show' : ''}" id="inventorySubmenu" style="background-color: #f9f9f9;">
+                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small m-0">
+
+                    <li>
+                        <a href="/stockIn/inventory-staff/notifications" class="sidebar-item text-decoration-none ps-5 d-flex align-items-center ${pageContext.request.requestURI.contains('/notifications') ? 'text-primary fw-bold' : ''}" style="height: 45px;">
+                            <i class="fa-solid fa-bell me-2 sidebar-text" style="font-size: 14px;"></i>
+                            <span class="sidebar-text">Notifications</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/stockIn/admin/view" class="sidebar-item text-decoration-none ps-5 d-flex align-items-center ${pageContext.request.requestURI.contains('/stockIn/admin') ? 'text-primary fw-bold' : ''}" style="height: 45px;">
+                            <i class="fa-solid fa-file-invoice me-2 sidebar-text" style="font-size: 14px;"></i>
+                            <span class="sidebar-text">Request Order</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/suppliers" class="sidebar-item text-decoration-none ps-5 d-flex align-items-center ${pageContext.request.requestURI.contains('/suppliers') ? 'text-primary fw-bold' : ''}" style="height: 45px;">
+                            <i class="fa-solid fa-truck-field me-2 sidebar-text" style="font-size: 14px;"></i>
+                            <span class="sidebar-text">Supplier List</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/inventory/admin/approval/queue" class="sidebar-item text-decoration-none ps-5 d-flex align-items-center ${pageContext.request.requestURI.contains('/inventory/admin/queue') ? 'text-primary fw-bold' : ''}" style="height: 45px;">
+                            <i class="fa-solid fa-check-to-slot me-2 sidebar-text" style="font-size: 14px;"></i>
+                            <span class="sidebar-text">Approval Queue</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
 
         <a href="/reports" class="sidebar-item text-decoration-none" title="Reports">
             <i class="fa-solid fa-clipboard-list"></i>
