@@ -26,7 +26,7 @@ public class RequestOrderController {
 
     @GetMapping("/admin/view")
     public String showRequestOrderPage() {
-        return "inventory/request-order";
+        return "inventory/admin/request-order";
     }
 
     @GetMapping("/admin/supplier-info")
