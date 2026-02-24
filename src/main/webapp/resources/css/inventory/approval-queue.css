@@ -1,0 +1,84 @@
+.main-content {
+    margin-top: 70px;
+    margin-left: 80px;
+    padding: 30px;
+    background-color: #fcfcfc;
+    min-height: 100vh;
+}
+
+.page-title {
+    font-weight: 800;
+    font-size: 1.75rem;
+    margin-bottom: 25px;
+}
+
+/* Summary Card */
+.stat-card {
+    background-color: #e0e0e0;
+    border-radius: 12px;
+    padding: 24px;
+    width: fit-content;
+    min-width: 350px;
+    border: 1px solid #d0d0d0;
+    margin-bottom: 20px ;
+}
+
+.stat-value {
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: #000;
+}
+
+.stat-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #444;
+}
+
+/* Table Design */
+.table-container {
+    background-color: #e0e0e0;
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid #d0d0d0;
+}
+
+.table thead th {
+    color: #555;
+    font-weight: 700;
+    border-bottom: 2px solid #bbb;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+}
+
+/* Action Buttons */
+.btn-reject {
+    background-color: #8b1e1e; /* Đỏ đậm đặc trưng */
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.btn-approve {
+    background-color: #4a7c44; /* Xanh lá đậm đặc trưng */
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.action-link {
+    color: #2563eb;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.request-id {
+    font-weight: 700;
+    color: #222;
+}
