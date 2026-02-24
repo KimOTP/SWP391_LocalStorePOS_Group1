@@ -106,20 +106,8 @@ public class StockInService {
         }
     }
 
-    // Giai đoạn 3: Manager duyệt (Trạng thái 4: Approved -> CẬP NHẬT KHO)
-    @Transactional
-    public void approveStockIn(Integer stockInId) {
-        StockIn si = stockInRepo.findById(stockInId).orElseThrow();
-        TransactionStatus status = transactionStatusRepo.findById(4)
-                .orElseThrow(() -> new RuntimeException("Status not found"));
-        si.setStatus(status); // Approved
-        stockInRepo.save(si);
-
-        List<StockInDetail> details = detailRepo.findByStockIn(si);
-        for (StockInDetail d : details) {
-            Inventory inventory = new Inventory();
-            inventory.setCurrentQuantity(inventory.getCurrentQuantity() + d.getReceivedQuantity());
-            inventoryRepo.save(inventory);
-        }
+    //stock-in detail
+    public StockIn getStockInById(Integer id) {
+        return stockInRepo.findById(id).orElseThrow();
     }
 }
