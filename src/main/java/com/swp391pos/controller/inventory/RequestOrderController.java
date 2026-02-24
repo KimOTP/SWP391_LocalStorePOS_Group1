@@ -1,16 +1,17 @@
 package com.swp391pos.controller.inventory;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swp391pos.entity.*;
 import com.swp391pos.repository.*;
 import com.swp391pos.service.InventoryService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
-
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/requestOrder")
@@ -21,7 +22,6 @@ public class RequestOrderController {
     @Autowired private SupplierRepository supplierRepo;
     @Autowired private InventoryService inventoryService;
 
-    // 1. CHỈNH SỬA: Phương thức trả về giao diện JSP
     @GetMapping("/admin/view")
     public String showRequestOrderPage() {
         return "inventory/request-order";
@@ -42,9 +42,7 @@ public class RequestOrderController {
     @GetMapping("/admin/products-by-supplier")
     @ResponseBody
     public ResponseEntity<?> getProductsBySupplier(@RequestParam String name) {
-
         List<Product> products = productRepo.searchBySupplierName(name);
-
         if (products.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -56,20 +54,32 @@ public class RequestOrderController {
     public ResponseEntity<?> getSingleProductInfo(@RequestParam String sku) {
         Product product = productRepo.findProductByProductId(sku);
         if (product == null) return ResponseEntity.notFound().build();
-
         Inventory inventory = inventoryRepo.findById(sku).orElse(null);
-
         Map<String, Object> response = new HashMap<>();
         response.put("productName", product.getProductName());
         response.put("unitCost", (inventory != null) ? inventory.getUnitCost() : BigDecimal.ZERO);
-
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/admin/stock-in")
-    @ResponseBody
-    public ResponseEntity<?> saveRequest(@RequestBody Map<String, Object> payload) {
-        inventoryService.createRequest(payload);
-        return ResponseEntity.ok().build();
+    public String submitOrder(
+            @RequestParam String supplierName,
+            @RequestParam String itemsJson,
+            HttpSession session) {
+        try {
+            Account account = (Account) session.getAttribute("loggedInAccount");
+//            if (account == null) return "redirect:/login";
+
+            ObjectMapper mapper = new ObjectMapper();
+            List<Map<String, Object>> items = mapper.readValue(itemsJson, new TypeReference<List<Map<String, Object>>>(){});
+
+            inventoryService.createRequest(supplierName, items, account);
+            return "redirect:/requestOrder/admin/view";
+
+        } catch (Exception e) {
+            // In lỗi ra màn hình đen (Console) để xem nguyên nhân thực sự
+            e.printStackTrace();
+            return "redirect:/requestOrder/admin/view?error=" + e.getMessage();
+        }
     }
 }
