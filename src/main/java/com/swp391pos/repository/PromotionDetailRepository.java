@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 @Repository
 public interface PromotionDetailRepository extends JpaRepository<PromotionDetail, Long> {
@@ -21,4 +22,9 @@ public interface PromotionDetailRepository extends JpaRepository<PromotionDetail
 
     @Query("SELECT DISTINCT pd.product.productName FROM PromotionDetail pd WHERE pd.promotion.promotionId = :promotionId")
     List<String> findDistinctProductNamesByPromotionId(@Param("promotionId") Integer promotionId);
+
+    @Query("SELECT pd FROM PromotionDetail pd WHERE pd.promotion.status = 'ACTIVE' " +
+            "AND :today >= pd.promotion.startDate " +
+            "AND :today <= pd.promotion.endDate")
+    List<PromotionDetail> findAllActivePromotionsForPos(@Param("today") LocalDate today);
 }
