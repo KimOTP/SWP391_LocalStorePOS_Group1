@@ -57,8 +57,8 @@
         </div>
         <div class="col-md-3">
             <div class="stat-card">
-                <div class="stat-title mb-2">Promotion is about to end</div>
-                <div class="stat-value text-warning">${expiredCount}</div> <div class="small text-muted mt-1">About to expire across system</div>
+                <div class="stat-title mb-2">Promotion Expired</div>
+                <div class="stat-value text-warning">${expiredCount}</div> <div class="small text-muted mt-1">Expired across system</div>
             </div>
         </div>
     </div>
