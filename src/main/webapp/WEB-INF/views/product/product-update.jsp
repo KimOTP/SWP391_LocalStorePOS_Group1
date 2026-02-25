@@ -27,7 +27,7 @@
         </div>
 
         <div class="card border-0 shadow-sm">
-            <form action="${pageContext.request.contextPath}/products/manager/do-update" method="POST" enctype="multipart/form-data">
+            <form action="${pageContext.request.contextPath}/products/do-update" method="POST" enctype="multipart/form-data">
                 <div class="card-body p-5">
                     <div class="row g-5">
 
@@ -140,7 +140,7 @@
                     </div> <%-- End Row --%>
 
                     <div class="d-flex justify-content-end gap-3 mt-5 pt-4 border-top">
-                        <a href="<c:url value='/products/manager/manage'/>" class="btn btn-light px-5 py-2 border fw-bold">Cancel</a>
+                        <a href="<c:url value='/products/manage'/>" class="btn btn-light px-5 py-2 border fw-bold">Cancel</a>
                         <button type="submit" class="btn btn-primary px-5 py-2 fw-bold">Update Product</button>
                     </div>
                 </div>

@@ -36,7 +36,10 @@
     color: #64748b !important;
 }
 
-.stat-card:hover { transform: scale(1.03) !important; }
+.stat-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
 
 .stat-value {
     font-size: 1.75rem !important;
@@ -49,10 +52,9 @@
 .text-outstock { color: #dc2626 !important; }
 .text-pending { color: #eab308 !important; }
 
-/* --- 3. FIX LỖI CHẠM BIÊN (DÀNH CHO THẺ CARD TRONG ẢNH) --- */
-/* Target chính xác vào thẻ card chứa Products List */
+/* --- 3. FIX LỖI CHẠM BIÊN --- */
 .main-content .card.shadow-sm.border-0 {
-    margin-top: 30px !important; /* Tạo khoảng cách rõ rệt với hàng Stat Cards */
+    margin-top: 30px !important;
     border-radius: 16px !important;
 }
 
@@ -80,15 +82,16 @@
 }
 
 .search-box .form-control {
-    padding-left: 45px !important; /* Chừa chỗ cho icon kính lúp */
+    padding-left: 45px !important;
     height: 42px !important;
-    border: 1px solid #e2e8f0 !important; /* Ép hiển thị border */
+    border: 1px solid #e2e8f0 !important;
     border-radius: 10px !important;
     background-color: #f8fafc !important;
     font-size: 0.85rem !important;
 }
 
-/* --- 5. Buttons (Fix lỗi gạch ngang trong ảnh Inspect) --- */
+/* --- 5. Buttons (Thêm hiệu ứng Hover & Hold) --- */
+/* Nút Add Product */
 .btn-add {
     background-color: #2563eb !important;
     color: #fff !important;
@@ -100,11 +103,49 @@
     border-radius: 8px !important;
     display: inline-flex !important;
     align-items: center !important;
+    transition: all 0.2s ease !important;
 }
-.btn-filter {
-    height: 42px !important; /* Bằng chiều cao ô Search */
+
+.btn-add:hover {
+    background-color: #1d4ed8 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
+}
+
+.btn-add:active {
+    transform: scale(0.96) !important; /* Hiệu ứng nhấn giữ (Hold) */
+}
+
+/* Nút Export Excel */
+.btn-outline-success {
+    height: 40px !important;
+    border: 1.5px solid #16a34a !important;
+    color: #16a34a !important;
     background-color: #ffffff !important;
-    border: 1px solid #e2e8f0 !important; /* Khôi phục border bị mất */
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    padding: 0 20px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-outline-success:hover {
+    background-color: #16a34a !important;
+    color: #ffffff !important;
+    transform: translateY(-1px) !important;
+}
+
+.btn-outline-success:active {
+    transform: scale(0.96) !important;
+}
+
+/* Nút Filter */
+.btn-filter {
+    height: 42px !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
     border-radius: 10px !important;
     padding: 0 15px !important;
     color: #475569 !important;
@@ -115,30 +156,13 @@
     width: 100% !important;
     transition: all 0.2s ease !important;
 }
+
 .btn-filter:hover {
     border-color: #2563eb !important;
     background-color: #f8fafc !important;
 }
 
-.btn-outline-success {
-    height: 40px !important;
-    border: 1.5px solid #16a34a !important; /* Border rõ ràng hơn */
-    color: #16a34a !important;
-    background-color: #ffffff !important;
-    font-weight: 600 !important;
-    border-radius: 8px !important;
-    padding: 0 20px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 8px !important;
-}
-
-.btn-outline-success:hover {
-    background-color: #16a34a !important;
-    color: #ffffff !important;
-}
-
-/* --- 6. FIX LỖI HÌNH ẢNH LIST PRODUCT --- */
+/* --- 6. FIX LỖI HÌNH ẢNH & HOVER/HOLD --- */
 .product-img-container {
     width: 48px !important;
     height: 48px !important;
@@ -150,12 +174,27 @@
     border-radius: 10px !important;
     overflow: hidden !important;
     border: 1px solid #e2e8f0 !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer;
 }
 
 .product-img-table {
     width: 100% !important;
     height: 100% !important;
-    object-fit: cover !important; /* Đảm bảo ảnh lấp đầy khung không bị méo */
+    object-fit: cover !important;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Hover vào dòng hoặc vào ảnh thì ảnh phóng to nhẹ */
+tr:hover .product-img-table,
+.product-img-container:hover .product-img-table {
+    transform: scale(1.15) !important;
+}
+
+/* Khi nhấn giữ (Hold) vào ảnh */
+.product-img-container:active {
+    transform: scale(0.9) !important;
+    border-color: #2563eb !important;
 }
 
 /* --- 7. Status Badges --- */
