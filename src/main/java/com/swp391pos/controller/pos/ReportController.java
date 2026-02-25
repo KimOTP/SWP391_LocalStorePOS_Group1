@@ -19,7 +19,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/reports")
 @RequiredArgsConstructor
-public class reportController {
+public class ReportController {
 
     private final ReportService reportService;
 
