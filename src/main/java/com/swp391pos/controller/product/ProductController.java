@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
-@RequestMapping("/products")
+@RequestMapping("/products/manager")
 public class ProductController {
 
     @Autowired
@@ -100,10 +100,10 @@ public class ProductController {
 
         if (success) {
             redirectAttributes.addFlashAttribute("message", "Product added successfully!");
-            return "redirect:/products/manage";
+            return "redirect:/products/manager/manage";
         } else {
             redirectAttributes.addFlashAttribute("error", "Failed to add product.");
-            return "redirect:/products/add";
+            return "redirect:/products/manager/add";
         }
     }
 
@@ -118,7 +118,7 @@ public class ProductController {
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable String id) {
         productService.deleteProduct(id);
-        return "redirect:/products/manage";
+        return "redirect:/products/manager/manage";
     }
 
     @GetMapping("/update/{id}")
@@ -137,12 +137,13 @@ public class ProductController {
                                 @RequestParam("statusId") Integer statusId,
                                 @RequestParam("categoryId") Integer categoryId) {
 
+        product.setProductId(oldId);
         boolean success = productService.updateProduct(oldId, product, imageFile, statusId, categoryId);
 
         if(success) {
-            return "redirect:/products/manage";
+            return "redirect:/products/manager/manage";
         } else {
-            return "redirect:/products/update/" + oldId + "?error";
+            return "redirect:/products/manager/update/" + oldId + "?error";
         }
     }
 

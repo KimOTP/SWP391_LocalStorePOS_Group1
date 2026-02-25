@@ -3,7 +3,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top" style="height: 70px;">
     <div class="container-fluid px-4">
 
-        <a class="navbar-brand p-0 me-3" href="${pageContext.request.contextPath}/">
+        <a class="navbar-brand p-0 me-3" href="${pageContext.request.contextPath}/dashboard">
             <img src="${pageContext.request.contextPath}/resources/static/images/pos-logo.png"
                  alt="POS System Logo"
                  style="height: 50px; width: auto; object-fit: contain;">

@@ -12,6 +12,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<c:url value='/resources/css/product/product-manage.css' />">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -24,36 +26,40 @@
         <h2 class="fw-bold mb-0">Manage Product</h2>
     </div>
 
-    <div class="row g-4 mb-5">
+    <div class="row g-4">
         <div class="col-md-3">
             <div class="stat-card">
-                <div class="stat-title mb-2">Total Products</div>
-                <div class="stat-value">${totalProducts}</div>
-                <div class="small text-muted mt-1">Active: ${activeCount} | Stop: ${stopCount}</div>
+                <i class="fa-solid fa-box stat-icon"></i>
+                <div class="stat-title">Total Products</div>
+                <div class="stat-value text-total">${totalProducts}</div>
+                <div class="small text-muted mt-2">Active: ${activeCount} | Stop: ${stopCount}</div>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="stat-card">
-                <div class="stat-title mb-2">Categories</div>
-                <div class="stat-value">${categoryCount}</div>
-                <div class="small text-muted mt-1">Product Categories</div>
+                <i class="fa-solid fa-list-ul stat-icon"></i>
+                <div class="stat-title">Categories</div>
+                <div class="stat-value text-category">${categoryCount}</div>
+                <div class="small text-muted mt-2">Product Categories</div>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="stat-card">
-                <div class="stat-title mb-2">Out of Stock</div>
-                <div class="stat-value">${outOfStockCount}</div>
-                <div class="small text-muted mt-1">Status: Out of Stock</div>
+                <i class="fa-solid fa-triangle-exclamation stat-icon"></i>
+                <div class="stat-title">Out of Stock</div>
+                <div class="stat-value text-outstock">${outOfStockCount}</div>
+                <div class="small text-muted mt-2">Need to Restock</div>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="stat-card">
-                <div class="stat-title mb-2">Pending Approval</div>
-                <div class="stat-value">${pendingCount}</div>
-                <div class="small text-muted mt-1">Needs Approval</div>
+                <i class="fa-solid fa-clock-rotate-left stat-icon"></i>
+                <div class="stat-title">Pending Approval</div>
+                <div class="stat-value text-pending">${pendingCount}</div>
+                <div class="small text-muted mt-2">Needs Approval</div>
             </div>
         </div>
     </div>
@@ -70,7 +76,7 @@
                         <a href="<c:url value='/products/export-excel' />" class="btn btn-outline-success px-4 py-2">
                             <i class="fa-solid fa-file-excel me-2"></i>Export Excel
                         </a>
-                        <a href="<c:url value='/products/add' />" class="btn btn-add px-4 py-2 d-inline-flex align-items-center text-decoration-none">
+                        <a href="<c:url value='/products/manager/add' />" class="btn btn-add px-4 py-2 d-inline-flex align-items-center text-decoration-none">
                             <i class="fa-solid fa-plus me-2"></i>Add Product
                         </a>
                     </div>
@@ -164,7 +170,7 @@
                     <tbody>
                         <c:forEach var="p" items="${listProducts}">
                             <tr>
-                                <td class="text-muted small">${p.productId}</td>
+                                <td class="text-sku small">${p.productId}</td>
                                 <td class="product-name">
                                     <div class="d-flex align-items-center gap-3">
                                         <div class="product-img-container shadow-sm">
@@ -195,7 +201,11 @@
                                 </td>
                                 <td>
                                     <c:set var="statusName" value="${p.status.productStatusName}" />
-                                    <span class="badge ${statusName == 'Active' ? 'bg-success' : 'bg-secondary'}">
+                                    <span class="status-badge
+                                        ${statusName == 'Active' ? 'status-active' : ''}
+                                        ${statusName == 'Out of Stock' ? 'status-outstock' : ''}
+                                        ${statusName == 'Discontinued' ? 'status-discontinued' : ''}
+                                        ${statusName == 'Pending Approval' ? 'status-pending' : ''}">
                                         ${statusName}
                                     </span>
                                 </td>
@@ -216,19 +226,20 @@
                                                 <button class="dropdown-item rounded-2 py-2 btn-view-detail"
                                                         type="button"
                                                         data-id="${p.productId}"
-                                                        data-url="<c:url value='/products/view'/>">
+                                                        data-url="<c:url value='/products/manager/view'/>">
                                                     <i class="fa-regular fa-eye me-2 text-primary" style="width: 18px;"></i>View
                                                 </button>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item rounded-2 py-2" href="<c:url value='/products/update/${p.productId}'/>">
+                                                <a class="dropdown-item rounded-2 py-2" href="<c:url value='/products/manager/update/${p.productId}'/>">
                                                     <i class="fa-regular fa-pen-to-square me-2 text-warning" style="width: 18px;"></i> Update
                                                 </a>
                                             </li>
                                             <li><hr class="dropdown-divider mx-2"></li>
                                             <li>
-                                                <a class="dropdown-item rounded-2 py-2 text-danger" href="<c:url value='/products/delete/${p.productId}'/>"
-                                                   onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')">
+                                                <a class="dropdown-item rounded-2 py-2 text-danger btn-delete-confirm"
+                                                   href="javascript:void(0)"
+                                                   data-url="<c:url value='/products/manager/delete/${p.productId}'/>">
                                                     <i class="fa-regular fa-trash-can me-2" style="width: 18px;"></i> Delete
                                                 </a>
                                             </li>

@@ -1,78 +1,203 @@
-/* Layout */
+/* --- 1. Layout & Tổng thể --- */
 .main-content {
     margin-top: 70px;
     margin-left: 80px;
     padding: 40px;
-    background-color: #f8f9fa;
+    background-color: #f8fafc; /* Màu nền nhẹ nhàng đồng bộ trang Manage */
     min-height: calc(100vh - 70px);
 }
 
-/* Form Elements */
-.input-custom {
-    background-color: #e0e0e0 !important;
-    border: none !important;
-    border-radius: 10px !important;
-    padding: 12px 15px !important;
-}
-
-/* Fix Selling Price Group */
-.input-group-custom {
-    display: flex;
-    align-items: center;
-    background-color: #e0e0e0;
-    border-radius: 10px;
+.card {
+    border: 1.5px solid #e2e8f0 !important; /* Viền rõ nét như stat-card */
+    border-radius: 16px !important;
     overflow: hidden;
 }
 
+/* --- 2. Input & Select Custom --- */
+.input-custom, .form-select.input-custom {
+    background-color: #ffffff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 10px 15px !important;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.input-custom:focus {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+    background-color: #fff !important;
+}
+
+.input-custom[readonly] {
+    background-color: #f1f5f9 !important; /* Màu xám nhẹ cho SKU auto-gen */
+    cursor: not-allowed;
+}
+
+/* --- 3. Selling Price Group --- */
+.input-group-custom {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
+    background-color: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.input-group-custom:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
 .input-group-custom .input-custom {
-    flex: 1;
+    border: none !important;
     background-color: transparent !important;
 }
 
 .currency-suffix {
     padding-right: 15px;
-    font-weight: bold;
-    color: #333;
+    font-weight: 700;
+    color: #64748b;
 }
 
-/* Status Items */
+/* --- 4. Status Radio Items --- */
+.status-option-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
 .status-item {
-    background-color: #e0e0e0;
+    border: 1.5px solid #e2e8f0;
     border-radius: 10px;
-    padding: 12px 15px;
-    margin-bottom: 12px;
+    padding: 10px 15px;
     display: flex;
     align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: #fff;
+}
+
+.status-item:hover {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+}
+
+/* Hiệu ứng khi Radio được chọn */
+.status-item has(:checked) {
+    border-color: #2563eb;
+    background-color: #eff6ff;
 }
 
 .status-item input[type="radio"] {
+    width: 18px;
+    height: 18px;
     margin-right: 12px;
-    accent-color: #000;
+    accent-color: #2563eb; /* Màu xanh chủ đạo */
+    cursor: pointer;
 }
 
-/* Image Upload */
+.status-item label {
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #475569;
+    margin-bottom: 0;
+}
+
+/* --- 5. Image Upload (Giao diện chuyên nghiệp) --- */
 .image-upload-wrapper {
-    background-color: #e0e0e0;
-    border-radius: 15px;
+    background-color: #f8fafc;
+    border: 2px dashed #cbd5e1; /* Viền đứt nét cho khu vực upload */
+    border-radius: 16px;
     height: 320px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.image-upload-wrapper:hover {
+    border-color: #2563eb;
+    background-color: #eff6ff;
 }
 
 .inner-box {
     background-color: #fff;
-    width: 140px;
-    height: 140px;
+    width: 200px; /* Tăng kích thước preview ảnh */
+    height: 200px;
     border-radius: 12px;
-    overflow: hidden; /* Quan trọng để ảnh không tràn góc bo */
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .inner-box img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Ảnh fit đầy ô vuông */
+    object-fit: cover;
+}
+
+/* --- 6. Buttons --- */
+.btn-primary {
+    background-color: #2563eb !important;
+    border: none !important;
+    border-radius: 8px !important;
+    transition: all 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #1d4ed8 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-light {
+    border-radius: 8px !important;
+    background-color: #fff !important;
+    color: #64748b !important;
+}
+
+/* --- Custom Select Wrapper --- */
+.custom-select-wrapper .dropdown-toggle {
+    /* Mũi tên chữ V hiện đại */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 1rem center !important;
+    background-size: 14px 10px !important;
+    border: 1.5px solid #e2e8f0 !important;
+    background-color: #fff !important;
+    padding: 10px 15px !important;
+    font-size: 0.9rem !important;
+    color: #1e293b !important;
+}
+
+.custom-select-wrapper .dropdown-toggle::after {
+    display: none; /* Ẩn mũi tên tam giác mặc định của Bootstrap */
+}
+
+/* Menu xổ xuống (Dropdown Menu) */
+.custom-dropdown-menu {
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 6px !important;
+    margin-top: 6px !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.custom-dropdown-menu .dropdown-item {
+    padding: 10px 12px !important;
+    border-radius: 8px !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    color: #475569 !important;
+    transition: all 0.2s ease;
+}
+
+.custom-dropdown-menu .dropdown-item:hover {
+    background-color: #f1f5f9 !important;
+    color: #2563eb !important;
 }
