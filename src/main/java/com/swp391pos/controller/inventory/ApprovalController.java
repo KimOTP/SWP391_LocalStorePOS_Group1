@@ -23,7 +23,7 @@ public class ApprovalController {
         List<Map<String, Object>> unifiedQueue = approvalService.getAllPendingApprovals();
         model.addAttribute("pendingRequests", unifiedQueue);
         model.addAttribute("totalCount", unifiedQueue.size());
-        return "inventory/admin/approval-queue";
+        return "inventory/manager/approval-queue";
     }
 
     @PostMapping("/approval/action")

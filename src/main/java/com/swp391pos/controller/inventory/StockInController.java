@@ -23,7 +23,7 @@ public class StockInController {
 
     @GetMapping("/admin/view")
     public String showRequestOrderPage() {
-        return "inventory/admin/request-order";
+        return "inventory/manager/request-order";
     }
 
     @GetMapping("/admin/supplier-info")
@@ -65,7 +65,7 @@ public class StockInController {
             ra.addFlashAttribute("message", "Error: " + e.getMessage());
             ra.addFlashAttribute("status", "danger");
         }
-        return "redirect:/requestOrder/admin/view";
+        return "redirect:/requestOrder/manager/view";
     }
 
     //Stock In Notification For Inventory Staff

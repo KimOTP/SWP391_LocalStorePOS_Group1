@@ -16,9 +16,8 @@ public class SupplierController {
 
     @GetMapping
     public String viewSupplierList(Model model) {
-        // Put all data to a model
         model.addAttribute("suppliers", supplierService.getSuppliersDashboardData());
-        return "inventory/admin/supplier-list";
+        return "inventory/manager/supplier-list";
     }
 
     @PostMapping("/admin/add")
