@@ -3,7 +3,7 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top" style="height: 70px;">
     <div class="container-fluid px-4">
 
-        <a class="navbar-brand p-0 me-3" href="${pageContext.request.contextPath}/">
+        <a class="navbar-brand p-0 me-3" href="${pageContext.request.contextPath}/dashboard">
             <img src="${pageContext.request.contextPath}/resources/static/images/pos-logo.png"
                  alt="POS System Logo"
                  style="height: 50px; width: auto; object-fit: contain;">
@@ -25,6 +25,19 @@
                 </div>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
+            <!-- Thêm block thông tin user -->
+                <li class="px-3 py-2">
+                    <div class="fw-bold">
+                        ${account.username}
+                    </div>
+                    <div class="small text-muted">
+                        ${account.employee.email}
+                    </div>
+                    <div class="small">
+                        ${account.employee.role}
+                    </div>
+                </li>
+                <li><hr class="dropdown-divider"></li>
                 <li>
                     <a class="dropdown-item"
                        href="${account.employee.role == 'MANAGER'

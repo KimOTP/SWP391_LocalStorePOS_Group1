@@ -2,12 +2,15 @@ package com.swp391pos.controller.hr;
 
 import com.swp391pos.entity.Account;
 import com.swp391pos.repository.AccountRepository;
+import com.swp391pos.repository.AttendanceRepository;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -16,9 +19,12 @@ import java.time.format.DateTimeFormatter;
 public class HrController {
 
     private final AccountRepository accountRepository;
+    private final AttendanceRepository attendanceRepository;
 
-    public HrController(AccountRepository accountRepository) {
+    public HrController(AccountRepository accountRepository,
+                        AttendanceRepository attendanceRepository) {
         this.accountRepository = accountRepository;
+        this.attendanceRepository = attendanceRepository;
     }
 
     @GetMapping("/manager/manager_profile")
@@ -68,6 +74,17 @@ public class HrController {
                 .orElse(null);
 
         model.addAttribute("account", account);
+
+        String todayShift = attendanceRepository
+                .findLatestShift(
+                        account.getEmployee().getEmployeeId(),
+                        PageRequest.of(0,1)
+                )
+                .stream()
+                .findFirst()
+                .orElse("No shift yet");
+
+        model.addAttribute("todayShift", todayShift);
 //------------------
         LocalDateTime previousLogin =
                 (LocalDateTime) session.getAttribute("previousLogin");

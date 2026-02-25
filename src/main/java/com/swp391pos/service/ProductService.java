@@ -122,6 +122,8 @@ public class ProductService {
             stat.setProductStatusId(statusId);
             product.setStatus(stat);
 
+            productRepository.save(product);
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();

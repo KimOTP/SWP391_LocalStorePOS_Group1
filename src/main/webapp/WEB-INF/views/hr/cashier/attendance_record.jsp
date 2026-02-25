@@ -39,54 +39,107 @@
                 </thead>
 
                 <tbody>
-                <tr>
-                    <td>3</td>
-                    <td>Afternoon</td>
-                    <td>19/01/2026</td>
-                    <td>19/01/2026 - 12:01</td>
-                    <td>19/01/2026 - 18:00</td>
-                    <td>No</td>
-                    <td>No</td>
-                    <td class="text-success">Normal</td>
-                    <td>19/01/2026 - 18:00</td>
-                </tr>
+                <c:forEach var="att" items="${attendancePage.content}">
+                    <tr>
+                        <td>${att.employee.employeeId}</td>
+                        <td>${att.shift.shiftName}</td>
+                        <td>${att.workDate}</td>
+                        <td>${att.checkInTime.toString().replace('T',' ').substring(0,16)}</td>
+                        <td>${att.checkOutTime.toString().replace('T',' ').substring(0,16)}</td>
 
-                <tr>
-                    <td>3</td>
-                    <td>Afternoon</td>
-                    <td>18/01/2026</td>
-                    <td>18/01/2026 - 12:13</td>
-                    <td>18/01/2026 - 18:00</td>
-                    <td>Yes</td>
-                    <td>No</td>
-                    <td class="text-danger">Late</td>
-                    <td>18/01/2026 - 18:00</td>
-                </tr>
+                        <td>
+                            <c:choose>
+                                <c:when test="${att.isLate}">
+                                    Yes
+                                </c:when>
+                                <c:otherwise>No</c:otherwise>
+                            </c:choose>
+                        </td>
 
-                <tr>
-                    <td>3</td>
-                    <td>Afternoon</td>
-                    <td>17/01/2026</td>
-                    <td>17/01/2026 - 12:01</td>
-                    <td>17/01/2026 - 17:30</td>
-                    <td>No</td>
-                    <td>Yes</td>
-                    <td class="text-warning">Early Leave</td>
-                    <td>17/01/2026 - 18:00</td>
-                </tr>
+                        <td>
+                            <c:choose>
+                                <c:when test="${att.isEarlyLeave}">
+                                    Yes
+                                </c:when>
+                                <c:otherwise>No</c:otherwise>
+                            </c:choose>
+                        </td>
+
+                        <td>
+                            <c:choose>
+                                <c:when test="${att.isLate and att.isEarlyLeave}">
+                                    <span class="text-warning">Late, Early Leave</span>
+                                </c:when>
+                                <c:when test="${att.isLate}">
+                                    <span class="text-danger">Late</span>
+                                </c:when>
+                                <c:when test="${att.isEarlyLeave}">
+                                    <span class="text-warning">Early Leave</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <span class="text-success">Normal</span>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
+
+                        <td>${att.checkOutTime.toString().replace('T',' ').substring(0,16)}</td>
+                    </tr>
+                </c:forEach>
                 </tbody>
             </table>
         </div>
 
         <!-- PAGINATION -->
         <div class="d-flex justify-content-center gap-2 mt-4">
-            <button class="btn btn-light">&laquo;</button>
-            <button class="btn btn-light">&lsaquo;</button>
-            <button class="btn btn-primary">1</button>
-            <button class="btn btn-light">2</button>
-            <button class="btn btn-light">3</button>
-            <button class="btn btn-light">&rsaquo;</button>
-            <button class="btn btn-light">&raquo;</button>
+
+            <c:if test="${attendancePage.totalPages > 1}">
+
+                <!-- << FIRST -->
+                <c:if test="${currentPage > 0}">
+                    <a href="?page=0"
+                       class="btn btn-light">
+                        <<
+                    </a>
+                </c:if>
+
+                <!-- < PREVIOUS -->
+                <c:if test="${currentPage > 0}">
+                    <a href="?page=${currentPage - 1}"
+                       class="btn btn-light">
+                        <
+                    </a>
+                </c:if>
+
+                <!-- PAGE NUMBERS -->
+                <c:forEach begin="0"
+                           end="${attendancePage.totalPages - 1}"
+                           var="i">
+
+                    <a href="?page=${i}"
+                       class="btn ${i == currentPage ? 'page-active' : 'btn-light'}">
+                        ${i + 1}
+                    </a>
+
+                </c:forEach>
+
+                <!-- > NEXT -->
+                <c:if test="${currentPage < attendancePage.totalPages - 1}">
+                    <a href="?page=${currentPage + 1}"
+                       class="btn btn-light">
+                        >
+                    </a>
+                </c:if>
+
+                <!-- >> LAST -->
+                <c:if test="${currentPage < attendancePage.totalPages - 1}">
+                    <a href="?page=${attendancePage.totalPages - 1}"
+                       class="btn btn-light">
+                        >>
+                    </a>
+                </c:if>
+
+            </c:if>
+
         </div>
 
         <!-- BACK -->
