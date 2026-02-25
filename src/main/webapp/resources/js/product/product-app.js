@@ -72,28 +72,22 @@ function initTableFilter() {
     function filterTable() {
         const searchText = searchInput.value.toLowerCase().trim();
 
-        // 1. Lấy danh sách các giá trị đang được tick (Nếu không tick cái nào, mảng sẽ rỗng)
         const selectedStatuses = Array.from(document.querySelectorAll('.status-cb:checked')).map(cb => cb.value.trim());
         const selectedCategories = Array.from(document.querySelectorAll('.category-cb:checked')).map(cb => cb.value.trim());
         const selectedUnits = Array.from(document.querySelectorAll('.unit-cb:checked')).map(cb => cb.value.trim());
 
         tableRows.forEach(row => {
-            // 2. Lấy dữ liệu text từ các cột
             const name = row.querySelector('.product-name').innerText.toLowerCase();
             const sku = row.querySelector('td:nth-child(1)').innerText.toLowerCase();
             const category = row.querySelector('td:nth-child(4)').innerText.trim();
             const unit = row.querySelector('td:nth-child(5)').innerText.trim();
             const status = row.querySelector('td:nth-child(7)').innerText.trim();
 
-            // 3. Logic kiểm tra Search
             const matchesSearch = name.includes(searchText) || sku.includes(searchText);
-
-            // 4. Logic kiểm tra Checkbox (Nếu mảng rỗng => hiện tất cả)
             const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(status);
             const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(category);
             const matchesUnit = selectedUnits.length === 0 || selectedUnits.includes(unit);
 
-            // 5. Hiển thị hàng nếu khớp TẤT CẢ các tiêu chí
             if (matchesSearch && matchesStatus && matchesCategory && matchesUnit) {
                 row.style.display = "";
             } else {
@@ -102,17 +96,58 @@ function initTableFilter() {
         });
     }
 
-    // Gán sự kiện
     searchInput.addEventListener('input', filterTable);
     checkboxes.forEach(cb => {
         cb.addEventListener('change', filterTable);
     });
 }
 
+// --- 4. Xử lý Xác nhận xóa bằng Popup (SweetAlert2) ---
+function initDeleteConfirmation() {
+    const deleteButtons = document.querySelectorAll('.btn-delete-confirm');
 
-// --- 4. Khởi tạo tất cả khi trang tải xong ---
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault(); // Chặn link mặc định
+            const deleteUrl = this.getAttribute('data-url');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you really want to delete this product? This action cannot be undone!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                borderRadius: '15px'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = deleteUrl;
+                }
+            });
+        });
+    });
+}
+
+function selectCategory(id, name) {
+    document.getElementById('categoryLabel').innerText = name;
+    document.getElementById('selectedCategoryId').value = id;
+    // Thêm hiệu ứng đổi màu chữ nếu cần
+    document.getElementById('categoryLabel').style.color = '#1e293b';
+}
+
+function selectUnit(unitName) {
+    document.getElementById('unitLabel').innerText = unitName;
+    document.getElementById('selectedUnit').value = unitName;
+    document.getElementById('unitLabel').style.color = '#1e293b';
+}
+
+// --- 5. Khởi tạo tất cả khi trang tải xong ---
 document.addEventListener('DOMContentLoaded', function() {
     initImagePreview();
     initProductDetails();
     initTableFilter();
+    initDeleteConfirmation(); // Khởi tạo tính năng xóa
 });

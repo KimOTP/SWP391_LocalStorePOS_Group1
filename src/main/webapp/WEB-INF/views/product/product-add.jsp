@@ -18,16 +18,15 @@
     <div class="main-content">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold mb-0">Add New Product</h2>
-            <a href="<c:url value='/products/manage'/>" class="btn btn-light border fw-bold px-3">
+            <a href="<c:url value='/products/manager/manage'/>" class="btn btn-light border fw-bold px-3">
                 <i class="fa-solid fa-arrow-left me-2"></i>Back to List
             </a>
         </div>
 
         <div class="card border-0 shadow-sm" style="border-radius: 15px;">
-            <form action="${pageContext.request.contextPath}/products/add" method="POST" enctype="multipart/form-data">
+            <form action="${pageContext.request.contextPath}/products/manager/add" method="POST" enctype="multipart/form-data">
                 <div class="card-body p-5">
                     <div class="row g-5">
-
                         <%-- Cột 1: Basic Info --%>
                         <div class="col-md-4 border-end">
                             <div class="mb-4">
@@ -38,25 +37,43 @@
                                 <label class="form-label text-muted fw-bold small">Product Name</label>
                                 <input type="text" name="productName" class="form-control input-custom" placeholder="Enter name..." required>
                             </div>
-                            <div class="mb-4">
-                                <label class="form-label text-muted fw-bold small">Category</label>
-                                <select name="categoryId" class="form-select input-custom" required>
-                                    <option value="" selected disabled>Select category</option>
-                                    <c:forEach var="cat" items="${categories}">
-                                        <option value="${cat.categoryId}">${cat.categoryName}</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
-                            <div class="mb-0">
-                                <label class="form-label text-muted fw-bold small">Unit</label>
-                                <select name="unit" class="form-select input-custom">
-                                    <option value="Can">Can</option>
-                                    <option value="Pack">Pack</option>
-                                    <option value="Unit">Unit</option>
-                                    <option value="Bottle">Bottle</option>
-                                </select>
-                            </div>
-                        </div>
+
+                                    <%-- Custom Category Dropdown --%>
+                                   <div class="mb-4">
+                                       <label class="form-label text-muted fw-bold small">Category</label>
+                                       <div class="dropdown custom-select-wrapper">
+                                           <button class="btn input-custom dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center"
+                                                   type="button" id="categoryDropdown" data-bs-toggle="dropdown">
+                                               <span id="categoryLabel" class="text-muted">Select category</span>
+                                           </button>
+                                           <ul class="dropdown-menu w-100 shadow-sm custom-dropdown-menu">
+                                               <c:forEach var="cat" items="${categories}">
+                                                   <li><a class="dropdown-item" href="javascript:void(0)"
+                                                          onclick="selectCategory('${cat.categoryId}', '${cat.categoryName}')">${cat.categoryName}</a></li>
+                                               </c:forEach>
+                                           </ul>
+                                           <input type="hidden" name="categoryId" id="selectedCategoryId" required>
+                                       </div>
+                                   </div>
+
+                                   <%-- Custom Unit Dropdown --%>
+                                   <div class="mb-0">
+                                       <label class="form-label text-muted fw-bold small">Unit</label>
+                                       <div class="dropdown custom-select-wrapper">
+                                           <button class="btn input-custom dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center"
+                                                   type="button" id="unitDropdown" data-bs-toggle="dropdown">
+                                               <span id="unitLabel" class="text-muted">Select unit</span>
+                                           </button>
+                                           <ul class="dropdown-menu w-100 shadow-sm custom-dropdown-menu">
+                                               <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectUnit('Can')">Can</a></li>
+                                               <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectUnit('Pack')">Pack</a></li>
+                                               <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectUnit('Unit')">Unit</a></li>
+                                               <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectUnit('Bottle')">Bottle</a></li>
+                                           </ul>
+                                           <input type="hidden" name="unit" id="selectedUnit" value="">
+                                       </div>
+                                   </div>
+                               </div>
 
                         <%-- Cột 2: Attributes & Dynamic Status --%>
                         <div class="col-md-4 border-end">
@@ -107,7 +124,7 @@
                     </div>
 
                     <div class="d-flex justify-content-end gap-3 mt-5 pt-4 border-top">
-                        <a href="<c:url value='/products/manage'/>" class="btn btn-light px-5 py-2 border fw-bold">Cancel</a>
+                        <a href="<c:url value='/products/manager/manage'/>" class="btn btn-light px-5 py-2 border fw-bold">Cancel</a>
                         <button type="submit" class="btn btn-primary px-5 py-2 fw-bold">Add Product</button>
                     </div>
                 </div>

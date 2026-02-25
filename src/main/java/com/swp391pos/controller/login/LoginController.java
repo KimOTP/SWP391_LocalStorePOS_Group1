@@ -118,13 +118,7 @@ public class LoginController {
                         attendanceRepository.save(attendance);
                     });
         }
-
-//        session.removeAttribute("account");
-//        session.removeAttribute("loggedInAccount");
-//        session.removeAttribute("role");
-//        session.removeAttribute("previousLogin");
         session.invalidate();
         return "redirect:/auth/login";
     }
-
 }

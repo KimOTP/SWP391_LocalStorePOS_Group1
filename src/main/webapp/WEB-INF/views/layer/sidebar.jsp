@@ -1,195 +1,268 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 
-<div id="sidebar" class="sidebar bg-white border-end">
-    <div class="d-flex flex-column h-100">
-
-        <div class="sidebar-item toggle-btn" id="sidebarToggle">
-            <i class="fa-solid fa-chevron-right" id="toggleIcon"></i>
-            <span class="ms-3 sidebar-text fw-bold">Collapse</span>
-        </div>
-
-        <a href="/" class="sidebar-item text-decoration-none" title="Home">
-            <i class="fa-solid fa-house"></i>
-            <span class="ms-3 sidebar-text">Home</span>
-        </a>
-
-        <a href="/pos" class="sidebar-item text-decoration-none" title="POS">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span class="ms-3 sidebar-text">POS & Sales</span>
-        </a>
-
-        <a href="/products/manage" class="sidebar-item text-decoration-none" title="Products">
-            <i class="fa-solid fa-store"></i>
-            <span class="ms-3 sidebar-text">Menu & Products</span>
-        </a>
-
-        <c:set var="isCrmActive" value="${pageContext.request.requestURI.contains('/customers') or pageContext.request.requestURI.contains('/promotions')}" />
-
-        <div class="nav-item">
-            <a href="#crmSubmenu" data-bs-toggle="collapse"
-               class="sidebar-item text-decoration-none d-flex align-items-center justify-content-between ${isCrmActive ? 'active' : ''}"
-               aria-expanded="${isCrmActive}">
-                <div class="d-flex align-items-center">
-                    <i class="fa-solid fa-user-group"></i> <span class="ms-3 sidebar-text">CRM & Promo</span>
-                </div>
-                <i class="fa-solid fa-chevron-down ms-auto sidebar-text small-arrow"></i>
-            </a>
-
-            <div class="collapse ${isCrmActive ? 'show' : ''}" id="crmSubmenu" style="background-color: #f9f9f9;">
-                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small m-0">
-
-                    <li>
-                        <a href="/cus-promo/manager/customer" class="sidebar-item text-decoration-none ps-5 d-flex align-items-center ${pageContext.request.requestURI.contains('/customers') ? 'text-primary fw-bold' : ''}" style="height: 45px;">
-                            <i class="fa-regular fa-user me-2 sidebar-text" style="font-size: 14px;"></i>
-                            <span class="sidebar-text">Customer</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/cus-promo/manager/promotion" class="sidebar-item text-decoration-none ps-5 d-flex align-items-center ${pageContext.request.requestURI.contains('/promotions') ? 'text-primary fw-bold' : ''}" style="height: 45px;">
-                            <i class="fa-solid fa-tags me-2 sidebar-text" style="font-size: 14px;"></i>
-                            <span class="sidebar-text">Promotion</span>
-                        </a>
-                    </li>
-
-                </ul>
-            </div>
-        </div>
-        <c:set var="isInventoryActive" value="${pageContext.request.requestURI.contains('/stockIn')
-                                      or pageContext.request.requestURI.contains('/suppliers')
-                                      or pageContext.request.requestURI.contains('/inventory/admin')}" />
-
-        <div class="nav-item">
-            <a href="#inventorySubmenu" data-bs-toggle="collapse"
-               class="sidebar-item text-decoration-none d-flex align-items-center justify-content-between ${isInventoryActive ? 'active' : ''}"
-               aria-expanded="${isInventoryActive}">
-                <div class="d-flex align-items-center">
-                    <i class="fa-solid fa-building"></i>
-                    <span class="ms-3 sidebar-text">Inventory</span>
-                </div>
-                <i class="fa-solid fa-chevron-down ms-auto sidebar-text small-arrow"></i>
-            </a>
-
-            <div class="collapse ${isInventoryActive ? 'show' : ''}" id="inventorySubmenu" style="background-color: #f9f9f9;">
-                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small m-0">
-
-                    <li>
-                        <a href="/stockIn/inventory-staff/notifications" class="sidebar-item text-decoration-none ps-5 d-flex align-items-center ${pageContext.request.requestURI.contains('/notifications') ? 'text-primary fw-bold' : ''}" style="height: 45px;">
-                            <i class="fa-solid fa-bell me-2 sidebar-text" style="font-size: 14px;"></i>
-                            <span class="sidebar-text">Notifications</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/stockIn/admin/view" class="sidebar-item text-decoration-none ps-5 d-flex align-items-center ${pageContext.request.requestURI.contains('/stockIn/admin') ? 'text-primary fw-bold' : ''}" style="height: 45px;">
-                            <i class="fa-solid fa-file-invoice me-2 sidebar-text" style="font-size: 14px;"></i>
-                            <span class="sidebar-text">Request Order</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/suppliers" class="sidebar-item text-decoration-none ps-5 d-flex align-items-center ${pageContext.request.requestURI.contains('/suppliers') ? 'text-primary fw-bold' : ''}" style="height: 45px;">
-                            <i class="fa-solid fa-truck-field me-2 sidebar-text" style="font-size: 14px;"></i>
-                            <span class="sidebar-text">Supplier List</span>
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/inventory/admin/approval/queue" class="sidebar-item text-decoration-none ps-5 d-flex align-items-center ${pageContext.request.requestURI.contains('/inventory/admin/queue') ? 'text-primary fw-bold' : ''}" style="height: 45px;">
-                            <i class="fa-solid fa-check-to-slot me-2 sidebar-text" style="font-size: 14px;"></i>
-                            <span class="sidebar-text">Approval Queue</span>
-                        </a>
-                    </li>
-
-                </ul>
-            </div>
-        </div>
-
-        <a href="/reports" class="sidebar-item text-decoration-none" title="Reports">
-            <i class="fa-solid fa-clipboard-list"></i>
-            <span class="ms-3 sidebar-text">Reports</span>
-        </a>
-    </div>
-</div>
-
 <style>
-    /* CSS Sidebar cơ bản */
-    .sidebar {
-        width: 80px;
+    :root {
+        --sb-bg: #ffffff;
+        --sb-collapsed: 80px;
+        --sb-expanded: 260px;
+        --sb-blue: #2563eb;
+        --sb-text: #64748b;
+        --sb-hover: #f8fafc;
+        /* Đồng bộ font chữ với các hệ thống POS hiện đại */
+        --sb-font: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    #sidebar {
+        width: var(--sb-collapsed);
         height: calc(100vh - 70px);
         position: fixed;
         top: 70px;
         left: 0;
-        transition: width 0.3s ease;
+        background: var(--sb-bg);
+        border-right: 1px solid #edf2f7;
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1000;
+        overflow-y: auto;
         overflow-x: hidden;
-        white-space: nowrap;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+        font-family: var(--sb-font);
     }
 
-    .sidebar.expanded { width: 250px; }
+    #sidebar.expanded {
+        width: var(--sb-expanded);
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.05);
+    }
 
-    .sidebar-item {
-        padding: 15px 25px;
-        font-size: 18px;
-        color: #555;
-        cursor: pointer;
+    /* Header & Toggle Area */
+    .sidebar-header {
+        height: 60px;
         display: flex;
         align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--sb-blue);
+        border-bottom: 1px solid #f8fafc;
+    }
+
+    #sidebar.expanded .sidebar-header {
+        justify-content: space-between;
+        padding: 0 28px;
+    }
+
+    .toggle-icon {
+        font-size: 1.1rem;
+        transition: transform 0.4s;
+    }
+
+    #sidebar.expanded .toggle-icon {
+        transform: rotate(180deg);
+    }
+
+    /* Sidebar Links (Cấp 1) */
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 50px;
+        color: var(--sb-text);
+        text-decoration: none !important;
+        margin: 4px 12px;
+        border-radius: 12px;
         transition: all 0.2s;
     }
 
-    .sidebar-item:hover, .sidebar-item.active {
-        color: #0d6efd;
+    #sidebar.expanded .sidebar-link {
+        justify-content: flex-start;
+        padding: 0 16px;
     }
 
-    /* Hiệu ứng thanh xanh bên trái khi active (chỉ áp dụng cho item cấp 1) */
-    .nav-item > .sidebar-item.active {
-        background-color: #f0f2f5;
-        border-left: 4px solid #0d6efd;
+    .sidebar-link i:first-child {
+        font-size: 1.2rem;
+        min-width: 24px;
+        text-align: center;
     }
 
-    /* Ẩn hiện text khi thu/phóng */
-    .sidebar-text {
+    .sidebar-link:hover {
+        background: var(--sb-hover);
+        color: var(--sb-blue);
+    }
+
+    .sidebar-link.active {
+        background: #eff6ff;
+        color: var(--sb-blue);
+        font-weight: 600;
+    }
+
+    /* KHÓA CLICK: Chỉ Dashboard được bấm khi thu nhỏ */
+    #sidebar:not(.expanded) .sidebar-link:not(.allow-collapsed),
+    #sidebar:not(.expanded) .nav-group {
+        pointer-events: none;
+        cursor: default;
+    }
+
+    /* Submenu (Cấp 2) */
+    .submenu-list {
+        padding: 2px 0 8px 0;
+    }
+
+    .submenu-item {
+        display: flex;
+        align-items: center;
+        padding: 10px 16px 10px 48px;
+        color: var(--sb-text);
+        text-decoration: none !important;
+        font-size: 0.88rem;
+        border-radius: 10px;
+        margin: 2px 12px;
+        transition: all 0.2s;
+    }
+
+    .submenu-item i {
+        font-size: 1rem;
+        width: 20px;
+        margin-right: 10px;
+    }
+
+    .submenu-item.active {
+        background: var(--sb-blue);
+        color: #fff !important;
+        font-weight: 500;
+    }
+
+    .submenu-item:hover:not(.active) {
+        background: var(--sb-hover);
+        color: var(--sb-blue);
+    }
+
+    /* Visibility Controls */
+    .sb-text, .sb-arrow, .header-label {
+        display: none;
         opacity: 0;
-        transition: opacity 0.2s;
-        visibility: hidden;
-        display: none; /* Ẩn hẳn để không vỡ layout khi thu nhỏ */
+        white-space: nowrap;
     }
 
-    .sidebar.expanded .sidebar-text {
-        opacity: 1;
-        visibility: visible;
+    #sidebar.expanded .sb-text,
+    #sidebar.expanded .sb-arrow,
+    #sidebar.expanded .header-label {
         display: inline-block;
+        opacity: 1;
+        margin-left: 12px;
     }
 
-    .sidebar.expanded #toggleIcon { transform: rotate(180deg); }
+    .sb-arrow {
+        margin-left: auto;
+        font-size: 9px;
+    }
 
-    /* Mũi tên nhỏ của dropdown */
-    .small-arrow { font-size: 12px; transition: transform 0.2s; }
-    .sidebar-item[aria-expanded="true"] .small-arrow { transform: rotate(180deg); }
-
+    #sidebar::-webkit-scrollbar { width: 4px; }
+    #sidebar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
 </style>
 
+<div id="sidebar">
+    <div class="sidebar-header" id="toggleBtn">
+        <span class="header-label fw-bold" style="font-size: 14px; letter-spacing: 0.5px;">NAVIGATION</span>
+        <i class="fa-solid fa-chevron-right toggle-icon"></i>
+    </div>
+
+    <a href="/dashboard" class="sidebar-link allow-collapsed ${pageContext.request.requestURI.endsWith('dashboard') ? 'active' : ''}">
+        <i class="fa-solid fa-house-chimney"></i>
+        <span class="sb-text">Dashboard</span>
+    </a>
+
+    <a href="/pos" class="sidebar-link ${pageContext.request.requestURI.contains('/pos') ? 'active' : ''}">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span class="sb-text">POS & Sales</span>
+        <i class="fa-solid fa-chevron-right sb-arrow"></i>
+    </a>
+
+    <c:set var="isMenuOpen" value="${pageContext.request.requestURI.contains('/products')}" />
+    <div class="nav-group">
+        <a href="#menuSub" data-bs-toggle="collapse" class="sidebar-link ${isMenuOpen ? 'active' : ''}">
+            <i class="fa-solid fa-utensils"></i>
+            <span class="sb-text">Menu & Products</span>
+            <i class="fa-solid fa-chevron-down sb-arrow"></i>
+        </a>
+        <div class="collapse ${isMenuOpen ? 'show' : ''}" id="menuSub">
+            <div class="submenu-list">
+                <a href="/products/manager/manage" class="submenu-item ${pageContext.request.requestURI.contains('/manage') ? 'active' : ''}">
+                    <i class="fa-solid fa-layer-group"></i>
+                    <span>Product List</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <c:set var="isCrmOpen" value="${pageContext.request.requestURI.contains('/cus-promo')}" />
+    <div class="nav-group">
+        <a href="#crmSub" data-bs-toggle="collapse" class="sidebar-link ${isCrmOpen ? 'active' : ''}">
+            <i class="fa-solid fa-users-gear"></i>
+            <span class="sb-text">CRM & Promo</span>
+            <i class="fa-solid fa-chevron-down sb-arrow"></i>
+        </a>
+        <div class="collapse ${isCrmOpen ? 'show' : ''}" id="crmSub">
+            <div class="submenu-list">
+                <a href="/cus-promo/manager/customer" class="submenu-item ${pageContext.request.requestURI.contains('/customer') ? 'active' : ''}">
+                    <i class="fa-solid fa-user-tag"></i>
+                    <span>Customers</span>
+                </a>
+                <a href="/cus-promo/manager/promotion" class="submenu-item ${pageContext.request.requestURI.contains('/promotion') ? 'active' : ''}">
+                    <i class="fa-solid fa-ticket"></i>
+                    <span>Promotions</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <c:set var="isInvOpen" value="${pageContext.request.requestURI.contains('/stockIn') or pageContext.request.requestURI.contains('/suppliers') or pageContext.request.requestURI.contains('/inventory')}" />
+    <div class="nav-group">
+        <a href="#invSub" data-bs-toggle="collapse" class="sidebar-link ${isInvOpen ? 'active' : ''}">
+            <i class="fa-solid fa-boxes-stacked"></i>
+            <span class="sb-text">Inventory</span>
+            <i class="fa-solid fa-chevron-down sb-arrow"></i>
+        </a>
+        <div class="collapse ${isInvOpen ? 'show' : ''}" id="invSub">
+            <div class="submenu-list">
+                <a href="/stockIn/inventory-staff/notifications" class="submenu-item">
+                    <i class="fa-solid fa-bell"></i><span>Notifications</span>
+                </a>
+                <a href="/stockIn/admin/view" class="submenu-item">
+                    <i class="fa-solid fa-file-circle-plus"></i><span>Request Order</span>
+                </a>
+                <a href="/suppliers" class="submenu-item">
+                    <i class="fa-solid fa-truck-ramp-box"></i><span>Supplier List</span>
+                </a>
+                <a href="/inventory/admin/approval/queue" class="submenu-item">
+                    <i class="fa-solid fa-clipboard-check"></i><span>Approval Queue</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <a href="/reports" class="sidebar-link">
+        <i class="fa-solid fa-chart-column"></i>
+        <span class="sb-text">Reports</span>
+    </a>
+</div>
+
 <script>
-    const sidebar = document.getElementById('sidebar');
-    const toggleBtn = document.getElementById('sidebarToggle');
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleBtn');
 
-    // Hover vào mũi tên -> Mở rộng sidebar
-    toggleBtn.addEventListener('mouseenter', () => {
-        sidebar.classList.add('expanded');
-    });
+        // Toggle Expand/Collapse on Click
+        toggleBtn.addEventListener('click', function() {
+            sidebar.classList.toggle('expanded');
+        });
 
-    // Rời chuột khỏi sidebar -> Thu nhỏ
-    sidebar.addEventListener('mouseleave', () => {
-        // Chỉ thu nhỏ nếu người dùng không click giữ cố định (logic mở rộng tùy bạn)
-        sidebar.classList.remove('expanded');
-
-        // Tùy chọn: Khi thu nhỏ thì đóng luôn submenu cho gọn
-        // var collapseElementList = [].slice.call(document.querySelectorAll('.collapse'))
-        // var collapseList = collapseElementList.map(function (collapseEl) {
-        //   return new bootstrap.Collapse(collapseEl, { toggle: false }).hide()
-        // })
+        // Auto-close submenus when collapsing for clean UI
+        sidebar.addEventListener('transitionend', function() {
+            if (!sidebar.classList.contains('expanded')) {
+                const openCollapses = sidebar.querySelectorAll('.collapse.show');
+                openCollapses.forEach(c => {
+                    const bCollapse = bootstrap.Collapse.getInstance(c);
+                    if (bCollapse) bCollapse.hide();
+                });
+            }
+        });
     });
 </script>
