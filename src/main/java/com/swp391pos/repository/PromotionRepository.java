@@ -25,5 +25,5 @@ public interface PromotionRepository extends JpaRepository<Promotion, Integer> {
                                      @Param("toDate") LocalDate toDate);
 
     long countByStatus(PromotionStatus status);
-    long countByStatusNot(PromotionStatus status); //đếm số promo chưa bị delete
+    long countByStatusNot(PromotionStatus status); //đếm số promo chưa bị deleted
 }
