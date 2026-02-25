@@ -19,6 +19,12 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 
     List<Attendance> findByWorkDate(LocalDate workDate);
 
+    Page<Attendance> findByEmployee_EmployeeIdAndWorkDateLessThanEqualOrderByWorkDateDesc(
+            Integer employeeId,
+            LocalDate date,
+            Pageable pageable
+    );
+
     List<Attendance> findByEmployeeAndWorkDateGreaterThanEqual(
             Employee employee,
             LocalDate date
@@ -57,4 +63,12 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
             Employee employee,
             LocalDate workDate
     );
+
+    @Query("""
+       SELECT a.shift.shiftName
+       FROM Attendance a
+       WHERE a.employee.employeeId = :empId
+       ORDER BY a.workDate DESC
+    """)
+        List<String> findLatestShift(Integer empId, Pageable pageable);
 }
