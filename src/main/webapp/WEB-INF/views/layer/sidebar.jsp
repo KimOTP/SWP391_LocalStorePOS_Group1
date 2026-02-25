@@ -184,7 +184,7 @@
         </a>
         <div class="collapse ${isMenuOpen ? 'show' : ''}" id="menuSub">
             <div class="submenu-list">
-                <a href="/products/manager/manage" class="submenu-item ${pageContext.request.requestURI.contains('/manage') ? 'active' : ''}">
+                <a href="/products/manage" class="submenu-item ${pageContext.request.requestURI.contains('/manage') ? 'active' : ''}">
                     <i class="fa-solid fa-layer-group"></i>
                     <span>Product List</span>
                 </a>
