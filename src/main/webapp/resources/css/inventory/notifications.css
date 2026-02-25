@@ -5,6 +5,8 @@
     padding: 30px;
     background-color: #fcfcfc;
     min-height: 100vh;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: margin-left;
 }
 
 .page-title {
@@ -104,4 +106,7 @@
 
 .action-link:hover {
     color: #1d4ed8;
+}
+#sidebar.expanded ~ .main-content {
+    margin-left: 260px;
 }

@@ -9,6 +9,8 @@ body {
     padding: 30px;
     background-color: #ffffff;
     min-height: 100vh;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: margin-left;
 }
 
 /* Card thông tin phía trên (Phần xám) */
@@ -143,4 +145,7 @@ body {
     background-color: #d9d9d9;
     border-radius: 15px;
     padding: 25px;
+}
+#sidebar.expanded ~ .main-content {
+    margin-left: 260px;
 }

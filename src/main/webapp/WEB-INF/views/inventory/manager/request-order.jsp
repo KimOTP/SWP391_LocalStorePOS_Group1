@@ -109,7 +109,7 @@
                     <span id="finalGrandTotal" class="text-danger">0.00 đ</span>
                 </div>
                 <div class="d-flex gap-2">
-                    <form id="finalForm" action="/requestOrder/admin/stock-in" method="POST">
+                    <form id="finalForm" action="/StockIn/stock-in" method="POST">
                         <input type="hidden" id="hiddenSupplierName" name="supplierName">
                         <input type="hidden" id="hiddenItemsJson" name="itemsJson">
 

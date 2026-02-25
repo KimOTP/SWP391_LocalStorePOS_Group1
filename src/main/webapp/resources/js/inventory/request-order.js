@@ -39,7 +39,7 @@ async function handleSupplierAutoFill() {
     }
 
     try {
-        const response = await fetch(`/requestOrder/admin/supplier-info?name=${encodeURIComponent(name)}`);
+        const response = await fetch(`/stockIn/supplier-info?name=${encodeURIComponent(name)}`);
 
         if (!response.ok) {
             throw new Error("Supplier not found in the system!");
@@ -67,7 +67,7 @@ async function loadProductsBySupplier(name) {
     const productSelect = document.getElementById('productSku');
 
     try {
-        const response = await fetch(`/requestOrder/admin/products-by-supplier?name=${encodeURIComponent(name)}`);
+        const response = await fetch(`/stockIn/products-by-supplier?name=${encodeURIComponent(name)}`);
         const products = await response.json();
 
         if (products && products.length > 0) {
@@ -91,7 +91,7 @@ async function handleProductSelect() {
     if (!sku) return;
 
     try {
-        const response = await fetch(`/requestOrder/admin/product-info?sku=${encodeURIComponent(sku)}`);
+        const response = await fetch(`/stockIn/product-info?sku=${encodeURIComponent(sku)}`);
         const data = await response.json();
         if (data) {
             row.querySelector('.product-name').value = data.productName;
@@ -198,6 +198,6 @@ async function submitFinalOrder() {
 }
 function handleCancel() {
     if (confirm("Cancel this request? All data will be lost.")) {
-        window.location.href = '/requestOrder/admin/view'; // English Redirect
+        window.location.href = '/stockIn/view'; // English Redirect
     }
 }

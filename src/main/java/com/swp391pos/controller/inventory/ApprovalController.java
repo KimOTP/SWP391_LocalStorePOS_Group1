@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/inventory/admin")
+@RequestMapping("/inventory")
 public class ApprovalController {
     @Autowired private ApprovalService approvalService;
 
@@ -31,6 +31,6 @@ public class ApprovalController {
                                @RequestParam boolean approve, HttpSession session) {
         Account acc = (Account) session.getAttribute("loggedInAccount");
         approvalService.processApproval(type, id, approve, acc);
-        return "redirect:/inventory/admin/approval/queue";
+        return "redirect:/inventory/approval/queue";
     }
 }

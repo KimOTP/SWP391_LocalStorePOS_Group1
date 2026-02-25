@@ -4,6 +4,8 @@
     padding: 30px;
     background-color: #fcfcfc;
     min-height: 100vh;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: margin-left;
 }
 
 .page-title {
@@ -81,4 +83,7 @@
 .request-id {
     font-weight: 700;
     color: #222;
+}
+#sidebar.expanded ~ .main-content {
+    margin-left: 260px;
 }

@@ -50,7 +50,7 @@
               <fmt:formatDate value="${pDate}" pattern="dd/MM/yyyy HH:mm" />
             </td>
             <td class="text-center">
-              <c:url var="processUrl" value="/stockIn/inventory-staff/process">
+              <c:url var="processUrl" value="/stockIn/process">
                 <c:param name="id" value="${item.stockInId}" />
               </c:url>
               <a href="${processUrl}" class="action-link">Start Action</a>

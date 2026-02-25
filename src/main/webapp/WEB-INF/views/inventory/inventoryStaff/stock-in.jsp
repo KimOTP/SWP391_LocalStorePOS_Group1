@@ -80,7 +80,7 @@
     </div>
 </div>
 
-<form id="submitForm" action="/stockIn/inventory-staff/submit-process" method="POST">
+<form id="submitForm" action="/stockIn/submit-process" method="POST">
     <input type="hidden" name="stockInId" value="${stockIn.stockInId}">
     <input type="hidden" id="actualDataJson" name="actualDataJson">
 </form>

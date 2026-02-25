@@ -61,7 +61,7 @@
             </div>
           </td>
           <td class="text-center">
-            <c:url var="detailUrl" value="/stockIn/inventory-staff/stock-in-details">
+            <c:url var="detailUrl" value="/stockIn/stock-in-details">
               <c:param name="id" value="${item.id}" />
             </c:url>
             <a href="${detailUrl}" class="action-link">View Detailed</a>
@@ -73,7 +73,7 @@
   </div>
 </div>
 
-<form id="actionForm" action="/inventory/admin/approval/action" method="POST">
+<form id="actionForm" action="/inventory/approval/action" method="POST">
   <input type="hidden" name="type" id="actionType">
   <input type="hidden" name="id" id="actionId">
   <input type="hidden" name="approve" id="isApprove">
