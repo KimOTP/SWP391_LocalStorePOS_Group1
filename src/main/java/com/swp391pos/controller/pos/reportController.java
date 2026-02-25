@@ -3,11 +3,13 @@ package com.swp391pos.controller.pos;
 import com.swp391pos.entity.Employee;
 import com.swp391pos.entity.Order;
 import com.swp391pos.service.ReportService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -21,37 +23,36 @@ public class reportController {
 
     private final ReportService reportService;
 
-    /**
-     * GET /reports — renders the reports page with today's data pre-loaded.
-     *
-     * FIX: previously the "orders" list and full report were not passed to model,
-     *      so ${report.orders}, ${totalRevenue}, etc. were all empty in JSP.
-     */
+    // ─────────────────────────────────────────────────────
+    // GET /reports — trang chính, load dữ liệu hôm nay
+    // ─────────────────────────────────────────────────────
+
     @GetMapping("")
     public String showReport(Model model) {
         LocalDate today = LocalDate.now();
         Map<String, Object> report = reportService.getDailyReport(today);
 
-        // Individual keys for the summary cards (used by JSTL EL directly)
+        // Summary cards
         model.addAttribute("totalRevenue",        report.get("totalRevenue"));
         model.addAttribute("totalOrders",         report.get("totalOrders"));
         model.addAttribute("averageValuePerUnit", report.get("averageValuePerUnit"));
         model.addAttribute("bestSellingProduct",  report.get("bestSellingProduct"));
         model.addAttribute("currentDate",          today);
-        model.addAttribute("currentDateFormatted", today.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        model.addAttribute("currentDateFormatted",
+                today.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
-        // ← FIX: pass the full report so ${report.orders} works in the order table
+        // Toàn bộ report (bao gồm orders list cho bảng JSP)
         model.addAttribute("report", report);
 
-        // Cashier list for the filter panel radio buttons
-        List<Employee> employees = reportService.getAllEmployees();
-        model.addAttribute("employees", employees);
+        // CHỈ lấy cashier để hiển thị trong filter
+        List<Employee> cashiers = reportService.getCashiers();
+        model.addAttribute("cashiers", cashiers);
 
         return "pos/manager/reports";
     }
 
     // ─────────────────────────────────────────────────────
-    // AJAX endpoints — return JSON consumed by reports.js
+    // AJAX endpoints
     // ─────────────────────────────────────────────────────
 
     @PostMapping("/api/reports-by-date-range")
@@ -60,11 +61,11 @@ public class reportController {
             @RequestParam String startDate,
             @RequestParam String endDate) {
         try {
-            Map<String, Object> report = reportService.getReportByDateRange(
-                    LocalDate.parse(startDate), LocalDate.parse(endDate));
-            return successResponse(report);
+            return successResponse(
+                    reportService.getReportByDateRange(
+                            LocalDate.parse(startDate), LocalDate.parse(endDate)));
         } catch (Exception e) {
-            return errorResponse("Error loading date range report: " + e.getMessage());
+            return errorResponse("Lỗi khi tải báo cáo theo ngày: " + e.getMessage());
         }
     }
 
@@ -75,11 +76,11 @@ public class reportController {
             @RequestParam String endDate,
             @RequestParam Integer cashierId) {
         try {
-            Map<String, Object> report = reportService.getReportByCashier(
-                    LocalDate.parse(startDate), LocalDate.parse(endDate), cashierId);
-            return successResponse(report);
+            return successResponse(
+                    reportService.getReportByCashier(
+                            LocalDate.parse(startDate), LocalDate.parse(endDate), cashierId));
         } catch (Exception e) {
-            return errorResponse("Error loading cashier report: " + e.getMessage());
+            return errorResponse("Lỗi khi tải báo cáo theo thu ngân: " + e.getMessage());
         }
     }
 
@@ -91,11 +92,11 @@ public class reportController {
             @RequestParam String paymentMethod) {
         try {
             Order.PaymentMethod method = Order.PaymentMethod.valueOf(paymentMethod.toUpperCase());
-            Map<String, Object> report = reportService.getReportByPaymentMethod(
-                    LocalDate.parse(startDate), LocalDate.parse(endDate), method);
-            return successResponse(report);
+            return successResponse(
+                    reportService.getReportByPaymentMethod(
+                            LocalDate.parse(startDate), LocalDate.parse(endDate), method));
         } catch (Exception e) {
-            return errorResponse("Error loading payment method report: " + e.getMessage());
+            return errorResponse("Lỗi khi tải báo cáo theo phương thức thanh toán: " + e.getMessage());
         }
     }
 
@@ -103,26 +104,46 @@ public class reportController {
     @ResponseBody
     public Map<String, Object> getDailyReport(@RequestParam String date) {
         try {
-            Map<String, Object> report = reportService.getDailyReport(LocalDate.parse(date));
-            return successResponse(report);
+            return successResponse(reportService.getDailyReport(LocalDate.parse(date)));
         } catch (Exception e) {
-            return errorResponse("Error loading daily report: " + e.getMessage());
+            return errorResponse("Lỗi khi tải báo cáo ngày: " + e.getMessage());
         }
     }
 
+    // ─────────────────────────────────────────────────────
+    // Export Excel — trả về file .xlsx thật
+    // ─────────────────────────────────────────────────────
+
     @PostMapping("/api/export-excel")
-    @ResponseBody
-    public Map<String, Object> exportExcel(
+    public void exportExcel(
             @RequestParam String startDate,
-            @RequestParam String endDate) {
+            @RequestParam String endDate,
+            HttpServletResponse response) {
         try {
-            Map<String, Object> report = reportService.getReportByDateRange(
-                    LocalDate.parse(startDate), LocalDate.parse(endDate));
-            Map<String, Object> response = successResponse(report);
-            response.put("message", "Report ready for export");
-            return response;
-        } catch (Exception e) {
-            return errorResponse("Export failed: " + e.getMessage());
+            LocalDate start = LocalDate.parse(startDate);
+            LocalDate end   = LocalDate.parse(endDate);
+
+            byte[] excelBytes = reportService.exportToExcel(start, end);
+
+            String filename = "BaoCaoDoanhThu_"
+                    + start.format(DateTimeFormatter.ofPattern("ddMMyyyy"))
+                    + "_"
+                    + end.format(DateTimeFormatter.ofPattern("ddMMyyyy"))
+                    + ".xlsx";
+
+            response.setContentType(
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition",
+                    "attachment; filename=\"" + filename + "\"");
+            response.setContentLength(excelBytes.length);
+            response.getOutputStream().write(excelBytes);
+            response.getOutputStream().flush();
+
+        } catch (IOException e) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            try {
+                response.getWriter().write("Xuất Excel thất bại: " + e.getMessage());
+            } catch (IOException ignored) { }
         }
     }
 
@@ -130,9 +151,20 @@ public class reportController {
     @ResponseBody
     public Map<String, Object> getEmployees() {
         try {
+            // Trả về tất cả employees (dành cho admin API)
             return successResponse(reportService.getAllEmployees());
         } catch (Exception e) {
-            return errorResponse("Error loading employees: " + e.getMessage());
+            return errorResponse("Lỗi khi tải danh sách nhân viên: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/api/cashiers")
+    @ResponseBody
+    public Map<String, Object> getCashiers() {
+        try {
+            return successResponse(reportService.getCashiers());
+        } catch (Exception e) {
+            return errorResponse("Lỗi khi tải danh sách thu ngân: " + e.getMessage());
         }
     }
 
@@ -141,16 +173,16 @@ public class reportController {
     // ─────────────────────────────────────────────────────
 
     private Map<String, Object> successResponse(Object data) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("data", data);
-        return response;
+        Map<String, Object> r = new HashMap<>();
+        r.put("success", true);
+        r.put("data", data);
+        return r;
     }
 
     private Map<String, Object> errorResponse(String message) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", false);
-        response.put("message", message);
-        return response;
+        Map<String, Object> r = new HashMap<>();
+        r.put("success", false);
+        r.put("message", message);
+        return r;
     }
 }

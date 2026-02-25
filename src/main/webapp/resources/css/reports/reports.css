@@ -1,8 +1,7 @@
 /* ==============================================
-   reports.css  — Grayscale POS Report Page
+   reports.css  — POS Report Page (VNĐ)
    ============================================== */
 
-/* Reset & base */
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
@@ -13,15 +12,21 @@ body {
     color: #222;
 }
 
-/* ── Page layout
-   Assumes sidebar is ~220px wide and header is ~60px tall.
-   Adjust margin-left to match YOUR sidebar width exactly.
-   ──────────────────────────────────────────────── */
+/* ── Page layout ─────────────────────────────────────────────
+   Sidebar width: 220px (CSS variable để dễ chỉnh)
+   Header height: 60px
+   ─────────────────────────────────────────────────────────── */
+:root {
+    --sidebar-w: 220px;
+    --header-h:  60px;
+}
+
 .page-content {
-    margin-left: 220px;   /* ← match your sidebar width */
-    margin-top: 60px;     /* ← push below fixed header */
-    padding: 18px 22px;
-    min-height: 100vh;
+    margin-left: var(--sidebar-w);
+    margin-top: var(--header-h);
+    padding: 20px 24px;
+    min-height: calc(100vh - var(--header-h));
+    transition: margin-left 0.25s ease;
 }
 
 /* ── Top bar ─────────────────────────────────── */
@@ -29,12 +34,12 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
 }
 
 .rpt-title {
     margin: 0;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 700;
     color: #111;
 }
@@ -49,7 +54,7 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 5px 13px;
+    padding: 6px 14px;
     background: #fff;
     border: 1px solid #bbb;
     border-radius: 5px;
@@ -58,6 +63,7 @@ body {
     color: #222;
     line-height: 1.5;
     white-space: nowrap;
+    transition: background 0.15s;
 }
 .rpt-btn:hover { background: #ebebeb; }
 
@@ -68,6 +74,14 @@ body {
 }
 .rpt-btn-ghost:hover { background: #e8e8e8; }
 
+/* Nút Xuất Excel nổi bật hơn */
+.rpt-btn-excel {
+    background: #e8f5e9;
+    border-color: #81c784;
+    color: #2e7d32;
+}
+.rpt-btn-excel:hover { background: #c8e6c9; }
+
 /* ── Filter box ──────────────────────────────── */
 .rpt-filter-box {
     background: #e5e5e5;
@@ -76,12 +90,11 @@ body {
     overflow: hidden;
 }
 
-/* Header row inside filter — label left, button right */
 .rpt-filter-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 14px;
+    padding: 9px 14px;
 }
 
 .rpt-filter-bar-label {
@@ -93,37 +106,35 @@ body {
     gap: 6px;
 }
 
-/* Extend / Collapse button — plain text, no border */
 .rpt-extend-btn {
     background: none;
     border: none;
     padding: 0;
     font-size: 13px;
-    color: #333;
+    color: #1565c0;
     cursor: pointer;
-    font-weight: normal;
+    font-weight: 600;
 }
 .rpt-extend-btn:hover { text-decoration: underline; }
 
-/* Collapsible body */
 .rpt-filter-body {
     background: #ebebeb;
     border-top: 1px solid #d4d4d4;
-    padding: 12px 14px 14px;
+    padding: 14px 16px 16px;
 }
 
-/* Date row */
 .rpt-filter-date-row {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 14px;
     font-size: 13px;
     color: #555;
+    flex-wrap: wrap;
 }
 
 .rpt-date-inp {
-    padding: 4px 8px;
+    padding: 5px 9px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 13px;
@@ -131,22 +142,21 @@ body {
     color: #222;
 }
 
-/* Filter group (Cashier / Payment) */
 .rpt-filter-group {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .rpt-filter-group-label {
     font-size: 13px;
     font-weight: 600;
     color: #333;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 }
 
 .rpt-radio-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 24px;
+    gap: 16px 28px;
 }
 
 .rpt-radio-lbl {
@@ -159,7 +169,7 @@ body {
 }
 
 .rpt-filter-foot {
-    margin-top: 12px;
+    margin-top: 14px;
     display: flex;
     gap: 8px;
 }
@@ -173,7 +183,7 @@ body {
     font-size: 14px;
     font-weight: 600;
     color: #222;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
 }
 
 /* ── Summary cards ───────────────────────────── */
@@ -181,7 +191,7 @@ body {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 12px;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
 }
 
 .rpt-card {
@@ -190,7 +200,6 @@ body {
     padding: 14px 16px 12px;
 }
 
-/* top row: label left, icon right */
 .rpt-card-row {
     display: flex;
     justify-content: space-between;
@@ -204,20 +213,20 @@ body {
 }
 
 .rpt-card-ico {
-    font-size: 15px;
+    font-size: 16px;
     color: #666;
     flex-shrink: 0;
 }
 
-/* value (big number) */
+/* Số tiền VNĐ — font nhỏ hơn vì số dài hơn $ */
 .rpt-card-val {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
     color: #111;
     line-height: 1.2;
+    word-break: break-word;
 }
 
-/* product name uses smaller font */
 .rpt-card-val--text {
     font-size: 15px;
     font-weight: 600;
@@ -236,6 +245,7 @@ body {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     overflow: hidden;
+    margin-bottom: 24px;
 }
 
 .rpt-table-bar {
@@ -262,39 +272,75 @@ body {
 
 .rpt-table tbody td {
     font-size: 13px;
-    padding: 7px 12px;
+    padding: 8px 12px;
     vertical-align: middle;
     color: #333;
     border-bottom: 1px solid #f0f0f0;
 }
 
 .rpt-table tbody tr:last-child td { border-bottom: none; }
-.rpt-table tbody tr:hover { background: #f9f9f9; }
+.rpt-table tbody tr:hover          { background: #f9f9f9; }
 
-/* ── Loading spinner ─────────────────────────── */
+/* Status badge */
+.rpt-status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    background: #e0e0e0;
+    color: #444;
+}
+
+/* ── Loading overlay ─────────────────────────── */
 .rpt-loading {
     position: fixed;
-    top: 14px;
+    top: calc(var(--header-h) + 10px);
     right: 20px;
     z-index: 9999;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 20px;
-    padding: 5px 12px;
+    padding: 5px 14px;
     font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.1);
+}
+
+/* ── Sidebar icon fix ────────────────────────────
+   Đảm bảo Bootstrap Icons hiển thị đúng trong sidebar
+   (sidebar thường dùng <i class="bi bi-xxx">)
+   ─────────────────────────────────────────────── */
+.sidebar i[class^="bi"],
+.sidebar i[class*=" bi"] {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
 }
 
 /* ── Responsive ──────────────────────────────── */
+@media (max-width: 1200px) {
+    .rpt-cards { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media (max-width: 992px) {
     .rpt-cards { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
-    .page-content { margin-left: 0; margin-top: 60px; padding: 12px; }
-    .rpt-cards    { grid-template-columns: repeat(2, 1fr); }
-    .rpt-topbar   { flex-direction: column; align-items: flex-start; gap: 8px; }
+    :root { --sidebar-w: 0px; }
+    .page-content {
+        margin-left: 0;
+        padding: 12px 14px;
+    }
+    .rpt-cards   { grid-template-columns: repeat(2, 1fr); }
+    .rpt-topbar  { flex-direction: column; align-items: flex-start; gap: 8px; }
 }
 
 @media (max-width: 480px) {
-    .rpt-cards    { grid-template-columns: 1fr 1fr; }
+    .rpt-cards { grid-template-columns: 1fr 1fr; }
+    .rpt-card-val { font-size: 16px; }
 }

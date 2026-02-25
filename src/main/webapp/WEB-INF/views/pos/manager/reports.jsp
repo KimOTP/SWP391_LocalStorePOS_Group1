@@ -4,121 +4,131 @@
 <%@ taglib prefix="fn"  uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
-    <title>Sales Report</title>
+    <title>Báo cáo doanh thu</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%-- Context path cho JS --%>
     <meta id="ctxMeta" name="context-path" content="${pageContext.request.contextPath}">
+
+    <%-- Bootstrap CSS --%>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <%-- Bootstrap Icons — đảm bảo icon hiển thị trong cả reports và sidebar --%>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/reports/reports.css">
 </head>
 <body>
 
+<%-- Sidebar & Header include --%>
 <jsp:include page="../../layer/header.jsp" />
 <jsp:include page="../../layer/sidebar.jsp" />
 
 <div class="page-content">
 
-    <!-- ── HEADER BAR ── -->
+    <%-- ── HEADER BAR ── --%>
     <div class="rpt-topbar">
-        <h5 class="rpt-title">Sales report</h5>
+        <h5 class="rpt-title">Báo cáo doanh thu</h5>
         <div class="rpt-action-group">
             <button class="rpt-btn" onclick="refreshReport()">
-                <i class="bi bi-arrow-clockwise"></i> Refresh
+                <i class="bi bi-arrow-clockwise"></i> Làm mới
             </button>
-            <button class="rpt-btn" onclick="exportExcel()">
-                <i class="bi bi-file-earmark-excel"></i> Export excel
+            <button class="rpt-btn rpt-btn-excel" onclick="exportExcel()">
+                <i class="bi bi-file-earmark-excel"></i> Xuất Excel
             </button>
         </div>
     </div>
 
-    <!-- ── FILTER BOX ── -->
+    <%-- ── FILTER BOX ── --%>
     <div class="rpt-filter-box">
 
-        <!-- Header row: icon+label on left, Extend/Collapse button on right -->
         <div class="rpt-filter-bar">
             <span class="rpt-filter-bar-label">
-                <i class="bi bi-funnel"></i> Report filter
+                <i class="bi bi-funnel"></i> Bộ lọc báo cáo
             </span>
-            <%-- THIS is the only clickable element for toggle --%>
             <button type="button" class="rpt-extend-btn" id="toggleBtn" onclick="toggleFilter()">
-                Extend
+                Mở rộng
             </button>
         </div>
 
-        <!-- Collapsible body -->
         <div id="filterBody" class="rpt-filter-body" style="display: none;">
 
-            <!-- Date input with calendar icon -->
+            <%-- Khoảng ngày --%>
             <div class="rpt-filter-date-row">
                 <i class="bi bi-calendar3"></i>
+                <label class="rpt-filter-group-label mb-0 me-1">Từ:</label>
                 <input type="date" id="startDate" class="rpt-date-inp">
-                <span>—</span>
+                <span class="mx-1">—</span>
+                <label class="rpt-filter-group-label mb-0 me-1">Đến:</label>
                 <input type="date" id="endDate" class="rpt-date-inp">
             </div>
 
-            <!-- Cashier -->
+            <%-- Cashier filter — CHỈ hiển thị nhân viên có role CASHIER --%>
             <div class="rpt-filter-group">
-                <div class="rpt-filter-group-label">Cashier</div>
+                <div class="rpt-filter-group-label">Thu ngân</div>
                 <div class="rpt-radio-row">
                     <label class="rpt-radio-lbl">
-                        <input type="radio" name="cashierFilter" value="" checked> All
+                        <input type="radio" name="cashierFilter" value="" checked> Tất cả
                     </label>
-                    <c:forEach var="emp" items="${employees}">
+                    <c:forEach var="emp" items="${cashiers}">
                         <label class="rpt-radio-lbl">
                             <input type="radio" name="cashierFilter" value="${emp.employeeId}">
-                            ${emp.fullName}
+                            ${fn:escapeXml(emp.fullName)}
                         </label>
                     </c:forEach>
                 </div>
             </div>
 
-            <!-- Payment methods -->
+            <%-- Phương thức thanh toán --%>
             <div class="rpt-filter-group">
-                <div class="rpt-filter-group-label">Payment methods</div>
+                <div class="rpt-filter-group-label">Phương thức thanh toán</div>
                 <div class="rpt-radio-row">
                     <label class="rpt-radio-lbl">
-                        <input type="radio" name="paymentFilter" value="" checked> All
+                        <input type="radio" name="paymentFilter" value="" checked> Tất cả
                     </label>
                     <label class="rpt-radio-lbl">
-                        <input type="radio" name="paymentFilter" value="CASH"> Payment by cash
+                        <input type="radio" name="paymentFilter" value="CASH"> Tiền mặt
                     </label>
                     <label class="rpt-radio-lbl">
-                        <input type="radio" name="paymentFilter" value="BANKING"> Payment via banking
+                        <input type="radio" name="paymentFilter" value="BANKING"> Chuyển khoản
                     </label>
                 </div>
             </div>
 
-            <!-- Apply / Reset -->
+            <%-- Nút Apply / Reset --%>
             <div class="rpt-filter-foot">
-                <button class="rpt-btn" onclick="applyFilter()">Apply</button>
-                <button class="rpt-btn rpt-btn-ghost" onclick="resetFilter()">Reset</button>
+                <button class="rpt-btn" onclick="applyFilter()">
+                    <i class="bi bi-check2"></i> Áp dụng
+                </button>
+                <button class="rpt-btn rpt-btn-ghost" onclick="resetFilter()">
+                    <i class="bi bi-x-circle"></i> Đặt lại
+                </button>
             </div>
 
         </div>
     </div>
 
-    <!-- ── DATE BAR ── -->
+    <%-- ── DATE BAR ── --%>
     <div class="rpt-date-bar" id="dateBar">${currentDateFormatted}</div>
 
-    <!-- ── SUMMARY CARDS ── -->
+    <%-- ── SUMMARY CARDS ── --%>
     <div class="rpt-cards">
 
         <div class="rpt-card">
             <div class="rpt-card-row">
-                <span class="rpt-card-lbl">Total revenue</span>
-                <i class="bi bi-currency-dollar rpt-card-ico"></i>
+                <span class="rpt-card-lbl">Tổng doanh thu</span>
+                <i class="bi bi-cash-coin rpt-card-ico"></i>
             </div>
             <div class="rpt-card-val" id="totalRevenue">
-                $<fmt:formatNumber value="${totalRevenue}" pattern="#,##0.00"/>
+                <fmt:formatNumber value="${totalRevenue}" pattern="#,##0"/> ₫
             </div>
             <div class="rpt-card-hint">&nbsp;</div>
         </div>
 
         <div class="rpt-card">
             <div class="rpt-card-row">
-                <span class="rpt-card-lbl">Total order</span>
+                <span class="rpt-card-lbl">Tổng đơn hàng</span>
                 <i class="bi bi-cart3 rpt-card-ico"></i>
             </div>
             <div class="rpt-card-val" id="totalOrders">${totalOrders}</div>
@@ -127,45 +137,45 @@
 
         <div class="rpt-card">
             <div class="rpt-card-row">
-                <span class="rpt-card-lbl">Average value/unit</span>
+                <span class="rpt-card-lbl">Giá trị TB / đơn vị</span>
                 <i class="bi bi-calculator rpt-card-ico"></i>
             </div>
             <div class="rpt-card-val" id="averageValuePerUnit">
-                $<fmt:formatNumber value="${averageValuePerUnit}" pattern="#,##0.00"/>
+                <fmt:formatNumber value="${averageValuePerUnit}" pattern="#,##0"/> ₫
             </div>
             <div class="rpt-card-hint">&nbsp;</div>
         </div>
 
         <div class="rpt-card">
             <div class="rpt-card-row">
-                <span class="rpt-card-lbl">Bestselling product</span>
+                <span class="rpt-card-lbl">Sản phẩm bán chạy</span>
                 <i class="bi bi-trophy rpt-card-ico"></i>
             </div>
             <div class="rpt-card-val rpt-card-val--text" id="bestSellingProduct">
-                ${not empty bestSellingProduct ? bestSellingProduct : 'N/A'}
+                ${not empty bestSellingProduct ? fn:escapeXml(bestSellingProduct) : 'N/A'}
             </div>
             <div class="rpt-card-hint">&nbsp;</div>
         </div>
 
     </div>
 
-    <!-- ── ORDER TABLE ── -->
+    <%-- ── ORDER TABLE ── --%>
     <div class="rpt-table-wrap">
         <div class="rpt-table-bar">
-            <span>Order Details</span>
-            <span id="orderCountBadge">${totalOrders} orders</span>
+            <span><i class="bi bi-list-ul me-1"></i>Chi tiết đơn hàng</span>
+            <span id="orderCountBadge">${totalOrders} đơn hàng</span>
         </div>
         <div class="table-responsive">
             <table class="table table-sm table-hover rpt-table mb-0">
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>Order ID</th>
-                    <th>Cashier</th>
-                    <th>Payment</th>
-                    <th>Amount</th>
-                    <th>Created At</th>
-                    <th>Status</th>
+                    <th>Mã đơn</th>
+                    <th>Thu ngân</th>
+                    <th>Thanh toán</th>
+                    <th>Thành tiền</th>
+                    <th>Thời gian</th>
+                    <th>Trạng thái</th>
                 </tr>
                 </thead>
                 <tbody id="orderTableBody">
@@ -177,21 +187,29 @@
                                 <td>#${order.orderId}</td>
                                 <td>
                                     <c:choose>
-                                        <c:when test="${not empty order.employee}">${order.employee.fullName}</c:when>
+                                        <c:when test="${not empty order.employee}">${fn:escapeXml(order.employee.fullName)}</c:when>
                                         <c:otherwise>—</c:otherwise>
                                     </c:choose>
                                 </td>
-                                <td>${order.paymentMethod}</td>
-                                <td>$<fmt:formatNumber value="${order.totalAmount}" pattern="#,##0.00"/></td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${order.paymentMethod == 'CASH'}">Tiền mặt</c:when>
+                                        <c:when test="${order.paymentMethod == 'BANKING'}">Chuyển khoản</c:when>
+                                        <c:otherwise>${order.paymentMethod}</c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td><fmt:formatNumber value="${order.totalAmount}" pattern="#,##0"/> ₫</td>
                                 <td>${fn:replace(fn:substring(order.createdAt, 0, 16), 'T', ' ')}</td>
-                                <td>${order.orderStatus.orderStatusName}</td>
+                                <td>
+                                    <span class="rpt-status-badge">${order.orderStatus.orderStatusName}</span>
+                                </td>
                             </tr>
                         </c:forEach>
                     </c:when>
                     <c:otherwise>
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-3">
-                                No orders found for the selected period.
+                            <td colspan="7" class="text-center text-muted py-4">
+                                <i class="bi bi-inbox me-1"></i>Không có đơn hàng trong ngày đã chọn.
                             </td>
                         </tr>
                     </c:otherwise>
@@ -201,163 +219,16 @@
         </div>
     </div>
 
-</div><!-- /page-content -->
+</div><%-- /page-content --%>
 
-<!-- Loading indicator -->
+<%-- Loading overlay --%>
 <div class="rpt-loading d-none" id="loadingOverlay">
-    <div class="spinner-border spinner-border-sm text-secondary"></div>
+    <div class="spinner-border spinner-border-sm text-secondary me-1"></div>
+    <span>Đang tải...</span>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-// ============================================================
-// reports.js — inline (tránh vấn đề đường dẫn file JS ngoài)
-// ============================================================
-var CTX = '${pageContext.request.contextPath}';
-
-// Set default dates on load
-window.addEventListener('DOMContentLoaded', function () {
-    var today = getTodayStr();
-    var s = document.getElementById('startDate');
-    var e = document.getElementById('endDate');
-    if (s) s.value = today;
-    if (e) e.value = today;
-});
-
-// ── Toggle filter ──────────────────────────────────────────
-function toggleFilter() {
-    var body = document.getElementById('filterBody');
-    var btn  = document.getElementById('toggleBtn');
-    if (!body || !btn) return;
-    if (body.style.display === 'none' || body.style.display === '') {
-        body.style.display = 'block';
-        btn.textContent = 'Collapse';
-    } else {
-        body.style.display = 'none';
-        btn.textContent = 'Extend';
-    }
-}
-
-// ── Apply / Reset / Refresh ────────────────────────────────
-function applyFilter() {
-    var startDate     = document.getElementById('startDate').value;
-    var endDate       = document.getElementById('endDate').value;
-    var cashierEl     = document.querySelector('input[name="cashierFilter"]:checked');
-    var payEl         = document.querySelector('input[name="paymentFilter"]:checked');
-    var cashierId     = cashierEl ? cashierEl.value : '';
-    var paymentMethod = payEl     ? payEl.value     : '';
-
-    if (!startDate || !endDate) { alert('Please select both start and end dates.'); return; }
-    if (startDate > endDate)    { alert('Start date cannot be after end date.'); return; }
-
-    var bar = document.getElementById('dateBar');
-    if (bar) bar.textContent = (startDate === endDate)
-        ? toDisplay(startDate)
-        : toDisplay(startDate) + ' — ' + toDisplay(endDate);
-
-    if (cashierId) {
-        doPost(CTX + '/reports/api/reports-by-cashier',
-            { startDate: startDate, endDate: endDate, cashierId: cashierId });
-    } else if (paymentMethod) {
-        doPost(CTX + '/reports/api/reports-by-payment-method',
-            { startDate: startDate, endDate: endDate, paymentMethod: paymentMethod });
-    } else {
-        doPost(CTX + '/reports/api/reports-by-date-range',
-            { startDate: startDate, endDate: endDate });
-    }
-}
-
-function resetFilter() {
-    var today = getTodayStr();
-    document.getElementById('startDate').value = today;
-    document.getElementById('endDate').value   = today;
-    document.querySelectorAll('input[name="cashierFilter"]').forEach(function(r){ r.checked = r.value === ''; });
-    document.querySelectorAll('input[name="paymentFilter"]').forEach(function(r){ r.checked = r.value === ''; });
-    var bar = document.getElementById('dateBar');
-    if (bar) bar.textContent = toDisplay(today);
-    doPost(CTX + '/reports/api/reports-by-date-range', { startDate: today, endDate: today });
-}
-
-function refreshReport() { applyFilter(); }
-
-function exportExcel() {
-    var s = document.getElementById('startDate').value;
-    var e = document.getElementById('endDate').value;
-    if (!s || !e) { alert('Select a date range first.'); return; }
-    showLoading(true);
-    fetch(CTX + '/reports/api/export-excel', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({ startDate: s, endDate: e })
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(j){ alert(j.success ? 'Report ready!' : (j.message || 'Export failed.')); })
-    .catch(function(){ alert('Network error.'); })
-    .finally(function(){ showLoading(false); });
-}
-
-// ── AJAX ──────────────────────────────────────────────────
-function doPost(url, params) {
-    showLoading(true);
-    fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams(params)
-    })
-    .then(function(r){ return r.json(); })
-    .then(function(json){
-        if (json.success) {
-            updateSummary(json.data);
-            updateTable(json.data.orders || []);
-        } else {
-            alert(json.message || 'Error loading report.');
-        }
-    })
-    .catch(function(){ alert('Network error.'); })
-    .finally(function(){ showLoading(false); });
-}
-
-// ── DOM updates ────────────────────────────────────────────
-function updateSummary(d) {
-    setEl('totalRevenue',        '$' + fmtNum(d.totalRevenue));
-    setEl('totalOrders',         d.totalOrders != null ? d.totalOrders : 0);
-    setEl('averageValuePerUnit', '$' + fmtNum(d.averageValuePerUnit));
-    setEl('bestSellingProduct',  d.bestSellingProduct || 'N/A');
-    var b = document.getElementById('orderCountBadge');
-    if (b) b.textContent = (d.totalOrders != null ? d.totalOrders : 0) + ' orders';
-}
-
-function updateTable(orders) {
-    var tbody = document.getElementById('orderTableBody');
-    if (!tbody) return;
-    if (!orders.length) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-3">No orders found for the selected period.</td></tr>';
-        return;
-    }
-    tbody.innerHTML = orders.map(function(o, i){
-        return '<tr>' +
-            '<td>' + (i+1) + '</td>' +
-            '<td>#' + o.orderId + '</td>' +
-            '<td>' + (o.employee && o.employee.fullName ? o.employee.fullName : '—') + '</td>' +
-            '<td>' + (o.paymentMethod || '—') + '</td>' +
-            '<td>$' + fmtNum(o.totalAmount) + '</td>' +
-            '<td>' + fmtDT(o.createdAt) + '</td>' +
-            '<td>' + (o.orderStatus ? o.orderStatus.orderStatusName : '') + '</td>' +
-            '</tr>';
-    }).join('');
-}
-
-// ── Helpers ────────────────────────────────────────────────
-function getTodayStr() { return new Date().toISOString().split('T')[0]; }
-function toDisplay(s)  { var p=s.split('-'); return p[2]+'/'+p[1]+'/'+p[0]; }
-function fmtNum(v)     { if(v==null) return '0.00'; return parseFloat(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); }
-function fmtDT(s)      { if(!s) return '—'; return String(s).substring(0,16).replace('T',' '); }
-function setEl(id, v)  { var el=document.getElementById(id); if(el) el.textContent=v; }
-function showLoading(show) {
-    var el = document.getElementById('loadingOverlay');
-    if (!el) return;
-    show ? el.classList.remove('d-none') : el.classList.add('d-none');
-}
-</script>
+<%-- JS tách riêng --%>
+<script src="${pageContext.request.contextPath}/resources/js/report/reports.js"></script>
 </body>
 </html>
