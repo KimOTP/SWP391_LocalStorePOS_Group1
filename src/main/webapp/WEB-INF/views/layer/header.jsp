@@ -25,6 +25,19 @@
                 </div>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
+            <!-- Thêm block thông tin user -->
+                <li class="px-3 py-2">
+                    <div class="fw-bold">
+                        ${account.username}
+                    </div>
+                    <div class="small text-muted">
+                        ${account.employee.email}
+                    </div>
+                    <div class="small">
+                        ${account.employee.role}
+                    </div>
+                </li>
+                <li><hr class="dropdown-divider"></li>
                 <li>
                     <a class="dropdown-item"
                        href="${account.employee.role == 'MANAGER'

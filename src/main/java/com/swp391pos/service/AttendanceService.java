@@ -6,6 +6,8 @@ import com.swp391pos.entity.WorkShift;
 import com.swp391pos.repository.AttendanceRepository;
 import com.swp391pos.repository.WorkShiftRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.swp391pos.repository.EmployeeRepository;
 
@@ -21,6 +23,16 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final WorkShiftRepository workShiftRepository;
     private final EmployeeRepository employeeRepository;
+
+
+    public Page<Attendance> getAttendanceHistory(Integer employeeId, Pageable pageable) {
+        return attendanceRepository
+                .findByEmployee_EmployeeIdAndWorkDateLessThanEqualOrderByWorkDateDesc(
+                        employeeId,
+                        LocalDate.now(),
+                        pageable
+                );
+    }
 
     // Check in
     public void checkIn(Employee employee) {

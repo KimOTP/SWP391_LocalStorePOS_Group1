@@ -29,18 +29,12 @@
         <div class="section-subtitle">Basic Information</div>
 
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-3">
                 <div class="info-label">Id</div>
                 <div class="info-box">${account.accountId}</div>
 
-                <div class="info-label">Full Name</div>
-                <div class="info-box">${account.employee.fullName}</div>
-
-                <div class="info-label">Login Name</div>
-                <div class="info-box">${account.username}</div>
-
-                <div class="info-label">Password</div>
-                <div class="info-box">********</div>
+                <div class="info-label">Role</div>
+                <div class="info-box">${account.employee.role}</div>
 
                 <button class="btn-change mt-2"
                 onclick="window.location.href='${pageContext.request.contextPath}/hr/common/change_information'">
@@ -48,14 +42,19 @@
                 </button>
             </div>
 
-            <div class="col-md-6">
-                <div class="info-label">Role</div>
-                <div class="info-box">${account.employee.role}</div>
+            <div class="col-md-3">
+                <div class="info-label">Full Name</div>
+                <div class="info-box">${account.employee.fullName}</div>
 
                 <div class="info-label">E-Mail</div>
                 <div class="info-box">${account.employee.email}</div>
+            </div>
 
-                <div class="info-label">Status</div>
+            <div class="col-md-3">
+                <div class="info-label">Login Name</div>
+                <div class="info-box">${account.username}</div>
+
+            <div class="info-label">Status</div>
                 <div class="info-box">
                     <c:choose>
                         <c:when test="${account.employee.status}">
@@ -66,47 +65,65 @@
                         </c:otherwise>
                     </c:choose>
                 </div>
+            </div>
 
-                <div class="info-label">Last Login</div>
+            <div class="col-md-3">
+                <div class="info-label">Password</div>
+                <div class="info-box">********</div>
+
+            <div class="info-label">Last Login</div>
                 <div class="info-box">
                     ${lastLoginFormatted}
                 </div>
             </div>
         </div>
 
-
         <!-- MANAGE -->
         <div class="section-divider">Manage</div>
+        <div class="row row-cols-1 row-cols-md-5 g-3">
 
-        <div class="row">
-            <div class="col-md-6">
+            <div class="col">
                 <div class="info-label">Employee List</div>
                 <div class="info-box">
-                    <a href="/hr/manager/employee_list"  class="link-detail">Detail</a>
-                </div>
-
-                <div class="info-label">Shifts</div>
-                <div class="info-box">
-                    <a href="/shift/manager/shift_management"  class="link-detail">Detail</a>
-                </div>
-
-                <div class="info-label">Employee Shift</div>
-                <div class="info-box">
-                    <a href="/shift/manager/employee_shift"  class="link-detail">Detail</a>
+                    <a href="/hr/manager/employee_list" class="link-detail">Detail</a>
                 </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col">
                 <div class="info-label">Create Employee Accounts</div>
                 <div class="info-box">
                     <a href="/hr/manager/create_emp_account" class="link-detail">Detail</a>
                 </div>
+            </div>
 
+<!--<div class="col">
+                <div class="info-label">Employee Shift</div>
+                <div class="info-box">
+                    <a href="/shift/manager/employee_shift" class="link-detail">Detail</a>
+                </div>
+</div>-->
+
+            <div class="col">
+                <div class="info-label">Shifts</div>
+                <div class="info-box">
+                    <a href="/shift/manager/shift_management" class="link-detail">Detail</a>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="info-label">Shift Change Request</div>
+                <div class="info-box">
+                    <a href="/shift/manager/shift_change_req" class="link-detail">Detail</a>
+                </div>
+            </div>
+
+            <div class="col">
                 <div class="info-label">Attendance</div>
                 <div class="info-box">
                     <a href="/shift/manager/attendance" class="link-detail">Detail</a>
                 </div>
             </div>
+
         </div>
 
         <div class="text-end mt-4">
