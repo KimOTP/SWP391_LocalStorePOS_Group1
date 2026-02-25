@@ -77,7 +77,7 @@
         <span class="text-muted small">Search and filter by criteria</span>
     </div>
 
-    <form action="/cus-promo/manager/promotion/detail" method="get" id="filterForm">
+    <form action="/promotion/detail" method="get" id="filterForm">
         <input type="hidden" name="id" value="${promotion.promotionId}">
 
         <div class="row g-3 mb-4">
@@ -150,12 +150,12 @@
                                      </a>
                                 </li>
 
-                                <li><a class="dropdown-item py-2" href="#"><i class="fa-solid fa-pause text-secondary me-2"></i> Inactive</a></li>
+
                                 <li><hr class="dropdown-divider"></li>
 
                                 <li>
                                      <a class="dropdown-item py-2 text-danger"
-                                           href="/cus-promo/manager/promotion/detail/delete?detailId=${detail.promoDetailId}&promotionId=${promotion.promotionId}"
+                                           href="/promotion/detail/delete?detailId=${detail.promoDetailId}&promotionId=${promotion.promotionId}"
                                            onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi đợt khuyến mãi?')">
                                             <i class="fa-solid fa-trash me-2"></i> Delete
                                      </a>
@@ -179,7 +179,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/cus-promo/manager/promotion/detail/add" method="post">
+            <form action="/promotion/detail/add" method="post">
                 <div class="modal-body pt-3">
                     <input type="hidden" name="promotionId" value="${promotion.promotionId}">
 
@@ -233,7 +233,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/cus-promo/manager/promotion/detail/update" method="post">
+            <form action="/promotion/detail/update" method="post">
                 <div class="modal-body pt-3">
                     <input type="hidden" name="promoDetailId" id="editPromoDetailId">
                     <input type="hidden" name="promotionId" value="${promotion.promotionId}">
