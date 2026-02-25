@@ -23,7 +23,7 @@
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
     <div class="pos-top-bar flex-wrap gap-2">
-        <c:if test="${sessionScope.currentUser.role eq 'MANAGER'}">
+        <c:if test="${sessionScope.account.employee.role == 'MANAGER'}">
             <button class="btn-outline" onclick="openPrintTemplate()">Setting print template</button>
             <button class="btn-outline" onclick="openBankConfig()">Account banking configuration</button>
         </c:if>
@@ -50,8 +50,8 @@
             <div class="product-grid">
                 <c:forEach items="${products}" var="p">
                     <div class="product-card"
-                         onclick="addToCart('${p.productId}','${p.productName}','${p.price}')">
-                        <div class="product-img"></div>
+                         onclick="addToCart('${p.productId}','${p.productName}','${p.price}','${p.imageUrl}' )">
+                        <div class="product-img"><img src = '${p.imageUrl}'/></div>
                         <div class="product-name">${p.productName}</div>
                         <div class="product-price">$<fmt:formatNumber value="${p.price}" maxFractionDigits="0"/></div>
                         <div class="add-btn">+</div>
