@@ -35,8 +35,8 @@ public class PromotionService {
     }
 
     public long getTotalPromotions() {
-        return promotionRepository.count();
-    }
+        return promotionRepository.countByStatusNot(PromotionStatus.DELETED);
+    }  //Không đếm thằng nào đã bị DELETED
     public long countByStatus(String status) {
         try {
             return promotionRepository.countByStatus(PromotionStatus.valueOf(status));
@@ -59,8 +59,15 @@ public class PromotionService {
         promotionRepository.save(promotion);
     }
 
-    public void deletePromotion(Integer id) {
-        promotionRepository.deleteById(id);
+    public void deletePromotion(Integer promotionId) {
+        // Thay vì xóa, ta tìm ra nó và đổi status
+        Promotion promotion = promotionRepository.findById(promotionId)
+                .orElseThrow(() -> new RuntimeException("Promotion not found"));
+
+        // Chuyển trạng thái sang INACTIVE (hoặc bạn có thể thêm trạng thái DELETED vào Enum)
+        promotion.setStatus(PromotionStatus.DELETED);
+
+        promotionRepository.save(promotion); // Lưu lại thay vì xóa
     }
 
     public void updateStatus(Integer id, PromotionStatus newStatus) {
@@ -69,5 +76,9 @@ public class PromotionService {
             promotion.setStatus(newStatus);
             promotionRepository.save(promotion);
         }
+    }
+
+    public Promotion getPromotionById(Integer id) {
+        return promotionRepository.findById(id).orElse(null);
     }
 }

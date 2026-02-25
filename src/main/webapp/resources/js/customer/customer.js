@@ -35,7 +35,7 @@ function confirmDelete(id, name) {
     // Hiện hộp thoại xác nhận của trình duyệt
     if (confirm("Bạn có chắc chắn muốn xóa khách hàng: " + name + " không?")) {
         // Nếu chọn OK -> Chuyển hướng đến đường dẫn xóa
-        window.location.href = "/customers/delete/" + id;
+        window.location.href = "/cus-promo/manager/customer/delete/" + id;
     }
 }
 
@@ -59,7 +59,7 @@ function openDetailModal(id, name, phone, point, spending, lastDate) {
     // Reset về 0 hoặc Loading trước khi gọi API
     document.getElementById('detailTotalOrder').innerText = "...";
     // Gọi API lấy số lượng đơn hàng
-        fetch('/customers/' + id + '/order-count')
+        fetch('/cus-promo/manager/customer/' + id + '/order-count')
             .then(response => response.json())
             .then(count => {
                 document.getElementById('detailTotalOrder').innerText = count;
@@ -73,7 +73,7 @@ function openDetailModal(id, name, phone, point, spending, lastDate) {
     const historyTableBody = document.querySelector('#history-info tbody');
         historyTableBody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">Loading history...</td></tr>';
 
-        fetch('/customers/' + id + '/history')
+        fetch('/cus-promo/manager/customer/' + id + '/history')
             .then(response => {
                 if (!response.ok) throw new Error('Server error');
                 return response.json();
@@ -144,7 +144,7 @@ function openDetailModal(id, name, phone, point, spending, lastDate) {
 // Modal Config Point
 function openConfigModal() {
     // 1. Fetch dữ liệu từ API
-    fetch('/customers/config')
+    fetch('/cus-promo/manager/customer/config')
         .then(response => response.json())
         .then(data => {
             // 2. Điền dữ liệu vào form (Dùng key trong Map trả về)
@@ -201,3 +201,16 @@ function validatePromotionForm(form) {
     }
     return true; // Cho phép submit
 }
+
+function openEditDetailModal(detailId, productId, minQty, discountVal, discountType) {
+        // Gán dữ liệu vào các ô input trong Modal
+        document.getElementById('editPromoDetailId').value = detailId;
+        document.getElementById('editProductId').value = productId;
+        document.getElementById('editMinQuantity').value = minQty;
+        document.getElementById('editDiscountValue').value = discountVal;
+        document.getElementById('editDiscountType').value = discountType;
+
+        // Bật Modal lên
+        var editModal = new bootstrap.Modal(document.getElementById('editDetailModal'));
+        editModal.show();
+    }
