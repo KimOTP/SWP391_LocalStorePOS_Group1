@@ -59,7 +59,28 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
                 handleAccessDenied(request, response, "Access Denied !");
                 return;
             }
+        } else if ("INVENTORY STAFF".equalsIgnoreCase(role)) {
+            if (uri.contains("/manager/") || uri.contains("/admin/")) {
+                handleAccessDenied(request, response, "Access Denied !");
+                return;
+            }
+            boolean isAllowed = uri.contains("/dashboard")
+                    || uri.contains("/layer")
+                    ||uri.contains("/stockIn/add")
+                    || uri.contains("/stockIn/details")
+                    || uri.contains("/hr/cashier_profile")
+                    || uri.contains("/stockOut/add")
+                    || uri.contains("/stockOut/details")
+                    || uri.contains("/audit/add")
+                    || uri.contains("/audit/details")
+                    || uri.contains("/stockIn/notifications");
+
+            if (!isAllowed) {
+                handleAccessDenied(request, response, "Access Denied !");
+                return;
+            }
         }
+
 
         // 4. BƯỚC QUAN TRỌNG NHẤT: Xóa lỗi nếu truy cập hợp lệ (Manager luôn vào đây)
         if (session != null && session.getAttribute("accessError") != null) {
