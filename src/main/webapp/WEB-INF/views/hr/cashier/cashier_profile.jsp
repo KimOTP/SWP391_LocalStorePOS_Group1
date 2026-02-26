@@ -115,7 +115,7 @@
         </div>
 
         <div class="text-end mt-4">
-            <a href="/" class="back-link">← Back To Homepage</a>
+            <a href="/dashboard" class="back-link">← Back To Homepage</a>
         </div>
 
     </div>
