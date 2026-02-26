@@ -2,14 +2,12 @@ package com.swp391pos.service;
 
 import com.swp391pos.entity.*;
 import com.swp391pos.repository.*;
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,10 +19,7 @@ public class StockInService {
     @Autowired private TransactionStatusRepository transactionStatusRepo;
     @Autowired private SupplierRepository supplierRepo;
     @Autowired private InventoryRepository inventoryRepo;
-    @Autowired private ProductRepository productRepo;
-    @Autowired private EmployeeRepository employeeRepo;
-    @Autowired private StockOutRepository stockOutRepo;
-    @Autowired private AuditSessionRepository auditRepo;
+    @Autowired private ProductRepository productRepo;;
 
     // Request Order Process
     public Map<String, String> getSupplierEmail(String name) {

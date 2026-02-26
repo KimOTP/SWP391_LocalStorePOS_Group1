@@ -177,3 +177,32 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+// Thêm đoạn code này vào cuối file stock-out.js của bạn
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Lấy productId từ URL (ví dụ: ?productId=SP001)
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('productId');
+
+    if (productId) {
+        autoSelectProduct(productId);
+    }
+});
+
+async function autoSelectProduct(id) {
+    try {
+        // 2. Gọi API để lấy thông tin chi tiết của 1 sản phẩm
+        const response = await fetch(`/stockOut/search-products?term=${encodeURIComponent(id)}`);
+        const data = await response.json();
+
+        // 3. Nếu tìm thấy sản phẩm, thực hiện chọn vào bảng
+        if (data && data.length > 0) {
+            // Tìm sản phẩm khớp chính xác ID trong danh sách trả về
+            const targetProduct = data.find(p => p.sku === id);
+            if (targetProduct) {
+                selectItem(targetProduct); // Tái sử dụng hàm selectItem bạn đã viết
+            }
+        }
+    } catch (error) {
+        console.error("Lỗi tự động thêm sản phẩm:", error);
+    }
+}
