@@ -81,6 +81,7 @@
                     <div class="app-desc">Checkout & Billing</div>
                 </a>
             </div>
+
         </c:if>
 
         <%-- 2. DÀNH RIÊNG CHO MANAGER (Hiển thị tất cả các dịch vụ quản lý & HR) --%>
@@ -172,7 +173,27 @@
                     <div class="app-desc">Staff Directory</div>
                 </a>
             </div>
+            <div class="app-wrapper">
+            <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+            <a href="/shift/shift_change_req" class="app-card">
+                <div class="app-icon-wrapper bg-warning text-white">
+                    <i class="fa-solid fa-calendar-day"></i>
+                </div>
+                <div class="app-title">Shift Change</div>
+                <div class="app-desc">Schedule Adjustments</div>
+            </a>
+        </div>
 
+        <div class="app-wrapper">
+            <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+            <a href="/shift/attendance" class="app-card">
+                <div class="app-icon-wrapper bg-success text-white">
+                    <i class="fa-solid fa-user-clock"></i>
+                </div>
+                <div class="app-title">Attendance</div>
+                <div class="app-desc">Time Tracking</div>
+            </a>
+        </div>
             <div class="app-wrapper">
                 <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
                 <a href="/reports" class="app-card">
@@ -186,7 +207,17 @@
         </c:if>
 
         <%-- 3. DÀNH CHO MANAGER VÀ INVENTORY STAFF (Dựa trên ảnh path code của bạn) --%>
-        <c:if test="${sessionScope.role == 'MANAGER' || sessionScope.role == 'INVENTORY_STAFF'}">
+        <c:if test="${sessionScope.role == 'MANAGER' || sessionScope.role == 'INVENTORY STAFF'}">
+            <div class="app-wrapper">
+                        <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                        <a href="/inventory/dashboard" class="app-card">
+                            <div class="app-icon-wrapper bg-inventory">
+                                <i class="fa-solid fa-warehouse"></i>
+                            </div>
+                            <div class="app-title">Inventory</div>
+                            <div class="app-desc">Stock Control</div>
+                        </a>
+                    </div>
             <div class="app-wrapper">
                 <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
                 <a href="/stockIn/add" class="app-card">
@@ -232,28 +263,6 @@
             </div>
         </c:if>
 
-        <%-- 4. DÀNH CHO TẤT CẢ NHÂN VIÊN (Profile, Attendance, Shift - MANAGER cũng thấy) --%>
-        <div class="app-wrapper">
-            <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
-            <a href="/shift/shift_change_req" class="app-card">
-                <div class="app-icon-wrapper bg-warning text-white">
-                    <i class="fa-solid fa-calendar-day"></i>
-                </div>
-                <div class="app-title">Shift Change</div>
-                <div class="app-desc">Schedule Adjustments</div>
-            </a>
-        </div>
-
-        <div class="app-wrapper">
-            <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
-            <a href="/shift/attendance" class="app-card">
-                <div class="app-icon-wrapper bg-success text-white">
-                    <i class="fa-solid fa-user-clock"></i>
-                </div>
-                <div class="app-title">Attendance</div>
-                <div class="app-desc">Time Tracking</div>
-            </a>
-        </div>
     </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
