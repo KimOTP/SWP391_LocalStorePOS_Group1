@@ -40,17 +40,17 @@
                     <div class="info-box">
                         <select class="info-input" name="role">
                             <option value="">All</option>
-                            <option value="Cashier"
-                                ${param.role == 'Cashier' ? 'selected' : ''}>
-                                Cashier
+                            <option value="CASHIER"
+                                ${param.role == 'CASHIER' ? 'selected' : ''}>
+                                CASHIER
                             </option>
-                            <option value="Manager"
-                                ${param.role == 'Manager' ? 'selected' : ''}>
-                                Manager
+                            <option value="MANAGER"
+                                ${param.role == 'MANAGER' ? 'selected' : ''}>
+                                MANAGER
                             </option>
-                            <option value="Supplier"
-                                ${param.role == 'Supplier' ? 'selected' : ''}>
-                                Supplier
+                            <option value="INVENTORY STAFF"
+                                ${param.role == 'INVENTORY STAFF' ? 'selected' : ''}>
+                                INVENTORY STAFF
                             </option>
                         </select>
                     </div>
