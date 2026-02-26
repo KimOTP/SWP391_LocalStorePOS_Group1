@@ -248,17 +248,30 @@
         </a>
         <div class="collapse ${isInvOpen ? 'show' : ''}" id="invSub">
             <div class="submenu-list">
-                <a href="/stockIn/notifications" class="submenu-item">
+                <a href="/inventory/dashboard" class="submenu-item ${pageContext.request.requestURI.contains('/inventory/dashboard') ? 'active' : ''}">
+                    <i class="fa-solid fa-house-chimney"></i>
+                    <span>Inventory Dashboard</span>
+                </a>
+                <a href="/stockIn/notifications" class="submenu-item ${pageContext.request.requestURI.contains('/notifications') ? 'active' : ''}">
                     <i class="fa-solid fa-bell"></i><span>Notifications</span>
                 </a>
-                <a href="/stockIn/add" class="submenu-item">
-                    <i class="fa-solid fa-file-circle-plus"></i><span>Request Order</span>
+                <a href="/stockIn/add" class="submenu-item ${pageContext.request.requestURI.contains('/stockIn/add') ? 'active' : ''}">
+                    <i class="fa-solid fa-file-circle-plus"></i><span>Stock-in Request</span>
                 </a>
-                <a href="/suppliers" class="submenu-item">
+                <a href="/stockOut/add" class="submenu-item ${pageContext.request.requestURI.contains('/stockOut/add') ? 'active' : ''}">
+                    <i class="fa-solid fa-file-circle-minus"></i><span>Stock-out Request</span>
+                </a>
+                <a href="/audit/add" class="submenu-item ${pageContext.request.requestURI.contains('/audit') ? 'active' : ''}">
+                    <i class="fa-solid fa-clipboard-list"></i><span>Audit Session</span>
+                </a>
+                <a href="/suppliers" class="submenu-item ${pageContext.request.requestURI.contains('/suppliers') ? 'active' : ''}">
                     <i class="fa-solid fa-truck-ramp-box"></i><span>Supplier List</span>
                 </a>
-                <a href="/inventory/approval/queue" class="submenu-item">
+                <a href="/inventory/approval/queue" class="submenu-item ${pageContext.request.requestURI.contains('/approval') ? 'active' : ''}">
                     <i class="fa-solid fa-clipboard-check"></i><span>Approval Queue</span>
+                </a>
+                <a href="/inventory/log/show" class="submenu-item ${pageContext.request.requestURI.contains('/logs') ? 'active' : ''}">
+                    <i class="fa-solid fa-clock-rotate-left"></i><span>Inventory Logs</span>
                 </a>
             </div>
         </div>
