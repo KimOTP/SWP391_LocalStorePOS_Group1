@@ -1,83 +1,75 @@
-.profile-wrapper {
-    background: #fff;
-    padding: 32px 40px;
-    min-height: calc(100vh - 70px);
+/* ===== 1. MAIN LAYOUT (Giống product-manage) ===== */
+.main-content {
+    background-color: #f8fafc !important;
+    padding: 30px 40px !important;
+    margin-top: 70px !important;
+    margin-left: 80px;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    will-change: margin-left;
 }
 
+.sidebar.expanded ~ .main-content {
+    margin-left: 260px !important;
+}
+
+
+/* ===== 2. PROFILE WRAPPER -> biến thành card container ===== */
+.profile-wrapper {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+
+/* ===== 3. SECTION TITLE ===== */
 .section-title {
     font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 8px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 6px;
 }
 
 .section-subtitle {
     font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: #555;
+    font-weight: 500;
+    color: #64748b;
+    margin-bottom: 25px;
 }
 
+
+/* ===== 4. INFO LABEL ===== */
 .info-label {
-    font-size: 15px;
-    color: #666;
-    margin-bottom: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 6px;
 }
 
+
+/* ===== 5. INFO BOX (Giống input search product-manage) ===== */
 .info-box {
-    background: #d9d9d9;
-    border-radius: 16px;
-    padding: 6px 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 8px 14px;
     font-size: 14px;
-    margin-bottom: 14px;
+    margin-bottom: 18px;
+    height: 42px;
 
     display: flex;
     align-items: center;
-    height: 38px;
+    transition: all 0.2s ease;
 }
 
-.btn-change {
-    background: #1e66ff;
-    color: #fff;
-    border-radius: 18px;
-    padding: 6px 18px;
-    font-size: 13px;
-    border: none;
+.info-box:hover {
+    border-color: #2563eb;
+    background: #ffffff;
 }
 
-.link-detail {
-    font-size: 15px;
-    color: #1e66ff;
-    text-decoration: underline;
-    margin-left: 6px;
-    cursor: pointer;
-}
 
-.back-link {
-    font-size: 25px;
-    color: #333;
-    margin-top: 30px;
-    float: right;
-    text-decoration: none;
-}
-
-.section-divider {
-    margin: 30px 0 20px;
-    font-weight: 600;
-    font-size: 18px;
-}
-
-.main-content {
-    margin-top: 70px;
-    margin-left: 80px;
-    transition: margin-left 0.3s ease;
-    position: relative;
-    z-index: 1;
-}
-
-.sidebar.expanded ~ .main-content {
-    margin-left: 250px;
-}
-
+/* ===== 6. INPUT INSIDE BOX ===== */
 .info-input {
     width: 100%;
     border: none;
@@ -85,18 +77,121 @@
     outline: none;
     font-size: 14px;
     height: 100%;
+    color: #1e293b;
 }
 
-.success-text {
-    font-size: 13px;
-    color: green;
-    margin-top: 6px;
+
+/* ===== 7. CHANGE BUTTON (Style giống btn-add) ===== */
+.btn-change {
+    background-color: #2563eb;
+    color: #fff;
+    border: none;
+    height: 38px;
+    padding: 0 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
 }
 
+.btn-change:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-change:active {
+    transform: scale(0.96);
+}
+
+
+/* ===== 8. LINK DETAIL ===== */
+.link-detail {
+    font-size: 14px;
+    color: #2563eb;
+    text-decoration: none;
+    margin-left: 8px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.link-detail:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+
+/* ===== 9. BACK LINK ===== */
+.back-link {
+    font-size: 20px;
+    color: #475569;
+    margin-top: 30px;
+    float: right;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.back-link:hover {
+    color: #2563eb;
+}
+
+
+/* ===== 10. SECTION DIVIDER ===== */
+.section-divider {
+    margin: 35px 0 20px;
+    font-weight: 700;
+    font-size: 16px;
+    color: #1e293b;
+}
+
+
+/* ===== 11. STATUS BADGES (Giống product-manage) ===== */
 .status-active {
-    color: #28a745;
+    background: #ecfdf5;
+    color: #059669;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-active::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
 }
 
 .status-deactive {
-    color: #dc3545;
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-deactive::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #dc2626;
+}
+
+
+/* ===== 12. SUCCESS TEXT ===== */
+.success-text {
+    font-size: 13px;
+    color: #16a34a;
+    margin-top: 8px;
 }
