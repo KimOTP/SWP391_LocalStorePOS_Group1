@@ -41,9 +41,17 @@ public class Payment {
     @Column(name = "createdAt", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "paidAt")
+    private LocalDateTime paidAt;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
+        // Nếu lúc tạo mà status đã là SUCCESS (ví dụ trả tiền mặt xong luôn)
+        // thì có thể gán luôn paidAt
+        if (this.paymentStatus == PaymentStatus.SUCCESS) {
+            this.paidAt = LocalDateTime.now();
+        }
     }
 
     public enum PaymentMethod {
