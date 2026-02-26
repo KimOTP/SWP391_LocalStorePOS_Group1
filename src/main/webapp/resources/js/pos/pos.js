@@ -341,3 +341,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updatePreview();
 });
+
+document.getElementById('categorySelect')?.addEventListener('change', function () {
+    loadProducts(this.value || null);
+});
+
+function toggleCategoryDropdown() {
+    const dropdown = document.getElementById('categoryDropdown');
+    dropdown.classList.toggle('active');
+}
+
+function selectCategory(id, name) {
+    const dropdown = document.getElementById('categoryDropdown');
+    document.getElementById('selectedCategoryText').innerText = name;
+    dropdown.classList.remove('active');
+    loadProducts(id || null);
+}
+
+// Click ngoài để đóng
+document.addEventListener('click', function(e) {
+    const dropdown = document.getElementById('categoryDropdown');
+    if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove('active');
+    }
+});

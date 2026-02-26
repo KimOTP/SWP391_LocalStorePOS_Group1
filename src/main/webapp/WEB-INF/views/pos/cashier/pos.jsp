@@ -31,12 +31,26 @@
 
         <input type="text" class="search-box" placeholder="Search for products...">
 
-        <select class="category-select">
-            <option value="">All categories</option>
-            <c:forEach var="category" items="${categories}">
-                <option value="${category.categoryId}">${category.categoryName}</option>
-            </c:forEach>
-        </select>
+        <div class="pos-dropdown" id="categoryDropdown">
+            <div class="pos-dropdown-selected" onclick="toggleCategoryDropdown()">
+                <span id="selectedCategoryText">Select category</span>
+                <span class="pos-dropdown-arrow"></span>
+            </div>
+
+            <div class="pos-dropdown-menu" id="categoryMenu">
+                <div class="pos-dropdown-item"
+                     onclick="selectCategory('', 'Select category')">
+                    Select category
+                </div>
+
+                <c:forEach var="c" items="${categories}">
+                    <div class="pos-dropdown-item"
+                         onclick="selectCategory('${c.categoryId}', '${c.categoryName}')">
+                        ${c.categoryName}
+                    </div>
+                </c:forEach>
+            </div>
+        </div>
     </div>
 
     <!-- TOP BAR ROW 2: Price Range Slider -->

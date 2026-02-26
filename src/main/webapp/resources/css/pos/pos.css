@@ -692,3 +692,143 @@ body {
     .search-box, .category-select { width: 100%; }
     .product-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
 }
+
+/* ================================
+   Modern Category Dropdown Style
+   ================================ */
+
+.pos-category-wrapper {
+    position: relative;
+    min-width: 220px;
+}
+
+.pos-category-select {
+    width: 100%;
+    padding: 12px 42px 12px 16px;
+    border-radius: 18px;
+    border: 1.5px solid #cbd5e1;
+    background-color: #f1f5f9;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #334155;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Custom arrow */
+.pos-category-wrapper::after {
+    content: "";
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    width: 14px;
+    height: 14px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.pos-category-select:hover {
+    border-color: #94a3b8;
+    background-color: #e2e8f0;
+}
+
+.pos-category-select:focus {
+    outline: none;
+    border-color: #2563eb;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* =========================
+   Custom Category Dropdown
+   ========================= */
+
+.pos-dropdown {
+    position: relative;
+    width: 240px;
+    font-family: var(--sb-font);
+}
+
+.pos-dropdown-selected {
+    background: #f1f5f9;
+    border: 2px solid #cbd5e1;
+    border-radius: 22px;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #334155;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+/* Hover mới xanh */
+.pos-dropdown-selected:hover {
+    border-color: #2563eb;
+    background: #eef2ff;
+}
+
+/* Khi dropdown đang mở */
+.pos-dropdown.active .pos-dropdown-selected {
+    border-color: #2563eb;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.pos-dropdown-arrow {
+    width: 14px;
+    height: 14px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23334155' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-size: contain;
+    transition: transform 0.25s ease;
+}
+
+/* Khi dropdown mở */
+.pos-dropdown.active .pos-dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+/* Dropdown list */
+.pos-dropdown-menu {
+    position: absolute;
+    top: 110%;
+    left: 0;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    padding: 8px 0;
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: all 0.25s ease;
+    z-index: 999;
+}
+
+/* Khi mở */
+.pos-dropdown.active .pos-dropdown-menu {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.pos-dropdown-item {
+    padding: 12px 16px;
+    font-size: 0.9rem;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pos-dropdown-item:hover {
+    background: #f1f5f9;
+    color: #2563eb;
+}
