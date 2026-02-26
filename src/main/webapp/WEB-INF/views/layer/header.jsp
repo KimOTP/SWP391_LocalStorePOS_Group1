@@ -45,8 +45,8 @@
                 <li>
                     <a class="dropdown-item"
                        href="${account.employee.role == 'MANAGER'
-                            ? pageContext.request.contextPath.concat('/hr/manager/manager_profile')
-                            : pageContext.request.contextPath.concat('/hr/cashier/cashier_profile')}">
+                            ? pageContext.request.contextPath.concat('/hr/manager_profile')
+                            : pageContext.request.contextPath.concat('/hr/cashier_profile')}">
                         Profile
                     </a>
                 </li>
