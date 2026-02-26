@@ -160,7 +160,7 @@
 
             <div class="app-wrapper">
                 <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
-                <a href="#" class="app-card">
+                <a href="/hr/manager_profile" class="app-card">
                     <div class="app-icon-wrapper bg-dark text-white">
                         <i class="fa-solid fa-user-gear"></i>
                     </div>
@@ -171,7 +171,7 @@
 
             <div class="app-wrapper">
                 <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
-                <a href="#" class="app-card">
+                <a href="/hr/employee_list" class="app-card">
                     <div class="app-icon-wrapper bg-primary text-white">
                         <i class="fa-solid fa-address-book"></i>
                     </div>
@@ -182,7 +182,7 @@
 
             <div class="app-wrapper">
                 <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
-                <a href="#" class="app-card">
+                <a href="/shift/shift_change_req" class="app-card">
                     <div class="app-icon-wrapper bg-warning text-white">
                         <i class="fa-solid fa-calendar-day"></i> </div>
                     <div class="app-info-container"> <div class="app-title">Shift Change</div>
@@ -193,7 +193,7 @@
 
             <div class="app-wrapper">
                 <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
-                <a href="#" class="app-card">
+                <a href="/shift/attendance" class="app-card">
                     <div class="app-icon-wrapper bg-success text-white">
                         <i class="fa-solid fa-user-clock"></i>
                     </div>
@@ -204,7 +204,7 @@
 
             <div class="app-wrapper">
                 <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
-                <a href="#" class="app-card">
+                <a href="/reports" class="app-card">
                     <div class="app-icon-wrapper bg-report">
                         <i class="fa-solid fa-chart-pie"></i>
                     </div>
