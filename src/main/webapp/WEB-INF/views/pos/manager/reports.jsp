@@ -6,15 +6,15 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <title>Báo cáo doanh thu</title>
+    <title>Revenue Report</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <%-- Context path cho JS --%>
+    <%-- Context path for JS --%>
     <meta id="ctxMeta" name="context-path" content="${pageContext.request.contextPath}">
 
     <%-- Bootstrap CSS --%>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <%-- Bootstrap Icons — đảm bảo icon hiển thị trong cả reports và sidebar --%>
+    <%-- Bootstrap Icons --%>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/reports/reports.css">
@@ -29,13 +29,13 @@
 
     <%-- ── HEADER BAR ── --%>
     <div class="rpt-topbar">
-        <h5 class="rpt-title">Báo cáo doanh thu</h5>
+        <h5 class="rpt-title">Revenue Report</h5>
         <div class="rpt-action-group">
             <button class="rpt-btn" onclick="refreshReport()">
-                <i class="bi bi-arrow-clockwise"></i> Làm mới
+                <i class="bi bi-arrow-clockwise"></i> Refresh
             </button>
-            <button class="rpt-btn rpt-btn-excel" onclick="exportExcel()">
-                <i class="bi bi-file-earmark-excel"></i> Xuất Excel
+            <button class="btn-outline-success" onclick="exportExcel()">
+                <i class="bi bi-file-earmark-excel"></i> Export Excel
             </button>
         </div>
     </div>
@@ -45,31 +45,32 @@
 
         <div class="rpt-filter-bar">
             <span class="rpt-filter-bar-label">
-                <i class="bi bi-funnel"></i> Bộ lọc báo cáo
+                <i class="bi bi-funnel"></i> Report Filters
             </span>
-            <button type="button" class="rpt-extend-btn" id="toggleBtn" onclick="toggleFilter()">
-                Mở rộng
+            <button type="button" class="rpt-extend-btn" id="filterToggleBtn" onclick="toggleFilter()">
+                <i class="bi bi-chevron-down rpt-filter-chevron" id="filterChevron"></i>
+                <span id="filterToggleLabel">Expand</span>
             </button>
         </div>
 
         <div id="filterBody" class="rpt-filter-body" style="display: none;">
 
-            <%-- Khoảng ngày --%>
+            <%-- Date range --%>
             <div class="rpt-filter-date-row">
                 <i class="bi bi-calendar3"></i>
-                <label class="rpt-filter-group-label mb-0 me-1">Từ:</label>
+                <label class="rpt-filter-group-label mb-0 me-1">From:</label>
                 <input type="date" id="startDate" class="rpt-date-inp">
                 <span class="mx-1">—</span>
-                <label class="rpt-filter-group-label mb-0 me-1">Đến:</label>
+                <label class="rpt-filter-group-label mb-0 me-1">To:</label>
                 <input type="date" id="endDate" class="rpt-date-inp">
             </div>
 
-            <%-- Cashier filter — CHỈ hiển thị nhân viên có role CASHIER --%>
+            <%-- Cashier filter — only shows employees with CASHIER role --%>
             <div class="rpt-filter-group">
-                <div class="rpt-filter-group-label">Thu ngân</div>
+                <div class="rpt-filter-group-label">Cashier</div>
                 <div class="rpt-radio-row">
                     <label class="rpt-radio-lbl">
-                        <input type="radio" name="cashierFilter" value="" checked> Tất cả
+                        <input type="radio" name="cashierFilter" value="" checked> All
                     </label>
                     <c:forEach var="emp" items="${cashiers}">
                         <label class="rpt-radio-lbl">
@@ -80,29 +81,29 @@
                 </div>
             </div>
 
-            <%-- Phương thức thanh toán --%>
+            <%-- Payment method --%>
             <div class="rpt-filter-group">
-                <div class="rpt-filter-group-label">Phương thức thanh toán</div>
+                <div class="rpt-filter-group-label">Payment Method</div>
                 <div class="rpt-radio-row">
                     <label class="rpt-radio-lbl">
-                        <input type="radio" name="paymentFilter" value="" checked> Tất cả
+                        <input type="radio" name="paymentFilter" value="" checked> All
                     </label>
                     <label class="rpt-radio-lbl">
-                        <input type="radio" name="paymentFilter" value="CASH"> Tiền mặt
+                        <input type="radio" name="paymentFilter" value="CASH"> Cash
                     </label>
                     <label class="rpt-radio-lbl">
-                        <input type="radio" name="paymentFilter" value="BANKING"> Chuyển khoản
+                        <input type="radio" name="paymentFilter" value="BANKING"> Bank Transfer
                     </label>
                 </div>
             </div>
 
-            <%-- Nút Apply / Reset --%>
+            <%-- Apply / Reset buttons --%>
             <div class="rpt-filter-foot">
                 <button class="rpt-btn" onclick="applyFilter()">
-                    <i class="bi bi-check2"></i> Áp dụng
+                    <i class="bi bi-check2"></i> Apply
                 </button>
                 <button class="rpt-btn rpt-btn-ghost" onclick="resetFilter()">
-                    <i class="bi bi-x-circle"></i> Đặt lại
+                    <i class="bi bi-x-circle"></i> Reset
                 </button>
             </div>
 
@@ -117,7 +118,7 @@
 
         <div class="rpt-card">
             <div class="rpt-card-row">
-                <span class="rpt-card-lbl">Tổng doanh thu</span>
+                <span class="rpt-card-lbl">Total Revenue</span>
                 <i class="bi bi-cash-coin rpt-card-ico"></i>
             </div>
             <div class="rpt-card-val" id="totalRevenue">
@@ -128,7 +129,7 @@
 
         <div class="rpt-card">
             <div class="rpt-card-row">
-                <span class="rpt-card-lbl">Tổng đơn hàng</span>
+                <span class="rpt-card-lbl">Total Orders</span>
                 <i class="bi bi-cart3 rpt-card-ico"></i>
             </div>
             <div class="rpt-card-val" id="totalOrders">${totalOrders}</div>
@@ -137,7 +138,7 @@
 
         <div class="rpt-card">
             <div class="rpt-card-row">
-                <span class="rpt-card-lbl">Giá trị TB / đơn vị</span>
+                <span class="rpt-card-lbl">Avg. Value / Unit</span>
                 <i class="bi bi-calculator rpt-card-ico"></i>
             </div>
             <div class="rpt-card-val" id="averageValuePerUnit">
@@ -148,7 +149,7 @@
 
         <div class="rpt-card">
             <div class="rpt-card-row">
-                <span class="rpt-card-lbl">Sản phẩm bán chạy</span>
+                <span class="rpt-card-lbl">Best-Selling Product</span>
                 <i class="bi bi-trophy rpt-card-ico"></i>
             </div>
             <div class="rpt-card-val rpt-card-val--text" id="bestSellingProduct">
@@ -162,20 +163,20 @@
     <%-- ── ORDER TABLE ── --%>
     <div class="rpt-table-wrap">
         <div class="rpt-table-bar">
-            <span><i class="bi bi-list-ul me-1"></i>Chi tiết đơn hàng</span>
-            <span id="orderCountBadge">${totalOrders} đơn hàng</span>
+            <span><i class="bi bi-list-ul me-1"></i>Order Details</span>
+            <span id="orderCountBadge">${totalOrders} orders</span>
         </div>
         <div class="table-responsive">
             <table class="table table-sm table-hover rpt-table mb-0">
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>Mã đơn</th>
-                    <th>Thu ngân</th>
-                    <th>Thanh toán</th>
-                    <th>Thành tiền</th>
-                    <th>Thời gian</th>
-                    <th>Trạng thái</th>
+                    <th>Order ID</th>
+                    <th>Cashier</th>
+                    <th>Payment</th>
+                    <th>Amount</th>
+                    <th>Date & Time</th>
+                    <th>Status</th>
                 </tr>
                 </thead>
                 <tbody id="orderTableBody">
@@ -193,8 +194,8 @@
                                 </td>
                                 <td>
                                     <c:choose>
-                                        <c:when test="${order.paymentMethod == 'CASH'}">Tiền mặt</c:when>
-                                        <c:when test="${order.paymentMethod == 'BANKING'}">Chuyển khoản</c:when>
+                                        <c:when test="${order.paymentMethod == 'CASH'}">Cash</c:when>
+                                        <c:when test="${order.paymentMethod == 'BANKING'}">Bank Transfer</c:when>
                                         <c:otherwise>${order.paymentMethod}</c:otherwise>
                                     </c:choose>
                                 </td>
@@ -209,7 +210,7 @@
                     <c:otherwise>
                         <tr>
                             <td colspan="7" class="text-center text-muted py-4">
-                                <i class="bi bi-inbox me-1"></i>Không có đơn hàng trong ngày đã chọn.
+                                <i class="bi bi-inbox me-1"></i>No orders found for the selected date.
                             </td>
                         </tr>
                     </c:otherwise>
@@ -224,11 +225,10 @@
 <%-- Loading overlay --%>
 <div class="rpt-loading d-none" id="loadingOverlay">
     <div class="spinner-border spinner-border-sm text-secondary me-1"></div>
-    <span>Đang tải...</span>
+    <span>Loading...</span>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<%-- JS tách riêng --%>
 <script src="${pageContext.request.contextPath}/resources/js/report/reports.js"></script>
 </body>
 </html>

@@ -84,10 +84,22 @@
                 <div class="info-label">Status</div>
                 <div class="info-box">
                     <select name="status" class="info-input">
-                        <option value="">All</option>
-                        <option value="Normal">Normal</option>
-                        <option value="Late">Late</option>
-                        <option value="Early Leave">Early Leave</option>
+                        <option value="" ${empty status ? 'selected' : ''}>All</option>
+
+                        <option value="Normal"
+                            ${status == 'Normal' ? 'selected' : ''}>
+                            Normal
+                        </option>
+
+                        <option value="Late"
+                            ${status == 'Late' ? 'selected' : ''}>
+                            Late
+                        </option>
+
+                        <option value="Early Leave"
+                            ${status == 'Early Leave' ? 'selected' : ''}>
+                            Early Leave
+                        </option>
                     </select>
                 </div>
             </div>

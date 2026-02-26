@@ -121,11 +121,15 @@ public class AttendanceService {
 
             filtered = filtered.stream().filter(a -> {
 
-                if (status.equals("Expired")) return a.getAutoCheckout();
-                if (status.equals("Late")) return a.getIsLate();
-                if (status.equals("Early Leave")) return a.getIsEarlyLeave();
+                boolean isLate = Boolean.TRUE.equals(a.getIsLate());
+                boolean isEarly = Boolean.TRUE.equals(a.getIsEarlyLeave());
+                boolean isExpired = Boolean.TRUE.equals(a.getAutoCheckout());
+
+                if (status.equals("Expired")) return isExpired;
+                if (status.equals("Late")) return isLate;
+                if (status.equals("Early Leave")) return isEarly;
                 if (status.equals("Normal"))
-                    return !a.getIsLate() && !a.getIsEarlyLeave() && !a.getAutoCheckout();
+                    return !isLate && !isEarly && !isExpired;
 
                 return true;
             }).toList();
@@ -246,6 +250,10 @@ public class AttendanceService {
                     attendance.setEmployee(employee);
                     attendance.setShift(shift);
                     attendance.setWorkDate(date);
+
+                    attendance.setIsLate(false);
+                    attendance.setIsEarlyLeave(false);
+                    attendance.setAutoCheckout(false);
 
                     attendanceRepository.save(attendance);
                 }
