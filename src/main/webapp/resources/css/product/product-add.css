@@ -161,6 +161,11 @@
     color: #64748b !important;
 }
 
+.btn-light:hover {
+    transform: translateY(-1px);
+    /* Sử dụng màu xám đen nhạt để tạo chiều sâu tự nhiên */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
 /* --- Custom Select Wrapper --- */
 .custom-select-wrapper .dropdown-toggle {
     /* Mũi tên chữ V hiện đại */
