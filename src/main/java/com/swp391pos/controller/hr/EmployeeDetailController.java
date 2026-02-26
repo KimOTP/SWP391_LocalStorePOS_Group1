@@ -57,7 +57,7 @@ public class EmployeeDetailController {
         model.addAttribute("employee", employee);
         model.addAttribute("account", account);
 
-        return "hr/employee_detail";
+        return "hr/manager/employee_detail";
     }
 
     // ==============================
