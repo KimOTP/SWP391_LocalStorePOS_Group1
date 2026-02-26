@@ -11,7 +11,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/resources/css/customer/customer.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/css/customer/customer1.css" rel="stylesheet">
 </head>
 <body>
 
@@ -36,6 +36,7 @@
     <div class="row g-4 mb-5">
         <div class="col-md-3">
             <div class="stat-card">
+            <i class="fa-solid fa-tags stat-icon"></i>
                 <div class="stat-title mb-2">Total promotion</div>
                 <div class="stat-value">${totalPromotions}</div>
                 <div class="small text-muted mt-1">Promotions in the system</div>
@@ -43,6 +44,7 @@
         </div>
         <div class="col-md-3">
             <div class="stat-card">
+            <i class="fa-solid fa-circle-check stat-icon"></i>
                 <div class="stat-title mb-2">Active</div>
                 <div class="stat-value text-success">${activeCount}</div>
                 <div class="small text-muted mt-1">Currently running system-wide</div>
@@ -50,6 +52,7 @@
         </div>
         <div class="col-md-3">
             <div class="stat-card">
+            <i class="fa-solid fa-circle-pause stat-icon"></i>
                 <div class="stat-title mb-2">Inactive</div>
                 <div class="stat-value text-secondary">${inactiveCount}</div>
                 <div class="small text-muted mt-1">Temporarily suspended</div>
@@ -57,6 +60,7 @@
         </div>
         <div class="col-md-3">
             <div class="stat-card">
+            <i class="fa-solid fa-hourglass-half stat-icon"></i>
                 <div class="stat-title mb-2">Promotion Expired</div>
                 <div class="stat-value text-warning">${expiredCount}</div> <div class="small text-muted mt-1">Expired across system</div>
             </div>
@@ -71,7 +75,7 @@
                 <span class="text-muted small">Search and filter by criteria</span>
             </div>
 
-            <form action="/cus-promo/manager/promotion" method="get" id="filterForm">
+            <form action="/promotion" method="get" id="filterForm">
                 <div class="row g-3 mb-4">
 
                     <div class="col-md-4">
@@ -144,13 +148,13 @@
                             <td>
                                 <c:choose>
                                     <c:when test="${promo.status == 'ACTIVE'}">
-                                        <span class="badge rounded-pill bg-success px-3 py-2">Active</span>
+                                        <span class="badge rounded-pill badge-active px-3 py-2">Active</span>
                                     </c:when>
                                     <c:when test="${promo.status == 'EXPIRED'}">
-                                        <span class="badge rounded-pill bg-warning text-dark px-3 py-2">Expired</span>
+                                        <span class="badge rounded-pill badge-expired text-dark px-3 py-2">Expired</span>
                                     </c:when>
                                     <c:otherwise>
-                                        <span class="badge rounded-pill bg-secondary px-3 py-2">Inactive</span>
+                                        <span class="badge rounded-pill badge-inactive px-3 py-2">Inactive</span>
                                     </c:otherwise>
                                 </c:choose>
                             </td>
@@ -171,13 +175,13 @@
                                                     <i class="fa-solid fa-pen-to-square text-primary me-2"></i> Edit
                                              </a>
                                         </li>
-                                        <li><a class="dropdown-item py-2" href="/cus-promo/manager/promotion/detail?id=${promo.promotionId}"><i class="fa-solid fa-eye text-warning me-2"></i> View details</a></li>
+                                        <li><a class="dropdown-item py-2" href="/promotion/detail?id=${promo.promotionId}"><i class="fa-solid fa-eye text-warning me-2"></i> View details</a></li>
                                         <li>
                                                 <c:choose>
                                                     <%-- Nếu đang ACTIVE -> Inactive để tắt --%>
                                                     <c:when test="${promo.status == 'ACTIVE'}">
                                                         <a class="dropdown-item py-2"
-                                                           href="/cus-promo/manager/promotion/status?id=${promo.promotionId}&status=INACTIVE"
+                                                           href="/promotion/status?id=${promo.promotionId}&status=INACTIVE"
                                                            onclick="return confirm('Are you sure you want to pause this promotion?')">
                                                             <i class="fa-solid fa-pause text-secondary me-2"></i> Inactive
                                                         </a>
@@ -186,7 +190,7 @@
                                                     <%-- Nếu đang INACTIVE -> Hiện nút Active--%>
                                                     <c:when test="${promo.status == 'INACTIVE'}">
                                                         <a class="dropdown-item py-2"
-                                                           href="/cus-promo/manager/promotion/status?id=${promo.promotionId}&status=ACTIVE"
+                                                           href="/promotion/status?id=${promo.promotionId}&status=ACTIVE"
                                                            onclick="return confirm('Are you sure you want to activate this promotion?')">
                                                             <i class="fa-solid fa-play text-success me-2"></i> Active
                                                         </a>
@@ -195,7 +199,7 @@
                                             </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                             <a class="dropdown-item py-2 text-danger" href="/cus-promo/manager/promotion/delete?id=${promo.promotionId}"
+                                             <a class="dropdown-item py-2 text-danger" href="/promotion/delete?id=${promo.promotionId}"
                                                    onclick="return confirm('Are you sure you want to delete this promotion?')">
                                                     <i class="fa-solid fa-trash me-2"></i> Delete
                                              </a>
@@ -221,7 +225,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/cus-promo/manager/promotion/add" method="post" onsubmit="return validatePromotionForm(this)">
+            <form action="/promotion/add" method="post" onsubmit="return validatePromotionForm(this)">
                 <div class="modal-body pt-3">
                     <div class="row g-4"> <div class="col-md-6">
                             <label class="form-label fw-bold fs-5">Name:</label>
@@ -268,7 +272,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/cus-promo/manager/promotion/update" method="post" onsubmit="return validatePromotionForm(this)">
+            <form action="/promotion/update" method="post" onsubmit="return validatePromotionForm(this)">
                 <div class="modal-body pt-3">
                     <input type="hidden" id="editPromoId" name="promotionId">
 

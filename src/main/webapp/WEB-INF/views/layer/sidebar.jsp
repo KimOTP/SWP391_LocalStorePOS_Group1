@@ -212,11 +212,11 @@
         </a>
         <div class="collapse ${isCrmOpen ? 'show' : ''}" id="crmSub">
             <div class="submenu-list">
-                <a href="/cus-promo/manager/customer" class="submenu-item ${pageContext.request.requestURI.contains('/customer') ? 'active' : ''}">
+                <a href="/customer" class="submenu-item ${pageContext.request.requestURI.contains('/customer') ? 'active' : ''}">
                     <i class="fa-solid fa-user-tag"></i>
                     <span>Customers</span>
                 </a>
-                <a href="/cus-promo/manager/promotion" class="submenu-item ${pageContext.request.requestURI.contains('/promotion') ? 'active' : ''}">
+                <a href="/promotion" class="submenu-item ${pageContext.request.requestURI.contains('/promotion') ? 'active' : ''}">
                     <i class="fa-solid fa-ticket"></i>
                     <span>Promotions</span>
                 </a>
