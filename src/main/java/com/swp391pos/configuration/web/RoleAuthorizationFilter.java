@@ -42,7 +42,8 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
             // Bạn có thể thêm các folder khác vào đây nếu cần
             boolean isAllowed = uri.contains("/pos")
                     || uri.contains("/dashboard")
-                    || uri.contains("/layer");
+                    || uri.contains("/layer")
+                    || uri.contains("/cashier/");
 
             if (!isAllowed) {
                 // Ví dụ: Cashier vào /product/ (không thuộc 3 cái trên) sẽ bị đẩy về dashboard

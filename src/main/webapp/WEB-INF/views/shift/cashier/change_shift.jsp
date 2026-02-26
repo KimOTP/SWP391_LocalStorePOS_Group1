@@ -26,12 +26,20 @@
 
             <div class="info-label">Day I Want To Switch Shift</div>
             <div class="info-box">
-                <input type="date" name="workDate" class="info-input" value="2026-01-21">
+                <input type="date"
+                       name="workDate"
+                       class="info-input"
+                       min="<%= java.time.LocalDate.now() %>"
+                       max="<%= java.time.LocalDate.now().plusDays(7) %>"
+                       value="${selectedDate}" />
             </div>
 
             <div class="info-label">Current Shift</div>
             <div class="info-box">
-                <input type="text" class="info-input" value="Afternoon" readonly>
+                <input type="text"
+                       class="info-input"
+                       value="${currentShift}"
+                       readonly>
             </div>
 
             <div class="info-label">Requested Shift</div>
@@ -39,7 +47,7 @@
                 <select name="requestedShift" class="info-input">
                     <option value="Morning">Morning</option>
                     <option value="Afternoon">Afternoon</option>
-                    <option value="Evening" selected>Evening</option>
+                    <option value="Evening">Evening</option>
                 </select>
             </div>
 
@@ -50,9 +58,18 @@
 
             <button type="submit" class="btn-change mt-2">Send</button>
 
+            <!-- ERROR MESSAGE -->
+            <c:if test="${not empty error}">
+                <div class="text-danger mt-3">
+                    ${error}
+                </div>
+            </c:if>
+
             <!-- SUCCESS MESSAGE -->
             <c:if test="${not empty success}">
-                <div class="success-text">Send Successfully!</div>
+                <div class="text-success mt-3">
+                    ${success}
+                </div>
             </c:if>
         </form>
 
