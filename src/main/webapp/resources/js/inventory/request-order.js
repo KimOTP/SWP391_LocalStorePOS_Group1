@@ -201,3 +201,36 @@ function handleCancel() {
         window.location.href = '/stockIn/view'; // English Redirect
     }
 }
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Xử lý thông báo Pop-up từ Server (SweetAlert2)
+    const message = document.getElementById('serverMessage').value;
+    const status = document.getElementById('serverStatus').value;
+
+    if (message && message.trim() !== "") {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
+        Toast.fire({
+            icon: status === 'success' ? 'success' : 'error',
+            title: message
+        });
+    }
+
+    // 2. Lắng nghe sự kiện nút Add Item
+    const btnAddItem = document.getElementById('btnAddItem');
+    if(btnAddItem) {
+        btnAddItem.addEventListener('click', function() {
+            // Logic thêm item vào danh sách receipt của bạn ở đây
+            console.log("Adding item to receipt...");
+        });
+    }
+});
