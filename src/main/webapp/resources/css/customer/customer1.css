@@ -1,0 +1,142 @@
+/* --- 1. Tổng thể nội dung & Logic Co Giãn --- */
+body {
+    background-color: #f8fafc !important;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.main-content {
+    background-color: #f8fafc !important;
+    padding: 30px 40px !important;
+    margin-top: 70px !important;
+    margin-left: 80px;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    will-change: margin-left;
+}
+
+#sidebar.expanded ~ .main-content {
+    margin-left: 260px !important;
+}
+
+/* --- 2. Thẻ thống kê (Stat Cards - Chuẩn phong cách Product) --- */
+.stat-card {
+    position: relative !important;
+    background: #fff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    height: 100% !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
+}
+
+.stat-icon {
+    position: absolute !important;
+    right: 20px !important;
+    top: 20px !important;
+    font-size: 1.5rem !important;
+    opacity: 0.2 !important;
+    color: #64748b !important;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.stat-title {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
+}
+
+.stat-value {
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    margin-top: 8px !important;
+    color: #1e293b !important;
+}
+
+.text-1 { color: #0E549C !important; }
+.text-2 { color: #FEC107 !important; }
+.text-3 { color: #2CC1DB !important; }
+.text-4 { color: #41CFA2 !important; }
+
+.btn-primary:hover {
+background-color: #1d4ed8 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
+}
+
+
+/* --- 3. Container chứa Bảng (Bo góc, viền mỏng) --- */
+.card.shadow-sm.border-0 {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+    margin-top: 30px !important;
+}
+
+/* --- 4. Status Badges (Huy hiệu trạng thái có dấu chấm tròn) --- */
+.badge-active, .badge-inactive, .badge-expired {
+    padding: 6px 12px !important;
+    border-radius: 8px !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+/* Tạo dấu chấm tròn trước chữ */
+.badge-active::before, .badge-inactive::before, .badge-expired::before{
+    content: "" !important;
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+}
+
+/* Màu Active (Xanh lá) */
+.badge-active {
+    background: #ecfdf5 !important;
+    color: #059669 !important;
+}
+.badge-active::before { background: #10b981 !important; }
+
+/* Màu Inactive (Đỏ/Cam) */
+.badge-inactive {
+    background: #fef2f2 !important;
+    color: #dc2626 !important;
+}
+.badge-inactive::before { background: #dc2626 !important; }
+
+/* Màu Expired (Đen/xám) */
+.badge-expired {
+    background: #FFF8E3 !important;
+    color: #FFC107 !important;
+}
+.badge-expired::before { background: #FFC107 !important; }
+
+/* --- 5. Style cho Tab Detail Customer --- */
+#detailTab {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 4px;
+}
+#detailTab .nav-link {
+    color: #475569;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+#detailTab .nav-link:hover {
+    color: #2563eb;
+}
+#detailTab .nav-link.active {
+    background-color: white !important;
+    color: #2563eb !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
