@@ -134,10 +134,6 @@
     transition: transform 0.2s ease;
 }
 
-.btn-add:hover i {
-    transform: rotate(90px); /* Xoay nhẹ icon cộng khi hover */
-}
-
 /* --- 6. Table Styling --- */
 .table thead th {
     background-color: #f8fafc;
