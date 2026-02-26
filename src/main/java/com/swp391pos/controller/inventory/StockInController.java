@@ -103,7 +103,7 @@ public class StockInController {
             ra.addFlashAttribute("message", "Error: " + e.getMessage());
             ra.addFlashAttribute("status", "danger");
         }
-        return "redirect:/stockIn/inventory-staff/notifications";
+        return "redirect:/stockIn/notifications";
     }
 
     //Views Stock In Detail for InventoryStaff
