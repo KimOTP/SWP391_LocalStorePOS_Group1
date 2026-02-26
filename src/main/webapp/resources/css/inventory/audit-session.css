@@ -1,0 +1,193 @@
+/* --- 1. CẤU TRÚC TỔNG THỂ --- */
+.audit-main-content {
+    background-color: #f8fafc;
+    padding: 30px 40px;
+    margin-top: 70px;
+    margin-left: 80px;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- 2. THẺ DASHBOARD (STAT CARDS) --- */
+.audit-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.audit-stat-card {
+    background: #ffffff;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease-in-out;
+}
+
+.audit-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}
+
+.audit-stat-title {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.audit-stat-value {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.audit-stat-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2.5rem;
+    color: #f1f5f9;
+    z-index: 0;
+}
+
+/* Biến thể thẻ Progress (Màu xanh đậm) */
+.card-highlight-blue {
+    background-color: #2563eb;
+    border: none;
+}
+.card-highlight-blue .audit-stat-title { color: rgba(255, 255, 255, 0.8); }
+.card-highlight-blue .audit-stat-value { color: #ffffff; }
+
+/* --- 3. KHỐI THÔNG TIN PHIÊN (INFO PANEL) --- */
+.audit-info-panel {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.audit-label {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.audit-data {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #334155;
+}
+
+/* --- 4. BẢNG DỮ LIỆU (AUDIT TABLE) --- */
+.audit-table-wrapper {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.audit-table thead th {
+    background-color: #f8fafc;
+    color: #64748b;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 16px;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+/* Ô nhập số lượng thực tế (Actual Qty) */
+.audit-input-actual {
+    width: 85px;
+    height: 40px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 700;
+    color: #2563eb;
+    background-color: #ffffff;
+    transition: all 0.2s;
+}
+
+.audit-input-actual:focus {
+    border-color: #2563eb;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+/* Màu sắc Discrepancy (Độ lệch) */
+.diff-positive { color: #10b981 !important; } /* Thừa hàng */
+.diff-negative { color: #ef4444 !important; } /* Thiếu hàng */
+
+/* --- 5. NÚT BẤM (AUDIT BUTTONS) --- */
+.audit-btn-confirm {
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 12px;
+    font-weight: 700;
+    transition: all 0.2s;
+}
+
+.audit-btn-confirm:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.audit-btn-add {
+    background-color: #eff6ff;
+    color: #2563eb;
+    border: 1.5px dashed #2563eb;
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+/* Tùy chỉnh Checkbox Modal */
+.product-cb {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    border: 2px solid #cbd5e1;
+    border-radius: 6px;
+}
+
+#modalTable thead th {
+    background-color: #f8fafc;
+    padding: 15px;
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#modalTable tbody tr:hover {
+    background-color: #f1f5f9;
+}
+
+.audit-btn-confirm {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    padding: 10px 20px;
+    transition: all 0.2s;
+}
+
+.audit-btn-confirm:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
