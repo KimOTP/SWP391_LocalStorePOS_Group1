@@ -48,6 +48,9 @@
           <label class="small fw-bold text-muted text-uppercase mb-2">Staff Member</label>
           <select id="staffFilter" class="form-select btn-filter">
             <option value="ALL">All Staff</option>
+            <c:forEach items="${staffList}" var="s">
+              <option value="${s.fullName}">${s.fullName}</option>
+            </c:forEach>
           </select>
         </div>
         <div class="col-md-3">
@@ -55,6 +58,7 @@
           <select id="typeFilter" class="form-select btn-filter">
             <option value="ALL">All Types</option>
             <option value="Stock-in">Stock-in</option>
+            <option value="Stock-out">Stock-out</option>
             <option value="Audit">Audit</option>
           </select>
         </div>
@@ -92,12 +96,13 @@
             <td class="text-center text-muted small">${status.index + 1}</td>
             <td><span class="log-id">${item.prefix}${item.id}</span></td>
             <td>
-                <span class="badge rounded-pill border fw-normal text-dark px-3 ${item.type == 'Audit' ? 'border-info' : 'border-primary'}">
+                <span class="badge rounded-pill border fw-normal text-dark px-3
+                    ${item.type == 'Audit' ? 'border-info' : (item.type == 'Stock-out' ? 'border-danger' : 'border-primary')}">
                     ${item.type}
                 </span>
             </td>
             <td class="staff-cell">${item.staff}</td>
-            <td class="text-muted">
+            <td class="text-muted small">
               <fmt:formatDate value="${pDate}" pattern="dd/MM/yyyy HH:mm" />
             </td>
             <td class="text-center">
@@ -111,9 +116,23 @@
               </div>
             </td>
             <td class="text-end">
-              <a href="/stockIn/stock-in-details?id=${item.id}" class="action-link">
-                View Detail <i class="fa-solid fa-chevron-right ms-1 small"></i>
-              </a>
+              <c:choose>
+                <c:when test="${item.type == 'Stock-in'}">
+                  <a href="/stockIn/details?id=${item.id}" class="action-link">
+                    View Detail <i class="fa-solid fa-chevron-right ms-1 small"></i>
+                  </a>
+                </c:when>
+                <c:when test="${item.type == 'Stock-out'}">
+                  <a href="/stockOut/details?id=${item.id}" class="action-link">
+                    View Detail <i class="fa-solid fa-chevron-right ms-1 small"></i>
+                  </a>
+                </c:when>
+                <c:when test="${item.type == 'Audit'}">
+                  <a href="/audit/details?id=${item.id}" class="action-link">
+                    View Detail <i class="fa-solid fa-chevron-right ms-1 small"></i>
+                  </a>
+                </c:when>
+              </c:choose>
             </td>
           </tr>
         </c:forEach>

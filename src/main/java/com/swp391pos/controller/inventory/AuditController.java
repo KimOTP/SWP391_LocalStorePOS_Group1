@@ -48,4 +48,11 @@ public class AuditController {
         }
         return "redirect:/audit/add";
     }
+
+    @GetMapping("/details")
+    public String viewAuditDetail(@RequestParam Integer id, Model model) {
+        AuditSession audit = auditService.getAuditById(id);
+        model.addAttribute("audit", audit);
+        return "inventory/inventoryStaff/audit-detail";
+    }
 }

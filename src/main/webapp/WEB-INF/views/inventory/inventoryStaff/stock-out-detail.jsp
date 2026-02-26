@@ -17,15 +17,29 @@
 <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold mb-0">Report detail</h2>
+        <button class="btn-cancel" onclick="history.back()">
+            <i class="fa-solid fa-arrow-left me-2"></i>Back To Reports
+        </button>
     </div>
 
     <div class="info-card mb-4 border-primary-subtle border-start border-5">
         <div class="d-flex justify-content-between align-items-start mb-4">
-            <h5 class="fw-bold mb-0">Log information : <span class="text-primary">SO-${stockOut.stockOutId}</span></h5>
-            <c:set var="statusName" value="${stockOut.status.transactionStatusName}" />
-            <span class="status-badge ${statusName == 'Completed' ? 'bg-success-subtle text-success border-success' : 'bg-warning-subtle text-warning border-warning'}">
-                <i class="fa-solid fa-circle-check me-1"></i> ${statusName}
-            </span>
+            <h5 class="fw-bold mb-0">Request ID: <span class="text-primary">SO_${stockOut.stockOutId}</span></h5>
+
+            <c:choose>
+                <c:when test="${stockOut.status.transactionStatusId == 1}">
+                    <span class="status-badge status-discontinued">Input Pending</span>
+                </c:when>
+                <c:when test="${stockOut.status.transactionStatusId == 2}">
+                    <span class="status-badge status-pending">Pending Approval</span>
+                </c:when>
+                <c:when test="${stockOut.status.transactionStatusId == 3}">
+                    <span class="status-badge status-outstock">Rejected</span>
+                </c:when>
+                <c:when test="${stockOut.status.transactionStatusId == 4}">
+                    <span class="status-badge status-active">Completed</span>
+                </c:when>
+            </c:choose>
         </div>
 
         <div class="row g-4">

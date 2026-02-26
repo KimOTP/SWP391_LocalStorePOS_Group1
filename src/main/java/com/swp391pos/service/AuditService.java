@@ -67,4 +67,8 @@ public class AuditService {
         }
         return result;
     }
+
+    public AuditSession getAuditById(Integer id) {
+        return auditRepo.findById(id).orElseThrow();
+    }
 }

@@ -21,7 +21,7 @@ public class StockInController {
 
     @Autowired private StockInService stockInService;
 
-    @GetMapping("/view")
+    @GetMapping("/add")
     public String showRequestOrderPage() {
         return "inventory/manager/request-order";
     }
@@ -107,7 +107,7 @@ public class StockInController {
     }
 
     //Views Stock In Detail for InventoryStaff
-    @GetMapping("/stock-in-details")
+    @GetMapping("/details")
     public String viewDetailed(@RequestParam Integer id, Model model) {
         StockIn stockIn = stockInService.getStockInById(id);
         model.addAttribute("stockIn", stockIn);

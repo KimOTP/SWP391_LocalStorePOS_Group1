@@ -1,9 +1,7 @@
 package com.swp391pos.controller.inventory;
 
 import com.swp391pos.entity.Account;
-import com.swp391pos.entity.StockIn;
 import com.swp391pos.service.ApprovalService;
-import com.swp391pos.service.StockInService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Controller;
