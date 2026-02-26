@@ -248,16 +248,16 @@
         </a>
         <div class="collapse ${isInvOpen ? 'show' : ''}" id="invSub">
             <div class="submenu-list">
-                <a href="/stockIn/inventory-staff/notifications" class="submenu-item">
+                <a href="/stockIn/notifications" class="submenu-item">
                     <i class="fa-solid fa-bell"></i><span>Notifications</span>
                 </a>
-                <a href="/stockIn/admin/view" class="submenu-item">
+                <a href="/stockIn/view" class="submenu-item">
                     <i class="fa-solid fa-file-circle-plus"></i><span>Request Order</span>
                 </a>
                 <a href="/suppliers" class="submenu-item">
                     <i class="fa-solid fa-truck-ramp-box"></i><span>Supplier List</span>
                 </a>
-                <a href="/inventory/admin/approval/queue" class="submenu-item">
+                <a href="/inventory/approval/queue" class="submenu-item">
                     <i class="fa-solid fa-clipboard-check"></i><span>Approval Queue</span>
                 </a>
             </div>

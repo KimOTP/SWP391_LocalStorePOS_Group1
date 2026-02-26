@@ -39,7 +39,7 @@ async function handleSupplierAutoFill() {
     }
 
     try {
-        const response = await fetch(`/requestOrder/admin/supplier-info?name=${encodeURIComponent(name)}`);
+        const response = await fetch(`/stockIn/supplier-info?name=${encodeURIComponent(name)}`);
 
         if (!response.ok) {
             throw new Error("Supplier not found in the system!");
@@ -67,7 +67,7 @@ async function loadProductsBySupplier(name) {
     const productSelect = document.getElementById('productSku');
 
     try {
-        const response = await fetch(`/requestOrder/admin/products-by-supplier?name=${encodeURIComponent(name)}`);
+        const response = await fetch(`/stockIn/products-by-supplier?name=${encodeURIComponent(name)}`);
         const products = await response.json();
 
         if (products && products.length > 0) {
@@ -91,7 +91,7 @@ async function handleProductSelect() {
     if (!sku) return;
 
     try {
-        const response = await fetch(`/requestOrder/admin/product-info?sku=${encodeURIComponent(sku)}`);
+        const response = await fetch(`/stockIn/product-info?sku=${encodeURIComponent(sku)}`);
         const data = await response.json();
         if (data) {
             row.querySelector('.product-name').value = data.productName;
@@ -198,6 +198,39 @@ async function submitFinalOrder() {
 }
 function handleCancel() {
     if (confirm("Cancel this request? All data will be lost.")) {
-        window.location.href = '/requestOrder/admin/view'; // English Redirect
+        window.location.href = '/stockIn/view'; // English Redirect
     }
 }
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Xử lý thông báo Pop-up từ Server (SweetAlert2)
+    const message = document.getElementById('serverMessage').value;
+    const status = document.getElementById('serverStatus').value;
+
+    if (message && message.trim() !== "") {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+
+        Toast.fire({
+            icon: status === 'success' ? 'success' : 'error',
+            title: message
+        });
+    }
+
+    // 2. Lắng nghe sự kiện nút Add Item
+    const btnAddItem = document.getElementById('btnAddItem');
+    if(btnAddItem) {
+        btnAddItem.addEventListener('click', function() {
+            // Logic thêm item vào danh sách receipt của bạn ở đây
+            console.log("Adding item to receipt...");
+        });
+    }
+});

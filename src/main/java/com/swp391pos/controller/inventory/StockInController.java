@@ -21,33 +21,34 @@ public class StockInController {
 
     @Autowired private StockInService stockInService;
 
-    @GetMapping("/admin/view")
+    @GetMapping("/add")
     public String showRequestOrderPage() {
-        return "inventory/admin/request-order";
+        return "inventory/manager/request-order";
     }
 
-    @GetMapping("/admin/supplier-info")
+    @GetMapping("/supplier-info")
     @ResponseBody
     public ResponseEntity<?> getSupplierInfo(@RequestParam String name) {
         Map<String, String> data = stockInService.getSupplierEmail(name);
         return (data != null) ? ResponseEntity.ok(data) : ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/admin/products-by-supplier")
+    @GetMapping("/products-by-supplier")
     @ResponseBody
     public ResponseEntity<?> getProductsBySupplier(@RequestParam String name) {
         List<Product> products = stockInService.getProductsBySupplier(name);
         return products.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(products);
     }
 
-    @GetMapping("/admin/product-info")
+    @GetMapping("/product-info")
     @ResponseBody
     public ResponseEntity<?> getSingleProductInfo(@RequestParam String sku) {
         Map<String, Object> data = stockInService.getProductDetails(sku);
         return (data != null) ? ResponseEntity.ok(data) : ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/admin/stock-in")
+    // Request Order for Manager
+    @PostMapping("/stock-in")
     public String submitOrder(
             @RequestParam String supplierName,
             @RequestParam String itemsJson,
@@ -56,7 +57,6 @@ public class StockInController {
             Account account = (Account) session.getAttribute("loggedInAccount");
             ObjectMapper mapper = new ObjectMapper();
             List<Map<String, Object>> items = mapper.readValue(itemsJson, new TypeReference<>(){});
-            // Gọi Service xử lý toàn bộ logic
             stockInService.createRequest(supplierName, items, account);
 
             ra.addFlashAttribute("message", "Product Request submitted successfully!");
@@ -65,11 +65,11 @@ public class StockInController {
             ra.addFlashAttribute("message", "Error: " + e.getMessage());
             ra.addFlashAttribute("status", "danger");
         }
-        return "redirect:/requestOrder/admin/view";
+        return "redirect:view";
     }
 
     //Stock In Notification For Inventory Staff
-    @GetMapping("/inventory-staff/notifications")
+    @GetMapping("/notifications")
     public String showNotifications(Model model) {
         List<StockIn> pendingList = stockInService.getPendingNotifications();
 
@@ -79,13 +79,14 @@ public class StockInController {
     }
 
     //Stock In Process For InventoryStaff
-    @GetMapping("/inventory-staff/process")
+    @GetMapping("/process")
     public String showProcessPage(@RequestParam Integer id, Model model) {
         model.addAttribute("stockIn", stockInService.getStockInForProcessing(id));
         return "inventory/inventoryStaff/stock-in";
     }
 
-    @PostMapping("/inventory-staff/submit-process")
+    //Stock In Submit for InventoryStaff
+    @PostMapping("/submit-process")
     public String submitProcess(
             @RequestParam Integer stockInId,
             @RequestParam String actualDataJson,
@@ -102,9 +103,11 @@ public class StockInController {
             ra.addFlashAttribute("message", "Error: " + e.getMessage());
             ra.addFlashAttribute("status", "danger");
         }
-        return "redirect:/stockIn/inventory-staff/notifications";
+        return "redirect:/stockIn/notifications";
     }
-    @GetMapping("/inventory-staff/stock-in-details")
+
+    //Views Stock In Detail for InventoryStaff
+    @GetMapping("/details")
     public String viewDetailed(@RequestParam Integer id, Model model) {
         StockIn stockIn = stockInService.getStockInById(id);
         model.addAttribute("stockIn", stockIn);

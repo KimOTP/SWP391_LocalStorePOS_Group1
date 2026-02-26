@@ -1,4 +1,4 @@
-/* --- 1. Tổng thể nội dung --- */
+/* --- TỔNG THỂ --- */
 .main-content {
     background-color: #f8fafc;
     padding: 30px 40px;
@@ -7,11 +7,7 @@
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-#sidebar.expanded ~ .main-content {
-    margin-left: 260px;
-}
-
-/* --- 2. Thẻ Thông tin (Info Card) --- */
+/* --- INFO CARD --- */
 .info-card {
     background: #ffffff;
     border: 1px solid #e2e8f0;
@@ -36,7 +32,7 @@
     color: #1e293b;
 }
 
-/* --- 3. Bảng xử lý --- */
+/* --- TABLE & INPUTS --- */
 .table-section {
     background: #ffffff;
     border: 1px solid #e2e8f0;
@@ -61,9 +57,8 @@
     font-size: 0.85rem;
 }
 
-/* Ô nhập số lượng thực tế */
 .input-actual {
-    width: 100px;
+    width: 90px;
     height: 38px;
     border-radius: 8px;
     border: 1px solid #cbd5e1;
@@ -79,28 +74,26 @@
     outline: none;
 }
 
-/* Badge số lượng dự kiến */
-.expected-badge {
-    background: #f1f5f9;
-    color: #475569;
-    padding: 6px 12px;
+.stock-badge {
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 4px 12px;
     border-radius: 6px;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 0.85rem;
 }
 
-/* Trạng thái */
+/* --- BUTTONS & BADGES --- */
 .status-badge {
     padding: 6px 16px;
     border-radius: 8px;
     font-size: 0.75rem;
     font-weight: 700;
     background: #fffbeb;
-    color: #d97706; /* Màu vàng Pending Approval */
+    color: #d97706;
     border: 1px solid #fef3c7;
 }
 
-/* --- 4. Buttons --- */
 .btn-confirm {
     background-color: #2563eb;
     color: #fff !important;
@@ -123,10 +116,33 @@
     padding: 10px 24px;
     border-radius: 10px;
     font-weight: 600;
-    transition: all 0.2s;
+}
+/* Trong file resources/css/inventory/stock-out.css */
+
+.min-vh-10 {
+    min-height: 80px;
 }
 
-.btn-cancel:hover {
+/* Ô hiển thị ghi chú của từng dòng sản phẩm */
+.view-only-box {
     background-color: #f8fafc;
-    border-color: #cbd5e1;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: #475569;
+    min-width: 150px;
+}
+
+/* Badge số lượng xuất kho màu đỏ nổi bật */
+.bg-danger {
+    background-color: #dc2626 !important;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.table thead th {
+    /* Đảm bảo tiêu đề bảng đồng bộ với các trang trước */
+    font-size: 0.7rem;
+    color: #64748b;
+    background-color: #f8fafc;
 }
