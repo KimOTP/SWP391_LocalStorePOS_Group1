@@ -3,7 +3,7 @@
 <%-- Bootstrap + Font Awesome --%>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
     /* --- UI Profile Dropdown - Refined & Small Style --- */
     .user-dropdown {
@@ -185,7 +185,7 @@
 
                 <li>
                     <a class="dropdown-item"
-                       href="${account.employee.role == 'MANAGER' ? '/hr/manager/manager_profile' : '/hr/cashier/cashier_profile'}">
+                       href="${account.employee.role == 'MANAGER' ? '/hr/manager_profile' : '/hr/cashier_profile'}">
                         <i class="fa-regular fa-address-card"></i>Profile
                     </a>
                 </li>
@@ -212,3 +212,26 @@
     setInterval(updateClock, 1000);
     updateClock();
 </script>
+
+<c:if test="${not empty sessionScope.accessError}">
+    <script>
+        // Sử dụng hàm này để đảm bảo chỉ hiện khi trang đã load xong
+        window.addEventListener('load', function() {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+
+            Toast.fire({
+                icon: 'error',
+                title: '${sessionScope.accessError}'
+            });
+        });
+    </script>
+
+    <%-- Cách xóa an toàn nhất: Ép kiểu xóa trực tiếp qua Java Snippet --%>
+    <% session.removeAttribute("accessError"); %>
+</c:if>
