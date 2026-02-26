@@ -82,15 +82,7 @@ public class LoginController {
         session.setAttribute("loggedInAccount", account);
         session.setAttribute("role", role);
 
-        switch (role) {
-            case "MANAGER":
-                return "redirect:/hr/manager/manager_profile";
-            case "CASHIER":
-                return "redirect:/hr/cashier/cashier_profile";
-            default:
-                model.addAttribute("error", "Invalid role");
-                return "auth/login";
-        }
+        return "redirect:/dashboard";
     }
 
     @GetMapping("/logout")

@@ -76,7 +76,7 @@
                         <a href="<c:url value='/products/export-excel' />" class="btn btn-outline-success px-4 py-2">
                             <i class="fa-solid fa-file-excel me-2"></i>Export Excel
                         </a>
-                        <a href="<c:url value='/products/manager/add' />" class="btn btn-add px-4 py-2 d-inline-flex align-items-center text-decoration-none">
+                        <a href="<c:url value='/products/add' />" class="btn btn-add px-4 py-2 d-inline-flex align-items-center text-decoration-none">
                             <i class="fa-solid fa-plus me-2"></i>Add Product
                         </a>
                     </div>
@@ -226,12 +226,12 @@
                                                 <button class="dropdown-item rounded-2 py-2 btn-view-detail"
                                                         type="button"
                                                         data-id="${p.productId}"
-                                                        data-url="<c:url value='/products/manager/view'/>">
+                                                        data-url="<c:url value='/products/view'/>">
                                                     <i class="fa-regular fa-eye me-2 text-primary" style="width: 18px;"></i>View
                                                 </button>
                                             </li>
                                             <li>
-                                                <a class="dropdown-item rounded-2 py-2" href="<c:url value='/products/manager/update/${p.productId}'/>">
+                                                <a class="dropdown-item rounded-2 py-2" href="<c:url value='/products/update/${p.productId}'/>">
                                                     <i class="fa-regular fa-pen-to-square me-2 text-warning" style="width: 18px;"></i> Update
                                                 </a>
                                             </li>
@@ -239,7 +239,7 @@
                                             <li>
                                                 <a class="dropdown-item rounded-2 py-2 text-danger btn-delete-confirm"
                                                    href="javascript:void(0)"
-                                                   data-url="<c:url value='/products/manager/delete/${p.productId}'/>">
+                                                   data-url="<c:url value='/products/delete/${p.productId}'/>">
                                                     <i class="fa-regular fa-trash-can me-2" style="width: 18px;"></i> Delete
                                                 </a>
                                             </li>

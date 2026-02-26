@@ -71,4 +71,10 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
        ORDER BY a.workDate DESC
     """)
         List<String> findLatestShift(Integer empId, Pageable pageable);
+
+    Optional<Attendance>
+    findByEmployeeEmployeeIdAndWorkDate(
+            Integer employeeId,
+            LocalDate workDate
+    );
 }

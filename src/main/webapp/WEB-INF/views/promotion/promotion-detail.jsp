@@ -11,7 +11,7 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="${pageContext.request.contextPath}/resources/css/customer/customer.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/css/customer/customer1.css" rel="stylesheet">
 </head>
 <body>
 
@@ -21,7 +21,7 @@
 <div class="main-content">
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0">Promotion detail:</h2>
+        <h2 class="fw-bold mb-0">Promotion Detail</h2>
         <button class="btn btn-primary px-3 py-2 fw-medium border-0"
                 style="background-color: #3b82f6; border-radius: 8px;"
                 data-bs-toggle="modal" data-bs-target="#addDetailModal">
@@ -77,7 +77,7 @@
         <span class="text-muted small">Search and filter by criteria</span>
     </div>
 
-    <form action="/cus-promo/manager/promotion/detail" method="get" id="filterForm">
+    <form action="/promotion/detail" method="get" id="filterForm">
         <input type="hidden" name="id" value="${promotion.promotionId}">
 
         <div class="row g-3 mb-4">
@@ -96,7 +96,7 @@
             </div>
             <div class="col-md-3">
                 <select name="discountType" class="form-select py-2 rounded-3" onchange="document.getElementById('filterForm').submit()">
-                    <option value="">% or money</option>
+                    <option value="">% Or Money</option>
                     <option value="PERCENT" ${discountType == 'PERCENT' ? 'selected' : ''}>%</option>
                     <option value="AMOUNT" ${discountType == 'AMOUNT' ? 'selected' : ''}>VND</option>
                 </select>
@@ -150,12 +150,12 @@
                                      </a>
                                 </li>
 
-                                <li><a class="dropdown-item py-2" href="#"><i class="fa-solid fa-pause text-secondary me-2"></i> Inactive</a></li>
+
                                 <li><hr class="dropdown-divider"></li>
 
                                 <li>
                                      <a class="dropdown-item py-2 text-danger"
-                                           href="/cus-promo/manager/promotion/detail/delete?detailId=${detail.promoDetailId}&promotionId=${promotion.promotionId}"
+                                           href="/promotion/detail/delete?detailId=${detail.promoDetailId}&promotionId=${promotion.promotionId}"
                                            onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi đợt khuyến mãi?')">
                                             <i class="fa-solid fa-trash me-2"></i> Delete
                                      </a>
@@ -179,7 +179,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/cus-promo/manager/promotion/detail/add" method="post">
+            <form action="/promotion/detail/add" method="post">
                 <div class="modal-body pt-3">
                     <input type="hidden" name="promotionId" value="${promotion.promotionId}">
 
@@ -233,7 +233,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/cus-promo/manager/promotion/detail/update" method="post">
+            <form action="/promotion/detail/update" method="post">
                 <div class="modal-body pt-3">
                     <input type="hidden" name="promoDetailId" id="editPromoDetailId">
                     <input type="hidden" name="promotionId" value="${promotion.promotionId}">

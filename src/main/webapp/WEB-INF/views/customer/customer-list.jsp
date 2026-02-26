@@ -12,7 +12,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
-    <link href="${pageContext.request.contextPath}/resources/css/customer/customer.css" rel="stylesheet">
+    <link href="${pageContext.request.contextPath}/resources/css/customer/customer1.css" rel="stylesheet">
 </head>
 <body>
 
@@ -41,7 +41,7 @@
             <span class="text-muted">Manage your customer data and loyalty points</span>
         </div>
         <div class="d-flex gap-2">
-            <button class="btn btn-primary px-4 fw-medium" style="background-color: #0d6efd;" onclick="openConfigModal()">
+            <button class="btn btn-primary px-4 fw-medium" style="background-color: #0B4984;" onclick="openConfigModal()">
                 <i class="fa-solid fa-gear me-2"></i>Config Point
             </button>
             <button class="btn btn-primary px-4 fw-medium" style="background-color: #0d6efd;" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
@@ -53,22 +53,25 @@
     <div class="row g-4 mb-5">
         <div class="col-md-3">
             <div class="stat-card">
+            <i class="fa-solid fa-users stat-icon"></i>
                 <div class="stat-title mb-2">Total Customer</div>
-                <div class="stat-value">${totalCustomer}</div>
+                <div class="stat-value text-1">${totalCustomer}</div>
                 <div class="small text-muted mt-1">Active customers in system</div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stat-card">
+            <i class="fa-solid fa-star stat-icon"></i>
                 <div class="stat-title mb-2">Accumulated Points</div>
-                <div class="stat-value"><fmt:formatNumber value="${totalPoints}" /></div>
+                <div class="stat-value text-2"><fmt:formatNumber value="${totalPoints}" /></div>
                 <div class="small text-muted mt-1">Total loyalty points</div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="stat-card">
+            <i class="fa-solid fa-money-bill-wave stat-icon"></i>
                 <div class="stat-title mb-2">Total Spending</div>
-                <div class="stat-value">
+                <div class="stat-value text-3">
                     <fmt:formatNumber value="${totalSpending}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
                 </div>
                 <div class="small text-muted mt-1">Revenue from customers</div>
@@ -76,8 +79,9 @@
         </div>
         <div class="col-md-3">
             <div class="stat-card">
+            <i class="fa-solid fa-chart-line stat-icon"></i>
                 <div class="stat-title mb-2">Avg. Spending</div>
-                <div class="stat-value">
+                <div class="stat-value text-4">
                     <fmt:formatNumber value="${avgSpending}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
                 </div>
                 <div class="small text-muted mt-1">Per customer average</div>
@@ -88,7 +92,7 @@
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
 
-            <form action="/cus-promo/manager/customer" method="get" id="filterForm">
+            <form action="/customer" method="get" id="filterForm">
                 <div class="row g-3 mb-4">
 
                     <div class="col-md-4">
@@ -159,9 +163,9 @@
                                     <span class="fw-bold text-dark">${cust.fullName}</span>
                                 </div>
                             </td>
-                            <td>${cust.phoneNumber}</td>
+                            <td class="text-1">${cust.phoneNumber}</td>
                             <td class="fw-bold text-warning">${cust.currentPoint}</td>
-                            <td class="fw-bold">
+                            <td class="fw-bold text-3">
                                 <fmt:formatNumber value="${cust.totalSpending}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
                             </td>
                             <td class="text-muted">
@@ -224,7 +228,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
-            <form action="/cus-promo/manager/customer/add" method="post">
+            <form action="/customer/add" method="post">
                 <div class="modal-body pt-2">
 
                     <div class="mb-3">
@@ -276,7 +280,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/cus-promo/manager/customer/config/update" method="post">
+            <form action="/customer/config/update" method="post">
                 <div class="modal-body pt-2">
                     <p class="text-muted small mb-3">Set up rules for earning and redeeming loyalty points.</p>
 
@@ -347,7 +351,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <form action="/cus-promo/manager/customer/update" method="post">
+            <form action="/customer/update" method="post">
                 <div class="modal-body pt-2">
                     <input type="hidden" id="editId" name="customerId">
 
