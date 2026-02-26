@@ -38,7 +38,7 @@
             <div class="stat-card">
             <i class="fa-solid fa-tags stat-icon"></i>
                 <div class="stat-title mb-2">Total promotion</div>
-                <div class="stat-value">${totalPromotions}</div>
+                <div class="stat-value text-5">${totalPromotions}</div>
                 <div class="small text-muted mt-1">Promotions in the system</div>
             </div>
         </div>
@@ -46,7 +46,7 @@
             <div class="stat-card">
             <i class="fa-solid fa-circle-check stat-icon"></i>
                 <div class="stat-title mb-2">Active</div>
-                <div class="stat-value text-success">${activeCount}</div>
+                <div class="stat-value text-6">${activeCount}</div>
                 <div class="small text-muted mt-1">Currently running system-wide</div>
             </div>
         </div>
@@ -54,7 +54,7 @@
             <div class="stat-card">
             <i class="fa-solid fa-circle-pause stat-icon"></i>
                 <div class="stat-title mb-2">Inactive</div>
-                <div class="stat-value text-secondary">${inactiveCount}</div>
+                <div class="stat-value text-7">${inactiveCount}</div>
                 <div class="small text-muted mt-1">Temporarily suspended</div>
             </div>
         </div>
@@ -62,7 +62,7 @@
             <div class="stat-card">
             <i class="fa-solid fa-hourglass-half stat-icon"></i>
                 <div class="stat-title mb-2">Promotion Expired</div>
-                <div class="stat-value text-warning">${expiredCount}</div> <div class="small text-muted mt-1">Expired across system</div>
+                <div class="stat-value text-8">${expiredCount}</div> <div class="small text-muted mt-1">Expired across system</div>
             </div>
         </div>
     </div>
@@ -136,7 +136,7 @@
                         <tr>
                             <td class="ps-3 fw-medium text-muted">${promo.promotionId}</td>
 
-                            <td class="fw-bold text-dark">${promo.promoName}</td>
+                            <td class="fw-bold text-5">${promo.promoName}</td>
 
                             <td class="text-muted">
                                 ${promo.startDate.toString().substring(0, 10)}
@@ -151,7 +151,7 @@
                                         <span class="badge rounded-pill badge-active px-3 py-2">Active</span>
                                     </c:when>
                                     <c:when test="${promo.status == 'EXPIRED'}">
-                                        <span class="badge rounded-pill badge-expired text-dark px-3 py-2">Expired</span>
+                                        <span class="badge rounded-pill badge-expired px-3 py-2">Expired</span>
                                     </c:when>
                                     <c:otherwise>
                                         <span class="badge rounded-pill badge-inactive px-3 py-2">Inactive</span>
@@ -314,8 +314,9 @@
     </div>
 </div>
 
+<input type="hidden" id="serverSuccessMsg" value="${success}">
+<input type="hidden" id="serverErrorMsg" value="${error}">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 <script src="${pageContext.request.contextPath}/resources/js/customer/customer.js"></script>
 
 </body>
