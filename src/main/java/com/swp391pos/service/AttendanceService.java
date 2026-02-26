@@ -50,7 +50,10 @@ public class AttendanceService {
     public void autoMarkAbsent() {
 
         LocalDate today = LocalDate.now();
-        List<Attendance> list = attendanceRepository.findByWorkDate(today);
+        List<Attendance> list =
+                attendanceRepository
+                        .findByWorkDate(today, Pageable.unpaged())
+                        .getContent();
 
         for (Attendance attendance : list) {
 
@@ -68,7 +71,9 @@ public class AttendanceService {
         LocalDate today = LocalDate.now();
 
         List<Attendance> list =
-                attendanceRepository.findByWorkDate(today);
+                attendanceRepository
+                        .findByWorkDate(today, Pageable.unpaged())
+                        .getContent();
 
         for (Attendance attendance : list) {
             save(attendance); // cập nhật lại trạng thái
@@ -79,6 +84,58 @@ public class AttendanceService {
                 a.getEmployee().getRole().equals("MANAGER"));
 
         return list;
+    }
+
+    public Page<Attendance> getAttendancePage(
+            String fullName,
+            String shiftName,
+            String status,
+            Pageable pageable
+    ) {
+
+        LocalDate today = LocalDate.now();
+
+        Page<Attendance> page =
+                attendanceRepository.findByWorkDate(today, pageable);
+
+        List<Attendance> filtered = page.getContent();
+
+        if (fullName != null && !fullName.isBlank()) {
+            filtered = filtered.stream()
+                    .filter(a -> a.getEmployee()
+                            .getFullName()
+                            .toLowerCase()
+                            .contains(fullName.toLowerCase()))
+                    .toList();
+        }
+
+        if (shiftName != null && !shiftName.isBlank()) {
+            filtered = filtered.stream()
+                    .filter(a -> a.getShift()
+                            .getShiftName()
+                            .equalsIgnoreCase(shiftName))
+                    .toList();
+        }
+
+        if (status != null && !status.isBlank()) {
+
+            filtered = filtered.stream().filter(a -> {
+
+                if (status.equals("Expired")) return a.getAutoCheckout();
+                if (status.equals("Late")) return a.getIsLate();
+                if (status.equals("Early Leave")) return a.getIsEarlyLeave();
+                if (status.equals("Normal"))
+                    return !a.getIsLate() && !a.getIsEarlyLeave() && !a.getAutoCheckout();
+
+                return true;
+            }).toList();
+        }
+
+        return new org.springframework.data.domain.PageImpl<>(
+                filtered,
+                pageable,
+                filtered.size()
+        );
     }
 
     public void deleteManagerAttendance() {
@@ -165,7 +222,10 @@ public class AttendanceService {
             throw new RuntimeException("No shift configured");
         }
 
-        WorkShift shift = shifts.get(0);
+        WorkShift shift = shifts.stream()
+                .filter(s -> s.getShiftName().equalsIgnoreCase("Evening"))
+                .findFirst()
+                .orElse(shifts.get(0));
 
         for (int i = 0; i < 7; i++) {
 

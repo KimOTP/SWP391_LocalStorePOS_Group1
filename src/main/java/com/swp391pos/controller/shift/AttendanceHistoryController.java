@@ -24,7 +24,7 @@ public class AttendanceHistoryController {
         this.attendanceRepository = attendanceRepository;
     }
 
-    @GetMapping("/manager/attendance_history")
+    @GetMapping("/attendance_history")
     public String attendanceHistory(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(required = false) String fullName,
@@ -37,14 +37,14 @@ public class AttendanceHistoryController {
 
         Pageable pageable = PageRequest.of(page, 5);
 
-        Page<Attendance> attendancePage =
-                attendanceRepository.searchAttendance(
-                        fullName,
-                        shift,
-                        fromDate,
-                        toDate,
-                        pageable
-                );
+        Page<Attendance> attendancePage = attendanceRepository.searchAttendance(
+                fullName,
+                shift,
+                fromDate,
+                toDate,
+                status,
+                pageable
+        );
 
         model.addAttribute("attendancePage", attendancePage);
         model.addAttribute("currentPage", page);

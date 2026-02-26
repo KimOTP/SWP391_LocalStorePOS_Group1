@@ -21,7 +21,7 @@ public class WorkScheduleController {
     @Autowired
     private AttendanceRepository attendanceRepository;
 
-    @GetMapping("/cashier/work_schedule")
+    @GetMapping("/work_schedule")
     public String workSchedule(HttpSession session, Model model) {
 
         // Lấy account đang login

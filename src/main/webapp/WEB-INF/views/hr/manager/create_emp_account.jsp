@@ -18,14 +18,18 @@
 <div class="main-content">
     <div class="profile-wrapper">
 
-        <div class="section-title">Create Employee Account</div>
+        <a href="${pageContext.request.contextPath}/hr/manager_profile"
+                   class="back-link">← Back To Profile</a>
+        <div class="section-title">Create Employee Accounts</div>
         <div class="section-subtitle">Information</div>
-
-        <!-- ✅ FORM BẮT ĐẦU -->
-        <form action="${pageContext.request.contextPath}/hr/manager/create_emp_account" method="post">
+        <br/>
+        <!-- FORM BẮT ĐẦU -->
+        <form action="${pageContext.request.contextPath}/hr/create_emp_account" method="post">
 
             <div class="row">
-                <div class="col-md-6">
+
+                <!-- ================= CỘT 1 ================= -->
+                <div class="col-md-4">
 
                     <div class="info-label">Employee Name</div>
                     <div class="info-box">
@@ -39,11 +43,31 @@
                                placeholder="Enter login name" required/>
                     </div>
 
+                    <!-- BUTTON Ở CỘT 1 -->
+                    <button type="submit" class="btn-change mt-3">Create</button>
+
+                    <!-- ERROR -->
+                    <c:if test="${not empty error}">
+                        <div class="text-danger mt-2">${error}</div>
+                    </c:if>
+
+                    <!-- SUCCESS -->
+                    <c:if test="${not empty success}">
+                        <div class="text-success mt-2">${success}</div>
+                    </c:if>
+
+                </div>
+
+
+                <!-- ================= CỘT 2 ================= -->
+                <div class="col-md-4">
+
                     <div class="info-label">Role</div>
                     <div class="info-box">
                         <select class="info-input" name="role" required>
-                            <option value="CASHIER">Cashier</option>
-                            <option value="MANAGER">Manager</option>
+                            <option value="CASHIER">CASHIER</option>
+                            <option value="INVENTORY STAFF">INVENTORY STAFF</option>
+                            <option value="MANAGER">MANAGER</option>
                         </select>
                     </div>
 
@@ -52,6 +76,12 @@
                         <input class="info-input" type="email" name="email"
                                placeholder="example@gmail.com" required/>
                     </div>
+
+                </div>
+
+
+                <!-- ================= CỘT 3 ================= -->
+                <div class="col-md-4">
 
                     <div class="info-label">Password</div>
                     <div class="info-box">
@@ -63,28 +93,11 @@
                         <input type="password" class="info-input" name="confirmPassword" required/>
                     </div>
 
-                    <button type="submit" class="btn-change mt-2">Create</button>
-
-                    <!--  ERROR -->
-                    <c:if test="${not empty error}">
-                        <div class="text-danger mt-2">${error}</div>
-                    </c:if>
-
-                    <!--  SUCCESS -->
-                    <c:if test="${not empty success}">
-                        <div class="text-success mt-2">${success}</div>
-                    </c:if>
-
                 </div>
+
             </div>
 
         </form>
-        <!-- ✅ FORM KẾT THÚC -->
-
-        <!-- BACK -->
-        <a href="${pageContext.request.contextPath}/hr/manager/manager_profile"
-           class="back-link">← Back To Profile</a>
-
     </div>
 </div>
 
