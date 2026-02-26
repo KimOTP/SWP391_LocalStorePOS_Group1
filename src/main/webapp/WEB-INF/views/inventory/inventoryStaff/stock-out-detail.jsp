@@ -16,7 +16,8 @@
 
 <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0">Report detail</h2>
+        <h2 class="fw-bold mb-0">Stock-Out Detailed</h2>
+        <h2 class="fw-bold mb-0">Stock-Out Detailed</h2>
         <button class="btn-cancel" onclick="history.back()">
             <i class="fa-solid fa-arrow-left me-2"></i>Back To Reports
         </button>
