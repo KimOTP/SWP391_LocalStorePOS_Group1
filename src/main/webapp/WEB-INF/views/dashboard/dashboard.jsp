@@ -102,6 +102,17 @@
 
             <div class="app-wrapper">
                 <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                <a href="/cus-promo/manager/customer" class="app-card">
+                    <div class="app-icon-wrapper bg-customer">
+                        <i class="fa-solid fa-users"></i>
+                    </div>
+                    <div class="app-title">Customers</div>
+                </a>
+            </div>
+
+
+            <div class="app-wrapper">
+                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
                 <a href="/stockIn/inventory-staff/notifications" class="app-card">
                     <div class="app-icon-wrapper bg-inventory">
                         <i class="fa-solid fa-warehouse"></i>
@@ -109,6 +120,10 @@
                     <div class="app-title">Inventory</div>
                 </a>
             </div>
+
+
+
+
 
             <div class="app-wrapper">
                 <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
