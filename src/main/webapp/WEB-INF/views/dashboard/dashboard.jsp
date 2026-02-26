@@ -69,17 +69,22 @@
     </h6>
 
     <div class="app-grid" id="main-app-grid">
-        <div class="app-wrapper">
-            <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
-            <a href="<c:url value='/pos' />" class="app-card">
-                <div class="app-icon-wrapper bg-pos">
-                    <i class="fa-solid fa-cash-register"></i>
-                </div>
-                <div class="app-title">POS Sales</div>
-                <div class="app-desc">Checkout & Billing</div>
-            </a>
-        </div>
+        <%-- 1. CHUNG CHO TẤT CẢ ROLE (Hoặc cụ thể từng role) --%>
+        <c:if test="${sessionScope.role == 'MANAGER' || sessionScope.role == 'CASHIER'}">
+            <div class="app-wrapper">
+                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                <a href="<c:url value='/pos' />" class="app-card">
+                    <div class="app-icon-wrapper bg-pos">
+                        <i class="fa-solid fa-cash-register"></i>
+                    </div>
+                    <div class="app-title">POS Sales</div>
+                    <div class="app-desc">Checkout & Billing</div>
+                </a>
+            </div>
 
+        </c:if>
+
+        <%-- 2. DÀNH RIÊNG CHO MANAGER (Hiển thị tất cả các dịch vụ quản lý & HR) --%>
         <c:if test="${sessionScope.role == 'MANAGER'}">
             <div class="app-wrapper">
                 <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
@@ -127,17 +132,6 @@
 
             <div class="app-wrapper">
                 <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
-                <a href="/stockIn/add" class="app-card">
-                    <div class="app-icon-wrapper bg-info text-white">
-                        <i class="fa-solid fa-file-invoice"></i>
-                    </div>
-                    <div class="app-title">Request Order</div>
-                    <div class="app-desc">Purchase Requests</div>
-                </a>
-            </div>
-
-            <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
                 <a href="/suppliers" class="app-card">
                     <div class="app-icon-wrapper bg-secondary text-white">
                         <i class="fa-solid fa-truck-field"></i>
@@ -160,32 +154,6 @@
 
             <div class="app-wrapper">
                 <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
-                <a href="/stockIn/notifications" class="app-card">
-                    <div class="app-icon-wrapper bg-info text-white">
-                        <i class="fa-solid fa-bell"></i> </div>
-                    <div class="app-title">StockIn-Noti</div>
-                    <div class="app-desc">Incoming Shipments</div> </a>
-            </div>
-
-            <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
-                <a href="/stockOut/add" class="app-card">
-                    <div class="app-icon-wrapper bg-success text-white">
-                        <i class="fa-solid fa-truck-ramp-box"></i> </div>
-                    <div class="app-title">StockOut</div>
-                    <div class="app-desc">Dispatch Orders</div> </a>
-            </div>
-
-            <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
-                <a href="/audit/add" class="app-card">
-                    <div class="app-icon-wrapper bg-primary text-white">
-                        <i class="fa-solid fa-magnifying-glass-chart"></i> </div>
-                    <div class="app-title">Audit</div>
-                    <div class="app-desc">Inventory Accuracy</div> </a>
-            </div>
-            <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
                 <a href="/hr/manager_profile" class="app-card">
                     <div class="app-icon-wrapper bg-dark text-white">
                         <i class="fa-solid fa-user-gear"></i>
@@ -205,29 +173,27 @@
                     <div class="app-desc">Staff Directory</div>
                 </a>
             </div>
-
             <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
-                <a href="/shift/shift_change_req" class="app-card">
-                    <div class="app-icon-wrapper bg-warning text-white">
-                        <i class="fa-solid fa-calendar-day"></i> </div>
-                    <div class="app-info-container"> <div class="app-title">Shift Change</div>
-                        <div class="app-desc">Schedule Adjustments</div>
-                    </div>
-                </a>
-            </div>
+            <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+            <a href="/shift/shift_change_req" class="app-card">
+                <div class="app-icon-wrapper bg-warning text-white">
+                    <i class="fa-solid fa-calendar-day"></i>
+                </div>
+                <div class="app-title">Shift Change</div>
+                <div class="app-desc">Schedule Adjustments</div>
+            </a>
+        </div>
 
-            <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
-                <a href="/shift/attendance" class="app-card">
-                    <div class="app-icon-wrapper bg-success text-white">
-                        <i class="fa-solid fa-user-clock"></i>
-                    </div>
-                    <div class="app-title">Attendance</div>
-                    <div class="app-desc">Time Tracking</div>
-                </a>
-            </div>
-
+        <div class="app-wrapper">
+            <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+            <a href="/shift/attendance" class="app-card">
+                <div class="app-icon-wrapper bg-success text-white">
+                    <i class="fa-solid fa-user-clock"></i>
+                </div>
+                <div class="app-title">Attendance</div>
+                <div class="app-desc">Time Tracking</div>
+            </a>
+        </div>
             <div class="app-wrapper">
                 <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
                 <a href="/reports" class="app-card">
@@ -239,8 +205,65 @@
                 </a>
             </div>
         </c:if>
+
+        <%-- 3. DÀNH CHO MANAGER VÀ INVENTORY STAFF (Dựa trên ảnh path code của bạn) --%>
+        <c:if test="${sessionScope.role == 'MANAGER' || sessionScope.role == 'INVENTORY STAFF'}">
+            <div class="app-wrapper">
+                        <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                        <a href="/inventory/dashboard" class="app-card">
+                            <div class="app-icon-wrapper bg-inventory">
+                                <i class="fa-solid fa-warehouse"></i>
+                            </div>
+                            <div class="app-title">Inventory</div>
+                            <div class="app-desc">Stock Control</div>
+                        </a>
+                    </div>
+            <div class="app-wrapper">
+                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                <a href="/stockIn/add" class="app-card">
+                    <div class="app-icon-wrapper bg-info text-white">
+                        <i class="fa-solid fa-file-invoice"></i>
+                    </div>
+                    <div class="app-title">Request Order</div>
+                    <div class="app-desc">Purchase Requests</div>
+                </a>
+            </div>
+
+            <div class="app-wrapper">
+                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                <a href="/stockIn/notifications" class="app-card">
+                    <div class="app-icon-wrapper bg-info text-white">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <div class="app-title">StockIn-Noti</div>
+                    <div class="app-desc">Incoming Shipments</div>
+                </a>
+            </div>
+
+            <div class="app-wrapper">
+                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                <a href="/stockOut/add" class="app-card">
+                    <div class="app-icon-wrapper bg-success text-white">
+                        <i class="fa-solid fa-truck-ramp-box"></i>
+                    </div>
+                    <div class="app-title">StockOut</div>
+                    <div class="app-desc">Dispatch Orders</div>
+                </a>
+            </div>
+
+            <div class="app-wrapper">
+                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                <a href="/audit/add" class="app-card">
+                    <div class="app-icon-wrapper bg-primary text-white">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    </div>
+                    <div class="app-title">Audit</div>
+                    <div class="app-desc">Inventory Accuracy</div>
+                </a>
+            </div>
+        </c:if>
+
     </div>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="<c:url value='/resources/js/dashboard/dashboard.js' />"></script>
