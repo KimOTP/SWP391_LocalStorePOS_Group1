@@ -29,17 +29,15 @@ public class ApprovalService {
     public void processApproval(String type, Integer id, boolean isApproved, Account approverAccount) {
         TransactionStatus newStatus = statusRepo.findById(isApproved ? 4 : 3)
                 .orElseThrow(() -> new RuntimeException("Status not found"));
-//        Employee approver = approverAccount.getEmployee();
-//        header.setApprover(approver);
         InvLogHeader header = new InvLogHeader();
-        Employee approver = employeeRepo.getEmployeeByEmployeeId(1);
+        Employee approver = approverAccount.getEmployee();
         header.setApprover(approver);
         header.setCreatedAt(LocalDateTime.now());
 
         // 3. Xử lý theo từng loại giao dịch (Ví dụ: Stock-in)
         if ("Stock-in".equalsIgnoreCase(type)) {
             StockIn si = stockInRepo.findById(id).orElseThrow();
-            si.setStatus(newStatus); // Cập nhật trạng thái 3 hoặc 4
+            si.setStatus(newStatus);
             si.setApprover(approver);
 
             header.setStockInId(si);

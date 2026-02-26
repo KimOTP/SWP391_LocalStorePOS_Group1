@@ -52,7 +52,7 @@ public class StockInService {
     public void createRequest(String supplierName, List<Map<String, Object>> items, Account requester) {
         // 1. Lưu StockIn
         StockIn si = new StockIn();
-        si.setRequester(employeeRepo.getEmployeeByEmployeeId(1));
+        si.setRequester(requester.getEmployee());
         si.setSupplier(supplierRepo.findBySupplierName(supplierName).get());
         si.setCreatedAt(java.time.LocalDateTime.now());
         si.setStatus(transactionStatusRepo.findById(1).get());
@@ -93,8 +93,7 @@ public class StockInService {
         StockIn si = stockInRepo.findById(stockInId).orElseThrow();
         TransactionStatus status = transactionStatusRepo.findById(2)
                 .orElseThrow(() -> new RuntimeException("Status not found"));
-        //si.sefStaff(staffAccount.getEmployee());
-        si.setStaff(employeeRepo.getEmployeeByEmployeeId(2));
+        si.setStaff(staffAccount.getEmployee());
         si.setReceivedAt(LocalDateTime.now());
         si.setStatus(status);
         stockInRepo.save(si);
