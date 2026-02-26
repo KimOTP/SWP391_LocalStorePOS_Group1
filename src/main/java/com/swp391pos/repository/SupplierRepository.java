@@ -17,4 +17,6 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
     Optional<Supplier> findBySupplierName(String supplierName);
 
     List<Supplier> findBySupplierNameContainingIgnoreCase(String name);
+
+    String getSupplierBySupplierId(Integer supplierId);
 }
