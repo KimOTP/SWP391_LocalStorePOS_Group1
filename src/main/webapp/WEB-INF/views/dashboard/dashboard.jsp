@@ -73,9 +73,10 @@
             <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
             <a href="<c:url value='/pos' />" class="app-card">
                 <div class="app-icon-wrapper bg-pos">
-                    <i class="fa-solid fa-desktop"></i>
+                    <i class="fa-solid fa-cash-register"></i>
                 </div>
                 <div class="app-title">POS Sales</div>
+                <div class="app-desc">Checkout & Billing</div>
             </a>
         </div>
 
@@ -84,19 +85,32 @@
                 <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
                 <a href="<c:url value='/products/manager/manage' />" class="app-card">
                     <div class="app-icon-wrapper bg-product">
-                        <i class="fa-solid fa-box"></i>
+                        <i class="fa-solid fa-boxes-stacked"></i>
                     </div>
                     <div class="app-title">Products</div>
+                    <div class="app-desc">Items & Pricing</div>
                 </a>
             </div>
 
             <div class="app-wrapper">
                 <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
-                <a href="/cus-promo/manager/customer" class="app-card">
+                <a href="/customer" class="app-card">
                     <div class="app-icon-wrapper bg-customer">
-                        <i class="fa-solid fa-users"></i>
+                        <i class="fa-solid fa-user-group"></i>
                     </div>
                     <div class="app-title">Customers</div>
+                    <div class="app-desc">Member Management</div>
+                </a>
+            </div>
+
+            <div class="app-wrapper">
+                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                <a href="/promotion" class="app-card">
+                    <div class="app-icon-wrapper bg-warning text-white">
+                        <i class="fa-solid fa-tags"></i>
+                    </div>
+                    <div class="app-title">Promotions</div>
+                    <div class="app-desc">Discounts & Offers</div>
                 </a>
             </div>
 
@@ -107,6 +121,84 @@
                         <i class="fa-solid fa-warehouse"></i>
                     </div>
                     <div class="app-title">Inventory</div>
+                    <div class="app-desc">Stock Control</div>
+                </a>
+            </div>
+
+            <div class="app-wrapper">
+                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                <a href="#" class="app-card">
+                    <div class="app-icon-wrapper bg-info text-white">
+                        <i class="fa-solid fa-file-invoice"></i>
+                    </div>
+                    <div class="app-title">Request Order</div>
+                    <div class="app-desc">Purchase Requests</div>
+                </a>
+            </div>
+
+            <div class="app-wrapper">
+                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                <a href="#" class="app-card">
+                    <div class="app-icon-wrapper bg-secondary text-white">
+                        <i class="fa-solid fa-truck-field"></i>
+                    </div>
+                    <div class="app-title">Supplier</div>
+                    <div class="app-desc">Vendor Partners</div>
+                </a>
+            </div>
+
+            <div class="app-wrapper">
+                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                <a href="#" class="app-card">
+                    <div class="app-icon-wrapper bg-danger text-white">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <div class="app-title">Approval Queue</div>
+                    <div class="app-desc">Pending Tasks</div>
+                </a>
+            </div>
+
+            <div class="app-wrapper">
+                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                <a href="#" class="app-card">
+                    <div class="app-icon-wrapper bg-dark text-white">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <div class="app-title">Manage Employee</div>
+                    <div class="app-desc">HR Settings</div>
+                </a>
+            </div>
+
+            <div class="app-wrapper">
+                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                <a href="#" class="app-card">
+                    <div class="app-icon-wrapper bg-primary text-white">
+                        <i class="fa-solid fa-address-book"></i>
+                    </div>
+                    <div class="app-title">Employee List</div>
+                    <div class="app-desc">Staff Directory</div>
+                </a>
+            </div>
+
+            <div class="app-wrapper">
+                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                <a href="#" class="app-card">
+                    <div class="app-icon-wrapper bg-warning text-white">
+                        <i class="fa-solid fa-calendar-day"></i> </div>
+                    <div class="app-info-container"> <div class="app-title">Shift Change</div>
+                        <div class="app-desc">Schedule Adjustments</div>
+                    </div>
+                </a>
+            </div>
+
+            <div class="app-wrapper">
+                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                <a href="#" class="app-card">
+                    <div class="app-icon-wrapper bg-success text-white">
+                        <i class="fa-solid fa-user-clock"></i>
+                    </div>
+                    <div class="app-title">Attendance</div>
+                    <div class="app-desc">Time Tracking</div>
                 </a>
             </div>
 
@@ -114,9 +206,10 @@
                 <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
                 <a href="#" class="app-card">
                     <div class="app-icon-wrapper bg-report">
-                        <i class="fa-solid fa-chart-line"></i>
+                        <i class="fa-solid fa-chart-pie"></i>
                     </div>
                     <div class="app-title">Reports</div>
+                    <div class="app-desc">Analytics & Data</div>
                 </a>
             </div>
         </c:if>
