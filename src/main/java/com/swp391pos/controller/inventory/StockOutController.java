@@ -3,6 +3,7 @@ package com.swp391pos.controller.inventory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swp391pos.entity.Account;
+import com.swp391pos.entity.StockOut;
 import com.swp391pos.service.StockOutService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,5 +51,12 @@ public class StockOutController {
             ra.addFlashAttribute("status", "danger");
         }
         return "redirect:/stockOut/add";
+    }
+    @GetMapping("/details")
+    public String viewStockOutDetail(@RequestParam Integer id, Model model) {
+        // Lấy thông tin StockOut kèm theo list Details
+        StockOut stockOut = stockOutService.getStockOutById(id);
+        model.addAttribute("stockOut", stockOut);
+        return "inventory/inventoryStaff/stock-out-detail";
     }
 }

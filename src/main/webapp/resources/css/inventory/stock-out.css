@@ -117,3 +117,32 @@
     border-radius: 10px;
     font-weight: 600;
 }
+/* Trong file resources/css/inventory/stock-out.css */
+
+.min-vh-10 {
+    min-height: 80px;
+}
+
+/* Ô hiển thị ghi chú của từng dòng sản phẩm */
+.view-only-box {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: #475569;
+    min-width: 150px;
+}
+
+/* Badge số lượng xuất kho màu đỏ nổi bật */
+.bg-danger {
+    background-color: #dc2626 !important;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.table thead th {
+    /* Đảm bảo tiêu đề bảng đồng bộ với các trang trước */
+    font-size: 0.7rem;
+    color: #64748b;
+    background-color: #f8fafc;
+}

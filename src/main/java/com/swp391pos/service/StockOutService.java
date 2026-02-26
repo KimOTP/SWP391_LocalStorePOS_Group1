@@ -62,4 +62,8 @@ public class StockOutService {
         }
         return result;
     }
+
+    public StockOut getStockOutById(Integer id) {
+        return stockOutRepo.findById(id).orElseThrow(() -> new RuntimeException("StockOut ID not found"));
+    }
 }
