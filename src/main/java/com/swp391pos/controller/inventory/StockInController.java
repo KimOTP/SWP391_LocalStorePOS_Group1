@@ -65,7 +65,7 @@ public class StockInController {
             ra.addFlashAttribute("message", "Error: " + e.getMessage());
             ra.addFlashAttribute("status", "danger");
         }
-        return "redirect:view";
+        return "redirect:add";
     }
 
     //Stock In Notification For Inventory Staff
