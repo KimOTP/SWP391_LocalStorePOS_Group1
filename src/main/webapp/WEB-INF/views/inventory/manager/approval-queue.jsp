@@ -6,10 +6,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Product Request | LocalStorePOS</title>
-  <link rel="stylesheet" href="<c:url value='/resources/css/inventory/approval-queue.css'/>">
+  <title>Approval Queue | LocalStorePOS</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="<c:url value='/resources/css/inventory/approval-queue.css'/>">
 </head>
 <body>
 
@@ -17,59 +18,108 @@
 <jsp:include page="../../layer/sidebar.jsp" />
 
 <div class="main-content">
-  <h3 class="fw-bold mb-4">Approval Queue</h3>
+  <h2 class="fw-bold mb-4">Approval Queue</h2>
 
-  <div class="stat-section">
-    <div class="stat-card">
-      <div class="stat-title">On-going Approval Queue</div>
-      <div class="stat-value">${pendingRequests.size()}</div>
-      <div class="stat-desc">Need Approval</div>
+  <input type="hidden" id="serverMessage" value="${message}">
+  <input type="hidden" id="serverStatus" value="${status}">
+
+  <div class="row g-4 mb-4">
+    <div class="col-md-4">
+      <div class="stat-card border-0 shadow-sm">
+        <i class="fa-solid fa-list-check stat-icon"></i>
+        <div class="stat-title">Pending Approvals</div>
+        <div class="stat-value text-pending">${pendingRequests.size()}</div>
+        <div class="small text-muted mt-2">Actions requiring attention</div>
+      </div>
     </div>
   </div>
 
-  <div class="table-section shadow-sm">
-    <table class="table align-middle">
-      <thead>
-      <tr>
-        <th>Log ID</th>
-        <th>Action Type</th>
-        <th>Staff</th>
-        <th>Completion Time</th>
-        <th class="text-center">Act</th>
-        <th class="text-center">Detailed</th>
-      </tr>
-      </thead>
-      <tbody>
-      <c:forEach items="${pendingRequests}" var="item" varStatus="status">
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body p-4">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <label class="small fw-bold text-muted text-uppercase mb-2">Filter by Date</label>
+          <div class="search-box">
+            <i class="fa-solid fa-calendar-day search-icon"></i>
+            <input type="date" id="dateFilter" class="form-control">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <label class="small fw-bold text-muted text-uppercase mb-2">Staff Member</label>
+          <select id="staffFilter" class="form-select btn-filter">
+            <option value="ALL">All Staff</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="small fw-bold text-muted text-uppercase mb-2">Action Type</label>
+          <select id="typeFilter" class="form-select btn-filter">
+            <option value="ALL">All Types</option>
+            <option value="Stock-in">Stock-in</option>
+            <option value="Audit">Audit</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <button class="btn btn-light w-100 fw-bold border" onclick="resetFilters()">
+            <i class="fa-solid fa-rotate-left me-2"></i>Reset Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-section shadow-sm border-0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle" id="approvalTable">
+        <thead>
         <tr>
-          <td class="text-center text-muted">${status.index + 1}</td>
-          <td><span class="request-id">${item.prefix}${item.id}</span></td>
-          <td>
-                <span class="badge ${item.type == 'Audit' ? 'bg-info' : (item.type == 'Stock-in' ? 'bg-primary' : 'bg-warning')}">
+          <th class="text-center" style="width: 60px;">#</th>
+          <th>Log ID</th>
+          <th>Type</th>
+          <th>Staff</th>
+          <th>Completion Time</th>
+          <th class="text-center">Approval Actions</th>
+          <th class="text-end">Details</th>
+        </tr>
+        </thead>
+        <tbody>
+        <c:forEach items="${pendingRequests}" var="item" varStatus="status">
+          <fmt:parseDate value="${item.time}" pattern="yyyy-MM-dd'T'HH:mm" var="pDate" />
+          <tr class="request-row"
+              data-date="<fmt:formatDate value='${pDate}' pattern='yyyy-MM-dd' />"
+              data-staff="${item.staff}"
+              data-type="${item.type}">
+
+            <td class="text-center text-muted small">${status.index + 1}</td>
+            <td><span class="log-id">${item.prefix}${item.id}</span></td>
+            <td>
+                <span class="badge rounded-pill border fw-normal text-dark px-3 ${item.type == 'Audit' ? 'border-info' : 'border-primary'}">
                     ${item.type}
                 </span>
-          </td>
-          <td>${item.staff}</td>
-          <td>
-            <fmt:parseDate value="${item.time}" pattern="yyyy-MM-dd'T'HH:mm" var="pDate" />
-            <fmt:formatDate value="${pDate}" pattern="dd/MM/yyyy HH:mm" />
-          </td>
-          <td class="text-center">
-            <div class="d-flex justify-content-center gap-2">
-              <button class="btn-reject" onclick="handleApproval('${item.type}', ${item.id}, false)">Reject</button>
-              <button class="btn-approve" onclick="handleApproval('${item.type}', ${item.id}, true)">Approve</button>
-            </div>
-          </td>
-          <td class="text-center">
-            <c:url var="detailUrl" value="/stockIn/stock-in-details">
-              <c:param name="id" value="${item.id}" />
-            </c:url>
-            <a href="${detailUrl}" class="action-link">View Detailed</a>
-          </td>
-        </tr>
-      </c:forEach>
-      </tbody>
-    </table>
+            </td>
+            <td class="staff-cell">${item.staff}</td>
+            <td class="text-muted">
+              <fmt:formatDate value="${pDate}" pattern="dd/MM/yyyy HH:mm" />
+            </td>
+            <td class="text-center">
+              <div class="d-flex justify-content-center gap-2">
+                <button class="btn-reject" onclick="handleApproval('${item.type}', ${item.id}, false)">
+                  <i class="fa-solid fa-xmark me-1"></i> Reject
+                </button>
+                <button class="btn-approve" onclick="handleApproval('${item.type}', ${item.id}, true)">
+                  <i class="fa-solid fa-check me-1"></i> Approve
+                </button>
+              </div>
+            </td>
+            <td class="text-end">
+              <a href="/stockIn/stock-in-details?id=${item.id}" class="action-link">
+                View Detail <i class="fa-solid fa-chevron-right ms-1 small"></i>
+              </a>
+            </td>
+          </tr>
+        </c:forEach>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -79,7 +129,7 @@
   <input type="hidden" name="approve" id="isApprove">
 </form>
 
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="<c:url value='/resources/js/inventory/approval-queue.js'/>"></script>
 </body>
 </html>
