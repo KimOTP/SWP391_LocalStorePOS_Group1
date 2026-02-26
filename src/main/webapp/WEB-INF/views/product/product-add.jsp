@@ -24,7 +24,7 @@
         </div>
 
         <div class="card border-0 shadow-sm" style="border-radius: 15px;">
-            <form action="${pageContext.request.contextPath}/products/manager/add" method="POST" enctype="multipart/form-data">
+            <form action="${pageContext.request.contextPath}/products/add" method="POST" enctype="multipart/form-data">
                 <div class="card-body p-5">
                     <div class="row g-5">
                         <%-- Cột 1: Basic Info --%>
