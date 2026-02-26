@@ -27,7 +27,7 @@ public class HrController {
         this.attendanceRepository = attendanceRepository;
     }
 
-    @GetMapping("/manager/manager_profile")
+    @GetMapping("/manager_profile")
     public String managerProfile(HttpSession session, Model model) {
 
         Account sessionAccount = (Account) session.getAttribute("account");
@@ -60,7 +60,7 @@ public class HrController {
         return "hr/manager/manager_profile";
     }
 
-    @GetMapping("/cashier/cashier_profile")
+    @GetMapping("/cashier_profile")
     public String cashierProfile(HttpSession session, Model model) {
 
         Account sessionAccount = (Account) session.getAttribute("account");
@@ -76,13 +76,12 @@ public class HrController {
         model.addAttribute("account", account);
 
         String todayShift = attendanceRepository
-                .findLatestShift(
+                .findByEmployeeEmployeeIdAndWorkDate(
                         account.getEmployee().getEmployeeId(),
-                        PageRequest.of(0,1)
+                        LocalDate.now()
                 )
-                .stream()
-                .findFirst()
-                .orElse("No shift yet");
+                .map(a -> a.getShift().getShiftName())
+                .orElse("No shift today");
 
         model.addAttribute("todayShift", todayShift);
 //------------------

@@ -18,7 +18,7 @@ public class ShiftManagementController {
     private final WorkShiftRepository workShiftRepository;
 
     // Hiển thị danh sách
-    @GetMapping("/manager/shift_management")
+    @GetMapping("/shift_management")
     public String shiftManagement(Model model) {
         List<WorkShift> list = workShiftRepository.findAll();
         model.addAttribute("shiftList", list);

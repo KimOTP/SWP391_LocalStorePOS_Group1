@@ -19,11 +19,14 @@
 
     <div class="profile-wrapper">
 
+        <!-- BACK -->
+        <a href="/hr/manager_profile" class="back-link">← Back To Profile</a>
         <!-- TITLE -->
         <div class="section-title">Employee List</div>
+        <br/>
 
         <!-- FILTER -->
-        <form id="searchForm" method="get" action="<c:url value='/hr/manager/employee_list'/>">
+        <form id="searchForm" method="get" action="<c:url value='/hr/employee_list'/>">
             <div class="row mb-4">
                 <div class="col-md-3">
                     <div class="info-label">Full Name</div>
@@ -128,7 +131,7 @@
                         </td>
 
                         <td>
-                            <a href="<c:url value='/hr/manager/employee_detail/${emp.employeeId}'/>"
+                            <a href="<c:url value='/hr/employee_detail/${emp.employeeId}'/>"
                                class="btn-change">
                                 Edit
                             </a>
@@ -191,10 +194,6 @@
             </c:if>
 
         </div>
-
-        <!-- BACK -->
-        <a href="/hr/manager/manager_profile" class="back-link">← Back To Profile</a>
-
     </div>
 </div>
 

@@ -17,7 +17,7 @@ public class ShiftChangeHistoryController {
     @Autowired
     private ShiftChangeRequestRepository shiftChangeRequestRepository;
 
-    @GetMapping("/cashier/shift_change_history")
+    @GetMapping("/shift_change_history")
     public String shiftChangeHistory(
             @RequestParam(defaultValue = "0") int page,
             HttpSession session,

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
-@RequestMapping("/hr/manager")
+@RequestMapping("/hr")
 public class EmployeeListController {
 
     @Autowired

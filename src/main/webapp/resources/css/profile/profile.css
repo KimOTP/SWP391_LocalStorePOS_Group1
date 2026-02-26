@@ -8,7 +8,7 @@
     will-change: margin-left;
 }
 
-.sidebar.expanded ~ .main-content {
+#sidebar.expanded ~ .main-content {
     margin-left: 260px !important;
 }
 
@@ -125,16 +125,23 @@
 
 /* ===== 9. BACK LINK ===== */
 .back-link {
-    font-size: 20px;
-    color: #475569;
-    margin-top: 30px;
-    float: right;
+    display: inline-block;
+    background-color: #334155;
+    color: #ffffff;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
     text-decoration: none;
-    transition: color 0.2s ease;
+    float: right;
+    transition: all 0.2s ease;
 }
 
 .back-link:hover {
-    color: #2563eb;
+    background-color: #1d4ed8;
+    color: #ffffff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
 
@@ -194,4 +201,34 @@
     font-size: 13px;
     color: #16a34a;
     margin-top: 8px;
+}
+
+/* ===== CHANGE SHIFT CENTER ONLY ===== */
+.change-shift-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;   /* căn giữa ngang */
+}
+
+/* Căn giữa form */
+.change-shift-page form {
+    width: 100%;
+    max-width: 420px;
+}
+
+/* Căn giữa title */
+.change-shift-page .section-title {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* Nút back không float nữa */
+.change-shift-page .back-link {
+    float: none;
+}
+
+.shift-label {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
 }

@@ -43,7 +43,16 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
             boolean isAllowed = uri.contains("/pos")
                     || uri.contains("/dashboard")
                     || uri.contains("/layer")
-                    || uri.contains("/cashier/");
+                    || uri.contains("/cashier/")
+                    || uri.contains("/common/")
+                    || uri.contains("/hr/cashier_profile")
+                    || uri.contains("/hr/change_information")
+                    || uri.contains("/hr/attendance_record")
+                    || uri.contains("/hr/shift_change_history")
+                    || uri.contains("/shift/change_shift")
+                    || uri.contains("/shift/work_schedule")
+                    || uri.contains("/hr/update_information")
+                    || uri.contains("/hr/change_password");
 
             if (!isAllowed) {
                 // Ví dụ: Cashier vào /product/ (không thuộc 3 cái trên) sẽ bị đẩy về dashboard
