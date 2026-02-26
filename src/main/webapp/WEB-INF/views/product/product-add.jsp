@@ -18,13 +18,13 @@
     <div class="main-content">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold mb-0">Add New Product</h2>
-            <a href="<c:url value='/products/manage'/>" class="btn btn-light border fw-bold px-3">
+            <a href="<c:url value='/products/manage' />" class="btn btn-light border fw-bold px-3">
                 <i class="fa-solid fa-arrow-left me-2"></i>Back to List
             </a>
         </div>
 
         <div class="card border-0 shadow-sm" style="border-radius: 15px;">
-            <form action="${pageContext.request.contextPath}/products/manager/add" method="POST" enctype="multipart/form-data">
+            <form action="${pageContext.request.contextPath}/products/add" method="POST" enctype="multipart/form-data">
                 <div class="card-body p-5">
                     <div class="row g-5">
                         <%-- Cột 1: Basic Info --%>
