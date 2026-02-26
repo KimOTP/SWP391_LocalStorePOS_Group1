@@ -1,5 +1,5 @@
 // ============================================================
-// reports.js  — Đặt tại: /resources/js/report/reports.js
+// reports.js  — Located at: /resources/js/report/reports.js
 // ============================================================
 'use strict';
 
@@ -7,7 +7,7 @@ var CTX = document.getElementById('ctxMeta')
     ? document.getElementById('ctxMeta').getAttribute('content')
     : '';
 
-// ── Khởi tạo ngày mặc định khi trang load ──────────────────
+// ── Set default dates on page load ─────────────────────────
 window.addEventListener('DOMContentLoaded', function () {
     var today = getTodayStr();
     var s = document.getElementById('startDate');
@@ -16,18 +16,19 @@ window.addEventListener('DOMContentLoaded', function () {
     if (e) e.value = today;
 });
 
-// ── Toggle filter Extend / Collapse ────────────────────────
+// ── Toggle filter Expand / Collapse ────────────────────────
+// Uses id="filterToggleBtn" to avoid conflict with sidebar.jsp's id="toggleBtn"
 function toggleFilter() {
-    var body = document.getElementById('filterBody');
-    var btn  = document.getElementById('toggleBtn');
-    if (!body || !btn) return;
-    if (body.style.display === 'none' || body.style.display === '') {
-        body.style.display = 'block';
-        btn.textContent = 'Thu gọn';
-    } else {
-        body.style.display = 'none';
-        btn.textContent = 'Mở rộng';
-    }
+    var body    = document.getElementById('filterBody');
+    var chevron = document.getElementById('filterChevron');
+    var label   = document.getElementById('filterToggleLabel');
+    if (!body) return;
+
+    var isOpen = body.style.display === 'block';
+    body.style.display = isOpen ? 'none' : 'block';
+
+    if (chevron) chevron.classList.toggle('open', !isOpen);
+    if (label) label.textContent = isOpen ? 'Expand' : 'Collapse';
 }
 
 // ── Apply filter ────────────────────────────────────────────
@@ -40,15 +41,15 @@ function applyFilter() {
     var paymentMethod = payEl     ? payEl.value     : '';
 
     if (!startDate || !endDate) {
-        alert('Vui lòng chọn ngày bắt đầu và kết thúc.');
+        alert('Please select a start date and end date.');
         return;
     }
     if (startDate > endDate) {
-        alert('Ngày bắt đầu không được sau ngày kết thúc.');
+        alert('Start date cannot be after end date.');
         return;
     }
 
-    // Cập nhật date bar
+    // Update date bar
     var bar = document.getElementById('dateBar');
     if (bar) {
         bar.textContent = (startDate === endDate)
@@ -99,13 +100,13 @@ function exportExcel() {
     var s = document.getElementById('startDate').value;
     var e = document.getElementById('endDate').value;
     if (!s || !e) {
-        alert('Vui lòng chọn khoảng ngày trước khi xuất.');
+        alert('Please select a date range before exporting.');
         return;
     }
 
     showLoading(true);
 
-    // Tạo form ẩn để trigger download file từ server
+    // Create a hidden form to trigger file download from server
     var form = document.createElement('form');
     form.method = 'POST';
     form.action = CTX + '/reports/api/export-excel';
@@ -121,9 +122,8 @@ function exportExcel() {
     inp2.name  = 'endDate';
     inp2.value = e;
 
-    // CSRF token nếu có
+    // CSRF token if present
     var csrfMeta = document.querySelector('meta[name="_csrf"]');
-    var csrfHeaderMeta = document.querySelector('meta[name="_csrf_header"]');
     if (csrfMeta) {
         var csrfInp = document.createElement('input');
         csrfInp.type  = 'hidden';
@@ -155,29 +155,29 @@ function doPost(url, params) {
             updateSummary(json.data);
             updateTable(json.data.orders || []);
         } else {
-            alert(json.message || 'Lỗi khi tải báo cáo.');
+            alert(json.message || 'Failed to load report.');
         }
     })
-    .catch(function () { alert('Lỗi kết nối mạng.'); })
+    .catch(function () { alert('Network connection error.'); })
     .finally(function () { showLoading(false); });
 }
 
-// ── Cập nhật summary cards ───────────────────────────────────
+// ── Update summary cards ─────────────────────────────────────
 function updateSummary(d) {
     setEl('totalRevenue',        fmtVND(d.totalRevenue));
     setEl('totalOrders',         d.totalOrders != null ? d.totalOrders : 0);
     setEl('averageValuePerUnit', fmtVND(d.averageValuePerUnit));
     setEl('bestSellingProduct',  d.bestSellingProduct || 'N/A');
     var b = document.getElementById('orderCountBadge');
-    if (b) b.textContent = (d.totalOrders != null ? d.totalOrders : 0) + ' đơn hàng';
+    if (b) b.textContent = (d.totalOrders != null ? d.totalOrders : 0) + ' orders';
 }
 
-// ── Cập nhật bảng đơn hàng ───────────────────────────────────
+// ── Update order table ───────────────────────────────────────
 function updateTable(orders) {
     var tbody = document.getElementById('orderTableBody');
     if (!tbody) return;
     if (!orders || !orders.length) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-3">Không tìm thấy đơn hàng trong khoảng thời gian đã chọn.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-3">No orders found in the selected date range.</td></tr>';
         return;
     }
     tbody.innerHTML = orders.map(function (o, i) {
@@ -203,7 +203,7 @@ function toDisplay(s) {
     return p[2] + '/' + p[1] + '/' + p[0];
 }
 
-/** Format số thành VNĐ, ví dụ: 1,500,000 ₫ */
+/** Format number as VND currency, e.g. 1,500,000 */
 function fmtVND(v) {
     if (v == null) return '0 ₫';
     var n = Math.round(parseFloat(v));
@@ -232,8 +232,8 @@ function showLoading(show) {
 
 function payLabel(method) {
     if (!method) return '—';
-    if (method === 'CASH')    return 'Tiền mặt';
-    if (method === 'BANKING') return 'Chuyển khoản';
+    if (method === 'CASH')    return 'Cash';
+    if (method === 'BANKING') return 'Bank Transfer';
     return method;
 }
 
