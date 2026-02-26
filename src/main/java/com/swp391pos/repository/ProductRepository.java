@@ -46,4 +46,6 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
             "JOIN Supplier s ON si.supplierId = s.supplierId " +
             "WHERE s.supplierName = :supplierName", nativeQuery = true)
     List<Product> searchBySupplierName(@Param("supplierName") String supplierName);
+
+    List<Product> findByProductNameContainingIgnoreCase(String productName);
 }

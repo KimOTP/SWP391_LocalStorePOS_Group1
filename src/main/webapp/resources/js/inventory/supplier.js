@@ -34,6 +34,6 @@ function initLiveSearch() {
 
 function confirmDelete(id, name) {
     if (confirm(`Delete supplier: ${name} (#${id})?`)) {
-        window.location.href = `/admin/suppliers/delete/${id}`;
+        window.location.href = `/suppliers/delete/${id}`;
     }
 }

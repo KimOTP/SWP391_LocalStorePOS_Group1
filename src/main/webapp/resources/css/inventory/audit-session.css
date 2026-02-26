@@ -1,0 +1,24 @@
+/* Badge cho số lượng hệ thống (Expected) */
+.bg-secondary-subtle {
+    background-color: #e2e8f0 !important;
+    color: #475569 !important;
+    font-weight: 700;
+}
+
+/* Màu sắc chỉ thị sai lệch */
+.bg-success { background-color: #10b981 !important; } /* Thừa hàng */
+.bg-danger { background-color: #ef4444 !important; }  /* Thất thoát */
+
+.text-success { color: #10b981 !important; }
+.text-danger { color: #ef4444 !important; }
+
+/* Khung hiển thị số thực tế giống ô input nhưng chỉ đọc */
+.view-only-box {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 8px;
+    min-width: 60px;
+    text-align: center;
+    font-weight: 700;
+    color: #2563eb;
+}

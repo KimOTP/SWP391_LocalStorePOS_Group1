@@ -11,5 +11,6 @@ import java.util.List;
 public interface AuditSessionRepository extends JpaRepository<AuditSession, Integer> {
     @Query("SELECT a FROM AuditSession a WHERE a.status.transactionStatusId = :statusId")
     List<AuditSession> findByStatusId(@Param("statusId") Integer statusId);
-    StockIn findByAuditId(int auditId);
+    AuditSession findByAuditId(int auditId);
+
 }
