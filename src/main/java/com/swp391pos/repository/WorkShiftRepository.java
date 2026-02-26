@@ -6,5 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface WorkShiftRepository extends JpaRepository<WorkShift, Integer> {
-    Optional<WorkShift> findByShiftNameIgnoreCase(String shiftName);
+//    Optional<WorkShift> findByShiftNameIgnoreCase(String shiftName);
+    Optional<WorkShift> findByShiftName(String shiftName);
 }

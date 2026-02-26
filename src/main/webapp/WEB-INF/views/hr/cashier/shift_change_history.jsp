@@ -24,54 +24,134 @@
         <!-- TABLE -->
         <div class="info-box" style="height:auto; padding:0;">
             <table class="table align-middle mb-0">
+
                 <thead>
-                <tr>
-                    <th>My ID</th>
-                    <th>Day Want To Switch Shift</th>
-                    <th>Current Shift</th>
-                    <th>Requested Shift</th>
-                    <th>Reason</th>
-                    <th>Status</th>
-                    <th>Manager Approval</th>
-                    <th>Approval Time</th>
-                </tr>
+                    <tr>
+                        <th>My ID</th>
+                        <th>Day Want To Switch Shift</th>
+                        <th>Current Shift</th> <th>Requested Shift</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Manager Approval</th>
+                        <th>Approval Time</th>
+                    </tr>
                 </thead>
-
                 <tbody>
-                <tr>
-                    <td>3</td>
-                    <td>21/01/2026</td>
-                    <td>Afternoon</td>
-                    <td>Evening</td>
-                    <td>nha co viec</td>
-                    <td class="text-warning">Pending</td>
-                    <td>---</td>
-                    <td>---</td>
-                </tr>
+                <c:forEach var="req" items="${employeePage.content}">
+                    <tr>
+                        <td>${req.employee.employeeId}</td>
 
-                <tr>
-                    <td>3</td>
-                    <td>18/01/2026</td>
-                    <td>Afternoon</td>
-                    <td>Evening</td>
-                    <td>---</td>
-                    <td class="text-danger">Rejected</td>
-                    <td>Manager1</td>
-                    <td>18/01/2026 - 18:00</td>
-                </tr>
+                        <td>
+                            ${req.workDate}
+                        </td>
+
+                        <td>
+                            ${req.currentShift.shiftName}
+                        </td>
+
+                        <td>
+                            ${req.requestedShift.shiftName}
+                        </td>
+
+                        <td>
+                            <c:choose>
+                                <c:when test="${not empty req.reason}">
+                                    ${req.reason}
+                                </c:when>
+                                <c:otherwise>---</c:otherwise>
+                            </c:choose>
+                        </td>
+
+                        <td>
+                            <c:choose>
+                                <c:when test="${req.status == 'Pending'}">
+                                    <span class="text-warning">Pending</span>
+                                </c:when>
+                                <c:when test="${req.status == 'Approved'}">
+                                    <span class="text-success">Approved</span>
+                                </c:when>
+                                <c:when test="${req.status == 'Rejected'}">
+                                    <span class="text-danger">Rejected</span>
+                                </c:when>
+                                <c:otherwise>${req.status}</c:otherwise>
+                            </c:choose>
+                        </td>
+
+                        <td>
+                            <c:choose>
+                                <c:when test="${req.manager != null}">
+                                    ${req.manager.fullName}
+                                </c:when>
+                                <c:otherwise>---</c:otherwise>
+                            </c:choose>
+                        </td>
+
+                        <td>
+                            <c:choose>
+                                <c:when test="${req.reviewedAt != null}">
+                                    ${req.reviewedAt.toString().replace('T',' ')}
+                                </c:when>
+                                <c:otherwise>---</c:otherwise>
+                            </c:choose>
+                        </td>
+
+                    </tr>
+                </c:forEach>
                 </tbody>
             </table>
         </div>
 
         <!-- PAGINATION -->
         <div class="d-flex justify-content-center gap-2 mt-4">
-            <button class="btn btn-light">&laquo;</button>
-            <button class="btn btn-light">&lsaquo;</button>
-            <button class="btn btn-primary">1</button>
-            <button class="btn btn-light">2</button>
-            <button class="btn btn-light">3</button>
-            <button class="btn btn-light">&rsaquo;</button>
-            <button class="btn btn-light">&raquo;</button>
+
+            <c:if test="${employeePage.totalPages > 1}">
+
+                <!-- << FIRST -->
+                <c:if test="${currentPage > 0}">
+                    <a href="?page=0"
+                       class="btn btn-light">
+                        <<
+                    </a>
+                </c:if>
+
+                <!-- < PREVIOUS -->
+                <c:if test="${currentPage > 0}">
+                    <a href="?page=${currentPage - 1}"
+                       class="btn btn-light">
+                        <
+                    </a>
+                </c:if>
+
+                <!-- PAGE NUMBERS -->
+                <c:forEach begin="0"
+                           end="${employeePage.totalPages - 1}"
+                           var="i">
+
+                    <a href="?page=${i}"
+                       class="btn ${i == currentPage ? 'page-active' : 'btn-light'}">
+                        ${i + 1}
+                    </a>
+
+                </c:forEach>
+
+                <!-- > NEXT -->
+                <c:if test="${currentPage < employeePage.totalPages - 1}">
+                    <a href="?page=${currentPage + 1}"
+                       class="btn btn-light">
+                        >
+                    </a>
+                </c:if>
+
+                <!-- >> LAST -->
+                <c:if test="${currentPage < employeePage.totalPages - 1}">
+                    <a href="?page=${employeePage.totalPages - 1}"
+                       class="btn btn-light">
+                        >>
+                    </a>
+                </c:if>
+
+            </c:if>
+
         </div>
 
         <!-- BACK -->
