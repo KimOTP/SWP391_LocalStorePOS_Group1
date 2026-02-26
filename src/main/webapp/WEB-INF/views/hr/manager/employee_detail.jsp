@@ -74,6 +74,10 @@
                             ${employee.role == 'MANAGER' ? 'selected' : ''}>
                             MANAGER
                         </option>
+                        <option value="INVENTORY STAFF"
+                            ${employee.role == 'INVENTORY STAFF' ? 'selected' : ''}>
+                            INVENTORY STAFF
+                        </option>
                     </select>
                 </div>
 
