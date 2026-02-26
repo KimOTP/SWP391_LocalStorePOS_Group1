@@ -169,9 +169,8 @@ public class PosController {
                 oi.setOrder(saved);
 
                 Object pid = item.get("productId");
-                productRepository
-                        .findById((int) Long.parseLong(String.valueOf(pid)))
-                        .ifPresent(oi::setProduct);
+                Product product = productRepository.findProductByProductId(String.valueOf(pid));
+                if (product != null) oi.setProduct(product);
 
                 int        qty       = ((Number) item.getOrDefault("quantity", 1)).intValue();
                 BigDecimal unitPrice = BigDecimal.valueOf(
@@ -179,6 +178,7 @@ public class PosController {
 
                 oi.setQuantity(qty);
                 oi.setUnitPrice(unitPrice);
+                oi.setSubtotal(unitPrice.multiply(BigDecimal.valueOf(qty)));
 
                 OrderItem savedItem = orderItemService.save(oi);
 
