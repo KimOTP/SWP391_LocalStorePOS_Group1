@@ -177,6 +177,10 @@
             <i class="fa-solid fa-chevron-down sb-arrow"></i> </a>
         <div class="collapse ${isPosOpen ? 'show' : ''}" id="posSub">
             <div class="submenu-list">
+                <a href="/pos" class="submenu-item ${pageContext.request.requestURI.endsWith('/pos') ? 'active' : ''}">
+                    <i class="fa-solid fa-cash-register"></i>
+                    <span>POS Terminal</span>
+                </a>
                 <a href="/pos/receipts" class="submenu-item ${pageContext.request.requestURI.contains('/receipts') ? 'active' : ''}">
                     <i class="fa-solid fa-file-invoice"></i>
                     <span>Manage Receipt</span>
@@ -185,22 +189,6 @@
         </div>
     </div>
 
-    <c:set var="isMenuOpen" value="${pageContext.request.requestURI.contains('/products')}" />
-    <div class="nav-group">
-        <a href="#menuSub" data-bs-toggle="collapse" class="sidebar-link ${isMenuOpen ? 'active' : ''}">
-            <i class="fa-solid fa-utensils"></i>
-            <span class="sb-text">Menu & Products</span>
-            <i class="fa-solid fa-chevron-down sb-arrow"></i>
-        </a>
-        <div class="collapse ${isMenuOpen ? 'show' : ''}" id="menuSub">
-            <div class="submenu-list">
-                <a href="/products/manage" class="submenu-item ${pageContext.request.requestURI.contains('/manage') ? 'active' : ''}">
-                    <i class="fa-solid fa-layer-group"></i>
-                    <span>Product List</span>
-                </a>
-            </div>
-        </div>
-    </div>
 
     <c:set var="isMenuOpen" value="${pageContext.request.requestURI.contains('/products')}" />
     <div class="nav-group">
