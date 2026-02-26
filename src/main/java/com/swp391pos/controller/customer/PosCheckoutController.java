@@ -31,31 +31,31 @@ public class PosCheckoutController {
     private OrderItemService orderItemService;
     // Bỏ vào một Controller bất kỳ (ví dụ PosController.java)
 
-    @GetMapping("/payment")
-    public String showPaymentScreen(@RequestParam("orderId") Long orderId, Model model) {
-        // 1. Tìm Order trong Database
-        Order order = orderService.findById(orderId);
-
-        // 2. Lấy danh sách OrderItem của Order đó
-        List<OrderItem> items = orderItemService.findByOrder(order);
-
-        // 3. Map OrderItem sang dạng OrderItemDTO để nhét vào hàm calculateCheckout
-        List<OrderItemDTO> cartItems = items.stream().map(oi -> {
-            OrderItemDTO dto = new OrderItemDTO();
-            dto.setOrderId(order.getOrderId());
-            dto.setProductId(oi.getProduct().getProductId());
-            dto.setQuantity(oi.getQuantity());
-            return dto;
-        }).collect(Collectors.toList());
-
-        // 4. Gọi Service tính tiền Khuyến mãi (mà chúng ta vừa làm)
-        PaymentSummary summary = posService.calculateCheckout(cartItems);
-
-        // 5. Đẩy dữ liệu ra màn hình Payment
-        model.addAttribute("order", order);
-        model.addAttribute("summary", summary);
-
-        // Đường dẫn tới file JSP (chờ VAnh chốt thư mục)
-        return "pos/cashier/payment";
-    }
+//    @GetMapping("/payment")
+//    public String showPaymentScreen(@RequestParam("orderId") Long orderId, Model model) {
+//        // 1. Tìm Order trong Database
+//        Order order = orderService.findById(orderId);
+//
+//        // 2. Lấy danh sách OrderItem của Order đó
+//        List<OrderItem> items = orderItemService.findByOrder(order);
+//
+//        // 3. Map OrderItem sang dạng OrderItemDTO để nhét vào hàm calculateCheckout
+//        List<OrderItemDTO> cartItems = items.stream().map(oi -> {
+//            OrderItemDTO dto = new OrderItemDTO();
+//            dto.setOrderId(order.getOrderId());
+//            dto.setProductId(oi.getProduct().getProductId());
+//            dto.setQuantity(oi.getQuantity());
+//            return dto;
+//        }).collect(Collectors.toList());
+//
+//        // 4. Gọi Service tính tiền Khuyến mãi (mà chúng ta vừa làm)
+//        PaymentSummary summary = posService.calculateCheckout(cartItems);
+//
+//        // 5. Đẩy dữ liệu ra màn hình Payment
+//        model.addAttribute("order", order);
+//        model.addAttribute("summary", summary);
+//
+//        // Đường dẫn tới file JSP (chờ VAnh chốt thư mục)
+//        return "pos/cashier/payment";
+//    }
 }
