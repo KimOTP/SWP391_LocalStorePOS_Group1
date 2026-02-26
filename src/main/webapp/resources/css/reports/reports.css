@@ -1,47 +1,60 @@
-/* ==============================================
-   reports.css  — POS Report Page (VNĐ)
-   ============================================== */
+/* ==========================================================
+   reports.css  — POS Report Page
+   Styled to match pos.css design system
+   ========================================================== */
+
+/* ── Re-use the same CSS variables as pos.css ───────────── */
+:root {
+    --sb-collapsed:  80px;
+    --sb-expanded:   260px;
+    --sb-blue:       #2563eb;
+    --sb-text:       #64748b;
+    --sb-font:       'Inter', 'Segoe UI', Roboto, sans-serif;
+    --transition:    0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --border:        #e2e8f0;
+    --radius:        12px;
+    --shadow-sm:     0 1px 3px rgba(0,0,0,0.07);
+    --header-h:      70px;
+}
 
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 14px;
-    background: #f5f5f5;
-    color: #222;
+    font-family: var(--sb-font);
+    background: #f8fafc;
+    color: #1e293b;
 }
 
-/* ── Page layout ─────────────────────────────────────────────
-   Sidebar width: 220px (CSS variable để dễ chỉnh)
-   Header height: 60px
-   ─────────────────────────────────────────────────────────── */
-:root {
-    --sidebar-w: 220px;
-    --header-h:  60px;
-}
-
+/* ============================================================
+   PAGE LAYOUT — mirrors pos-container offset
+   ============================================================ */
 .page-content {
-    margin-left: var(--sidebar-w);
+    margin-left: var(--sb-collapsed);
     margin-top: var(--header-h);
-    padding: 20px 24px;
+    padding: 24px 28px 32px;
     min-height: calc(100vh - var(--header-h));
-    transition: margin-left 0.25s ease;
+    transition: margin-left var(--transition);
 }
 
-/* ── Top bar ─────────────────────────────────── */
+#sidebar.expanded ~ .page-content { margin-left: var(--sb-expanded); }
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
 .rpt-topbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
 }
 
 .rpt-title {
     margin: 0;
-    font-size: 20px;
+    font-size: calc(1.325rem + .9vw);
     font-weight: 700;
-    color: #111;
+    color: #0f172a;
+    letter-spacing: -0.01em;
 }
 
 .rpt-action-group {
@@ -49,44 +62,79 @@ body {
     gap: 8px;
 }
 
-/* ── Buttons ─────────────────────────────────── */
+/* ============================================================
+   BUTTONS — same shape/feel as btn-outline in pos.css
+   ============================================================ */
 .rpt-btn {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 6px 14px;
+    gap: 6px;
+    padding: 8px 16px;
     background: #fff;
-    border: 1px solid #bbb;
-    border-radius: 5px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
     cursor: pointer;
-    font-size: 13px;
-    color: #222;
-    line-height: 1.5;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #334155;
+    font-family: var(--sb-font);
     white-space: nowrap;
-    transition: background 0.15s;
+    transition: all 0.2s;
+    line-height: 1.5;
 }
-.rpt-btn:hover { background: #ebebeb; }
+.rpt-btn:hover {
+    border-color: var(--sb-blue);
+    color: var(--sb-blue);
+    background: #eff6ff;
+}
 
 .rpt-btn-ghost {
     background: transparent;
-    color: #555;
-    border-color: #bbb;
+    color: var(--sb-text);
 }
-.rpt-btn-ghost:hover { background: #e8e8e8; }
-
-/* Nút Xuất Excel nổi bật hơn */
-.rpt-btn-excel {
-    background: #e8f5e9;
-    border-color: #81c784;
-    color: #2e7d32;
+.rpt-btn-ghost:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    color: #334155;
 }
-.rpt-btn-excel:hover { background: #c8e6c9; }
 
-/* ── Filter box ──────────────────────────────── */
-.rpt-filter-box {
-    background: #e5e5e5;
+/* ── Export Excel button (btn-outline-success) ─────────── */
+.btn-outline-success {
+    height: 40px;
+    border: 1.5px solid #16a34a;
+    color: #16a34a;
+    background-color: #ffffff;
+    font-weight: 600;
     border-radius: 8px;
-    margin-bottom: 12px;
+    padding: 0 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-family: var(--sb-font);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    line-height: 1;
+}
+.btn-outline-success:hover {
+    background-color: #16a34a;
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+.btn-outline-success:active {
+    transform: scale(0.96);
+}
+
+/* ============================================================
+   FILTER BOX
+   ============================================================ */
+.rpt-filter-box {
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-sm);
     overflow: hidden;
 }
 
@@ -94,157 +142,216 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 9px 14px;
+    padding: 10px 16px;
 }
 
 .rpt-filter-bar-label {
-    font-size: 13px;
+    font-size: 0.83rem;
     font-weight: 600;
-    color: #333;
+    color: #334155;
     display: flex;
     align-items: center;
     gap: 6px;
 }
+.rpt-filter-bar-label i { color: var(--sb-blue); }
 
 .rpt-extend-btn {
     background: none;
     border: none;
     padding: 0;
-    font-size: 13px;
-    color: #1565c0;
-    cursor: pointer;
+    font-size: 0.8rem;
     font-weight: 600;
+    color: var(--sb-blue);
+    cursor: pointer;
+    font-family: var(--sb-font);
+    transition: opacity 0.15s;
 }
-.rpt-extend-btn:hover { text-decoration: underline; }
+.rpt-extend-btn:hover { opacity: 0.75; text-decoration: underline; }
+
+/* Chevron icon trong nút toggle filter */
+.rpt-filter-chevron {
+    font-size: 0.75rem;
+    transition: transform 0.25s ease;
+    display: inline-block;
+}
+.rpt-filter-chevron.open {
+    transform: rotate(180deg);
+}
 
 .rpt-filter-body {
-    background: #ebebeb;
-    border-top: 1px solid #d4d4d4;
-    padding: 14px 16px 16px;
+    border-top: 1.5px solid var(--border);
+    padding: 16px 18px 18px;
+    background: #f8fafc;
 }
 
 .rpt-filter-date-row {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 14px;
-    font-size: 13px;
-    color: #555;
+    margin-bottom: 16px;
+    font-size: 0.83rem;
+    color: var(--sb-text);
     flex-wrap: wrap;
 }
+.rpt-filter-date-row i { color: var(--sb-blue); }
 
 .rpt-date-inp {
-    padding: 5px 9px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 13px;
+    padding: 7px 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.83rem;
+    font-family: var(--sb-font);
     background: #fff;
-    color: #222;
+    color: #1e293b;
+    transition: border-color 0.2s;
+}
+.rpt-date-inp:focus {
+    outline: none;
+    border-color: var(--sb-blue);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
 }
 
-.rpt-filter-group {
-    margin-bottom: 12px;
-}
+.rpt-filter-group { margin-bottom: 14px; }
 
 .rpt-filter-group-label {
-    font-size: 13px;
+    font-size: 0.8rem;
     font-weight: 600;
-    color: #333;
-    margin-bottom: 6px;
+    color: #475569;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 .rpt-radio-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px 28px;
+    gap: 10px 24px;
 }
 
 .rpt-radio-lbl {
-    font-size: 13px;
+    font-size: 0.83rem;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 5px;
-    color: #333;
+    gap: 6px;
+    color: #334155;
+    font-weight: 500;
 }
+.rpt-radio-lbl input[type="radio"] { accent-color: var(--sb-blue); }
 
 .rpt-filter-foot {
-    margin-top: 14px;
+    margin-top: 16px;
     display: flex;
     gap: 8px;
 }
 
-/* ── Date bar ─────────────────────────────────── */
+/* ============================================================
+   DATE BAR
+   ============================================================ */
 .rpt-date-bar {
-    background: #dcdcdc;
-    border-radius: 6px;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
     text-align: center;
-    padding: 8px 12px;
-    font-size: 14px;
+    padding: 9px 16px;
+    font-size: 0.875rem;
     font-weight: 600;
-    color: #222;
-    margin-bottom: 16px;
+    color: #334155;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+.rpt-date-bar::before {
+    content: "\F1F0";           /* bi-calendar-range */
+    font-family: "bootstrap-icons";
+    color: var(--sb-blue);
+    font-size: 0.95rem;
 }
 
-/* ── Summary cards ───────────────────────────── */
+/* ============================================================
+   SUMMARY CARDS — 4-column grid, matches pos card style
+   ============================================================ */
 .rpt-cards {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 18px;
+    gap: 14px;
+    margin-bottom: 20px;
 }
 
 .rpt-card {
-    background: #dcdcdc;
-    border-radius: 8px;
-    padding: 14px 16px 12px;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px 14px;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+.rpt-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    border-color: #cbd5e1;
 }
 
 .rpt-card-row {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .rpt-card-lbl {
-    font-size: 12px;
-    color: #555;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--sb-text);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
 }
 
 .rpt-card-ico {
-    font-size: 16px;
-    color: #666;
+    font-size: 1rem;
+    color: var(--sb-blue);
+    background: #eff6ff;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
 }
 
-/* Số tiền VNĐ — font nhỏ hơn vì số dài hơn $ */
 .rpt-card-val {
-    font-size: 20px;
+    font-size: 1.35rem;
     font-weight: 700;
-    color: #111;
+    color: #0f172a;
     line-height: 1.2;
     word-break: break-word;
 }
 
 .rpt-card-val--text {
-    font-size: 15px;
+    font-size: 1rem;
     font-weight: 600;
+    color: #0f172a;
     word-break: break-word;
 }
 
 .rpt-card-hint {
-    font-size: 11px;
-    color: #888;
-    margin-top: 4px;
+    font-size: 0.72rem;
+    color: #94a3b8;
+    margin-top: 5px;
 }
 
-/* ── Order table ─────────────────────────────── */
+/* ============================================================
+   ORDER TABLE
+   ============================================================ */
 .rpt-table-wrap {
     background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
     overflow: hidden;
+    box-shadow: var(--shadow-sm);
     margin-bottom: 24px;
 }
 
@@ -252,76 +359,87 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 9px 14px;
-    background: #f0f0f0;
-    border-bottom: 1px solid #e0e0e0;
-    font-size: 13px;
+    padding: 10px 16px;
+    background: #f8fafc;
+    border-bottom: 1.5px solid var(--border);
+    font-size: 0.83rem;
     font-weight: 600;
-    color: #444;
+    color: #334155;
+}
+.rpt-table-bar i { color: var(--sb-blue); }
+
+/* Badge beside table title */
+#orderCountBadge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--sb-blue);
+    background: #eff6ff;
+    padding: 2px 10px;
+    border-radius: 20px;
+    border: 1px solid #bfdbfe;
 }
 
 .rpt-table thead th {
-    font-size: 12px;
+    font-size: 0.72rem;
     font-weight: 700;
-    color: #555;
-    background: #fafafa;
-    padding: 8px 12px;
-    border-bottom: 1px solid #e5e5e5;
+    color: var(--sb-text);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background: #f8fafc;
+    padding: 9px 14px;
+    border-bottom: 1.5px solid var(--border);
     white-space: nowrap;
 }
 
 .rpt-table tbody td {
-    font-size: 13px;
-    padding: 8px 12px;
+    font-size: 0.83rem;
+    padding: 9px 14px;
     vertical-align: middle;
-    color: #333;
-    border-bottom: 1px solid #f0f0f0;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
 }
 
 .rpt-table tbody tr:last-child td { border-bottom: none; }
-.rpt-table tbody tr:hover          { background: #f9f9f9; }
+.rpt-table tbody tr:hover          { background: #f8fafc; }
 
 /* Status badge */
 .rpt-status-badge {
     display: inline-block;
-    padding: 2px 8px;
-    border-radius: 10px;
-    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
     font-weight: 600;
-    background: #e0e0e0;
-    color: #444;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid var(--border);
+    white-space: nowrap;
 }
 
-/* ── Loading overlay ─────────────────────────── */
+/* ============================================================
+   LOADING OVERLAY
+   ============================================================ */
 .rpt-loading {
     position: fixed;
-    top: calc(var(--header-h) + 10px);
-    right: 20px;
+    top: calc(var(--header-h) + 12px);
+    right: 24px;
     z-index: 9999;
     background: #fff;
-    border: 1px solid #ddd;
+    border: 1.5px solid var(--border);
     border-radius: 20px;
     padding: 5px 14px;
-    font-size: 12px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #475569;
     display: flex;
     align-items: center;
-    gap: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    gap: 7px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    font-family: var(--sb-font);
 }
 
-/* ── Sidebar icon fix ────────────────────────────
-   Đảm bảo Bootstrap Icons hiển thị đúng trong sidebar
-   (sidebar thường dùng <i class="bi bi-xxx">)
-   ─────────────────────────────────────────────── */
-.sidebar i[class^="bi"],
-.sidebar i[class*=" bi"] {
-    font-size: 16px;
-    width: 20px;
-    text-align: center;
-    flex-shrink: 0;
-}
-
-/* ── Responsive ──────────────────────────────── */
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
 @media (max-width: 1200px) {
     .rpt-cards { grid-template-columns: repeat(2, 1fr); }
 }
@@ -331,16 +449,16 @@ body {
 }
 
 @media (max-width: 768px) {
-    :root { --sidebar-w: 0px; }
+    :root { --sb-collapsed: 0px; }
     .page-content {
         margin-left: 0;
-        padding: 12px 14px;
+        padding: 16px;
     }
     .rpt-cards   { grid-template-columns: repeat(2, 1fr); }
-    .rpt-topbar  { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .rpt-topbar  { flex-direction: column; align-items: flex-start; gap: 10px; }
 }
 
 @media (max-width: 480px) {
     .rpt-cards { grid-template-columns: 1fr 1fr; }
-    .rpt-card-val { font-size: 16px; }
+    .rpt-card-val { font-size: 1.1rem; }
 }
