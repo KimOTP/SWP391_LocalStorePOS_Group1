@@ -49,13 +49,24 @@
         padding: 0 28px;
     }
 
+    /* Đảm bảo transition mượt mà cho icon */
     .toggle-icon {
         font-size: 1.1rem;
-        transition: transform 0.4s;
+        transition: transform 0.3s ease;
     }
 
     #sidebar.expanded .toggle-icon {
         transform: rotate(180deg);
+    }
+
+    /* FIX: Khi sidebar đóng, ép tất cả các nội dung bên trong collapse phải ẩn đi */
+    #sidebar:not(.expanded) .collapse {
+        display: none !important;
+    }
+
+    /* FIX: Ẩn các mũi tên xuống khi thu nhỏ để icon chính được căn giữa */
+    #sidebar:not(.expanded) .sb-arrow {
+        display: none !important;
     }
 
     /* Sidebar Links (Cấp 1) */
