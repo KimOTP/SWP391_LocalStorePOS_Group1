@@ -196,7 +196,7 @@
                                     </span>
                                 </td>
                                 <td>${p.unit}</td>
-                                <td class="fw-bold">
+                                <td class="price">
                                     <fmt:formatNumber value="${p.price}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
                                 </td>
                                 <td>

@@ -28,7 +28,7 @@ public class ChangeShiftController {
     // LOAD FORM
     // =========================
 
-    @GetMapping("/cashier/change_shift")
+    @GetMapping("/change_shift")
     public String showChangeShiftPage(
             @RequestParam(value = "date", required = false)
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate workDate,
@@ -70,7 +70,7 @@ public class ChangeShiftController {
     // =========================
     // SUBMIT REQUEST
     // =========================
-    @PostMapping("/cashier/change_shift")
+    @PostMapping("/change_shift")
     public String sendShiftRequest(
             @RequestParam("workDate") LocalDate workDate,
             @RequestParam("requestedShift") String requestedShiftName,
@@ -93,7 +93,7 @@ public class ChangeShiftController {
             redirectAttributes.addFlashAttribute("error",
                     "You can only request within 7 days from today!");
 
-            return "redirect:/shift/cashier/change_shift?date=" + today;
+            return "redirect:/shift/change_shift?date=" + today;
         }
 
         Attendance attendance =
@@ -108,7 +108,7 @@ public class ChangeShiftController {
             redirectAttributes.addFlashAttribute("error",
                     "No shift found for this date!");
 
-            return "redirect:/shift/cashier/change_shift?date=" + workDate;
+            return "redirect:/shift/change_shift?date=" + workDate;
         }
 
         WorkShift requestedShift =
@@ -120,7 +120,7 @@ public class ChangeShiftController {
             redirectAttributes.addFlashAttribute("error",
                     "Shift not found!");
 
-            return "redirect:/shift/cashier/change_shift?date=" + workDate;
+            return "redirect:/shift/change_shift?date=" + workDate;
         }
 
         if (attendance.getShift().getShiftId()
@@ -129,7 +129,7 @@ public class ChangeShiftController {
             redirectAttributes.addFlashAttribute("error",
                     "You are already assigned to this shift!");
 
-            return "redirect:/shift/cashier/change_shift?date=" + workDate;
+            return "redirect:/shift/change_shift?date=" + workDate;
         }
 
         ShiftChangeRequest request = new ShiftChangeRequest();
@@ -145,6 +145,6 @@ public class ChangeShiftController {
         redirectAttributes.addFlashAttribute("success",
                 "Request sent successfully!");
 
-        return "redirect:/shift/cashier/change_shift?date=" + workDate;
+        return "redirect:/shift/change_shift?date=" + workDate;
     }
 }

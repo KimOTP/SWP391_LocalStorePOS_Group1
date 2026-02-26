@@ -30,7 +30,7 @@
                 <div class="section-title">Change Info</div>
                 <div class="section-subtitle">Basic Info</div>
 
-            <form action="<c:url value='/hr/common/update_information'/>" method="post">
+            <form action="<c:url value='/hr/update_information'/>" method="post">
 
                 <div class="row">
                     <!-- CỘT 1 -->
@@ -104,7 +104,7 @@
                 <div class="section-title">Change Password</div>
                 <div class="section-subtitle">ㅤ</div>
 
-            <form action="<c:url value='/hr/common/change_password'/>" method="post">
+            <form action="<c:url value='/hr/change_password'/>" method="post">
 
                 <div class="info-label">Old Password</div>
                 <div class="info-box">
@@ -135,25 +135,23 @@
                 </c:if>
             </form>
             </div>
+                <!-- BACK LINK: PHẢI MÀN HÌNH -->
+                <div class="text-end mt-4">
+                    <c:choose>
+                        <c:when test="${sessionScope.account.employee.role == 'MANAGER'}">
+                            <a href="/hr/manager_profile" class="back-link">← Back To Profile</a>
+                        </c:when>
+
+                        <c:when test="${sessionScope.account.employee.role == 'CASHIER'}">
+                            <a href="/hr/cashier_profile" class="back-link">← Back To Profile</a>
+                        </c:when>
+
+                        <c:otherwise>
+                            <a href="/profile" class="back-link">← Back To Profile</a>
+                        </c:otherwise>
+                    </c:choose>
+                </div>
         </div>
-
-        <!-- BACK LINK: PHẢI MÀN HÌNH -->
-        <div class="text-end mt-4">
-            <c:choose>
-                <c:when test="${sessionScope.account.employee.role == 'MANAGER'}">
-                    <a href="/hr/manager/manager_profile" class="back-link">← Back To Profile</a>
-                </c:when>
-
-                <c:when test="${sessionScope.account.employee.role == 'CASHIER'}">
-                    <a href="/hr/cashier/cashier_profile" class="back-link">← Back To Profile</a>
-                </c:when>
-
-                <c:otherwise>
-                    <a href="/profile" class="back-link">← Back To Profile</a>
-                </c:otherwise>
-            </c:choose>
-        </div>
-
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

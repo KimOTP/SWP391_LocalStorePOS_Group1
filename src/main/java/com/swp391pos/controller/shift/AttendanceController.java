@@ -1,6 +1,9 @@
 package com.swp391pos.controller.shift;
 
 import com.swp391pos.entity.WorkShift;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
 import com.swp391pos.entity.Attendance;
 import com.swp391pos.service.AttendanceService;
@@ -19,49 +22,7 @@ public class AttendanceController {
 
     private final AttendanceService attendanceService;
 
-//    @GetMapping("/manager/attendance")
-//    public String attendance(Model model) {
-//        attendanceService.deleteManagerAttendance();
-//
-//        // TẠO 7 NGÀY MỖI LẦN VÀO TRANG
-//        attendanceService.generateNext7DaysForAllEmployees();
-//
-//        List<Attendance> list = attendanceService.getTodayAttendance();
-//        List<WorkShift> shiftList = attendanceService.getAllShifts();
-//
-//        model.addAttribute("attendanceList", list);
-//        model.addAttribute("shiftList", shiftList);
-//
-//        return "shift/manager/attendance";
-//    }
-
-//    @PostMapping("/manager/attendance/update")
-//    @ResponseBody
-//    public void update(@RequestBody Map<String, String> data) {
-//
-//        Integer attendanceId = Integer.parseInt(data.get("attendanceId"));
-//        Integer shiftId = Integer.parseInt(data.get("shiftId"));
-//
-//        LocalDateTime checkIn =
-//                LocalDateTime.parse(data.get("checkInTime"));
-//
-//        LocalDateTime checkOut =
-//                LocalDateTime.parse(data.get("checkOutTime"));
-//
-//        Attendance attendance =
-//                attendanceService.findById(attendanceId);
-//
-//        WorkShift shift =
-//                attendanceService.findShiftById(shiftId);
-//
-//        attendance.setShift(shift);
-//        attendance.setCheckInTime(checkIn);
-//        attendance.setCheckOutTime(checkOut);
-//
-//        attendanceService.save(attendance);
-//    }
-
-    @PostMapping("/manager/attendance/update")
+    @PostMapping("/attendance/update")
     @ResponseBody
     public void update(@RequestBody Map<String, String> data) {
 
@@ -87,26 +48,63 @@ public class AttendanceController {
         );
     }
 
-    @GetMapping("/manager/attendance")
-    public String attendance(
-            @RequestParam(required = false) String fullName,
-            @RequestParam(required = false) String shift,
-            @RequestParam(required = false) String status,
-            Model model
-    ) {
+//    @GetMapping("/attendance")
+//    public String attendance(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(required = false) String fullName,
+//            @RequestParam(required = false) String shift,
+//            @RequestParam(required = false) String status,
+//            Model model
+//    ) {
+//
+////        attendanceService.deleteManagerAttendance();
+////        attendanceService.generateNext7DaysForAllEmployees();
+////
+//        Pageable pageable = PageRequest.of(page, 5);
+//
+//        Page<Attendance> attendancePage =
+//                attendanceService.getAttendancePage(pageable);
+//
+//        List<WorkShift> shiftList =
+//                attendanceService.getAllShifts();
+//
+//        model.addAttribute("attendancePage", attendancePage);
+//        model.addAttribute("attendanceList", attendancePage.getContent());
+//        model.addAttribute("shiftList", shiftList);
+//        model.addAttribute("currentPage", page);
+//
+//        return "shift/manager/attendance";
+//    }
+
+@GetMapping("/attendance")
+public String attendance(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(required = false) String fullName,
+        @RequestParam(required = false) String shift,
+        @RequestParam(required = false) String status,
+        Model model
+) {
 
         attendanceService.deleteManagerAttendance();
         attendanceService.generateNext7DaysForAllEmployees();
 
-        List<Attendance> list =
-                attendanceService.searchAttendance(fullName, shift, status);
 
-        List<WorkShift> shiftList =
-                attendanceService.getAllShifts();
+    Pageable pageable = PageRequest.of(page, 5);
 
-        model.addAttribute("attendanceList", list);
-        model.addAttribute("shiftList", shiftList);
+    Page<Attendance> attendancePage =
+            attendanceService.getAttendancePage(
+                    fullName,
+                    shift,
+                    status,
+                    pageable
+            );
 
-        return "shift/manager/attendance";
-    }
+    model.addAttribute("attendancePage", attendancePage);
+    model.addAttribute("attendanceList", attendancePage.getContent());
+    model.addAttribute("shiftList",
+            attendanceService.getAllShifts());
+    model.addAttribute("currentPage", page);
+
+    return "shift/manager/attendance";
+}
 }

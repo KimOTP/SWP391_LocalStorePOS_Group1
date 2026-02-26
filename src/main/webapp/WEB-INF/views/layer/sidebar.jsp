@@ -49,13 +49,24 @@
         padding: 0 28px;
     }
 
+    /* Đảm bảo transition mượt mà cho icon */
     .toggle-icon {
         font-size: 1.1rem;
-        transition: transform 0.4s;
+        transition: transform 0.3s ease;
     }
 
     #sidebar.expanded .toggle-icon {
         transform: rotate(180deg);
+    }
+
+    /* FIX: Khi sidebar đóng, ép tất cả các nội dung bên trong collapse phải ẩn đi */
+    #sidebar:not(.expanded) .collapse {
+        display: none !important;
+    }
+
+    /* FIX: Ẩn các mũi tên xuống khi thu nhỏ để icon chính được căn giữa */
+    #sidebar:not(.expanded) .sb-arrow {
+        display: none !important;
     }
 
     /* Sidebar Links (Cấp 1) */
@@ -169,11 +180,26 @@
         <span class="sb-text">Dashboard</span>
     </a>
 
-    <a href="/pos" class="sidebar-link ${pageContext.request.requestURI.contains('/pos') ? 'active' : ''}">
-        <i class="fa-solid fa-cart-shopping"></i>
-        <span class="sb-text">POS & Sales</span>
-        <i class="fa-solid fa-chevron-right sb-arrow"></i>
-    </a>
+    <c:set var="isPosOpen" value="${pageContext.request.requestURI.contains('/pos') || pageContext.request.requestURI.contains('/receipts')}" />
+    <div class="nav-group">
+        <a href="#posSub" data-bs-toggle="collapse" class="sidebar-link ${isPosOpen ? 'active' : ''}">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span class="sb-text">POS & Sales</span>
+            <i class="fa-solid fa-chevron-down sb-arrow"></i> </a>
+        <div class="collapse ${isPosOpen ? 'show' : ''}" id="posSub">
+            <div class="submenu-list">
+                <a href="/pos" class="submenu-item ${pageContext.request.requestURI.endsWith('/pos') ? 'active' : ''}">
+                    <i class="fa-solid fa-cash-register"></i>
+                    <span>POS Terminal</span>
+                </a>
+                <a href="/pos/receipts" class="submenu-item ${pageContext.request.requestURI.contains('/receipts') ? 'active' : ''}">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    <span>Manage Receipt</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
 
     <c:set var="isMenuOpen" value="${pageContext.request.requestURI.contains('/products')}" />
     <div class="nav-group">

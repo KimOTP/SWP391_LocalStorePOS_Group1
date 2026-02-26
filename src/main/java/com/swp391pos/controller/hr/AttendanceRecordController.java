@@ -20,7 +20,7 @@ public class AttendanceRecordController {
     @Autowired
     private AttendanceService attendanceService;
 
-    @GetMapping("/cashier/attendance_record")
+    @GetMapping("/attendance_record")
     public String attendanceRecord(
             @RequestParam(defaultValue = "0") int page,
             HttpSession session,

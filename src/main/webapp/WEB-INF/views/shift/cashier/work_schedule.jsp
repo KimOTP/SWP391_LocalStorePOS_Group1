@@ -18,9 +18,12 @@
 <div class="main-content">
     <div class="profile-wrapper">
 
+        <!-- BACK -->
+        <a href="/hr/cashier_profile" class="back-link">← Back To Profile</a>
         <!-- TITLE -->
         <div class="section-title">Work Schedule</div>
 
+        <br/>
         <!-- TABLE -->
         <div class="info-box" style="height:auto; padding:0;">
             <table class="table align-middle mb-0">
@@ -55,9 +58,6 @@
                 </tbody>
             </table>
         </div>
-
-        <!-- BACK -->
-        <a href="/hr/cashier/cashier_profile" class="back-link">← Back To Profile</a>
 
     </div>
 </div>

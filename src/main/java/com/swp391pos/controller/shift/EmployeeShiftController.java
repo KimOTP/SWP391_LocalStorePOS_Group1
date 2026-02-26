@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/shift")
 public class EmployeeShiftController {
 
-    @GetMapping("/manager/employee_shift")
+    @GetMapping("/employee_shift")
     public String employeeShift() {
         return "shift/manager/employee_shift";
     }

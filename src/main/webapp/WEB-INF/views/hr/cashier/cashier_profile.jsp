@@ -24,7 +24,9 @@
 
 <div class="main-content">
     <div class="profile-wrapper">
-
+        <div class="text-end mt-4">
+            <a href="/dashboard" class="back-link">← Back To Homepage</a>
+        </div>
         <div class="section-title">Personal Information</div>
         <div class="section-subtitle">Basic Information</div>
 
@@ -37,7 +39,7 @@
                 <div class="info-box">${account.employee.role}</div>
 
                 <button class="btn-change mt-2"
-                onclick="window.location.href='${pageContext.request.contextPath}/hr/common/change_information'">
+                onclick="window.location.href='${pageContext.request.contextPath}/hr/change_information'">
                     Change Info
                 </button>
             </div>
@@ -84,38 +86,30 @@
         <div class="row">
 
             <div class="col-md-3">
-                <div class="info-label">Current Shift</div>
                 <div class="info-box">
-                    ${todayShift}
-                    <a href="/shift/cashier/change_shift" class="link-detail">Change Shift</a>
+                    <span class="shift-label">Current Shift: ${todayShift}</span>
+                    <a href="/shift/change_shift" class="link-detail">Change Shift</a>
                 </div>
             </div>
 
             <div class="col-md-3">
-                <div class="info-label">Work Schedule</div>
                 <div class="info-box">
-                    <a href="/shift/cashier/work_schedule" class="link-detail">Detail</a>
+                    <a href="/shift/work_schedule" class="link-detail">Work Schedule</a>
                 </div>
             </div>
 
             <div class="col-md-3">
-                <div class="info-label">Attendance Record</div>
                 <div class="info-box">
-                    <a href="/hr/cashier/attendance_record" class="link-detail">Detail</a>
+                    <a href="/hr/attendance_record" class="link-detail">Attendance Record</a>
                 </div>
             </div>
 
             <div class="col-md-3">
-                <div class="info-label">Shift Change History</div>
                 <div class="info-box">
-                    <a href="/hr/cashier/shift_change_history" class="link-detail">Detail</a>
+                    <a href="/hr/shift_change_history" class="link-detail">Shift Change History</a>
                 </div>
             </div>
 
-        </div>
-
-        <div class="text-end mt-4">
-            <a href="/dashboard" class="back-link">← Back To Homepage</a>
         </div>
 
     </div>

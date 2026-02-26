@@ -31,7 +31,7 @@
                         <div class="col-md-4 border-end">
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Product Code (SKU) - Auto Generate</label>
-                                <input type="text" name="productId" class="form-control input-custom" placeholder="SKU_PRODUCTNAME_ATTRIBUTE" readonly>
+                                <input type="text" name="productId" class="form-control input-custom" placeholder="SKU_PROD-000" readonly>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Product Name</label>
