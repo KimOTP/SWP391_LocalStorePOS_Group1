@@ -16,24 +16,23 @@ public class SupplierController {
 
     @GetMapping
     public String viewSupplierList(Model model) {
-        // Put all data to a model
         model.addAttribute("suppliers", supplierService.getSuppliersDashboardData());
-        return "inventory/admin/supplier-list";
+        return "inventory/manager/supplier-list";
     }
 
-    @PostMapping("/admin/add")
+    @PostMapping("/add")
     public String createSupplier(@ModelAttribute Supplier supplier) {
         supplierService.saveSupplier(supplier);
         return "redirect:/suppliers";
     }
 
-    @PostMapping("/admin/update")
+    @PostMapping("/update")
     public String updateSupplier(@ModelAttribute Supplier supplier) {
         supplierService.updateSupplier(supplier);
         return "redirect:/suppliers";
     }
 
-    @GetMapping("/admin/delete/{id}")
+    @GetMapping("/delete/{id}")
     public String removeSupplier(@PathVariable Integer id) {
         supplierService.deleteSupplier(id);
         return "redirect:/suppliers";

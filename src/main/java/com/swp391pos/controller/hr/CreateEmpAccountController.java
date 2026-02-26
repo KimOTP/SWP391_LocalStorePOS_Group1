@@ -14,13 +14,13 @@ public class CreateEmpAccountController {
     private final AccountService accountService;
 
     // Hiển thị form
-    @GetMapping("/manager/create_emp_account")
+    @GetMapping("/create_emp_account")
     public String createEmpAccount() {
         return "hr/manager/create_emp_account";
     }
 
     // Xử lý submit form
-    @PostMapping("/manager/create_emp_account")
+    @PostMapping("/create_emp_account")
     public String createAccount(
             @RequestParam String fullName,
             @RequestParam String username,

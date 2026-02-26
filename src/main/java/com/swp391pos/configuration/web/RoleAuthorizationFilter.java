@@ -18,41 +18,81 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
         HttpSession session = request.getSession(false);
         String role = (session != null) ? (String) session.getAttribute("role") : null;
 
-        // 1. CỨU CSS: Cho phép các file tĩnh và trang login đi qua luôn
-        if (uri.contains("/static/") || uri.contains("/auth/") || uri.contains("/css/") || uri.contains("/js/")) {
+        // 1. LOẠI BỎ CÁC REQUEST TÀI NGUYÊN (Sửa lỗi hiện thông báo do load ảnh/icon thất bại)
+        if (uri.contains("/static/") || uri.contains("/auth/") || uri.contains("/css/") ||
+                uri.contains("/js/") || uri.contains("/resources/") || uri.endsWith(".png") ||
+                uri.endsWith(".jpg") || uri.endsWith(".svg") || uri.endsWith(".ico")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 2. Kiểm tra đăng nhập
+        // 2. KIỂM TRA ĐĂNG NHẬP
         if (role == null) {
             response.sendRedirect(request.getContextPath() + "/auth/login");
             return;
         }
 
-        // 3. Phân quyền chi tiết dựa trên thư mục
+        // 3. PHÂN QUYỀN CHO CASHIER
         if ("CASHIER".equalsIgnoreCase(role)) {
-            // Chặn nếu truy cập vào bất kỳ folder nào chứa chữ "manager" hoặc "admin"
+            // Chặn folder quản lý
             if (uri.contains("/manager/") || uri.contains("/admin/")) {
-                response.sendRedirect(request.getContextPath() + "/dashboard");
+                handleAccessDenied(request, response, "Access Denied !");
                 return;
             }
 
-            // Cashier chỉ được vào các folder "cashier", "dashboard", "layer" hoặc "common"
-            // Bạn có thể thêm các folder khác vào đây nếu cần
+            // Danh sách trắng cho Cashier
             boolean isAllowed = uri.contains("/pos")
                     || uri.contains("/dashboard")
                     || uri.contains("/layer")
-                    || uri.contains("/cashier/");
+                    || uri.contains("/cashier/")
+                    || uri.contains("/common/")
+                    || uri.contains("/hr/cashier_profile")
+                    || uri.contains("/hr/change_information")
+                    || uri.contains("/hr/attendance_record")
+                    || uri.contains("/hr/shift_change_history")
+                    || uri.contains("/shift/change_shift")
+                    || uri.contains("/shift/work_schedule")
+                    || uri.contains("/hr/update_information")
+                    || uri.contains("/hr/change_password");
 
             if (!isAllowed) {
-                // Ví dụ: Cashier vào /product/ (không thuộc 3 cái trên) sẽ bị đẩy về dashboard
-                response.sendRedirect(request.getContextPath() + "/dashboard");
+                handleAccessDenied(request, response, "Access Denied !");
+                return;
+            }
+        } else if ("INVENTORY STAFF".equalsIgnoreCase(role)) {
+            if (uri.contains("/manager/") || uri.contains("/admin/")) {
+                handleAccessDenied(request, response, "Access Denied !");
+                return;
+            }
+            boolean isAllowed = uri.contains("/dashboard")
+                    || uri.contains("/layer")
+                    ||uri.contains("/stockIn/add")
+                    || uri.contains("/stockIn/details")
+                    || uri.contains("/hr/cashier_profile")
+                    || uri.contains("/stockOut/add")
+                    || uri.contains("/stockOut/details")
+                    || uri.contains("/audit/add")
+                    || uri.contains("/audit/details")
+                    || uri.contains("/stockIn/notifications");
+
+            if (!isAllowed) {
+                handleAccessDenied(request, response, "Access Denied !");
                 return;
             }
         }
 
-        // Manager mặc định được đi tiếp vì không bị chặn bởi logic if trên
+
+        // 4. BƯỚC QUAN TRỌNG NHẤT: Xóa lỗi nếu truy cập hợp lệ (Manager luôn vào đây)
+        if (session != null && session.getAttribute("accessError") != null) {
+            session.removeAttribute("accessError");
+        }
+
         filterChain.doFilter(request, response);
+    }
+
+    private void handleAccessDenied(HttpServletRequest request, HttpServletResponse response, String message) throws IOException {
+        HttpSession session = request.getSession();
+        session.setAttribute("accessError", message);
+        response.sendRedirect(request.getContextPath() + "/dashboard?authError=1");
     }
 }

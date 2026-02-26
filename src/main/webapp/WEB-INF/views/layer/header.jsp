@@ -3,7 +3,8 @@
 <%-- Bootstrap + Font Awesome --%>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 <style>
     /* --- UI Profile Dropdown - Refined & Small Style --- */
     .user-dropdown {
@@ -185,7 +186,7 @@
 
                 <li>
                     <a class="dropdown-item"
-                       href="${account.employee.role == 'MANAGER' ? '/hr/manager/manager_profile' : '/hr/cashier/cashier_profile'}">
+                       href="${account.employee.role == 'MANAGER' ? '/hr/manager_profile' : '/hr/cashier_profile'}">
                         <i class="fa-regular fa-address-card"></i>Profile
                     </a>
                 </li>
@@ -211,4 +212,43 @@
     }
     setInterval(updateClock, 1000);
     updateClock();
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+
+        if (urlParams.get('authError') === '1') {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 2000,
+                timerProgressBar: true,
+
+                customClass: {
+                    popup: 'rounded-3 border-0 shadow-lg'
+                },
+                // Hiệu ứng bay từ phải qua (Cần thư viện Animate.css)
+                showClass: {
+                    popup: 'animate__animated animate__fadeInRight'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOutRight'
+                }
+            });
+
+            Toast.fire({
+                icon: 'error',
+                title: 'Access Denied!',
+                // Màu sắc đỏ nhẹ cho phù hợp với thông báo lỗi
+                background: '#fff',
+                iconColor: '#ef4444'
+            });
+
+            // Xóa tham số trên URL để tránh hiện lại khi F5
+            const newUrl = window.location.pathname;
+            window.history.replaceState({}, document.title, newUrl);
+        }
+    });
 </script>

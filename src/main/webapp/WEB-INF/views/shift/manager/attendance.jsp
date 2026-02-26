@@ -18,12 +18,14 @@
 <div class="main-content">
     <div class="profile-wrapper">
 
+        <!-- BACK -->
+        <a href="/hr/manager_profile" class="back-link">← Back To Profile</a>
         <!-- TITLE -->
         <div class="section-title">Attendance Management</div>
         <div class="section-subtitle">Today's Attendance</div>
 
         <!-- FILTER -->
-        <form id="searchForm" method="get" action="${pageContext.request.contextPath}/shift/manager/attendance">
+        <form id="searchForm" method="get" action="${pageContext.request.contextPath}/shift/attendance">
 
             <div class="row mb-4">
 
@@ -61,7 +63,6 @@
                             <option value="Normal" ${param.status == 'Normal' ? 'selected' : ''}>Normal</option>
                             <option value="Late" ${param.status == 'Late' ? 'selected' : ''}>Late</option>
                             <option value="Early Leave" ${param.status == 'Early Leave' ? 'selected' : ''}>Early Leave</option>
-                            <option value="Expired" ${param.status == 'Expired' ? 'selected' : ''}>Expired</option>
                         </select>
                     </div>
                 </div>
@@ -171,7 +172,7 @@
         <!-- PAGINATION -->
         <div class="d-flex justify-content-center gap-2 mt-4">
 
-            <c:if test="${employeePage.totalPages > 1}">
+            <c:if test="${attendancePage.totalPages > 1}">
 
                 <!-- << FIRST -->
                 <c:if test="${currentPage > 0}">
@@ -191,7 +192,7 @@
 
                 <!-- PAGE NUMBERS -->
                 <c:forEach begin="0"
-                           end="${employeePage.totalPages - 1}"
+                           end="${attendancePage.totalPages - 1}"
                            var="i">
 
                     <a href="?page=${i}"
@@ -202,7 +203,7 @@
                 </c:forEach>
 
                 <!-- > NEXT -->
-                <c:if test="${currentPage < employeePage.totalPages - 1}">
+                <c:if test="${currentPage < attendancePage.totalPages - 1}">
                     <a href="?page=${currentPage + 1}"
                        class="btn btn-light">
                         >
@@ -210,8 +211,8 @@
                 </c:if>
 
                 <!-- >> LAST -->
-                <c:if test="${currentPage < employeePage.totalPages - 1}">
-                    <a href="?page=${employeePage.totalPages - 1}"
+                <c:if test="${currentPage < attendancePage.totalPages - 1}">
+                    <a href="?page=${attendancePage.totalPages - 1}"
                        class="btn btn-light">
                         >>
                     </a>
@@ -224,18 +225,12 @@
 
             <!-- View History -->
             <button class="btn-primary"
-                onclick="window.location.href='${pageContext.request.contextPath}/shift/manager/attendance_history'">
+                onclick="window.location.href='${pageContext.request.contextPath}/shift/attendance_history'">
                 View Attendance History
             </button>
 
             </form>
         </div>
-
-
-
-        <!-- BACK -->
-        <a href="/hr/manager/manager_profile" class="back-link">← Back To Profile</a>
-
     </div>
 </div>
 <script>

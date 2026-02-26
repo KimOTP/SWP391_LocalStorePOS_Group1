@@ -17,7 +17,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
 
     boolean existsByEmployeeAndWorkDate(Employee employee, LocalDate workDate);
 
-    List<Attendance> findByWorkDate(LocalDate workDate);
+    Page<Attendance> findByWorkDate(LocalDate workDate, Pageable pageable);
 
     Page<Attendance> findByEmployee_EmployeeIdAndWorkDateLessThanEqualOrderByWorkDateDesc(
             Integer employeeId,
@@ -52,10 +52,11 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
     ORDER BY a.workDate DESC
 """)
     Page<Attendance> searchAttendance(
-            @Param("fullName") String fullName,
-            @Param("shift") String shift,
-            @Param("fromDate") LocalDate fromDate,
-            @Param("toDate") LocalDate toDate,
+            String fullName,
+            String shift,
+            LocalDate fromDate,
+            LocalDate toDate,
+            String status,
             Pageable pageable
     );
 

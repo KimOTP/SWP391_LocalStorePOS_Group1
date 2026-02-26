@@ -1,107 +1,160 @@
-/* Layout & Spacing */
+/* --- 1. Tổng thể nội dung --- */
 .main-content {
+    background-color: #f8fafc;
+    padding: 30px 40px;
     margin-top: 70px;
     margin-left: 80px;
-    padding: 30px;
-    background-color: #fcfcfc;
-    min-height: 100vh;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: margin-left;
 }
 
-.page-title {
-    font-weight: 800;
-    font-size: 1.75rem;
-    margin-bottom: 25px;
-    color: #111;
+#sidebar.expanded ~ .main-content {
+    margin-left: 260px;
 }
 
-/* --- SUMMARY SECTION --- */
-.summary-section {
-    margin-bottom: 35px; /* Tạo khoảng cách lớn với bảng */
-}
-
+/* --- 2. Thẻ thống kê (Stat Cards) --- */
 .stat-card {
-    background-color: #e0e0e0;
+    position: relative;
+    background: #fff;
+    border: 1.5px solid #e2e8f0;
     border-radius: 12px;
     padding: 24px;
-    width: fit-content;
-    min-width: 350px;
-    border: 1px solid #d0d0d0;
+    height: 100%;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+.stat-icon {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 1.5rem;
+    opacity: 0.2;
+    color: #64748b;
+}
+
+.stat-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .stat-value {
-    font-size: 2.8rem;
-    font-weight: 800;
-    color: #000;
-    line-height: 1.2;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-top: 8px;
+    color: #eab308; /* Màu vàng (Cảnh báo/Chờ xử lý) */
 }
 
 .stat-title {
-    font-size: 0.95rem;
+    font-size: 0.85rem;
+    color: #64748b;
     font-weight: 600;
-    color: #444;
-}
-
-.stat-description {
-    font-size: 0.85rem;
-    color: #666;
-    margin-top: 5px;
-}
-
-/* --- TABLE SECTION --- */
-.table-section {
-    width: 100%;
-}
-
-.table-container {
-    background-color: #e0e0e0; /* Nền xám cho cả vùng bảng theo mockup */
-    border-radius: 15px;
-    padding: 20px;
-    border: 1px solid #d0d0d0;
-}
-
-.table {
-    margin-bottom: 0;
-    background-color: transparent !important;
-}
-
-.table thead th {
-    color: #555;
-    font-weight: 700;
-    border-bottom: 2px solid #bbb;
-    font-size: 0.85rem;
     text-transform: uppercase;
-    padding: 15px 10px;
+    letter-spacing: 0.5px;
 }
 
-.table tbody td {
-    padding: 18px 10px;
-    border-bottom: 1px solid #ccc;
-    font-size: 0.95rem;
+/* --- 3. Khung bao quanh danh sách (Container) --- */
+.notification-container {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
 }
 
-/* Components trong bảng */
+/* --- 4. Table Styling --- */
+.table thead th {
+    background-color: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 16px;
+}
+
 .request-id {
-    font-weight: 700;
-    color: #222;
-}
-
-.badge-qty {
-    background-color: #555; /* Màu xám đậm nổi bật */
-    color: white;
-    padding: 6px 20px;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    display: inline-block;
-}
-
-.action-link {
     color: #2563eb;
-    font-weight: 700;
-    text-decoration: underline;
-    font-size: 0.9rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    background: #eff6ff;
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+/* --- 5. Nút Hành động (Action Link) --- */
+.action-link {
+    display: inline-flex;
+    align-items: center;
+    background-color: #2563eb;
+    color: #ffffff !important;
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
 }
 
 .action-link:hover {
-    color: #1d4ed8;
+    background-color: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+    transform: translateY(-1px);
+}
+/* --- Phàn bổ sung cho Filter --- */
+.btn-filter {
+    height: 40px;
+    font-size: 0.85rem;
+    padding: 0 12px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    color: #64748b;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.btn-filter:hover {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-box .search-icon {
+    position: absolute;
+    left: 14px;
+    color: #94a3b8;
+    z-index: 5;
+}
+
+.search-box .form-control {
+    padding-left: 40px !important;
+    height: 40px;
+    font-size: 0.85rem;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+}
+
+/* Tùy chỉnh input date để trông hiện đại hơn */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.tiny-icon {
+    font-size: 0.7rem;
+    color: #94a3b8;
 }

@@ -23,10 +23,13 @@
 <jsp:include page="/WEB-INF/views/layer/sidebar.jsp" />
 
 <div class="main-content">
-    <div class="profile-wrapper">
-
+        <div class="text-end mt-4">
+            <a href="/dashboard" class="back-link">← Back To Homepage</a>
+        </div>
         <div class="section-title">Personal Information</div>
         <div class="section-subtitle">Basic Information</div>
+    <div class="profile-wrapper">
+
 
         <div class="row">
             <div class="col-md-3">
@@ -37,7 +40,7 @@
                 <div class="info-box">${account.employee.role}</div>
 
                 <button class="btn-change mt-2"
-                onclick="window.location.href='${pageContext.request.contextPath}/hr/common/change_information'">
+                onclick="window.location.href='${pageContext.request.contextPath}/hr/change_information'">
                     Change Info
                 </button>
             </div>
@@ -83,51 +86,42 @@
         <div class="row row-cols-1 row-cols-md-5 g-3">
 
             <div class="col">
-                <div class="info-label">Employee List</div>
                 <div class="info-box">
-                    <a href="/hr/manager/employee_list" class="link-detail">Detail</a>
+                    <a href="/hr/employee_list" class="link-detail">Employee List</a>
                 </div>
             </div>
 
             <div class="col">
-                <div class="info-label">Create Employee Accounts</div>
                 <div class="info-box">
-                    <a href="/hr/manager/create_emp_account" class="link-detail">Detail</a>
+                    <a href="/hr/create_emp_account" class="link-detail">Create Employee Accounts</a>
                 </div>
             </div>
 
 <!--<div class="col">
                 <div class="info-label">Employee Shift</div>
                 <div class="info-box">
-                    <a href="/shift/manager/employee_shift" class="link-detail">Detail</a>
+                    <a href="/shift/employee_shift" class="link-detail">Detail</a>
                 </div>
 </div>-->
 
             <div class="col">
-                <div class="info-label">Shifts</div>
                 <div class="info-box">
-                    <a href="/shift/manager/shift_management" class="link-detail">Detail</a>
+                    <a href="/shift/shift_management" class="link-detail">Shifts</a>
                 </div>
             </div>
 
             <div class="col">
-                <div class="info-label">Shift Change Request</div>
                 <div class="info-box">
-                    <a href="/shift/manager/shift_change_req" class="link-detail">Detail</a>
+                    <a href="/shift/shift_change_req" class="link-detail">Shift Change Request</a>
                 </div>
             </div>
 
             <div class="col">
-                <div class="info-label">Attendance</div>
                 <div class="info-box">
-                    <a href="/shift/manager/attendance" class="link-detail">Detail</a>
+                    <a href="/shift/attendance" class="link-detail">Attendance</a>
                 </div>
             </div>
 
-        </div>
-
-        <div class="text-end mt-4">
-            <a href="/dashboard" class="back-link">← Back To Homepage</a>
         </div>
 
     </div>

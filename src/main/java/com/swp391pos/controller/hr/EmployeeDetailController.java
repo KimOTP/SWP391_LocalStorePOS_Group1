@@ -26,7 +26,7 @@ public class EmployeeDetailController {
     // ==============================
     // GET EMPLOYEE DETAIL
     // ==============================
-    @GetMapping("/manager/employee_detail/{id}")
+    @GetMapping("/employee_detail/{id}")
     public String editEmployee(
             @PathVariable("id") Integer id,
             HttpSession session,
@@ -34,7 +34,7 @@ public class EmployeeDetailController {
 
         Employee employee = employeeRepository.findById(id).orElse(null);
         if (employee == null) {
-            return "redirect:/hr/manager/employee_list";
+            return "redirect:/hr/employee_list";
         }
 
         // ===== LẤY ACCOUNT ĐANG LOGIN =====
@@ -46,7 +46,7 @@ public class EmployeeDetailController {
                 loggedInAccount.getEmployee() != null &&
                 loggedInAccount.getEmployee().getEmployeeId().equals(id)) {
 
-            return "redirect:/hr/manager/employee_list";
+            return "redirect:/hr/employee_list";
         }
 
         // ===== LẤY ACCOUNT CỦA EMPLOYEE ĐƯỢC CHỌN =====
@@ -57,13 +57,13 @@ public class EmployeeDetailController {
         model.addAttribute("employee", employee);
         model.addAttribute("account", account);
 
-        return "hr/manager/employee_detail";
+        return "hr/employee_detail";
     }
 
     // ==============================
     // SAVE EDIT
     // ==============================
-    @PostMapping("/manager/edit_employee")
+    @PostMapping("/edit_employee")
     public String saveEdit(
             @RequestParam Integer employeeId,
             @RequestParam String fullName,
@@ -83,12 +83,12 @@ public class EmployeeDetailController {
                 loggedInAccount.getEmployee() != null &&
                 loggedInAccount.getEmployee().getEmployeeId().equals(employeeId)) {
 
-            return "redirect:/hr/manager/employee_list";
+            return "redirect:/hr/employee_list";
         }
 
         Employee employee = employeeRepository.findById(employeeId).orElse(null);
         if (employee == null) {
-            return "redirect:/hr/manager/employee_list";
+            return "redirect:/hr/employee_list";
         }
 
         // ===== UPDATE EMPLOYEE =====
@@ -117,6 +117,6 @@ public class EmployeeDetailController {
             accountRepository.save(account);
         }
 
-        return "redirect:/hr/manager/employee_list";
+        return "redirect:/hr/employee_list";
     }
 }
