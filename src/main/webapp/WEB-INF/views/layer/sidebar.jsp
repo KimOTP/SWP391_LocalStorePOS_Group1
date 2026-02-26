@@ -251,7 +251,7 @@
                 <a href="/stockIn/notifications" class="submenu-item">
                     <i class="fa-solid fa-bell"></i><span>Notifications</span>
                 </a>
-                <a href="/stockIn/view" class="submenu-item">
+                <a href="/stockIn/add" class="submenu-item">
                     <i class="fa-solid fa-file-circle-plus"></i><span>Request Order</span>
                 </a>
                 <a href="/suppliers" class="submenu-item">
