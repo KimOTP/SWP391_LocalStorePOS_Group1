@@ -64,8 +64,11 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
                 handleAccessDenied(request, response, "Access Denied !");
                 return;
             }
-            boolean isAllowed =  uri.contains("/stockIn/add")
+            boolean isAllowed = uri.contains("/dashboard")
+                    || uri.contains("/layer")
+                    ||uri.contains("/stockIn/add")
                     || uri.contains("/stockIn/details")
+                    || uri.contains("/hr/cashier_profile")
                     || uri.contains("/stockOut/add")
                     || uri.contains("/stockOut/details")
                     || uri.contains("/audit/add")
