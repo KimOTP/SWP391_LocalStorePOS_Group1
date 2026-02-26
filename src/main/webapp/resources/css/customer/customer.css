@@ -10,8 +10,14 @@ body {
     margin-left: 80px; /* Né Sidebar (khi thu gọn) */
     padding: 30px;
     transition: margin-left 0.3s;
-}
 
+
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: margin-left;
+}
+#sidebar.expanded ~ .main-content {
+    margin-left: 260px;
+}
 /* Stats Card Style */
 .stat-card {
     background-color: #e9ecef;
