@@ -1,0 +1,155 @@
+/* --- 1. Tổng thể nội dung & Logic Co Giãn (Thống nhất với Product) --- */
+.main-content {
+    background-color: #f8fafc !important;
+    padding: 30px 40px !important;
+    margin-top: 70px !important;
+    margin-left: 80px;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    will-change: margin-left;
+}
+
+#sidebar.expanded ~ .main-content {
+    margin-left: 260px !important;
+}
+
+/* --- 2. Thẻ thống kê (Stat Cards) --- */
+.stat-card {
+    position: relative !important;
+    background: #fff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    height: 100% !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
+}
+
+.stat-icon {
+    position: absolute !important;
+    right: 20px !important;
+    top: 20px !important;
+    font-size: 1.5rem !important;
+    opacity: 0.2 !important;
+    color: #64748b !important;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.stat-value {
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    margin-top: 8px !important;
+}
+
+/* Biến thể màu sắc cho Dashboard Kho */
+.text-total { color: #1e293b !important; }      /* Tổng giá trị nhập/tồn */
+.text-category { color: #2563eb !important; }   /* Tổng giá trị hàng xuất */
+.text-outstock { color: #dc2626 !important; }   /* Cảnh báo tồn kho thấp */
+
+/* --- 3. Container chứa bảng danh sách --- */
+.inventory-list-container {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+    margin-top: 30px !important;
+}
+
+/* --- 4. Ô Tìm kiếm & Bộ lọc --- */
+.search-box {
+    position: relative !important;
+    width: 100% !important;
+}
+
+.search-box .search-icon {
+    position: absolute !important;
+    left: 15px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: #94a3b8 !important;
+    z-index: 10 !important;
+}
+
+.search-box .form-control {
+    padding-left: 45px !important;
+    height: 42px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    background-color: #f8fafc !important;
+    font-size: 0.85rem !important;
+}
+
+.btn-filter {
+    height: 42px !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 0 15px !important;
+    color: #475569 !important;
+    font-size: 0.85rem !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    transition: all 0.2s ease !important;
+}
+
+/* --- 5. Bảng & Trạng thái Tồn kho --- */
+.table thead th {
+    background-color: #f8fafc !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    color: #64748b !important;
+    font-size: 0.7rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    padding: 16px !important;
+}
+
+.text-sku {
+    color: #2563eb !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+}
+
+/* Status Badges Kho hàng */
+.status-badge {
+    padding: 6px 12px !important;
+    border-radius: 8px !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.status-badge::before {
+    content: "" !important;
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+}
+
+/* Trạng thái Enough (Đủ hàng) */
+.status-active { background: #ecfdf5 !important; color: #059669 !important; }
+.status-active::before { background: #10b981 !important; }
+
+/* Trạng thái Warning (Dưới mức tối thiểu) */
+.status-outstock { background: #fef2f2 !important; color: #dc2626 !important; }
+.status-outstock::before { background: #dc2626 !important; }
+
+/* --- 6. Liên kết hành động (Action Links) --- */
+.action-link {
+    text-decoration: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.action-link:hover {
+    color: #1d4ed8 !important;
+    text-decoration: underline !important;
+}

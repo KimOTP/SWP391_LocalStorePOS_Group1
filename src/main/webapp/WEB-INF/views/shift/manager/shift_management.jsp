@@ -17,8 +17,11 @@
 <div class="main-content">
 
     <div class="profile-wrapper">
+        <!-- BACK -->
+        <a href="/hr/manager_profile" class="back-link">← Back To Profile</a>
         <!-- TITLE -->
         <div class="section-title">Shift Management</div>
+        <br/>
 
         <!-- TABLE -->
         <div class="info-box" style="height:auto; padding:0;">
@@ -69,8 +72,6 @@
             </table>
         </div>
 
-        <!-- BACK -->
-        <a href="/hr/manager/manager_profile" class="back-link">← Back To Profile</a>
     </div>
 </div>
 

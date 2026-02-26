@@ -12,4 +12,7 @@ public interface StockInRepository extends JpaRepository<StockIn, Integer> {
     @Query("SELECT s FROM StockIn s WHERE s.status.transactionStatusId = :statusId")
     List<StockIn> findByStatusId(@Param("statusId") Integer statusId);
     StockIn findByStockInId(int stockInId);
+
+    @Query("SELECT COALESCE(SUM(d.receivedQuantity * d.unitCost),0) FROM StockIn si JOIN si.details d WHERE si.status.transactionStatusId = :statusId")
+    Double sumTotalValue(@Param("statusId") Integer statusId);
 }

@@ -1,84 +1,124 @@
+/* --- 1. Main Layout --- */
 .main-content {
+    background-color: #f8fafc;
+    padding: 30px 40px;
     margin-top: 70px;
     margin-left: 80px;
-    padding: 30px;
-    background-color: #fcfcfc;
-    min-height: 100vh;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.page-title {
-    font-weight: 800;
-    font-size: 1.75rem;
-    margin-bottom: 25px;
+#sidebar.expanded ~ .main-content {
+    margin-left: 260px;
 }
 
-/* Summary Card */
+/* --- 2. Stat Cards --- */
 .stat-card {
-    background-color: #e0e0e0;
+    position: relative;
+    background: #fff;
+    border: 1.5px solid #e2e8f0;
     border-radius: 12px;
     padding: 24px;
-    width: fit-content;
-    min-width: 350px;
-    border: 1px solid #d0d0d0;
-    margin-bottom: 20px ;
+    transition: transform 0.3s ease;
+    overflow: hidden;
 }
 
+.stat-icon {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 1.5rem;
+    opacity: 0.15;
+    color: #64748b;
+}
+
+.stat-card:hover { transform: scale(1.02); }
+
 .stat-value {
-    font-size: 2.8rem;
-    font-weight: 800;
-    color: #000;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2563eb;
+    margin-top: 8px;
 }
 
 .stat-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #444;
-}
-
-/* Table Design */
-.table-container {
-    background-color: #e0e0e0;
-    border-radius: 15px;
-    padding: 20px;
-    border: 1px solid #d0d0d0;
-}
-
-.table thead th {
-    color: #555;
-    font-weight: 700;
-    border-bottom: 2px solid #bbb;
     font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 600;
     text-transform: uppercase;
 }
 
-/* Action Buttons */
-.btn-reject {
-    background-color: #8b1e1e; /* Đỏ đậm đặc trưng */
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 6px 18px;
-    font-weight: 700;
+/* --- 3. Filters --- */
+.btn-filter {
+    height: 40px;
+    font-size: 0.85rem;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    color: #64748b;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-box .form-control {
+    padding-left: 40px !important;
+    height: 40px;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
     font-size: 0.85rem;
 }
 
-.btn-approve {
-    background-color: #4a7c44; /* Xanh lá đậm đặc trưng */
-    color: white;
-    border: none;
-    border-radius: 20px;
-    padding: 6px 18px;
-    font-weight: 700;
-    font-size: 0.85rem;
+.search-box .search-icon {
+    position: absolute;
+    left: 14px;
+    color: #94a3b8;
+    z-index: 5;
 }
+
+/* --- 4. Table & Actions --- */
+.table-section {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+}
+
+.table thead th {
+    background-color: #f8fafc;
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 16px;
+}
+
+.log-id {
+    color: #2563eb;
+    font-weight: 600;
+    background: #eff6ff;
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.btn-approve, .btn-reject {
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+    transition: 0.2s;
+}
+
+.btn-approve { background: #dcfce7; color: #166534; }
+.btn-approve:hover { background: #16a34a; color: white; }
+
+.btn-reject { background: #fee2e2; color: #991b1b; }
+.btn-reject:hover { background: #dc2626; color: white; }
 
 .action-link {
+    font-size: 0.85rem;
+    font-weight: 600;
     color: #2563eb;
-    font-weight: 700;
-    text-decoration: underline;
-}
-
-.request-id {
-    font-weight: 700;
-    color: #222;
+    text-decoration: none;
 }

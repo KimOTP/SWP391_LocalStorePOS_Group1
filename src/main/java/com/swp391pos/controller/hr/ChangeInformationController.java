@@ -25,7 +25,7 @@ public class ChangeInformationController {
     // ========================
     // VIEW CHANGE INFO PAGE
     // ========================
-    @GetMapping("/common/change_information")
+    @GetMapping("/change_information")
     public String changeInformation(HttpSession session,
                                     org.springframework.ui.Model model) {
 
@@ -43,7 +43,7 @@ public class ChangeInformationController {
     // ========================
     // UPDATE INFORMATION
     // ========================
-    @PostMapping("/common/update_information")
+    @PostMapping("/update_information")
     public String updateInformation(@RequestParam String fullName,
                                     @RequestParam String username,
                                     @RequestParam String email,
@@ -58,7 +58,7 @@ public class ChangeInformationController {
 
         if (account == null) {
             redirectAttributes.addFlashAttribute("error", "Account not found!");
-            return "redirect:/hr/common/change_information";
+            return "redirect:/hr/change_information";
         }
 
         boolean hasChange = false;
@@ -69,7 +69,7 @@ public class ChangeInformationController {
                 !Objects.equals(existingUsername.get().getAccountId(), account.getAccountId())) {
 
             redirectAttributes.addFlashAttribute("error", "Username already exists!");
-            return "redirect:/hr/common/change_information";
+            return "redirect:/hr/change_information";
         }
 
         // ❌ Email trùng
@@ -78,7 +78,7 @@ public class ChangeInformationController {
                 !Objects.equals(existingEmail.get().getAccountId(), account.getAccountId())) {
 
             redirectAttributes.addFlashAttribute("error", "Email already exists!");
-            return "redirect:/hr/common/change_information";
+            return "redirect:/hr/change_information";
         }
 
         if (!account.getEmployee().getFullName().equals(fullName)) {
@@ -98,19 +98,19 @@ public class ChangeInformationController {
 
         if (!hasChange) {
             redirectAttributes.addFlashAttribute("error", "No changes detected!");
-            return "redirect:/hr/common/change_information";
+            return "redirect:/hr/change_information";
         }
 
         accountRepository.save(account);
 
         redirectAttributes.addFlashAttribute("success", "Update successfully!");
-        return "redirect:/hr/common/change_information";
+        return "redirect:/hr/change_information";
     }
 
     // ========================
     // CHANGE PASSWORD
     // ========================
-    @PostMapping("/common/change_password")
+    @PostMapping("/change_password")
     public String changePassword(@RequestParam String oldPassword,
                                  @RequestParam String newPassword,
                                  @RequestParam String confirmPassword,
@@ -125,33 +125,33 @@ public class ChangeInformationController {
 
         if (account == null) {
             redirectAttributes.addFlashAttribute("errorPass", "Account not found!");
-            return "redirect:/hr/common/change_information";
+            return "redirect:/hr/change_information";
         }
 
         if (!passwordEncoder.matches(oldPassword, account.getPasswordHash())) {
             redirectAttributes.addFlashAttribute("errorPass", "Old password incorrect!");
-            return "redirect:/hr/common/change_information";
+            return "redirect:/hr/change_information";
         }
 
         if (!newPassword.equals(confirmPassword)) {
             redirectAttributes.addFlashAttribute("errorPass", "Confirm password not match!");
-            return "redirect:/hr/common/change_information";
+            return "redirect:/hr/change_information";
         }
 
         if (passwordEncoder.matches(newPassword, account.getPasswordHash())) {
             redirectAttributes.addFlashAttribute("errorPass", "New password must be different!");
-            return "redirect:/hr/common/change_information";
+            return "redirect:/hr/change_information";
         }
 
         if (newPassword.length() < 6) {
             redirectAttributes.addFlashAttribute("errorPass", "Password must be at least 6 characters!");
-            return "redirect:/hr/common/change_information";
+            return "redirect:/hr/change_information";
         }
 
         account.setPasswordHash(passwordEncoder.encode(newPassword));
         accountRepository.save(account);
 
         redirectAttributes.addFlashAttribute("successPass", "Password changed successfully!");
-        return "redirect:/hr/common/change_information";
+        return "redirect:/hr/change_information";
     }
 }

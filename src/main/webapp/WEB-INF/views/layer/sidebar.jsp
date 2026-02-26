@@ -49,13 +49,24 @@
         padding: 0 28px;
     }
 
+    /* Đảm bảo transition mượt mà cho icon */
     .toggle-icon {
         font-size: 1.1rem;
-        transition: transform 0.4s;
+        transition: transform 0.3s ease;
     }
 
     #sidebar.expanded .toggle-icon {
         transform: rotate(180deg);
+    }
+
+    /* FIX: Khi sidebar đóng, ép tất cả các nội dung bên trong collapse phải ẩn đi */
+    #sidebar:not(.expanded) .collapse {
+        display: none !important;
+    }
+
+    /* FIX: Ẩn các mũi tên xuống khi thu nhỏ để icon chính được căn giữa */
+    #sidebar:not(.expanded) .sb-arrow {
+        display: none !important;
     }
 
     /* Sidebar Links (Cấp 1) */
@@ -237,16 +248,16 @@
         </a>
         <div class="collapse ${isInvOpen ? 'show' : ''}" id="invSub">
             <div class="submenu-list">
-                <a href="/stockIn/inventory-staff/notifications" class="submenu-item">
+                <a href="/stockIn/notifications" class="submenu-item">
                     <i class="fa-solid fa-bell"></i><span>Notifications</span>
                 </a>
-                <a href="/stockIn/admin/view" class="submenu-item">
+                <a href="/stockIn/add" class="submenu-item">
                     <i class="fa-solid fa-file-circle-plus"></i><span>Request Order</span>
                 </a>
                 <a href="/suppliers" class="submenu-item">
                     <i class="fa-solid fa-truck-ramp-box"></i><span>Supplier List</span>
                 </a>
-                <a href="/inventory/admin/approval/queue" class="submenu-item">
+                <a href="/inventory/approval/queue" class="submenu-item">
                     <i class="fa-solid fa-clipboard-check"></i><span>Approval Queue</span>
                 </a>
             </div>

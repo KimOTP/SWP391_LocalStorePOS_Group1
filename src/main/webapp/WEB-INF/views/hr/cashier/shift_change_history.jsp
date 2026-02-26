@@ -18,8 +18,11 @@
 <div class="main-content">
     <div class="profile-wrapper">
 
+        <!-- BACK -->
+        <a href="/hr/cashier_profile" class="back-link">← Back To Profile</a>
         <!-- TITLE -->
         <div class="section-title">Shift Change History</div>
+        <br/>
 
         <!-- TABLE -->
         <div class="info-box" style="height:auto; padding:0;">
@@ -89,7 +92,7 @@
                         <td>
                             <c:choose>
                                 <c:when test="${req.reviewedAt != null}">
-                                    ${req.reviewedAt.toString().replace('T',' ')}
+                                    ${req.reviewedAt.toString().replace('T',' ').substring(0,16)}
                                 </c:when>
                                 <c:otherwise>---</c:otherwise>
                             </c:choose>
@@ -153,9 +156,6 @@
             </c:if>
 
         </div>
-
-        <!-- BACK -->
-        <a href="/hr/cashier/cashier_profile" class="back-link">← Back To Profile</a>
 
     </div>
 </div>

@@ -1,0 +1,148 @@
+/* --- TỔNG THỂ --- */
+.main-content {
+    background-color: #f8fafc;
+    padding: 30px 40px;
+    margin-top: 70px;
+    margin-left: 80px;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- INFO CARD --- */
+.info-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.info-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.info-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+/* --- TABLE & INPUTS --- */
+.table-section {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 24px;
+}
+
+.table thead th {
+    background-color: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 16px;
+}
+
+.text-sku {
+    color: #2563eb !important;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.input-actual {
+    width: 90px;
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    text-align: center;
+    font-weight: 700;
+    color: #2563eb;
+    transition: all 0.2s;
+}
+
+.input-actual:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    outline: none;
+}
+
+.stock-badge {
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+/* --- BUTTONS & BADGES --- */
+.status-badge {
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: #fffbeb;
+    color: #d97706;
+    border: 1px solid #fef3c7;
+}
+
+.btn-confirm {
+    background-color: #2563eb;
+    color: #fff !important;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-confirm:hover {
+    background-color: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-cancel {
+    background-color: #ffffff;
+    color: #64748b !important;
+    border: 1px solid #e2e8f0;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+/* Trong file resources/css/inventory/stock-out.css */
+
+.min-vh-10 {
+    min-height: 80px;
+}
+
+/* Ô hiển thị ghi chú của từng dòng sản phẩm */
+.view-only-box {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: #475569;
+    min-width: 150px;
+}
+
+/* Badge số lượng xuất kho màu đỏ nổi bật */
+.bg-danger {
+    background-color: #dc2626 !important;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.table thead th {
+    /* Đảm bảo tiêu đề bảng đồng bộ với các trang trước */
+    font-size: 0.7rem;
+    color: #64748b;
+    background-color: #f8fafc;
+}

@@ -1,87 +1,144 @@
-/* Main Layout adjustment for Sidebar & Header */
+/* --- 1. Tổng thể nội dung --- */
 .main-content {
+    background-color: #f8fafc;
+    padding: 30px 40px;
     margin-top: 70px;
     margin-left: 80px;
-    padding: 30px;
-    background-color: #f4f7f6;
-    min-height: 100vh;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: margin-left;
 }
 
+#sidebar.expanded ~ .main-content {
+    margin-left: 260px;
+}
+
+/* --- 2. Layout chia cột (Form & Summary) --- */
 .request-wrapper {
     display: flex;
-    gap: 25px;
+    gap: 24px;
     align-items: flex-start;
 }
 
-/* Left Section: Input Form (70%) */
-.form-card {
-    flex: 7;
+/* --- 3. Card Styling (Dựa trên mẫu Product-list) --- */
+.form-card, .summary-card {
     background: #ffffff;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
 }
 
-/* Right Section: Receipt Summary (30%) */
+.form-card {
+    flex: 1;
+    padding: 24px;
+}
+
 .summary-card {
-    flex: 3;
-    background-color: #d9d9d9; /* Grey background as per mockup */
-    padding: 25px;
-    border-radius: 15px;
-    min-height: 550px;
+    width: 380px;
+    padding: 24px;
+    position: sticky;
+    top: 100px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    min-height: 500px;
 }
 
-/* Component Styles */
-.input-custom {
-    background-color: #f0f0f0;
-    border: none;
-    border-radius: 8px;
-    padding: 12px;
+/* --- 4. Input & Form Controls --- */
+.input-custom, .form-select {
+    height: 40px;
+    font-size: 0.875rem;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background-color: #f8fafc;
+    padding: 0 12px;
     width: 100%;
-    margin-bottom: 15px;
+    transition: all 0.2s;
+    outline: none;
 }
 
-.form-select.input-custom {
-    cursor: pointer;
+.input-custom:focus, .form-select:focus {
+    background-color: #fff;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.input-custom[readonly] {
+    background-color: #f1f5f9;
+    color: #64748b;
+    cursor: not-allowed;
+}
+
+label {
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+/* --- 5. Buttons --- */
+.btn-add-receipt, .btn-primary {
+    background-color: #2563eb;
+    color: #fff;
+    border: none;
+    height: 40px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-add-receipt:hover, .btn-primary:hover {
+    background-color: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
 .btn-auto-fill {
-    background-color: #cccccc;
-    border: none;
-    border-radius: 8px;
-    padding: 10px 15px;
+    background-color: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #16a34a;
+    padding: 0 15px;
+    border-radius: 10px;
+    font-size: 0.85rem;
     font-weight: 600;
-    white-space: nowrap;
 }
 
-.btn-add-receipt {
-    background-color: #f0766d; /* Coral red button */
+.btn-auto-fill:hover {
+    background-color: #16a34a;
     color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 12px;
-    width: 100%;
-    font-weight: bold;
-    margin-top: 15px;
+}
+
+/* --- 6. Table Styling --- */
+.table thead th {
+    background-color: transparent;
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 12px 8px;
 }
 
 .receipt-table {
     width: 100%;
-    font-size: 0.9rem;
-    margin-top: 15px;
+    border-collapse: collapse;
 }
 
 .receipt-table th {
-    border-bottom: 1px solid #999;
-    padding-bottom: 8px;
-    text-align: left;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 10px;
 }
 
-.text-danger.small {
-    display: block;
-    margin-top: -10px;
-    margin-bottom: 10px;
+.receipt-table td {
+    padding: 12px 0;
+    border-bottom: 1px solid #f8fafc;
+    font-size: 0.875rem;
+}
+
+/* --- 7. Badges & Typography --- */
+.badge.bg-dark {
+    background-color: #1e293b !important;
+    font-weight: 500;
+    padding: 6px 12px;
+}
+
+.text-sku {
+    color: #2563eb;
+    font-weight: 600;
 }

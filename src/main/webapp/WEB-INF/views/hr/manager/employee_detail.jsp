@@ -19,13 +19,15 @@
 
     <div class="profile-wrapper">
 
+        <!-- BACK -->
+        <a href="/hr/employee_list" class="back-link">← Back</a>
         <!-- TITLE -->
         <div class="section-title">Employee Detail</div>
         <div class="section-subtitle">
             Information (Can not change ID, Creation time)
         </div>
 
-        <form method="post" action="<c:url value='/hr/manager/edit_employee'/>">
+        <form method="post" action="<c:url value='/hr/edit_employee'/>">
         <div class="row">
             <!-- LEFT COLUMN -->
             <div class="col-md-6">
@@ -105,9 +107,6 @@
             </div>
         </div>
         </form>
-
-        <!-- BACK -->
-        <a href="/hr/manager/employee_list" class="back-link">← Back</a>
 
     </div>
 </div>

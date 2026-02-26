@@ -52,6 +52,21 @@
 .text-outstock { color: #dc2626 !important; }
 .text-pending { color: #eab308 !important; }
 
+/* --- CSS cho mã SKU --- */
+.text-sku {
+    color: #2563eb !important; /* Màu xanh chuẩn Modern Blue */
+    font-weight: 600 !important; /* Đậm vừa phải để nổi bật */
+    font-family: 'Monaco', 'Consolas', monospace !important; /* Font đơn cách giúp mã SKU dễ nhìn hơn */
+    letter-spacing: 0.5px !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer;
+}
+
+/* Hiệu ứng khi di chuột vào mã SKU */
+.text-sku:hover {
+    color: #1d4ed8 !important; /* Đổi màu chữ xanh đậm hơn */
+}
+
 /* --- 3. FIX LỖI CHẠM BIÊN --- */
 .main-content .card.shadow-sm.border-0 {
     margin-top: 30px !important;
@@ -197,6 +212,11 @@ tr:hover .product-img-table,
     border-color: #2563eb !important;
 }
 
+.price{
+    color: #16A34A !important;
+    font-weight: bold;
+}
+
 /* --- 7. Status Badges --- */
 .status-badge {
     padding: 6px 12px !important;
@@ -213,6 +233,58 @@ tr:hover .product-img-table,
     width: 6px !important;
     height: 6px !important;
     border-radius: 50% !important;
+}
+
+/* --- 8. FIX CUỘN TRONG DANH SÁCH SẢN PHẨM --- */
+
+/* Thiết lập vùng chứa bảng có khả năng cuộn */
+.table-responsive {
+    /* Chiều cao tối đa tùy chỉnh (ví dụ: 500px hoặc 60vh) */
+    max-height: 600px !important;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+
+    /* Đảm bảo border bao quanh vùng cuộn */
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+
+    /* Đổ bóng nhẹ phía trong để tạo chiều sâu khi cuộn */
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02) !important;
+}
+
+/* Giữ cho thanh tiêu đề bảng (thead) luôn nằm trên cùng khi cuộn (Sticky Header) */
+.table-responsive thead {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+    background-color: #f8fafc !important; /* Phải có màu nền để không bị lộ nội dung bên dưới khi cuộn */
+}
+
+/* Tùy chỉnh thanh cuộn (Scrollbar) cho đẹp và gọn hơn */
+.table-responsive::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Đảm bảo bảng không có lề thừa gây ra thanh cuộn ngang không cần thiết */
+.table-responsive table {
+    margin-bottom: 0 !important;
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
 }
 
 .status-active { background: #ecfdf5 !important; color: #059669 !important; }

@@ -50,4 +50,7 @@ public class SupplierService {
         return supplierRepository.findBySupplierNameContainingIgnoreCase(name);
     }
 
+    public List<Supplier> getAllSuppliers() {
+        return supplierRepository.findAll();
+    }
 }

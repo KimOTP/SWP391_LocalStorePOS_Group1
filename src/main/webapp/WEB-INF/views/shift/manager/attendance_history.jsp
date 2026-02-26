@@ -18,6 +18,8 @@
 <div class="main-content">
     <div class="profile-wrapper">
 
+        <!-- BACK -->
+        <a href="/hr/manager_profile" class="back-link">← Back To Profile</a>
         <!-- TITLE -->
         <div class="section-title">Attendance Management</div>
         <div class="section-subtitle">Attendance History</div>
@@ -61,10 +63,19 @@
                 <div class="info-label">Shift</div>
                 <div class="info-box">
                     <select name="shift" class="info-input">
-                        <option value="">---</option>
-                        <option value="Morning">Morning</option>
-                        <option value="Afternoon">Afternoon</option>
-                        <option value="Evening">Evening</option>
+                        <option value="">All</option>
+                        <option value="Morning"
+                            ${shift == 'Morning' ? 'selected' : ''}>
+                            Morning
+                        </option>
+                        <option value="Afternoon"
+                            ${shift == 'Afternoon' ? 'selected' : ''}>
+                            Afternoon
+                        </option>
+                        <option value="Evening"
+                            ${shift == 'Evening' ? 'selected' : ''}>
+                            Evening
+                        </option>
                     </select>
                 </div>
             </div>
@@ -73,7 +84,7 @@
                 <div class="info-label">Status</div>
                 <div class="info-box">
                     <select name="status" class="info-input">
-                        <option value="">---</option>
+                        <option value="">All</option>
                         <option value="Normal">Normal</option>
                         <option value="Late">Late</option>
                         <option value="Early Leave">Early Leave</option>
@@ -109,8 +120,8 @@
                         <td>${a.employee.role}</td>
                         <td>${a.shift.shiftName}</td>
                         <td>${a.workDate}</td>
-                        <td>${a.checkInTime.toString().replace('T',' ')}</td>
-                        <td>${a.checkOutTime.toString().replace('T',' ')}</td>
+                        <td>${a.checkInTime.toString().replace('T',' ').substring(0,16)}</td>
+                        <td>${a.checkOutTime.toString().replace('T',' ').substring(0,16)}</td>
 
                         <td>
                             <c:choose>
@@ -203,9 +214,6 @@
             </c:if>
 
         </div>
-
-        <!-- BACK -->
-        <a href="/hr/manager/manager_profile" class="back-link">← Back To Profile</a>
 
     </div>
 </div>
