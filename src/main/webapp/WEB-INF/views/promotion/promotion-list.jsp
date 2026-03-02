@@ -199,8 +199,8 @@
                                             </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                             <a class="dropdown-item py-2 text-danger" href="/promotion/delete?id=${promo.promotionId}"
-                                                   onclick="return confirm('Are you sure you want to delete this promotion?')">
+                                             <a class="dropdown-item py-2 text-danger" href="#"
+                                                onclick="confirmDelete('/promotion/delete?id=${promo.promotionId}', 'this promotion')">
                                                     <i class="fa-solid fa-trash me-2"></i> Delete
                                              </a>
                                         </li>

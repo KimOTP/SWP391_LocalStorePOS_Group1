@@ -31,22 +31,22 @@ function openEditModal(id, name, phone, status, point) {
 }
 
 // Hàm xác nhận Xóa bằng SweetAlert2
-function confirmDelete(id, name) {
+// Hàm xác nhận Xóa bằng SweetAlert2 dùng chung
+function confirmDelete(url, itemName) {
     Swal.fire({
         title: 'Confirm deletion?',
-        text: "Are you sure you want to delete customer: " + name + " ?",
+        text: "Are you sure you want to delete " + itemName + " ?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc3545', // Màu đỏ cho nút Xóa
         cancelButtonColor: '#6c757d',  // Màu xám cho nút Hủy
         confirmButtonText: '<i class="fa-solid fa-trash me-2"></i> Delete',
-        cancelButtonText: 'Hủy'
+        cancelButtonText: 'Cancel'
     }).then((result) => {
-        // Nếu người dùng bấm nút Xóa (isConfirmed = true)
+        // Nếu người dùng bấm nút Xóa
         if (result.isConfirmed) {
-            // Chuyển hướng đến URL xóa của bạn
-            // (Lưu ý: Bạn nhớ dùng đúng đường dẫn module mà hôm nọ chúng ta đổi nhé)
-            window.location.href = "/customer/delete/" + id;
+            // Chuyển hướng đến URL được truyền vào
+            window.location.href = url;
         }
     })
 }

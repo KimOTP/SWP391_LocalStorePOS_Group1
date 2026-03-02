@@ -30,7 +30,7 @@ public class PosCheckoutController {
     @Autowired
     private OrderItemService orderItemService;
     // Bỏ vào một Controller bất kỳ (ví dụ PosController.java)
-
+/*
     @GetMapping("/payment")
     public String showPaymentScreen(@RequestParam("orderId") Long orderId, Model model) {
         // 1. Tìm Order trong Database
@@ -58,4 +58,6 @@ public class PosCheckoutController {
         // Đường dẫn tới file JSP (chờ VAnh chốt thư mục)
         return "pos/cashier/payment";
     }
+ */
+
 }

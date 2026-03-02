@@ -205,7 +205,7 @@
 
                                         <li>
                                             <a class="dropdown-item py-2 text-danger" href="#"
-                                               onclick="confirmDelete('${cust.customerId}', '${cust.fullName}')">
+                                               onclick="confirmDelete('/customer/delete/${cust.customerId}', 'customer: ${cust.fullName}')">
                                                 <i class="fa-solid fa-trash me-2"></i> Delete
                                             </a>
                                         </li>
