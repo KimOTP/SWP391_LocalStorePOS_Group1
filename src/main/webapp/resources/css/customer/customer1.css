@@ -63,6 +63,10 @@ body {
 .text-2 { color: #FEC107 !important; }
 .text-3 { color: #2CC1DB !important; }
 .text-4 { color: #41CFA2 !important; }
+.text-5 { color: #0E549C !important; }
+.text-6 { color: #198754 !important; }
+.text-7 { color: #DC2626 !important; }
+.text-8 { color: #EA7600 !important; }
 
 .btn-primary:hover {
 background-color: #1d4ed8 !important;
@@ -117,9 +121,9 @@ background-color: #1d4ed8 !important;
 /* Màu Expired (Đen/xám) */
 .badge-expired {
     background: #FFF8E3 !important;
-    color: #FFC107 !important;
+    color: #EA7600 !important;
 }
-.badge-expired::before { background: #FFC107 !important; }
+.badge-expired::before { background: #EA7600 !important; }
 
 /* --- 5. Style cho Tab Detail Customer --- */
 #detailTab {

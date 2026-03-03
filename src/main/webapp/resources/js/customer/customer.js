@@ -30,14 +30,63 @@ function openEditModal(id, name, phone, status, point) {
     editModal.show();
 }
 
-// Hàm xác nhận Xóa
+// Hàm xác nhận Xóa bằng SweetAlert2
 function confirmDelete(id, name) {
-    // Hiện hộp thoại xác nhận của trình duyệt
-    if (confirm("Bạn có chắc chắn muốn xóa khách hàng: " + name + " không?")) {
-        // Nếu chọn OK -> Chuyển hướng đến đường dẫn xóa
-        window.location.href = "/customer/delete/" + id;
-    }
+    Swal.fire({
+        title: 'Confirm deletion?',
+        text: "Are you sure you want to delete customer: " + name + " ?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545', // Màu đỏ cho nút Xóa
+        cancelButtonColor: '#6c757d',  // Màu xám cho nút Hủy
+        confirmButtonText: '<i class="fa-solid fa-trash me-2"></i> Delete',
+        cancelButtonText: 'Hủy'
+    }).then((result) => {
+        // Nếu người dùng bấm nút Xóa (isConfirmed = true)
+        if (result.isConfirmed) {
+            // Chuyển hướng đến URL xóa của bạn
+            // (Lưu ý: Bạn nhớ dùng đúng đường dẫn module mà hôm nọ chúng ta đổi nhé)
+            window.location.href = "/customer/delete/" + id;
+        }
+    })
 }
+// Hệ thống TOAST thông báo (SWEETALERT2)
+document.addEventListener("DOMContentLoaded", function() {
+    // Cấu hình mặc định cho chiếc Toast
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+    });
+
+    // Tìm thẻ hidden chứa tin nhắn từ Server gửi xuống
+    // Dùng dấu '?.' để tránh bị lỗi Javascript nếu trang nào đó không có thẻ này
+    const successMsg = document.getElementById('serverSuccessMsg')?.value;
+    const errorMsg = document.getElementById('serverErrorMsg')?.value;
+
+    // Có chữ bên trong thì bật Toast lên
+    if (successMsg && successMsg.trim() !== "") {
+        Toast.fire({
+            icon: 'success',
+            title: successMsg
+        });
+    }
+
+    if (errorMsg && errorMsg.trim() !== "") {
+        Toast.fire({
+            icon: 'error',
+            title: errorMsg
+        });
+    }
+});
+
+
 
 const formatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
 
@@ -196,7 +245,7 @@ function validatePromotionForm(form) {
 
     // So sánh ngày
     if (endDate < startDate) {
-        alert("Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu!");
+        alert("The end date must be greater than or equal to the start date.!");
         return false; // Chặn không cho submit
     }
     return true; // Cho phép submit
