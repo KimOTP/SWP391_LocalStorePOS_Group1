@@ -179,6 +179,18 @@
 
             <c:if test="${attendancePage.totalPages > 1}">
 
+                <!-- LIMIT 5 PAGES -->
+                <c:set var="startPage" value="${currentPage - 2}" />
+                <c:set var="endPage" value="${currentPage + 2}" />
+
+                <c:if test="${startPage < 0}">
+                    <c:set var="startPage" value="0"/>
+                </c:if>
+
+                <c:if test="${endPage >= attendancePage.totalPages}">
+                    <c:set var="endPage" value="${attendancePage.totalPages - 1}"/>
+                </c:if>
+
                 <!-- << FIRST -->
                 <c:if test="${currentPage > 0}">
                     <a href="?page=0"
@@ -196,15 +208,11 @@
                 </c:if>
 
                 <!-- PAGE NUMBERS -->
-                <c:forEach begin="0"
-                           end="${attendancePage.totalPages - 1}"
-                           var="i">
-
+                <c:forEach begin="${startPage}" end="${endPage}" var="i">
                     <a href="?page=${i}"
                        class="btn ${i == currentPage ? 'page-active' : 'btn-light'}">
                         ${i + 1}
                     </a>
-
                 </c:forEach>
 
                 <!-- > NEXT -->
