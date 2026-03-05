@@ -48,63 +48,35 @@ public class AttendanceController {
         );
     }
 
-//    @GetMapping("/attendance")
-//    public String attendance(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(required = false) String fullName,
-//            @RequestParam(required = false) String shift,
-//            @RequestParam(required = false) String status,
-//            Model model
-//    ) {
-//
-////        attendanceService.deleteManagerAttendance();
-////        attendanceService.generateNext7DaysForAllEmployees();
-////
-//        Pageable pageable = PageRequest.of(page, 5);
-//
-//        Page<Attendance> attendancePage =
-//                attendanceService.getAttendancePage(pageable);
-//
-//        List<WorkShift> shiftList =
-//                attendanceService.getAllShifts();
-//
-//        model.addAttribute("attendancePage", attendancePage);
-//        model.addAttribute("attendanceList", attendancePage.getContent());
-//        model.addAttribute("shiftList", shiftList);
-//        model.addAttribute("currentPage", page);
-//
-//        return "shift/manager/attendance";
-//    }
+    @GetMapping("/attendance")
+    public String attendance(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(required = false) String fullName,
+            @RequestParam(required = false) String shift,
+            @RequestParam(required = false) String status,
+            Model model
+    ) {
 
-@GetMapping("/attendance")
-public String attendance(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(required = false) String fullName,
-        @RequestParam(required = false) String shift,
-        @RequestParam(required = false) String status,
-        Model model
-) {
-
-        attendanceService.deleteManagerAttendance();
-        attendanceService.generateNext7DaysForAllEmployees();
+            attendanceService.deleteManagerAttendance();
+            attendanceService.generateNext7DaysForAllEmployees();
 
 
-    Pageable pageable = PageRequest.of(page, 5);
+        Pageable pageable = PageRequest.of(page, 5);
 
-    Page<Attendance> attendancePage =
-            attendanceService.getAttendancePage(
-                    fullName,
-                    shift,
-                    status,
-                    pageable
-            );
+        Page<Attendance> attendancePage =
+                attendanceService.getAttendancePage(
+                        fullName,
+                        shift,
+                        status,
+                        pageable
+                );
 
-    model.addAttribute("attendancePage", attendancePage);
-    model.addAttribute("attendanceList", attendancePage.getContent());
-    model.addAttribute("shiftList",
-            attendanceService.getAllShifts());
-    model.addAttribute("currentPage", page);
+        model.addAttribute("attendancePage", attendancePage);
+        model.addAttribute("attendanceList", attendancePage.getContent());
+        model.addAttribute("shiftList",
+                attendanceService.getAllShifts());
+        model.addAttribute("currentPage", page);
 
-    return "shift/manager/attendance";
-}
+        return "shift/manager/attendance";
+    }
 }
