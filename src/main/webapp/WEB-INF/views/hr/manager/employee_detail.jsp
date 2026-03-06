@@ -47,7 +47,7 @@
 
                 <div class="info-label">Login Name</div>
                 <div class="info-box">
-                    <input class="info-input" name="username" value="${account.username}" />
+                    <input class="info-input" name="username" value="${employeeAccount.username}" />
                 </div>
 
                 <div class="info-label">Password</div>

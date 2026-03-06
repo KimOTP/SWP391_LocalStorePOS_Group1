@@ -44,24 +44,52 @@ public class LoginController {
             Model model,
             HttpSession session) {
 
+        // ===== CHẶN LOGIN NHIỀU LẦN =====
+        if (session.getAttribute("account") != null) {
+            return "redirect:/dashboard";
+        }
+
         Account account = accountRepository.findByUsername(username).orElse(null);
 
+        //Check Account
         if (account == null) {
             model.addAttribute("error", "Account does not exist.");
             return "auth/login";
         }
 
+        //Check password
         if (!passwordEncoder.matches(password, account.getPasswordHash())) {
             model.addAttribute("error", "Wrong password");
             return "auth/login";
         }
 
+        //Check employee information
         if (account.getEmployee() == null) {
             model.addAttribute("error", "Account has no employee info");
             return "auth/login";
         }
 
+        //Check Status
+        if (Boolean.FALSE.equals(account.getEmployee().getStatus())) {
+            model.addAttribute("error", "Your account has been deactivated.");
+            return "auth/login";
+        }
+
         String role = account.getEmployee().getRole();
+
+//------------------------------------------------------------------------------------------------------------------
+        // ===== CASHIER CHỈ LOGIN 1 LẦN / NGÀY =====
+        if (role.equals("CASHIER") && account.getLastLogin() != null) {
+
+            LocalDate lastLoginDate = account.getLastLogin().toLocalDate();
+            LocalDate today = LocalDate.now();
+
+            if (lastLoginDate.equals(today)) {
+                model.addAttribute("error", "Cashier can only login once per day.");
+                return "auth/login";
+            }
+        }
+//------------------------------------------------------------------------------------------------------------------
         //Lấy thời gian login cũ
         LocalDateTime previousLogin = account.getLastLogin();
 
@@ -73,7 +101,7 @@ public class LoginController {
         accountRepository.save(account);
 
         // ===== CHECK-IN =====
-        if (!role.equals("MANAGER")) {
+        if (role.equals("CASHIER")) {
             attendanceService.checkIn(account.getEmployee());
         }
 
