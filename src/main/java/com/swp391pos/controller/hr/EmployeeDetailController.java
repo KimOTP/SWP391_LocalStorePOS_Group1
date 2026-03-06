@@ -50,12 +50,12 @@ public class EmployeeDetailController {
         }
 
         // ===== LẤY ACCOUNT CỦA EMPLOYEE ĐƯỢC CHỌN =====
-        Account account = accountRepository
+        Account employeeAccount = accountRepository
                 .findByEmployee_EmployeeId(id)
                 .orElse(null);
 
         model.addAttribute("employee", employee);
-        model.addAttribute("account", account);
+        model.addAttribute("employeeAccount", employeeAccount);
 
         return "hr/manager/employee_detail";
     }

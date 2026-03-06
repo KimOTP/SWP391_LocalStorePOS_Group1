@@ -191,8 +191,10 @@
                     </a>
                 </li>
                 <li>
-                    <a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/auth/logout">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i>Logout
+                    <a class="dropdown-item text-danger"
+                       href="${pageContext.request.contextPath}/auth/logout"
+                       onclick="return confirm('Are you sure you want to logout?')">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                     </a>
                 </li>
             </ul>
