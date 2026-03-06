@@ -11,6 +11,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.swp391pos.dto.PaymentDTO.*;
+import com.swp391pos.entity.PromotionDetail;
+import com.swp391pos.repository.PromotionDetailRepository;
+import java.time.LocalDate;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -26,7 +31,7 @@ public class PosController {
     private final OrderService       orderService;
     private final OrderItemService   orderItemService;
     private final OrderStatusService orderStatusService;
-    private final PromotionService   promotionService;
+    private final PosService posService;
     private final CategoryService    categoryService;
     private final InventoryService   inventoryService;
     private final PaymentService     paymentService;
@@ -268,6 +273,20 @@ public class PosController {
         Order order = orderService.findById(orderId);
         model.addAttribute("order",      order);
         model.addAttribute("bankConfig", session.getAttribute("posBankConfig"));
+        //Tìm đơn hàng
+        List<OrderItem> items = orderItemService.findByOrder(order);
+        //danh sách các món hàng (OrderItem) và chuyển đổi chúng thành dạng OrderItemDTO.
+        List<OrderItemDTO> cartItems = items.stream().map(oi -> {
+            OrderItemDTO dto = new OrderItemDTO();
+            dto.setOrderId(order.getOrderId());
+            dto.setProductId(oi.getProduct().getProductId());
+            dto.setQuantity(oi.getQuantity());
+            return dto;
+        }).collect(Collectors.toList());
+        //PosService để xử lý logic toán học, sau đó nhận lại cục PaymentSummary
+        PaymentSummary summary = posService.calculatePromotion(cartItems);
+
+        model.addAttribute("summary", summary);
         return "pos/cashier/payment";
     }
 
