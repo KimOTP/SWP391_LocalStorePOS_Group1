@@ -33,13 +33,13 @@
 
                     <div class="info-label">Employee Name</div>
                     <div class="info-box">
-                        <input class="info-input" type="text" name="fullName"
+                        <input class="info-input" type="text" name="fullName" value="${fullName}"
                                placeholder="Enter employee name" required/>
                     </div>
 
                     <div class="info-label">Login Name</div>
                     <div class="info-box">
-                        <input class="info-input" type="text" name="username"
+                        <input class="info-input" type="text" name="username" value="${username}"
                                placeholder="Enter login name" required/>
                     </div>
 
@@ -65,15 +65,26 @@
                     <div class="info-label">Role</div>
                     <div class="info-box">
                         <select class="info-input" name="role" required>
-                            <option value="CASHIER">CASHIER</option>
-                            <option value="INVENTORY STAFF">INVENTORY STAFF</option>
-                            <option value="MANAGER">MANAGER</option>
+                            <option value="CASHIER"
+                                <c:if test="${role == 'CASHIER'}">selected</c:if>>
+                                CASHIER
+                            </option>
+
+                            <option value="INVENTORY STAFF"
+                                <c:if test="${role == 'INVENTORY STAFF'}">selected</c:if>>
+                                INVENTORY STAFF
+                            </option>
+
+                            <option value="MANAGER"
+                                <c:if test="${role == 'MANAGER'}">selected</c:if>>
+                                MANAGER
+                            </option>
                         </select>
                     </div>
 
                     <div class="info-label">E-Mail</div>
                     <div class="info-box">
-                        <input class="info-input" type="email" name="email"
+                        <input class="info-input" type="email" name="email" value="${email}"
                                placeholder="example@gmail.com" required/>
                     </div>
 

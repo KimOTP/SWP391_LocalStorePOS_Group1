@@ -63,3 +63,26 @@ function editRow(id) {
         });
     }
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll("tbody tr").forEach(row => {
+
+        let start = row.querySelectorAll(".view")[1].innerText.trim();
+        let end = row.querySelectorAll(".view")[2].innerText.trim();
+
+        let durationCell = row.querySelector(".duration");
+
+        if (start && end) {
+
+            let startTime = new Date("1970-01-01T" + start);
+            let endTime = new Date("1970-01-01T" + end);
+
+            let diff = (endTime - startTime) / (1000 * 60 * 60);
+
+            durationCell.innerText = diff + "h";
+        }
+
+    });
+
+});
