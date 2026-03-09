@@ -77,6 +77,50 @@ public class ComboService {
         }
     }
 
+    @Transactional
+    public boolean updateCombo(Combo combo, List<String> productIds, List<Integer> quantities,
+                               MultipartFile imageFile, String existingImageUrl) {
+        try {
+            // 1. Xử lý hình ảnh
+            if (imageFile != null && !imageFile.isEmpty()) {
+                Map uploadResult = cloudinary.uploader().upload(imageFile.getBytes(),
+                        ObjectUtils.asMap("folder", "combos"));
+                combo.setImageUrl((String) uploadResult.get("url"));
+            } else {
+                // Nếu không chọn ảnh mới, giữ lại ảnh cũ từ trường hidden
+                combo.setImageUrl(existingImageUrl);
+            }
+
+            // 2. Lưu thông tin Combo (Master)
+            Combo savedCombo = comboRepository.save(combo);
+
+            // 3. Xóa toàn bộ chi tiết sản phẩm cũ của Combo này
+            // Bạn cần viết phương thức này trong ComboDetailRepository
+            comboDetailRepository.deleteByCombo(savedCombo);
+
+            // 4. Lưu lại danh sách sản phẩm mới
+            if (productIds != null && !productIds.isEmpty()) {
+                for (int i = 0; i < productIds.size(); i++) {
+                    Product product = productRepository.findProductByProductId(productIds.get(i));
+                    if (product != null) {
+                        ComboDetail detail = new ComboDetail();
+                        detail.setCombo(savedCombo);
+                        detail.setProduct(product);
+                        detail.setQuantity(quantities.get(i));
+                        comboDetailRepository.save(detail);
+                    }
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update combo: " + e.getMessage());
+        }
+    }
+
+    public List<Combo> getCombosByStatuses(List<String> statuses) {
+        // statuses sẽ là danh sách như ["ACTIVE", "PENDING_APPROVAL"]
+        return comboRepository.findByStatusComboIn(statuses);
+    }
     /**
      * Tự động sinh mã SKU: SKU-COM-00?
      */

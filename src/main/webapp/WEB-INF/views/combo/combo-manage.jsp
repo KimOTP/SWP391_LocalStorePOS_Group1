@@ -37,8 +37,8 @@
         <div class="col-md-4">
             <div class="stat-card">
                 <i class="fa-solid fa-check-double stat-icon"></i>
-                <div class="stat-title">Approved</div>
-                <div class="stat-value text-category" style="color: #16a34a !important;">${approvedCount}</div>
+                <div class="stat-title">Active</div>
+                <div class="stat-value text-category" style="color: #16a34a !important;">${activeCount}</div>
                 <div class="small text-muted mt-2">Ready to Sell</div>
             </div>
         </div>
@@ -84,11 +84,15 @@
                         </button>
                         <div class="dropdown-menu shadow border-0 p-2">
                             <label class="dropdown-item d-flex align-items-center py-2">
-                                <input type="checkbox" class="filter-checkbox status-cb" value="Approved">
-                                <span class="ms-2">Approved</span>
+                                <input type="checkbox" class="filter-checkbox status-cb" value="ACTIVE">
+                                <span class="ms-2">Active</span>
                             </label>
                             <label class="dropdown-item d-flex align-items-center py-2">
-                                <input type="checkbox" class="filter-checkbox status-cb" value="Pending Approval">
+                                <input type="checkbox" class="filter-checkbox status-cb" value="DISCONTINUED">
+                                <span class="ms-2">Discontinued</span>
+                            </label>
+                            <label class="dropdown-item d-flex align-items-center py-2">
+                                <input type="checkbox" class="filter-checkbox status-cb" value="PENDING_APPROVAL">
                                 <span class="ms-2">Pending Approval</span>
                             </label>
                         </div>
@@ -140,16 +144,14 @@
                                     <fmt:formatNumber value="${c.totalPrice}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
                                 </td>
                                 <td>
-                                    <span class="status-badge
+                                    <span class="status-badge status-text
                                         <c:choose>
-                                            <%-- Sửa 'APPROVED' thành 'ACTIVE' cho khớp với Enum của bạn --%>
                                             <c:when test="${c.statusCombo == 'ACTIVE'}">status-active</c:when>
-
                                             <c:when test="${c.statusCombo == 'PENDING_APPROVAL'}">status-pending</c:when>
-
                                             <c:otherwise>status-discontinued</c:otherwise>
-                                        </c:choose>">
-                                        ${c.statusCombo.displayName}
+                                        </c:choose>"
+                                        data-status="${c.statusCombo}"> ${c.statusCombo == 'ACTIVE' ? 'Active' :
+                                          c.statusCombo == 'PENDING_APPROVAL' ? 'Pending Approval' : 'Discontinued'}
                                     </span>
                                 </td>
                                 <td class="text-end">
