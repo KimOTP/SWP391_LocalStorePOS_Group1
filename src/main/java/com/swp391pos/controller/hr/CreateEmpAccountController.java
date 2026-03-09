@@ -35,6 +35,12 @@ public class CreateEmpAccountController {
                 fullName, username, email, role, password, confirmPassword
         );
 
+        //Trả lại dữ liệu cho form
+        model.addAttribute("fullName", fullName);
+        model.addAttribute("username", username);
+        model.addAttribute("email", email);
+        model.addAttribute("role", role);
+
         if (!result.equals("success")) {
             model.addAttribute("error", result);
             return "hr/manager/create_emp_account";
