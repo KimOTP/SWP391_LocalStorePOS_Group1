@@ -181,11 +181,15 @@ function updateTable(orders) {
         return;
     }
     tbody.innerHTML = orders.map(function (o, i) {
+        // paymentMethod có thể là: string "CASH"/"BANKING", hoặc null
+        var pm = o.paymentMethod;
+        var pmStr = pm == null ? null
+                  : (typeof pm === 'object' ? (pm.name || pm.value || JSON.stringify(pm)) : String(pm));
         return '<tr>' +
             '<td>' + (i + 1) + '</td>' +
             '<td>#' + o.orderId + '</td>' +
             '<td>' + (o.employee && o.employee.fullName ? escHtml(o.employee.fullName) : '—') + '</td>' +
-            '<td>' + (o.paymentMethod ? payLabel(o.paymentMethod) : '—') + '</td>' +
+            '<td>' + payLabel(pmStr) + '</td>' +
             '<td>' + fmtVND(o.totalAmount) + '</td>' +
             '<td>' + fmtDT(o.createdAt) + '</td>' +
             '<td>' + (o.orderStatus ? escHtml(o.orderStatus.orderStatusName) : '') + '</td>' +
@@ -231,7 +235,7 @@ function showLoading(show) {
 }
 
 function payLabel(method) {
-    if (!method) return '—';
+    if (!method || method === 'null') return '—';
     if (method === 'CASH')    return 'Cash';
     if (method === 'BANKING') return 'Bank Transfer';
     return method;
