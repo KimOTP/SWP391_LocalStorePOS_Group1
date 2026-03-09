@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%-- Bootstrap + Font Awesome --%>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -134,6 +135,29 @@
         border-top: 1px solid #f1f5f9 !important;
         opacity: 1 !important;
     }
+
+    .notification-dropdown{
+        width:320px;
+        border-radius:12px;
+        padding:0;
+    }
+
+    .notification-header{
+        font-size:12px;
+        font-weight:600;
+        padding:8px 16px;
+        background:#f8fafc;
+        color:#64748b;
+    }
+
+    .notification-item{
+        font-size:13px;
+        padding:10px 16px;
+    }
+
+    .notification-item:hover{
+        background:#f1f5f9;
+    }
 </style>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top" style="height: 70px;">
@@ -147,6 +171,58 @@
         <div class="d-flex flex-column align-items-end mx-auto me-4">
             <span id="realtime-clock" class="fw-bold fs-5 text-primary">00:00:00</span>
             <span id="realtime-date" class="small text-muted">Loading date...</span>
+        </div>
+
+        <div class="dropdown me-3">
+            <button class="btn btn-light position-relative border-0 bg-transparent"
+                    type="button"
+                    data-bs-toggle="dropdown">
+
+                <i class="fa-regular fa-bell fs-5"></i>
+
+                <!-- Badge -->
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    ${notificationCount}
+                </span>
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end notification-dropdown shadow">
+
+                <!-- TODAY -->
+                <li class="notification-header">
+                    Today
+                </li>
+
+                <c:forEach var="n" items="${todayNotifications}">
+                <li>
+                    <a class="dropdown-item notification-item"
+                       href="/hr/notification/read/${n.notificationId}">
+
+                        <div class="fw-semibold">${n.title}</div>
+                        <div class="text-muted small">${n.message}</div>
+
+                    </a>
+                </li>
+                </c:forEach>
+
+                <!-- EARLIER -->
+                <li class="notification-header">
+                    Earlier
+                </li>
+
+                <c:forEach var="n" items="${oldNotifications}">
+                <li>
+                    <a class="dropdown-item notification-item"
+                       href="/hr/notification/read/${n.notificationId}">
+
+                        <div>${n.title}</div>
+                        <div class="text-muted small">${n.message}</div>
+
+                    </a>
+                </li>
+                </c:forEach>
+
+            </ul>
         </div>
 
         <div class="dropdown">
