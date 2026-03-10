@@ -93,7 +93,7 @@
                     <c:forEach items="${combos}" var="combo">
                         <div class="product-card combo-card"
                              data-price="${combo.price}"
-                             onclick="addToCart('COMBO_${combo.comboId}','${combo.comboName}','${combo.price}','combo')">
+                             onclick="addToCart('COMBO_${combo.comboId}','${combo.comboName}','${combo.totalPrice}','combo')">
                             <div class="product-img">
                                 <img src="${combo.imageUrl}" alt="${combo.comboName}"
                                      onerror="this.src='${pageContext.request.contextPath}/resources/img/no-image.jpg'"/>
