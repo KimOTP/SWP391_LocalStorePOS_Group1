@@ -1,15 +1,15 @@
 package com.swp391pos.controller.pos;
 
+import com.swp391pos.dto.PaymentDTO;
 import com.swp391pos.dto.PaymentRequest;
 import com.swp391pos.dto.PaymentResponse;
 import com.swp391pos.entity.Order;
+import com.swp391pos.entity.OrderItem;
 import com.swp391pos.entity.OrderStatus;
 import com.swp391pos.entity.Payment;
 import com.swp391pos.enums.PaymentMethod;
 import com.swp391pos.enums.PaymentStatus;
-import com.swp391pos.service.OrderService;
-import com.swp391pos.service.OrderStatusService;
-import com.swp391pos.service.PaymentService;
+import com.swp391pos.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/pos/payment")
@@ -32,6 +34,8 @@ public class PaymentController {
 
     private final PaymentService paymentService;
     private final OrderService orderService;
+    private final OrderItemService orderItemService;
+    private final PosService posService;
     private final OrderStatusService orderStatusService;
 
     /* ================================================================
@@ -43,8 +47,23 @@ public class PaymentController {
                               Model model,
                               HttpSession session) {
         Order order = orderService.findById(orderId);
-        model.addAttribute("order",      order);
+
+        List<OrderItem> items = orderItemService.findByOrder(order);
+
+        List<PaymentDTO.OrderItemDTO> cartItems = items.stream().map(oi -> {
+            PaymentDTO.OrderItemDTO dto = new PaymentDTO.OrderItemDTO();
+            dto.setOrderId(order.getOrderId());
+            dto.setProductId(oi.getProduct().getProductId());
+            dto.setQuantity(oi.getQuantity());
+            return dto;
+        }).collect(Collectors.toList());
+
+        PaymentDTO.PaymentSummary summary = posService.calculatePromotion(cartItems);
+
+        model.addAttribute("summary", summary);
+        model.addAttribute("order", order);
         model.addAttribute("bankConfig", session.getAttribute("posBankConfig"));
+
         return "pos/cashier/payment";
     }
 
