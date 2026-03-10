@@ -92,7 +92,7 @@
                 <div class="product-grid combo-grid" id="comboGrid">
                     <c:forEach items="${combos}" var="combo">
                         <div class="product-card combo-card"
-                             data-price="${combo.price}"
+                             data-price="${combo.totalPrice}"
                              onclick="addToCart('COMBO_${combo.comboId}','${combo.comboName}','${combo.totalPrice}','combo')">
                             <div class="product-img">
                                 <img src="${combo.imageUrl}" alt="${combo.comboName}"
@@ -100,7 +100,7 @@
                             </div>
                             <div class="product-name">${combo.comboName}</div>
                             <div class="product-unit">combo</div>
-                            <div class="product-price"><fmt:formatNumber value="${combo.price}" maxFractionDigits="0"/>đ</div>
+                            <div class="product-price"><fmt:formatNumber value="${combo.totalPrice}" maxFractionDigits="0"/>đ</div>
                             <div class="add-btn">+</div>
                         </div>
                     </c:forEach>
