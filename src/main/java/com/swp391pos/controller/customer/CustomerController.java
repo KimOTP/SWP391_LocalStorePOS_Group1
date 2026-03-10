@@ -28,7 +28,7 @@ public class CustomerController {
     public String listCustomers(Model model,
                                 @RequestParam(required = false) String keyword,
                                 @RequestParam(required = false) Integer minPoint,
-                                @RequestParam(required = false) Integer status,    // Mới thêm
+                                @RequestParam(required = false) Integer status,      // Mới thêm
                                 @RequestParam(required = false) String timePeriod) { // Mới thêm
 
         //Gọi Service
@@ -55,7 +55,7 @@ public class CustomerController {
                               BindingResult result,
                               RedirectAttributes redirectAttributes) {
 
-        // 1. Nếu có lỗi Validate (Ví dụ: SĐT nhập chữ, Tên để trống...)
+        // Nếu có lỗi Validate (Ví dụ: SĐT nhập chữ, Tên để trống...)
         if (result.hasErrors()) {
             // Lấy lỗi đầu tiên ra để thông báo
             String errorMessage = result.getFieldError().getDefaultMessage();
@@ -67,11 +67,11 @@ public class CustomerController {
             return "redirect:/customer";
         }
 
-        // 2. Nếu dữ liệu ngon lành -> Lưu vào DB
+        // Nếu dữ liệu ngon lành -> Lưu vào DB
         customerService.saveCustomer(customer);
 
-        // 3. Thông báo thành công
-        redirectAttributes.addFlashAttribute("success", "Successfully added a customer.!");
+        // Thông báo thành công
+        redirectAttributes.addFlashAttribute("success", "Successfully added a customer!");
 
         return "redirect:/customer";
     }
@@ -80,7 +80,7 @@ public class CustomerController {
     public String deleteCustomer(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
             customerService.deleteById(id);
-            redirectAttributes.addFlashAttribute("success", "Customer successfully deleted.!");
+            redirectAttributes.addFlashAttribute("success", "Customer successfully deleted!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Error: Cannot delete this customer.");
         }
@@ -97,10 +97,8 @@ public class CustomerController {
         if (result.hasErrors()) {
             // Lấy lỗi đầu tiên ra để thông báo
             String errorMessage = result.getFieldError().getDefaultMessage();
-
             // Báo lỗi đỏ ra màn hình
             redirectAttributes.addFlashAttribute("error", "Update failed: " + errorMessage);
-
             // Quay về trang danh sách
             return "redirect:/customer";
         }

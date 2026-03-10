@@ -192,18 +192,18 @@ function openDetailModal(id, name, phone, point, spending, lastDate) {
 
 // Modal Config Point
 function openConfigModal() {
-    // 1. Fetch dữ liệu từ API
+    // Fetch dữ liệu từ API
     fetch('/customer/config')
         .then(response => response.json())
         .then(data => {
-            // 2. Điền dữ liệu vào form (Dùng key trong Map trả về)
+            // Điền dữ liệu vào form (Dùng key trong Map trả về)
             if (data) {
-                document.getElementById('confEarning').value = data.POINT_EARNING_RATE || 10000;
-                document.getElementById('confRedemption').value = data.POINT_REDEMPTION_VALUE || 100;
-                document.getElementById('confMaxPercent').value = data.MAX_REDEEM_PERCENT || 50;
-                document.getElementById('confMinPoint').value = data.MIN_POINT_TO_REDEEM || 10;
+                document.getElementById('confEarning').value = data.POINT_EARNING_RATE ;
+                document.getElementById('confRedemption').value = data.POINT_REDEMPTION_VALUE;
+                document.getElementById('confMaxPercent').value = data.MAX_REDEEM_PERCENT;
+                document.getElementById('confMinPoint').value = data.MIN_POINT_TO_REDEEM;
             }
-            // 3. Show Modal
+            // Show Modal
             var configModal = new bootstrap.Modal(document.getElementById('configPointModal'));
             configModal.show();
         })
