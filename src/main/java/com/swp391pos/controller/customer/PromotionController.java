@@ -9,15 +9,18 @@ import com.swp391pos.service.PromotionService;
 import com.swp391pos.service.PromotionDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.swp391pos.entity.Promotion.PromotionStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/promotion")
@@ -211,4 +214,16 @@ public class PromotionController {
         }
         return "redirect:/promotion/detail?id=" + promotionId;
     }
+
+    @PostMapping("/promotion/{promotionId}/import-details")
+    @ResponseBody
+    public ResponseEntity<?> importDetails(@PathVariable int promotionId, @RequestParam("file")MultipartFile file) {
+        try {
+            promotionDetailService.importPromotionDetails(promotionId, file);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Import success"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success",false,"message", e.getMessage()));
+        }
+    }
+
 }

@@ -30,6 +30,12 @@
             </nav>
             <h2 class="fw-bold mb-0">Promotion Details</h2>
         </div>
+
+        <input type="file" id="excelFile" accept=".xlsx" style="display: none;" onchange="uploadExcel()">
+        <button type="button" class="btn btn-success" onclick="document.getElementById('excelFile').click()">
+            <i class="fa-solid fa-file-excel"></i> Import Excel
+        </button>
+
         <button class="btn btn-primary px-4 py-2 fw-medium d-inline-flex align-items-center"
                 style="background-color: #2563eb; border-radius: 8px;"
                 data-bs-toggle="modal" data-bs-target="#addDetailModal">

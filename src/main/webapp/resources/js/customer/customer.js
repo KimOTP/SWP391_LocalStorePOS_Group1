@@ -262,4 +262,34 @@ function openEditDetailModal(detailId, productId, minQty, discountVal, discountT
         // Bật Modal lên
         var editModal = new bootstrap.Modal(document.getElementById('editDetailModal'));
         editModal.show();
+}
+
+async function uploadExcel() {
+    const fileInput = document.getElementById('excelFile');
+    if (fileInput.files.length === 0) return;
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    // Thay thế bằng biến chứa promotionId hiện tại
+    const promotionId = ${promotion.promotionId};
+
+    try {
+        const response = await fetch('/promotion/' + promotionId + '/import-details', {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+        if (result.success) {
+            Swal.fire('Thành công', 'Import dữ liệu thành công!', 'success')
+            .then(() => location.reload());
+        } else {
+            Swal.fire('Lỗi', result.message, 'error');
+        }
+    } catch (error) {
+        Swal.fire('Lỗi', 'Không thể kết nối đến server', 'error');
+    } finally {
+        fileInput.value = ''; // Reset file input
     }
+}
+
