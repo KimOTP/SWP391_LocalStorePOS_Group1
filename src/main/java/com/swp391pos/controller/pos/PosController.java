@@ -28,15 +28,15 @@ public class PosController {
     private final OrderStatusService orderStatusService;
     private final PromotionService   promotionService;
     private final CategoryService    categoryService;
+    private final ComboService       comboService;
     private final InventoryService   inventoryService;
-    private final PaymentService     paymentService;
     private final EmployeeService    employeeService;
     private final ObjectMapper       objectMapper;   // Spring Boot tự tạo bean này
 
     private static final String SESSION_PRINT_TEMPLATE  = "posPrintTemplate";
 
     /**
-     * Key session chứa JSON của order items để Promotion module đọc.
+     * Key session chứa JSON của order items để module khác đọc.
      *
      * Format JSON được lưu:
      * [
@@ -53,7 +53,7 @@ public class PosController {
      *   ...
      * ]
      *
-     * Promotion module đọc bằng cách:
+     * Module khác đọc bằng cách:
      *   String json = (String) session.getAttribute("posCurrentOrderJson");
      *   List<Map> items = objectMapper.readValue(json, List.class);
      *
@@ -68,21 +68,22 @@ public class PosController {
     public String showPOS(Model model, HttpSession session) {
         model.addAttribute("products",   productService.getAllProducts());
         model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("combos",     comboService.getAllCombos());
 
         @SuppressWarnings("unchecked")
-        Map<String, String> tpl = (Map<String, String>) session.getAttribute(SESSION_PRINT_TEMPLATE);
-        if (tpl == null) {
-            tpl = new HashMap<>();
-            tpl.put("paperSize", "58mm");
-            tpl.put("fontSize",  "12");
-            tpl.put("title",     "Sales invoice");
-            tpl.put("thanks",    "Thank you for your purchase.");
-            tpl.put("company",   "Local store POS system");
-            tpl.put("address",   "123 Đường ABC, Hòa Lạc, thành phố Hà Nội");
-            tpl.put("phone",     "0956328396");
-            tpl.put("email",     "info@gmail.com");
+        Map<String, String> printTemplate = (Map<String, String>) session.getAttribute(SESSION_PRINT_TEMPLATE);
+        if (printTemplate == null) {
+            printTemplate = new HashMap<>();
+            printTemplate.put("paperSize", "58mm");
+            printTemplate.put("fontSize",  "12");
+            printTemplate.put("title",     "Sales invoice");
+            printTemplate.put("thanks",    "Thank you for your purchase.");
+            printTemplate.put("company",   "Local store POS system");
+            printTemplate.put("address",   "123 Đường ABC, Hòa Lạc, thành phố Hà Nội");
+            printTemplate.put("phone",     "0956328396");
+            printTemplate.put("email",     "info@gmail.com");
         }
-        model.addAttribute("templateSettings", tpl);
+        model.addAttribute("templateSettings", printTemplate);
 
         return "pos/cashier/pos";
     }
@@ -96,11 +97,11 @@ public class PosController {
             @RequestParam(required = false) String categoryId) {
 
         List<Product> products = categoryId != null && !categoryId.isEmpty()
-                ? productRepository.findAll().stream()
+                ? productService.getAllProducts().stream()
                 .filter(p -> p.getCategory() != null &&
                         String.valueOf(p.getCategory().getCategoryId()).equals(categoryId))
                 .collect(Collectors.toList())
-                : productRepository.findAll();
+                : productService.getAllProducts();
 
         return toProductDtoList(products);
     }
@@ -254,66 +255,6 @@ public class PosController {
         } catch (Exception ex) {
             return ResponseEntity.status(500)
                     .body(Map.of("error", "Failed to parse cart items: " + ex.getMessage()));
-        }
-    }
-
-    /* ================================================================
-       PAYMENT PAGE
-       GET /pos/payment?orderId=xxx
-       ================================================================ */
-    @GetMapping("/payment")
-    public String showPayment(@RequestParam Long orderId,
-                              Model model,
-                              HttpSession session) {
-        Order order = orderService.findById(orderId);
-        model.addAttribute("order",      order);
-        model.addAttribute("bankConfig", session.getAttribute("posBankConfig"));
-        return "pos/cashier/payment";
-    }
-
-    /* ================================================================
-       CONFIRM PAYMENT
-       POST /pos/api/payment/confirm
-       ================================================================ */
-    @PostMapping("/api/payment/confirm")
-    @ResponseBody
-    public ResponseEntity<Map<String, Object>> confirmPayment(
-            @RequestBody Map<String, Object> body,
-            HttpSession session) {
-
-        Map<String, Object> resp = new HashMap<>();
-        try {
-            Long   orderId       = Long.parseLong(String.valueOf(body.get("orderId")));
-            String paymentMethod = String.valueOf(body.getOrDefault("paymentMethod", "cash"));
-            double totalPaid     = ((Number) body.getOrDefault("totalPaid", 0)).doubleValue();
-            String note          = String.valueOf(body.getOrDefault("note", ""));
-
-            Order order = orderService.findById(orderId);
-
-            OrderStatus completed = orderStatusService.findByOrderStatusName(
-                    OrderStatus.OrderStatusName.valueOf("PAID"));
-            order.setOrderStatus(completed);
-            orderService.save(order);
-
-            Payment payment = new Payment();
-            payment.setOrder(order);
-            payment.setPaymentMethod(Payment.PaymentMethod.valueOf(paymentMethod.toUpperCase()));
-            payment.setAmount(BigDecimal.valueOf(totalPaid));
-            payment.setPaidAt(LocalDateTime.now());
-            paymentService.save(payment);
-
-            // Xóa JSON session sau khi thanh toán xong
-            session.removeAttribute(SESSION_CART_ORDER_JSON);
-
-            resp.put("success", true);
-            resp.put("orderId", orderId);
-            return ResponseEntity.ok(resp);
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            resp.put("success", false);
-            resp.put("message", ex.getMessage());
-            return ResponseEntity.status(500).body(resp);
         }
     }
 
