@@ -194,8 +194,9 @@
                                 </td>
                                 <td>
                                     <c:choose>
-                                        <c:when test="${order.paymentMethod == 'CASH'}">Cash</c:when>
-                                        <c:when test="${order.paymentMethod == 'BANKING'}">Bank Transfer</c:when>
+                                        <c:when test="${empty order.paymentMethod}">—</c:when>
+                                        <c:when test="${order.paymentMethod.name() == 'CASH'}">Cash</c:when>
+                                        <c:when test="${order.paymentMethod.name() == 'BANKING'}">Bank Transfer</c:when>
                                         <c:otherwise>${order.paymentMethod}</c:otherwise>
                                     </c:choose>
                                 </td>
