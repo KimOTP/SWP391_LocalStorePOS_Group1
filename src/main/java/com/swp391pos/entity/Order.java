@@ -1,5 +1,6 @@
 package com.swp391pos.entity;
 
+import com.swp391pos.enums.PaymentMethod;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -72,9 +73,5 @@ public class Order {
         if (this.discountAmount == null) {
             this.discountAmount = BigDecimal.ZERO;
         }
-    }
-    public enum PaymentMethod {
-        CASH,
-        ONLINE
     }
 }
