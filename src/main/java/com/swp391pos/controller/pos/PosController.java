@@ -2,6 +2,7 @@ package com.swp391pos.controller.pos;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swp391pos.entity.*;
+import com.swp391pos.enums.OrderStatusName;
 import com.swp391pos.repository.*;
 import com.swp391pos.service.*;
 import jakarta.servlet.http.HttpSession;
@@ -151,7 +152,7 @@ public class PosController {
             order.setCreatedAt(LocalDateTime.now());
             order.setTotalAmount(BigDecimal.valueOf(totalAmount));
             order.setOrderStatus(orderStatusService.findByOrderStatusName(
-                    OrderStatus.OrderStatusName.valueOf("DRAFT")));
+                    OrderStatusName.valueOf("DRAFT")));
 
             Object account = session.getAttribute("account");
             if (account instanceof Account) {
@@ -273,7 +274,7 @@ public class PosController {
             Order order = orderService.findById(orderId);
 
             OrderStatus cancelled = orderStatusService.findByOrderStatusName(
-                    OrderStatus.OrderStatusName.valueOf("CANCELLED"));
+                    OrderStatusName.valueOf("CANCELLED"));
             order.setOrderStatus(cancelled);
             orderService.save(order);
 

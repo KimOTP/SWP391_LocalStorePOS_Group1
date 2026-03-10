@@ -26,7 +26,6 @@ public class ReportService {
     private final OrderRepository      orderRepository;
     private final OrderItemRepository  orderItemRepository;
     private final EmployeeRepository   employeeRepository;
-    private final PaymentRepository    paymentRepository;
 
     // ─────────────────────────────────────────────────────
     // Public API
