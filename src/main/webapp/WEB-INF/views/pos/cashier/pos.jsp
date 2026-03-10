@@ -83,6 +83,37 @@
 
         <!-- PRODUCT LIST (scrollable) -->
         <div class="product-area">
+
+            <%-- ── COMBO SECTION ── --%>
+            <c:if test="${not empty combos}">
+                <div class="product-section-label">
+                    <i class="fa-solid fa-layer-group"></i> Combo
+                </div>
+                <div class="product-grid combo-grid" id="comboGrid">
+                    <c:forEach items="${combos}" var="combo">
+                        <div class="product-card combo-card"
+                             data-price="${combo.price}"
+                             onclick="addToCart('COMBO_${combo.comboId}','${combo.comboName}','${combo.price}','combo')">
+                            <div class="product-img">
+                                <img src="${combo.imageUrl}" alt="${combo.comboName}"
+                                     onerror="this.src='${pageContext.request.contextPath}/resources/img/no-image.jpg'"/>
+                            </div>
+                            <div class="product-name">${combo.comboName}</div>
+                            <div class="product-unit">combo</div>
+                            <div class="product-price"><fmt:formatNumber value="${combo.price}" maxFractionDigits="0"/>đ</div>
+                            <div class="add-btn">+</div>
+                        </div>
+                    </c:forEach>
+                </div>
+                <div class="product-section-divider"></div>
+            </c:if>
+
+            <%-- ── PRODUCT SECTION ── --%>
+            <c:if test="${not empty combos}">
+                <div class="product-section-label">
+                    <i class="fa-solid fa-box-open"></i> Product
+                </div>
+            </c:if>
             <div class="product-grid" id="productGrid">
                 <c:forEach items="${products}" var="p">
                     <div class="product-card"

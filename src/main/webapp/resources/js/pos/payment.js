@@ -178,7 +178,7 @@ async function confirmPayment() {
     };
 
     try {
-        const res  = await fetch((window.contextPath || '') + '/pos/api/payment/confirm', {
+        const res  = await fetch((window.contextPath || '') + '/pos/payment/confirm', {
             method : 'POST',
             headers: { 'Content-Type': 'application/json' },
             body   : JSON.stringify(payload)
@@ -217,10 +217,39 @@ function showToast(msg, type) {
     setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 2700);
 }
 
+/* ── Load order items từ session JSON ── */
+async function loadOrderItems() {
+    try {
+        const res   = await fetch((window.contextPath || '') + '/pos/api/cart-items');
+        const items = await res.json();
+        const tbody = document.getElementById('orderItemsBody');
+        if (!items || items.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="2" style="text-align:center;color:#94a3b8;">No items</td></tr>';
+            return;
+        }
+        tbody.innerHTML = items.map(item => {
+            const name     = item.productName || item.name || '–';
+            const qty      = item.quantity || 1;
+            const price    = parseFloat(item.unitPrice || item.price || 0);
+            const lineTotal = parseFloat(item.lineTotal || item.subtotal || (price * qty));
+            return '<tr>' +
+                '<td>' +
+                    '<div class="oi-name">' + name + '</div>' +
+                    '<div class="oi-meta">' + qty + ' × ' + price.toLocaleString('vi-VN') + 'đ</div>' +
+                '</td>' +
+                '<td class="text-end oi-total">' + lineTotal.toLocaleString('vi-VN') + 'đ</td>' +
+            '</tr>';
+        }).join('');
+    } catch(e) {
+        console.error('Failed to load order items:', e);
+    }
+}
+
 /* ── INIT ── */
 document.addEventListener('DOMContentLoaded', () => {
     startClock();
     updateTotals();
+    loadOrderItems();
 
     // Show QR if bank method is pre-selected
     onPayMethodChange(document.querySelector('input[name="payMethod"]:checked'));

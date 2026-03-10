@@ -31,22 +31,22 @@ function openEditModal(id, name, phone, status, point) {
 }
 
 // Hàm xác nhận Xóa bằng SweetAlert2
-function confirmDelete(id, name) {
+// Hàm xác nhận Xóa bằng SweetAlert2 dùng chung
+function confirmDelete(url, itemName) {
     Swal.fire({
         title: 'Confirm deletion?',
-        text: "Are you sure you want to delete customer: " + name + " ?",
+        text: "Are you sure you want to delete " + itemName + " ?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc3545', // Màu đỏ cho nút Xóa
         cancelButtonColor: '#6c757d',  // Màu xám cho nút Hủy
         confirmButtonText: '<i class="fa-solid fa-trash me-2"></i> Delete',
-        cancelButtonText: 'Hủy'
+        cancelButtonText: 'Cancel'
     }).then((result) => {
-        // Nếu người dùng bấm nút Xóa (isConfirmed = true)
+        // Nếu người dùng bấm nút Xóa
         if (result.isConfirmed) {
-            // Chuyển hướng đến URL xóa của bạn
-            // (Lưu ý: Bạn nhớ dùng đúng đường dẫn module mà hôm nọ chúng ta đổi nhé)
-            window.location.href = "/customer/delete/" + id;
+            // Chuyển hướng đến URL được truyền vào
+            window.location.href = url;
         }
     })
 }
@@ -192,18 +192,18 @@ function openDetailModal(id, name, phone, point, spending, lastDate) {
 
 // Modal Config Point
 function openConfigModal() {
-    // 1. Fetch dữ liệu từ API
+    // Fetch dữ liệu từ API
     fetch('/customer/config')
         .then(response => response.json())
         .then(data => {
-            // 2. Điền dữ liệu vào form (Dùng key trong Map trả về)
+            // Điền dữ liệu vào form (Dùng key trong Map trả về)
             if (data) {
-                document.getElementById('confEarning').value = data.POINT_EARNING_RATE || 10000;
-                document.getElementById('confRedemption').value = data.POINT_REDEMPTION_VALUE || 100;
-                document.getElementById('confMaxPercent').value = data.MAX_REDEEM_PERCENT || 50;
-                document.getElementById('confMinPoint').value = data.MIN_POINT_TO_REDEEM || 10;
+                document.getElementById('confEarning').value = data.POINT_EARNING_RATE ;
+                document.getElementById('confRedemption').value = data.POINT_REDEMPTION_VALUE;
+                document.getElementById('confMaxPercent').value = data.MAX_REDEEM_PERCENT;
+                document.getElementById('confMinPoint').value = data.MIN_POINT_TO_REDEEM;
             }
-            // 3. Show Modal
+            // Show Modal
             var configModal = new bootstrap.Modal(document.getElementById('configPointModal'));
             configModal.show();
         })

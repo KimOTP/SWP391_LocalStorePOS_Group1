@@ -83,30 +83,36 @@
         <!-- SHIFT & ATTENDANCE INFO -->
         <div class="section-divider">Shift & Attendance Info</div>
 
-        <div class="row">
+        <div class="row row-cols-1 row-cols-md-5 g-3">
 
-            <div class="col-md-3">
+            <div class="col">
                 <div class="info-box">
-                    <span class="shift-label">Current Shift: ${todayShift}</span>
-                    <a href="/shift/change_shift" class="link-detail">Change Shift</a>
+                    <span class="shift-label">Current: ${todayShift}</span>
+                    <a href="/shift/change_shift" class="link-detail">Change</a>
                 </div>
             </div>
 
-            <div class="col-md-3">
+            <div class="col">
                 <div class="info-box">
                     <a href="/shift/work_schedule" class="link-detail">Work Schedule</a>
                 </div>
             </div>
 
-            <div class="col-md-3">
+            <div class="col">
                 <div class="info-box">
                     <a href="/hr/attendance_record" class="link-detail">Attendance Record</a>
                 </div>
             </div>
 
-            <div class="col-md-3">
+            <div class="col">
                 <div class="info-box">
                     <a href="/hr/shift_change_history" class="link-detail">Shift Change History</a>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="info-box">
+                    <a href="/hr/note" class="link-detail">Note</a>
                 </div>
             </div>
 

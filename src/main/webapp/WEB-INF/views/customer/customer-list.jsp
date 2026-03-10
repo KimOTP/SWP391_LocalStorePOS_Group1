@@ -24,19 +24,6 @@
 
 <div class="main-content">
 
-    <c:if test="${not empty error}">
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="fa-solid fa-triangle-exclamation me-2"></i> ${error}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        </c:if>
-
-        <c:if test="${not empty success}">
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="fa-solid fa-check-circle me-2"></i> ${success}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        </c:if>
 
     <div class="d-flex justify-content-between align-items-end mb-4">
         <div>
@@ -205,7 +192,7 @@
 
                                         <li>
                                             <a class="dropdown-item py-2 text-danger" href="#"
-                                               onclick="confirmDelete('${cust.customerId}', '${cust.fullName}')">
+                                               onclick="confirmDelete('/customer/delete/${cust.customerId}', 'customer: ${cust.fullName}')">
                                                 <i class="fa-solid fa-trash me-2"></i> Delete
                                             </a>
                                         </li>
