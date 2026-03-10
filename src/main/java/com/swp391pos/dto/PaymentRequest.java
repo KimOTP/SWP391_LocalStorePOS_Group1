@@ -1,7 +1,10 @@
 package com.swp391pos.dto;
 
+import lombok.Data;
+
 import java.math.BigDecimal;
 
+@Data
 public class PaymentRequest {
     private Long orderId;
     private BigDecimal amount;
@@ -11,12 +14,4 @@ public class PaymentRequest {
     private String gatewayOrderCode;
     private String paymentSessionId;
 
-    public Long getOrderId() { return orderId; }
-    public void setOrderId(Long orderId) { this.orderId = orderId; }
-    public BigDecimal getAmount() { return amount; }
-    public void setAmount(BigDecimal amount) { this.amount = amount; }
-    public String getGatewayOrderCode() { return gatewayOrderCode; }
-    public void setGatewayOrderCode(String s) { this.gatewayOrderCode = s; }
-    public String getPaymentSessionId() { return paymentSessionId; }
-    public void setPaymentSessionId(String s) { this.paymentSessionId = s; }
 }
