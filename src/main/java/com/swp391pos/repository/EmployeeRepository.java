@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
@@ -33,4 +34,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     @Query("SELECT e FROM Employee e WHERE e.employeeId = :id")
     Employee getEmployeeByEmployeeId(@Param("id") Integer id);
+
+    @Query("SELECT e.email FROM Employee e WHERE e.role = 'MANAGER'")
+    List<String> findAllManagerEmails();
+
 }
