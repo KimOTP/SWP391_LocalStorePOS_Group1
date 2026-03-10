@@ -9,7 +9,6 @@
         --sb-blue: #2563eb;
         --sb-text: #64748b;
         --sb-hover: #f8fafc;
-        /* Đồng bộ font chữ với các hệ thống POS hiện đại */
         --sb-font: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     }
 
@@ -21,11 +20,16 @@
         left: 0;
         background: var(--sb-bg);
         border-right: 1px solid #edf2f7;
-        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        /* KHÔNG có transition ở đây — sẽ được thêm bằng JS sau khi load */
         z-index: 1000;
         overflow-y: auto;
         overflow-x: hidden;
         font-family: var(--sb-font);
+    }
+
+    /* Transition CHỈ được bật sau khi JS thêm class .ready */
+    #sidebar.ready {
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     #sidebar.expanded {
@@ -33,7 +37,6 @@
         box-shadow: 10px 0 30px rgba(0, 0, 0, 0.05);
     }
 
-    /* Header & Toggle Area */
     .sidebar-header {
         height: 60px;
         display: flex;
@@ -49,9 +52,12 @@
         padding: 0 28px;
     }
 
-    /* Đảm bảo transition mượt mà cho icon */
     .toggle-icon {
         font-size: 1.1rem;
+        /* Transition của icon cũng chỉ bật sau khi ready */
+    }
+
+    #sidebar.ready .toggle-icon {
         transition: transform 0.3s ease;
     }
 
@@ -59,17 +65,7 @@
         transform: rotate(180deg);
     }
 
-    /* FIX: Khi sidebar đóng, ép tất cả các nội dung bên trong collapse phải ẩn đi */
-    #sidebar:not(.expanded) .collapse {
-        display: none !important;
-    }
-
-    /* FIX: Ẩn các mũi tên xuống khi thu nhỏ để icon chính được căn giữa */
-    #sidebar:not(.expanded) .sb-arrow {
-        display: none !important;
-    }
-
-    /* Sidebar Links (Cấp 1) */
+    /* Sidebar Links (Level 1) */
     .sidebar-link {
         display: flex;
         align-items: center;
@@ -104,18 +100,7 @@
         font-weight: 600;
     }
 
-    /* KHÓA CLICK: Chỉ Dashboard được bấm khi thu nhỏ */
-    #sidebar:not(.expanded) .sidebar-link:not(.allow-collapsed),
-    #sidebar:not(.expanded) .nav-group {
-        pointer-events: none;
-        cursor: default;
-    }
-
-    /* Submenu (Cấp 2) */
-    .submenu-list {
-        padding: 2px 0 8px 0;
-    }
-
+    /* Submenu (Level 2) */
     .submenu-item {
         display: flex;
         align-items: center;
@@ -163,11 +148,29 @@
     .sb-arrow {
         margin-left: auto;
         font-size: 9px;
+        transition: transform 0.3s;
+    }
+
+    .sidebar-link[aria-expanded="true"] .sb-arrow {
+        transform: rotate(180deg);
+    }
+
+    /* ẨN submenu khi sidebar collapsed */
+    #sidebar:not(.expanded) .submenu-list {
+        display: none;
     }
 
     #sidebar::-webkit-scrollbar { width: 4px; }
     #sidebar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
 </style>
+
+<c:set var="currUri" value="${pageContext.request.requestURI}" />
+
+<%-- Tính toán group nào đang active --%>
+<c:set var="isPosOpen"  value="${currUri.contains('/pos') || currUri.contains('/receipts')}" />
+<c:set var="isMenuOpen" value="${currUri.contains('/products') || currUri.contains('/combos')}" />
+<c:set var="isCrmOpen"  value="${currUri.contains('/customer') || currUri.contains('/promotion')}" />
+<c:set var="isInvOpen"  value="${currUri.contains('/inventory') || currUri.contains('/stockIn') || currUri.contains('/stockOut') || currUri.contains('/audit') || currUri.contains('/suppliers') || currUri.contains('/approval') || currUri.contains('/log')}" />
 
 <div id="sidebar">
     <div class="sidebar-header" id="toggleBtn">
@@ -175,24 +178,30 @@
         <i class="fa-solid fa-chevron-right toggle-icon"></i>
     </div>
 
-    <a href="/dashboard" class="sidebar-link allow-collapsed ${pageContext.request.requestURI.endsWith('dashboard') ? 'active' : ''}">
+    <%-- Dashboard --%>
+    <a href="<c:url value='/dashboard'/>" class="sidebar-link ${currUri.contains('/dashboard') ? 'active' : ''}">
         <i class="fa-solid fa-house-chimney"></i>
         <span class="sb-text">Dashboard</span>
     </a>
 
-    <c:set var="isPosOpen" value="${pageContext.request.requestURI.contains('/pos') || pageContext.request.requestURI.contains('/receipts')}" />
+    <%-- POS & Sales --%>
     <div class="nav-group">
-        <a href="#posSub" data-bs-toggle="collapse" class="sidebar-link ${isPosOpen ? 'active' : ''}">
+        <a href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#posSub"
+           class="sidebar-link ${isPosOpen ? 'active' : ''}"
+           aria-expanded="${isPosOpen}">
             <i class="fa-solid fa-cart-shopping"></i>
-            <span class="sb-text">POS & Sales</span>
-            <i class="fa-solid fa-chevron-down sb-arrow"></i> </a>
+            <span class="sb-text">POS &amp; Sales</span>
+            <i class="fa-solid fa-chevron-down sb-arrow"></i>
+        </a>
         <div class="collapse ${isPosOpen ? 'show' : ''}" id="posSub">
             <div class="submenu-list">
-                <a href="/pos" class="submenu-item ${pageContext.request.requestURI.endsWith('/pos') ? 'active' : ''}">
+                <a href="<c:url value='/pos'/>"
+                   class="submenu-item ${currUri.endsWith('/pos') ? 'active' : ''}">
                     <i class="fa-solid fa-cash-register"></i>
                     <span>POS Terminal</span>
                 </a>
-                <a href="/pos/receipts" class="submenu-item ${pageContext.request.requestURI.contains('/receipts') ? 'active' : ''}">
+                <a href="<c:url value='/pos/receipts'/>"
+                   class="submenu-item ${currUri.contains('/receipts') ? 'active' : ''}">
                     <i class="fa-solid fa-file-invoice"></i>
                     <span>Manage Receipt</span>
                 </a>
@@ -200,42 +209,49 @@
         </div>
     </div>
 
-
-    <c:set var="isMenuOpen" value="${pageContext.request.requestURI.contains('/products')}" />
+    <%-- Menu & Products --%>
     <div class="nav-group">
-        <a href="#menuSub" data-bs-toggle="collapse" class="sidebar-link ${isMenuOpen ? 'active' : ''}">
+        <a href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#menuSub"
+           class="sidebar-link ${isMenuOpen ? 'active' : ''}"
+           aria-expanded="${isMenuOpen}">
             <i class="fa-solid fa-utensils"></i>
-            <span class="sb-text">Menu & Products</span>
+            <span class="sb-text">Menu &amp; Products</span>
             <i class="fa-solid fa-chevron-down sb-arrow"></i>
         </a>
         <div class="collapse ${isMenuOpen ? 'show' : ''}" id="menuSub">
             <div class="submenu-list">
-                <a href="/products/manage" class="submenu-item ${pageContext.request.requestURI.contains('/manage') ? 'active' : ''}">
+                <a href="<c:url value='/products/manage'/>"
+                   class="submenu-item ${currUri.contains('/products/manage') ? 'active' : ''}">
                     <i class="fa-solid fa-layer-group"></i>
-                    <span>Manage Product</span>
+                    <span>Product</span>
                 </a>
-                <a href="/combos/manage" class="submenu-item ${pageContext.request.requestURI.contains('/manage') ? 'active' : ''}">
-                    <i class="fa-solid fa-layer-group"></i>
-                    <span>Manage Combo</span>
+                <a href="<c:url value='/combos/manage'/>"
+                   class="submenu-item ${currUri.contains('/combos/manage') ? 'active' : ''}">
+                    <i class="fa-solid fa-cubes"></i>
+                    <span>Combo</span>
                 </a>
             </div>
         </div>
     </div>
 
-    <c:set var="isCrmOpen" value="${pageContext.request.requestURI.contains('/cus-promo')}" />
+    <%-- CRM & Promo --%>
     <div class="nav-group">
-        <a href="#crmSub" data-bs-toggle="collapse" class="sidebar-link ${isCrmOpen ? 'active' : ''}">
+        <a href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#crmSub"
+           class="sidebar-link ${isCrmOpen ? 'active' : ''}"
+           aria-expanded="${isCrmOpen}">
             <i class="fa-solid fa-users-gear"></i>
-            <span class="sb-text">CRM & Promo</span>
+            <span class="sb-text">CRM &amp; Promo</span>
             <i class="fa-solid fa-chevron-down sb-arrow"></i>
         </a>
         <div class="collapse ${isCrmOpen ? 'show' : ''}" id="crmSub">
             <div class="submenu-list">
-                <a href="/customer" class="submenu-item ${pageContext.request.requestURI.contains('/customer') ? 'active' : ''}">
+                <a href="<c:url value='/customer'/>"
+                   class="submenu-item ${currUri.contains('/customer') ? 'active' : ''}">
                     <i class="fa-solid fa-user-tag"></i>
                     <span>Customers</span>
                 </a>
-                <a href="/promotion" class="submenu-item ${pageContext.request.requestURI.contains('/promotion') ? 'active' : ''}">
+                <a href="<c:url value='/promotion'/>"
+                   class="submenu-item ${currUri.contains('/promotion') ? 'active' : ''}">
                     <i class="fa-solid fa-ticket"></i>
                     <span>Promotions</span>
                 </a>
@@ -243,69 +259,125 @@
         </div>
     </div>
 
-    <c:set var="isInvOpen" value="${pageContext.request.requestURI.contains('/stockIn') or pageContext.request.requestURI.contains('/suppliers') or pageContext.request.requestURI.contains('/inventory')}" />
+    <%-- Inventory --%>
     <div class="nav-group">
-        <a href="#invSub" data-bs-toggle="collapse" class="sidebar-link ${isInvOpen ? 'active' : ''}">
+        <a href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#invSub"
+           class="sidebar-link ${isInvOpen ? 'active' : ''}"
+           aria-expanded="${isInvOpen}">
             <i class="fa-solid fa-boxes-stacked"></i>
             <span class="sb-text">Inventory</span>
             <i class="fa-solid fa-chevron-down sb-arrow"></i>
         </a>
         <div class="collapse ${isInvOpen ? 'show' : ''}" id="invSub">
             <div class="submenu-list">
-                <a href="/inventory/dashboard" class="submenu-item ${pageContext.request.requestURI.contains('/inventory/dashboard') ? 'active' : ''}">
-                    <i class="fa-solid fa-house-chimney"></i>
-                    <span>Inventory Dashboard</span>
+                <a href="<c:url value='/inventory/dashboard'/>"
+                   class="submenu-item ${currUri.contains('/inventory/dashboard') ? 'active' : ''}">
+                    <i class="fa-solid fa-house-chimney"></i><span>Inventory Dashboard</span>
                 </a>
-                <a href="/stockIn/notifications" class="submenu-item ${pageContext.request.requestURI.contains('/notifications') ? 'active' : ''}">
+                <a href="<c:url value='/stockIn/notifications'/>"
+                   class="submenu-item ${currUri.contains('/notifications') ? 'active' : ''}">
                     <i class="fa-solid fa-bell"></i><span>Notifications</span>
                 </a>
-                <a href="/stockIn/add" class="submenu-item ${pageContext.request.requestURI.contains('/stockIn/add') ? 'active' : ''}">
+                <a href="<c:url value='/stockIn/add'/>"
+                   class="submenu-item ${currUri.contains('/stockIn/add') ? 'active' : ''}">
                     <i class="fa-solid fa-file-circle-plus"></i><span>Stock-in Request</span>
                 </a>
-                <a href="/stockOut/add" class="submenu-item ${pageContext.request.requestURI.contains('/stockOut/add') ? 'active' : ''}">
+                <a href="<c:url value='/stockOut/add'/>"
+                   class="submenu-item ${currUri.contains('/stockOut/add') ? 'active' : ''}">
                     <i class="fa-solid fa-file-circle-minus"></i><span>Stock-out Request</span>
                 </a>
-                <a href="/audit/add" class="submenu-item ${pageContext.request.requestURI.contains('/audit') ? 'active' : ''}">
+                <a href="<c:url value='/audit/add'/>"
+                   class="submenu-item ${currUri.contains('/audit') ? 'active' : ''}">
                     <i class="fa-solid fa-clipboard-list"></i><span>Audit Session</span>
                 </a>
-                <a href="/suppliers" class="submenu-item ${pageContext.request.requestURI.contains('/suppliers') ? 'active' : ''}">
+                <a href="<c:url value='/suppliers'/>"
+                   class="submenu-item ${currUri.contains('/suppliers') ? 'active' : ''}">
                     <i class="fa-solid fa-truck-ramp-box"></i><span>Supplier List</span>
                 </a>
-                <a href="/inventory/approval/queue" class="submenu-item ${pageContext.request.requestURI.contains('/approval') ? 'active' : ''}">
+                <a href="<c:url value='/inventory/approval/queue'/>"
+                   class="submenu-item ${currUri.contains('/approval') ? 'active' : ''}">
                     <i class="fa-solid fa-clipboard-check"></i><span>Approval Queue</span>
                 </a>
-                <a href="/inventory/log/show" class="submenu-item ${pageContext.request.requestURI.contains('/logs') ? 'active' : ''}">
+                <a href="<c:url value='/inventory/log/show'/>"
+                   class="submenu-item ${currUri.contains('/log') ? 'active' : ''}">
                     <i class="fa-solid fa-clock-rotate-left"></i><span>Inventory Logs</span>
                 </a>
             </div>
         </div>
     </div>
 
-    <a href="/reports" class="sidebar-link">
+    <%-- Reports --%>
+    <a href="<c:url value='/reports'/>"
+       class="sidebar-link ${currUri.contains('/reports') ? 'active' : ''}">
         <i class="fa-solid fa-chart-column"></i>
         <span class="sb-text">Reports</span>
     </a>
 </div>
 
+<!--
+    CRITICAL: Script này phải chạy NGAY SAU KHI sidebar render,
+    TRƯỚC KHI Bootstrap bundle được load ở cuối body.
+    Mục đích: xóa data-bs-toggle để Bootstrap không scan và reset
+    các .collapse.show mà server đã render sẵn.
+-->
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const sidebar = document.getElementById('sidebar');
-        const toggleBtn = document.getElementById('toggleBtn');
+(function() {
+    document.querySelectorAll('.sidebar-link[data-bs-toggle="collapse"]').forEach(function(el) {
+        el.removeAttribute('data-bs-toggle');
+        el.removeAttribute('data-bs-target');
+    });
+})();
+</script>
 
-        // Toggle Expand/Collapse on Click
-        toggleBtn.addEventListener('click', function() {
-            sidebar.classList.toggle('expanded');
+<script>
+(function () {
+    // ── BƯỚC 1: Khôi phục expanded/collapsed NGAY LẬP TỨC trước khi render
+    var sidebar = document.getElementById('sidebar');
+    if (localStorage.getItem('sidebarExpanded') === 'true') {
+        sidebar.classList.add('expanded');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var toggleBtn = document.getElementById('toggleBtn');
+
+        // ── BƯỚC 2: Bật transition sau khi DOM đã ổn định
+        //    (data-bs-toggle đã được xóa bởi inline script trước Bootstrap load)
+        requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+                sidebar.classList.add('ready');
+            });
         });
 
-        // Auto-close submenus when collapsing for clean UI
-        sidebar.addEventListener('transitionend', function() {
-            if (!sidebar.classList.contains('expanded')) {
-                const openCollapses = sidebar.querySelectorAll('.collapse.show');
-                openCollapses.forEach(c => {
-                    const bCollapse = bootstrap.Collapse.getInstance(c);
-                    if (bCollapse) bCollapse.hide();
-                });
-            }
+        // ── BƯỚC 4: Toggle sidebar expand/collapse
+        toggleBtn.addEventListener('click', function () {
+            sidebar.classList.toggle('expanded');
+            localStorage.setItem('sidebarExpanded', sidebar.classList.contains('expanded'));
+        });
+
+        // ── BƯỚC 5: Tự xử lý toggle submenu bằng JS thuần
+        //    Gán listener trực tiếp lên trigger (sidebar-link), không phải nav-group
+        //    để tránh bắt nhầm click bubble từ submenu-item bên trong
+        document.querySelectorAll('.nav-group').forEach(function (group) {
+            var trigger = group.querySelector('.sidebar-link');
+            var collapseEl = group.querySelector('.collapse');
+            if (!trigger || !collapseEl) return;
+
+            trigger.addEventListener('click', function (e) {
+                // Chỉ xử lý khi click đúng vào trigger hoặc các element con trực tiếp
+                // Bỏ qua nếu click từ submenu-item bubble lên
+                if (e.target.closest('.submenu-item')) return;
+
+                e.preventDefault();
+                var isShown = collapseEl.classList.contains('show');
+                if (isShown) {
+                    collapseEl.classList.remove('show');
+                    trigger.setAttribute('aria-expanded', 'false');
+                } else {
+                    collapseEl.classList.add('show');
+                    trigger.setAttribute('aria-expanded', 'true');
+                }
+            });
         });
     });
+})();
 </script>
