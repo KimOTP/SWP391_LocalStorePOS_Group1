@@ -36,8 +36,6 @@ public class PaymentDTO {
     public static class PaymentSummary {
         private Long orderId; // Thêm mã hóa đơn
         private List<PaymentItem> items;
-        private BigDecimal totalAmount;    // Tổng tiền gốc
         private BigDecimal totalDiscount;  // Tổng tiền giảm từ Promotion
-        private BigDecimal finalTotal;     // Tổng phải thanh toán (Total)
     }
 }
