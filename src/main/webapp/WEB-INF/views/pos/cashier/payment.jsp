@@ -52,17 +52,7 @@
                         </tr>
                     </thead>
                     <tbody id="orderItemsBody">
-                        <c:forEach var="item" items="${order.orderItems}">
-                            <tr>
-                                <td>
-                                    <div class="oi-name">${item.product.productName}</div>
-                                    <div class="oi-meta">${item.quantity} × <fmt:formatNumber value="${item.price}" maxFractionDigits="0"/>đ</div>
-                                </td>
-                                <td class="text-end oi-total">
-                                    <fmt:formatNumber value="${item.price * item.quantity}" maxFractionDigits="0"/>đ
-                                </td>
-                            </tr>
-                        </c:forEach>
+                        <%-- Order items được load từ session JSON bởi JS bên dưới --%>
                     </tbody>
                 </table>
             </div>
@@ -244,7 +234,7 @@
 <script>
     // Data injected from controller
     window.orderId      = '${order.orderId}';
-    window.totalAmount  = ${order.totalAmount};
+    window.totalAmount  = parseFloat('${order.totalAmount}') || 0;
     window.contextPath  = '${pageContext.request.contextPath}';
 
     // Bank settings from session (set in print template config)

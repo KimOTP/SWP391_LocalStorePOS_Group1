@@ -212,6 +212,7 @@ function initPriceSlider() {
 }
 
 function applyPriceFilter() {
+    // Chỉ filter product grid, không filter combo grid
     document.querySelectorAll('#productGrid .product-card').forEach(card => {
         const price = parseFloat(card.dataset.price) || 0;
         card.classList.toggle('hidden', price < priceMin || price > priceMax);
