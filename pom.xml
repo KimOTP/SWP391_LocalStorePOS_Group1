@@ -102,6 +102,12 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
+<!--        added on 10/03/2026 gmail service-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
