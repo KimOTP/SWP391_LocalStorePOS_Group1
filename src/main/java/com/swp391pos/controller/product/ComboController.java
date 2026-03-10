@@ -91,6 +91,14 @@ public class ComboController {
         }
     }
 
+    @GetMapping("/detail-fragment/{id}")
+    public String getComboDetailFragment(@PathVariable("id") String id, Model model) {
+
+        Combo combo = comboService.getComboById(id);
+        model.addAttribute("combo", combo);
+        return "combo/combo-detail";
+    }
+
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable String id) {
         comboService.deleteCombo(id);

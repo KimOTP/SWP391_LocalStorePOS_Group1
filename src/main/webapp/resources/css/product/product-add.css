@@ -5,8 +5,12 @@
     padding: 40px;
     background-color: #f8fafc; /* Màu nền nhẹ nhàng đồng bộ trang Manage */
     min-height: calc(100vh - 70px);
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    will-change: margin-left;
 }
-
+#sidebar.expanded ~ .main-content {
+    margin-left: 260px !important;
+}
 .card {
     border: 1.5px solid #e2e8f0 !important; /* Viền rõ nét như stat-card */
     border-radius: 16px !important;

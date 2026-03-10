@@ -165,12 +165,60 @@ window.confirmDelete = function(id, url) {
     if(confirm("Are you sure you want to delete combo " + id + "?")) window.location.href = url;
 };
 
+// Thêm vào trong document.addEventListener('DOMContentLoaded', ...) hoặc bên ngoài
+// --- Hàm xử lý hiện Modal Chi tiết Combo ---
+function initViewComboModal() {
+    const viewButtons = document.querySelectorAll('.btn-view-combo');
+    const modalBody = document.getElementById('comboModalBody');
+    // Khởi tạo instance của Bootstrap Modal
+    const modalElement = document.getElementById('comboDetailModal');
+    if (!modalElement) return;
+    const myModal = new bootstrap.Modal(modalElement);
+
+    viewButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const comboId = this.getAttribute('data-id');
+
+            // 1. Hiển thị trạng thái loading trong khi chờ server
+            modalBody.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2 text-muted">Đang tải dữ liệu...</p>
+                </div>`;
+
+            // 2. Mở Modal
+            myModal.show();
+
+            // 3. Fetch dữ liệu từ Controller (đảm bảo đúng URL bạn đã định nghĩa ở Controller)
+            fetch(`/combos/detail-fragment/${comboId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error("Không thể tải dữ liệu combo");
+                    return response.text();
+                })
+                .then(html => {
+                    // 4. Đổ nội dung HTML vào Modal Body
+                    modalBody.innerHTML = html;
+                })
+                .catch(err => {
+                    modalBody.innerHTML = `
+                        <div class="alert alert-danger m-3">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                            Lỗi: ${err.message}
+                        </div>`;
+                    console.error("Fetch error:", err);
+                });
+        });
+    });
+}
+
 // --- 6. Khởi tạo ---
 document.addEventListener('DOMContentLoaded', function() {
     initImagePreview();
     initProductSearch();
     initStatusFilter();
     initTableSearch();
+    initViewComboModal();
 
     const dataBridge = document.getElementById('combo-data-bridge');
     if (dataBridge && dataBridge.getAttribute('data-is-update') === 'true') {

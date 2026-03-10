@@ -14,7 +14,6 @@
 
 /* --- 2. Thẻ thống kê (Stat Cards) --- */
 .stat-card {
-    position: relative !important;
     background: #fff !important;
     border: 1.5px solid #e2e8f0 !important;
     border-radius: 12px !important;
@@ -23,90 +22,211 @@
     transition: all 0.3s ease !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important;
-    overflow: hidden !important;
-}
-
-.stat-icon {
-    position: absolute !important;
-    right: 20px !important;
-    top: 20px !important;
-    font-size: 1.5rem !important;
-    opacity: 0.2 !important;
-    color: #64748b !important;
+    gap: 4px !important;
 }
 
 .stat-card:hover {
-    transform: translateY(-5px) !important;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 7px 10px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.stat-card-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 14px !important;
+    margin-bottom: 10px !important;
+}
+
+.stat-card-info {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+}
+
+.stat-card-icon {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.15rem !important;
+}
+
+.stat-icon-total    { background: rgba(30,  41,  59,  0.08) !important; color: #1e293b !important; }
+.stat-icon-category { background: rgba(37,  99,  235, 0.10) !important; color: #2563eb !important; }
+.stat-icon-outstock { background: rgba(220, 38,  38,  0.08) !important; color: #dc2626 !important; }
+.stat-icon-pending  { background: rgba(234, 179, 8,   0.10) !important; color: #ca8a04 !important; }
+
+.stat-title {
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: #94a3b8 !important;
 }
 
 .stat-value {
     font-size: 1.75rem !important;
     font-weight: 700 !important;
-    margin-top: 8px !important;
+    margin-top: 2px !important;
+    line-height: 1.2 !important;
 }
 
-.text-total { color: #1e293b !important; }
+.stat-sub {
+    font-size: 0.78rem !important;
+    color: #94a3b8 !important;
+    margin-top: 2px !important;
+}
+
+.text-total    { color: #1e293b !important; }
 .text-category { color: #2563eb !important; }
 .text-outstock { color: #dc2626 !important; }
-.text-pending { color: #eab308 !important; }
+.text-pending  { color: #eab308 !important; }
 
 /* --- CSS cho mã SKU --- */
 .text-sku {
-    color: #2563eb !important; /* Màu xanh chuẩn Modern Blue */
-    font-weight: 600 !important; /* Đậm vừa phải để nổi bật */
-    font-family: 'Monaco', 'Consolas', monospace !important; /* Font đơn cách giúp mã SKU dễ nhìn hơn */
+    color: #2563eb !important;
+    font-weight: 600 !important;
+    font-family: 'Monaco', 'Consolas', monospace !important;
     letter-spacing: 0.5px !important;
-    transition: all 0.2s ease !important;
-    cursor: pointer;
 }
 
-/* Hiệu ứng khi di chuột vào mã SKU */
-.text-sku:hover {
-    color: #1d4ed8 !important; /* Đổi màu chữ xanh đậm hơn */
-}
-
-/* --- 3. FIX LỖI CHẠM BIÊN --- */
+/* --- 3. Card containers --- */
 .main-content .card.shadow-sm.border-0 {
     margin-top: 30px !important;
     border-radius: 16px !important;
 }
 
-.product-list-container {
+.product-table-card {
+    margin-top: 30px;
     background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
     border-radius: 16px !important;
-    padding: 24px !important;
+    overflow: hidden !important;
     box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
 }
 
-/* --- 4. Ô Tìm kiếm & Filters --- */
-.search-box {
+/* --- 4. Filter Bar --- */
+.filter-bar {
+    margin-top: 30px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    padding: 16px 20px !important;
+    flex-wrap: wrap !important;
+    background: #fff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
+}
+
+.search-box-standalone {
     position: relative !important;
-    width: 100% !important;
-}
-
-.search-box .search-icon {
-    position: absolute !important;
-    left: 15px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    color: #94a3b8 !important;
-    z-index: 10 !important;
-}
-
-.search-box .form-control {
-    padding-left: 45px !important;
+    width: 350px !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 30px 0 10px !important;
     height: 42px !important;
+    transition: border-color 0.2s ease !important;
+}
+
+.search-box-standalone:focus-within {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+    background: #fff !important;
+}
+
+.search-box-standalone .search-icon {
+    color: #94a3b8 !important;
+    font-size: 0.85rem !important;
+    margin-right: 10px !important;
+    flex-shrink: 0 !important;
+}
+
+.search-box-standalone .form-control {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    height: 100% !important;
+    font-size: 0.85rem !important;
+    box-shadow: none !important;
+    color: #1e293b !important;
+}
+
+.search-box-standalone .form-control:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.filter-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    margin-left: auto !important;
+}
+
+/* --- 5. Buttons --- */
+
+.btn-filter {
+    height: 38px !important;
+    background-color: #f1f5f9 !important;
     border: 1px solid #e2e8f0 !important;
     border-radius: 10px !important;
-    background-color: #f8fafc !important;
-    font-size: 0.85rem !important;
+    padding: 0 20px !important;
+    color: #475569 !important;
+    font-size: 0.82rem !important;
+    font-weight: 500 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.2s ease !important;
+    white-space: nowrap !important;
+    min-width: 150px !important;
+    justify-content: space-between !important;
 }
 
-/* --- 5. Buttons (Thêm hiệu ứng Hover & Hold) --- */
-/* Nút Add Product */
+.btn-filter:hover {
+    border-color: #2563eb !important;
+    color: #2563eb !important;
+    background-color: #eff6ff !important;
+}
+
+.btn-filter.show,
+.btn-filter:focus {
+    border-color: #2563eb !important;
+    color: #2563eb !important;
+    background-color: #eff6ff !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+}
+
+.btn-filter-more {
+    height: 38px !important;
+    background-color: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 0 16px !important;
+    color: #64748b !important;
+    font-size: 0.82rem !important;
+    font-weight: 500 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: all 0.2s ease !important;
+    white-space: nowrap !important;
+}
+
+.btn-filter-more:hover {
+    color: #2563eb !important;
+    background-color: #eff6ff !important;
+    border-color: #2563eb !important;
+}
+
 .btn-add {
     background-color: #2563eb !important;
     color: #fff !important;
@@ -128,10 +248,9 @@
 }
 
 .btn-add:active {
-    transform: scale(0.96) !important; /* Hiệu ứng nhấn giữ (Hold) */
+    transform: scale(0.96) !important;
 }
 
-/* Nút Export Excel */
 .btn-outline-success {
     height: 40px !important;
     border: 1.5px solid #16a34a !important;
@@ -156,28 +275,42 @@
     transform: scale(0.96) !important;
 }
 
-/* Nút Filter */
-.btn-filter {
-    height: 42px !important;
-    background-color: #ffffff !important;
+/* --- Dropdown menu styling --- */
+.filter-actions .dropdown-menu {
+    border-radius: 12px !important;
     border: 1px solid #e2e8f0 !important;
-    border-radius: 10px !important;
-    padding: 0 15px !important;
-    color: #475569 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+    padding: 6px !important;
+    min-width: 180px !important;
+}
+
+.filter-actions .dropdown-item {
+    border-radius: 8px !important;
     font-size: 0.85rem !important;
+    font-weight: 510;
+    color: #475569 !important;
+    padding: 8px 12px !important;
     display: flex !important;
-    justify-content: space-between !important;
     align-items: center !important;
-    width: 100% !important;
-    transition: all 0.2s ease !important;
+    gap: 10px !important;
+    transition: all 0.15s ease !important;
 }
 
-.btn-filter:hover {
-    border-color: #2563eb !important;
-    background-color: #f8fafc !important;
+.filter-actions .dropdown-item:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
 }
 
-/* --- 6. FIX LỖI HÌNH ẢNH & HOVER/HOLD --- */
+.filter-actions .dropdown-item input[type="checkbox"] {
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    accent-color: #2563eb !important;
+}
+
+/* --- 6. Hình ảnh sản phẩm --- */
 .product-img-container {
     width: 48px !important;
     height: 48px !important;
@@ -200,27 +333,25 @@
     transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-/* Hover vào dòng hoặc vào ảnh thì ảnh phóng to nhẹ */
 tr:hover .product-img-table,
 .product-img-container:hover .product-img-table {
     transform: scale(1.15) !important;
 }
 
-/* Khi nhấn giữ (Hold) vào ảnh */
 .product-img-container:active {
     transform: scale(0.9) !important;
     border-color: #2563eb !important;
 }
 
-.price{
-    color: #16A34A !important;
+.price {
+    color: #059669  !important;
     font-weight: bold;
 }
 
 /* --- 7. Status Badges --- */
 .status-badge {
     padding: 6px 12px !important;
-    border-radius: 8px !important;
+    border-radius: 999px !important;
     font-size: 0.75rem !important;
     font-weight: 600 !important;
     display: inline-flex !important;
@@ -235,32 +366,83 @@ tr:hover .product-img-table,
     border-radius: 50% !important;
 }
 
-/* --- 8. FIX CUỘN TRONG DANH SÁCH SẢN PHẨM --- */
+.status-active       { background: #dcfce7 !important; color: #16a34a !important; border-radius: 999px !important; }
+.status-active::before       { background: #16a34a !important; }
 
-/* Thiết lập vùng chứa bảng có khả năng cuộn */
+.status-outstock     { background: #fee2e2 !important; color: #dc2626 !important; border-radius: 999px !important; }
+.status-outstock::before     { background: #dc2626 !important; }
+
+.status-pending      { background: #fef9c3 !important; color: #ca8a04 !important; border-radius: 999px !important; }
+.status-pending::before      { background: #ca8a04 !important; }
+
+.status-discontinued { background: #e2e8f0 !important; color: #475569 !important; border-radius: 999px !important; }
+.status-discontinued::before { background: #475569 !important; }
+
+/* --- 8. Table --- */
 .table-responsive {
-    /* Chiều cao tối đa tùy chỉnh (ví dụ: 500px hoặc 60vh) */
     max-height: 600px !important;
     overflow-y: auto !important;
     overflow-x: auto !important;
-
-    /* Đảm bảo border bao quanh vùng cuộn */
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 8px !important;
-
-    /* Đổ bóng nhẹ phía trong để tạo chiều sâu khi cuộn */
-    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02) !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
 }
 
-/* Giữ cho thanh tiêu đề bảng (thead) luôn nằm trên cùng khi cuộn (Sticky Header) */
 .table-responsive thead {
     position: sticky !important;
     top: 0 !important;
     z-index: 10 !important;
-    background-color: #f8fafc !important; /* Phải có màu nền để không bị lộ nội dung bên dưới khi cuộn */
 }
 
-/* Tùy chỉnh thanh cuộn (Scrollbar) cho đẹp và gọn hơn */
+.product-table-card .table > thead > tr.thead-row,
+.thead-row {
+    background-color: #f1f5f9 !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+}
+
+.product-table-card .table > thead > tr > th.th-cell,
+.th-cell {
+    padding: 14px 24px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #94a3b8 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    background-color: #f1f5f9 !important;
+    white-space: nowrap !important;
+}
+
+.th-link {
+    color: #94a3b8 !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+}
+
+.th-link:hover {
+    color: #64748b !important;
+}
+
+.product-table-card .table > tbody > tr > td.td-cell,
+.td-cell {
+    padding: 14px 24px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    vertical-align: middle !important;
+}
+
+/* Row hover */
+.product-table-card .table > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > td,
+.table > tbody > tr:hover > * {
+    background-color: rgba(248, 250, 252, 0.7) !important;
+    --bs-table-bg-state: transparent !important;
+    --bs-table-accent-bg: transparent !important;
+    transition: background-color 0.15s ease !important;
+}
+
+/* Scrollbar */
 .table-responsive::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -280,21 +462,8 @@ tr:hover .product-img-table,
     background: #94a3b8;
 }
 
-/* Đảm bảo bảng không có lề thừa gây ra thanh cuộn ngang không cần thiết */
 .table-responsive table {
     margin-bottom: 0 !important;
     border-collapse: separate !important;
     border-spacing: 0 !important;
 }
-
-.status-active { background: #ecfdf5 !important; color: #059669 !important; }
-.status-active::before { background: #10b981 !important; }
-
-.status-outstock { background: #fef2f2 !important; color: #dc2626 !important; }
-.status-outstock::before { background: #dc2626 !important; }
-
-.status-pending { background: #fffbeb !important; color: #d97706 !important; }
-.status-pending::before { background: #f59e0b !important; }
-
-.status-discontinued { background: #f1f5f9 !important; color: #475569 !important; }
-.status-discontinued::before { background: #475569 !important; }
