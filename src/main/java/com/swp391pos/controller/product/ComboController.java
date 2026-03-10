@@ -23,10 +23,21 @@ public class ComboController {
     }
 
     @GetMapping("/manage")
-    public String manage(Model model) {
+    public String manage(@RequestParam(value = "status", required = false) List<String> statuses,
+                         Model model) {
+
+        List<Combo> combos;
+        if (statuses != null && !statuses.isEmpty()) {
+            // Lọc theo danh sách trạng thái được chọn
+            combos = comboService.getCombosByStatuses(statuses);
+        } else {
+            // Hiển thị tất cả nếu không chọn filter
+            combos = comboService.getAllCombos();
+        }
+        model.addAttribute("selectedStatuses", statuses);
         model.addAttribute("listCombos", comboService.getAllCombos());
         model.addAttribute("totalCombos", comboService.countTotal());
-        model.addAttribute("approvedCount", comboService.countByStatus(Combo.Status.ACTIVE));
+        model.addAttribute("activeCount", comboService.countByStatus(Combo.Status.ACTIVE));
         model.addAttribute("pendingCount", comboService.countByStatus(Combo.Status.PENDING_APPROVAL));
         return "combo/combo-manage";
     }
@@ -51,6 +62,32 @@ public class ComboController {
         } catch (Exception e) {
             e.printStackTrace();
             return "redirect:/combos/add?error";
+        }
+    }
+
+    @GetMapping("/update/{id}")
+    public String showUpdateForm(@PathVariable String id, Model model) {
+        Combo combo = comboService.getComboById(id);
+        if (combo == null) {
+            return "redirect:/combos/manage?error=notfound";
+        }
+        model.addAttribute("combo", combo);
+        model.addAttribute("products", productService.getAllProducts());
+        return "combo/combo-update"; // Trỏ đến file JSP bạn vừa tạo
+    }
+
+    @PostMapping("/update")
+    public String updateCombo(@ModelAttribute Combo combo,
+                              @RequestParam(value = "productIds", required = false) List<String> productIds,
+                              @RequestParam(value = "quantities", required = false) List<Integer> quantities,
+                              @RequestParam("imageFile") MultipartFile imageFile,
+                              @RequestParam("existingImageUrl") String existingImageUrl) {
+        try {
+            comboService.updateCombo(combo, productIds, quantities, imageFile, existingImageUrl);
+            return "redirect:/combos/manage?updatesuccess";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "redirect:/combos/update/" + combo.getComboId() + "?error";
         }
     }
 

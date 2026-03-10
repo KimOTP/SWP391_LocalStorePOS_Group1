@@ -25,4 +25,6 @@ public interface ComboRepository extends JpaRepository<Combo, String> {
 
     // Thêm hàm đếm theo Trạng thái (Enum) để phục vụ các thẻ Stat Cards trên giao diện
     long countByStatusCombo(Combo.Status statusCombo);
+
+    List<Combo> findByStatusComboIn(List<String> statuses);
 }
