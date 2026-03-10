@@ -53,7 +53,10 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
                     || uri.contains("/shift/change_shift")
                     || uri.contains("/shift/work_schedule")
                     || uri.contains("/hr/update_information")
-                    || uri.contains("/hr/change_password");
+                    || uri.contains("/hr/change_password")
+                    || uri.contains("/hr/notification/read/")
+                    || uri.contains("/hr/note")
+                    || uri.contains("/hr/note/view/");
 
             if (!isAllowed) {
                 handleAccessDenied(request, response, "Access Denied !");
@@ -73,7 +76,10 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
                     || uri.contains("/stockOut/details")
                     || uri.contains("/audit/add")
                     || uri.contains("/audit/details")
-                    || uri.contains("/stockIn/notifications");
+                    || uri.contains("/stockIn/notifications")
+                    || uri.contains("/hr/notification/read/")
+                    || uri.contains("/hr/note")
+                    || uri.contains("/hr/note/view/");
 
             if (!isAllowed) {
                 handleAccessDenied(request, response, "Access Denied !");

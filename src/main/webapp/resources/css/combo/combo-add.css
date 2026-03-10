@@ -155,3 +155,25 @@
     background: #cbd5e1;
     border-radius: 10px;
 }
+
+.custom-dropdown-menu {
+    border-radius: 12px !important;
+    margin-top: 5px !important;
+}
+
+#productSearchInside:focus {
+    border-color: #dee2e6;
+}
+
+.product-item-li .dropdown-item:hover {
+    background-color: #f1f5f9;
+}
+
+.scrollable-menu::-webkit-scrollbar {
+    width: 5px;
+}
+
+.scrollable-menu::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}

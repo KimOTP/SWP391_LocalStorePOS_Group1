@@ -5,7 +5,6 @@ let selectedProducts = [];
 function initImagePreview() {
     const imageInput = document.getElementById('imageInput');
     const container = document.getElementById('previewContainer');
-
     if (imageInput && container) {
         imageInput.addEventListener('change', function(evt) {
             const file = evt.target.files[0];
@@ -18,45 +17,57 @@ function initImagePreview() {
                 container.innerHTML = '';
                 const newImg = document.createElement('img');
                 newImg.src = imgUrl;
-                newImg.style.width = '100%';
-                newImg.style.height = '100%';
-                newImg.style.objectFit = 'cover';
-                newImg.style.display = 'block';
-                newImg.style.borderRadius = '10px';
+                newImg.className = "img-fluid rounded";
                 container.appendChild(newImg);
-
                 newImg.onload = () => URL.revokeObjectURL(imgUrl);
             }
         });
     }
 }
 
-// --- 2. Logic Thêm/Xóa/Cập nhật số lượng sản phẩm ---
+// --- 2. Logic Tìm kiếm sản phẩm trong Dropdown (Trang Add/Update) ---
+function initProductSearch() {
+    const searchInput = document.getElementById('productSearchInside');
+    const productItems = document.querySelectorAll('.product-item-li');
+    const noResult = document.getElementById('noProductFound');
+    const dropdownBtn = document.getElementById('dropdownProductBtn');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const keyword = this.value.toLowerCase().trim();
+            let hasResult = false;
+            productItems.forEach(item => {
+                const productName = item.querySelector('.p-name').textContent.toLowerCase();
+                if (productName.includes(keyword) || item.textContent.toLowerCase().includes(keyword)) {
+                    item.classList.remove('d-none');
+                    hasResult = true;
+                } else {
+                    item.classList.add('d-none');
+                }
+            });
+            noResult.classList.toggle('d-none', hasResult);
+        });
+        if (dropdownBtn) {
+            dropdownBtn.addEventListener('shown.bs.dropdown', () => searchInput.focus());
+        }
+    }
+}
+
+// --- 3. Thêm/Xóa/Sửa số lượng sản phẩm Combo ---
 function addProductToCombo(id, name, price) {
     const existing = selectedProducts.find(p => p.id === id);
-    if (existing) {
-        // Nếu sản phẩm đã có, tăng số lượng lên 1
-        existing.quantity += 1;
-    } else {
-        // Nếu chưa có, thêm mới với quantity = 1
-        selectedProducts.push({ id, name, price, quantity: 1 });
-    }
+    if (existing) { existing.quantity += 1; }
+    else { selectedProducts.push({ id, name, price, quantity: 1 }); }
     renderProductList();
     calculateTotal();
 }
 
-// Hàm tăng giảm số lượng
 function updateQuantity(id, delta) {
     const product = selectedProducts.find(p => p.id === id);
     if (product) {
         product.quantity += delta;
-        // Nếu số lượng về 0 thì xóa sản phẩm khỏi danh sách
-        if (product.quantity <= 0) {
-            removeProduct(id);
-        } else {
-            renderProductList();
-            calculateTotal();
-        }
+        if (product.quantity <= 0) { removeProduct(id); }
+        else { renderProductList(); calculateTotal(); }
     }
 }
 
@@ -69,39 +80,24 @@ function removeProduct(id) {
 function renderProductList() {
     const container = document.getElementById('selectedProductsList');
     if (!container) return;
-
     if (selectedProducts.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state text-center py-4 text-muted small">
-                <i class="fa-solid fa-box-open d-block mb-2 fs-4"></i>
-                No products added yet
-            </div>`;
+        container.innerHTML = `<div class="text-center py-4 text-muted small">No products added yet</div>`;
         return;
     }
-
-    // Render danh sách sản phẩm kèm bộ nút cộng trừ
     container.innerHTML = selectedProducts.map(p => `
         <div class="selected-item p-3 mb-2 rounded bg-white shadow-sm border">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-                <div class="fw-bold small text-dark" style="max-width: 70%">${p.name}</div>
-                <i class="fa-solid fa-trash-can text-danger small cursor-pointer"
-                   onclick="removeProduct('${p.id}')" style="cursor: pointer;"></i>
+            <div class="d-flex justify-content-between mb-2">
+                <div class="fw-bold small">${p.name}</div>
+                <i class="fa-solid fa-trash-can text-danger cursor-pointer" onclick="removeProduct('${p.id}')"></i>
             </div>
-
             <div class="d-flex justify-content-between align-items-center">
-                <div class="quantity-control d-flex align-items-center bg-light rounded-2 p-1" style="border: 1px solid #dee2e6;">
-                    <button type="button" class="btn btn-sm btn-light py-0 px-2 fw-bold"
-                            onclick="updateQuantity('${p.id}', -1)">-</button>
-                    <input type="text" class="qty-input border-0 bg-transparent text-center fw-bold"
-                           value="${p.quantity}" readonly style="width: 30px; font-size: 13px;">
-                    <button type="button" class="btn btn-sm btn-light py-0 px-2 fw-bold"
-                            onclick="updateQuantity('${p.id}', 1)">+</button>
+                <div class="d-flex align-items-center bg-light rounded p-1">
+                    <button type="button" class="btn btn-sm py-0" onclick="updateQuantity('${p.id}', -1)">-</button>
+                    <input type="text" class="text-center border-0 bg-transparent" value="${p.quantity}" readonly style="width:30px">
+                    <button type="button" class="btn btn-sm py-0" onclick="updateQuantity('${p.id}', 1)">+</button>
                 </div>
-                <div class="text-primary fw-bold small">
-                    ${(p.price * p.quantity).toLocaleString()}đ
-                </div>
+                <div class="text-primary fw-bold">${(p.price * p.quantity).toLocaleString()}đ</div>
             </div>
-
             <input type="hidden" name="productIds" value="${p.id}">
             <input type="hidden" name="quantities" value="${p.quantity}">
         </div>
@@ -111,37 +107,76 @@ function renderProductList() {
 function calculateTotal() {
     const originalPriceInput = document.getElementById('originalPrice');
     const sellingPriceInput = document.getElementById('sellingPrice');
-
-    if (!originalPriceInput || !sellingPriceInput) return;
-
-    // Tính tổng dựa trên (đơn giá * số lượng)
+    if (!originalPriceInput) return;
     const total = selectedProducts.reduce((sum, p) => sum + (p.price * p.quantity), 0);
     originalPriceInput.value = total;
-
-    // Tự động cập nhật giá bán nếu chưa nhập gì hoặc giá bán cũ bằng giá gốc cũ
-    sellingPriceInput.value = total;
+    const isUpdate = document.getElementById('combo-data-bridge')?.getAttribute('data-is-update') === 'true';
+    if (!isUpdate || total === 0) { if(sellingPriceInput) sellingPriceInput.value = total; }
 }
 
-// --- 3. Xử lý Giảm giá nhanh ---
-function applyDiscount(percent) {
-    const originalPriceInput = document.getElementById('originalPrice');
-    const sellingPriceInput = document.getElementById('sellingPrice');
+// --- 4. Bộ lọc bảng Manage (Client-side) ---
+function initStatusFilter() {
+    const checkboxes = document.querySelectorAll('.status-cb');
+    if (checkboxes.length === 0) return;
 
-    const total = parseFloat(originalPriceInput.value) || 0;
-    if (total === 0) {
-        alert("Please add products first!");
-        return;
+    // Ngăn đóng dropdown khi chọn
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.addEventListener('click', (e) => e.stopPropagation());
+    });
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', applyAllFilters);
+    });
+}
+
+function initTableSearch() {
+    const searchInput = document.getElementById('comboSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', applyAllFilters);
     }
-
-    const discountedPrice = total * (1 - (percent / 100));
-    sellingPriceInput.value = Math.round(discountedPrice);
 }
 
-// --- 4. Khởi tạo khi DOM sẵn sàng ---
+function applyAllFilters() {
+    const searchInput = document.getElementById('comboSearchInput');
+    const keyword = searchInput ? searchInput.value.toLowerCase().trim() : "";
+    const selectedStatuses = Array.from(document.querySelectorAll('.status-cb:checked')).map(cb => cb.value);
+
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        const comboName = row.querySelector('.product-name').textContent.toLowerCase();
+        const comboId = row.querySelector('td:first-child').textContent.toLowerCase();
+
+        // Lấy từ data-status mà mình đã sửa ở JSP
+        const statusBadge = row.querySelector('.status-text');
+        const rowStatus = statusBadge ? statusBadge.getAttribute('data-status') : '';
+
+        const matchesSearch = comboName.includes(keyword) || comboId.includes(keyword);
+        const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(rowStatus);
+
+        row.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
+    });
+}
+
+// --- 5. Global Functions ---
+window.addProductToCombo = addProductToCombo;
+window.updateQuantity = updateQuantity;
+window.removeProduct = removeProduct;
+window.confirmDelete = function(id, url) {
+    if(confirm("Are you sure you want to delete combo " + id + "?")) window.location.href = url;
+};
+
+// --- 6. Khởi tạo ---
 document.addEventListener('DOMContentLoaded', function() {
     initImagePreview();
-    renderProductList();
+    initProductSearch();
+    initStatusFilter();
+    initTableSearch();
 
-    const comboForm = document.getElementById('comboForm');
-    if(comboForm) comboForm.reset();
+    const dataBridge = document.getElementById('combo-data-bridge');
+    if (dataBridge && dataBridge.getAttribute('data-is-update') === 'true') {
+        try {
+            selectedProducts = JSON.parse(dataBridge.getAttribute('data-details'));
+            renderProductList();
+        } catch (e) { console.error("Parse error", e); }
+    }
 });

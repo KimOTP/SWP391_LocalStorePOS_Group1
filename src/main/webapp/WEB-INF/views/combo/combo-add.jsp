@@ -38,26 +38,47 @@
                                 <input type="text" name="comboName" class="form-control input-custom" placeholder="e.g. Family Pack" required>
                             </div>
 
-                            <div class="mb-3">
-                                <label class="form-label text-muted fw-bold small">Add Products to Combo</label>
-                                <div class="dropdown custom-select-wrapper">
-                                    <button class="btn input-custom dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center"
-                                            type="button" data-bs-toggle="dropdown">
-                                        <span class="text-muted">Select product to add...</span>
-                                    </button>
-                                    <ul class="dropdown-menu w-100 shadow-sm custom-dropdown-menu scrollable-menu">
-                                        <c:forEach var="p" items="${products}">
-                                            <li>
-                                                <a class="dropdown-item d-flex justify-content-between" href="javascript:void(0)"
-                                                   onclick="addProductToCombo('${p.productId}', '${p.productName}', ${p.price})">
-                                                    <span>${p.productName}</span>
-                                                    <span class="text-primary fw-bold">${p.price}đ</span>
-                                                </a>
-                                            </li>
-                                        </c:forEach>
-                                    </ul>
-                                </div>
-                            </div>
+                           <div class="mb-3">
+                               <label class="form-label text-muted fw-bold small">Add Products to Combo</label>
+                               <div class="dropdown custom-select-wrapper">
+                                   <button class="btn input-custom dropdown-toggle w-100 text-start d-flex justify-content-between align-items-center"
+                                           type="button" data-bs-toggle="dropdown" id="dropdownProductBtn">
+                                       <span class="text-muted">Select product to add...</span>
+                                       <i class="fa-solid fa-chevron-down ms-1 tiny-icon"></i>
+                                   </button>
+
+                                   <div class="dropdown-menu w-100 shadow border-0 p-2 custom-dropdown-menu">
+                                       <div class="px-2 pb-2 border-bottom mb-2">
+                                           <div class="input-group input-group-sm">
+                                               <span class="input-group-text bg-transparent border-end-0">
+                                                   <i class="fa-solid fa-magnifying-glass text-muted"></i>
+                                               </span>
+                                               <input type="text" class="form-control border-start-0 ps-0 shadow-none"
+                                                      id="productSearchInside" placeholder="Search product name..."
+                                                      onclick="event.stopPropagation()"> </div>
+                                       </div>
+
+                                       <ul class="list-unstyled mb-0 scrollable-menu" id="productListItems" style="max-height: 250px; overflow-y: auto;">
+                                           <c:forEach var="p" items="${products}">
+                                               <li class="product-item-li">
+                                                   <a class="dropdown-item d-flex justify-content-between align-items-center py-2 rounded-2"
+                                                      href="javascript:void(0)"
+                                                      onclick="addProductToCombo('${p.productId}', '${p.productName}', ${p.price})">
+                                                       <div class="d-flex flex-column">
+                                                           <span class="fw-bold text-dark small p-name">${p.productName}</span>
+                                                           <span class="text-muted" style="font-size: 11px;">SKU: ${p.productId}</span>
+                                                       </div>
+                                                       <span class="text-primary fw-bold small">${p.price}đ</span>
+                                                   </a>
+                                               </li>
+                                           </c:forEach>
+                                           <li id="noProductFound" class="text-center py-3 text-muted small d-none">
+                                               No products found
+                                           </li>
+                                       </ul>
+                                   </div>
+                               </div>
+                           </div>
 
                             <%-- List Sản phẩm đã chọn có Scroll --%>
                             <div class="selected-products-wrapper mt-3">
@@ -134,7 +155,7 @@
 
                     <div class="d-flex justify-content-end gap-3 mt-5 pt-4 border-top">
                         <a href="<c:url value='/combos/manage'/>" class="btn btn-light px-5 py-2 border fw-bold">Cancel</a>
-                        <button type="submit" class="btn btn-primary px-5 py-2 fw-bold">Save Combo</button>
+                        <button type="submit" class="btn btn-primary px-5 py-2 fw-bold">Add Combo</button>
                     </div>
                 </div>
             </form>

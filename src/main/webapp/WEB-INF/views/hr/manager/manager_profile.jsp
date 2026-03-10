@@ -83,7 +83,7 @@
 
         <!-- MANAGE -->
         <div class="section-divider">Manage</div>
-        <div class="row row-cols-1 row-cols-md-5 g-3">
+        <div class="row row-cols-1 row-cols-md-6 g-3">
 
             <div class="col">
                 <div class="info-box">
@@ -93,16 +93,9 @@
 
             <div class="col">
                 <div class="info-box">
-                    <a href="/hr/create_emp_account" class="link-detail">Create Employee Accounts</a>
+                    <a href="/hr/create_emp_account" class="link-detail">Create Emp Accounts</a>
                 </div>
             </div>
-
-<!--<div class="col">
-                <div class="info-label">Employee Shift</div>
-                <div class="info-box">
-                    <a href="/shift/employee_shift" class="link-detail">Detail</a>
-                </div>
-</div>-->
 
             <div class="col">
                 <div class="info-box">
@@ -119,6 +112,12 @@
             <div class="col">
                 <div class="info-box">
                     <a href="/shift/attendance" class="link-detail">Attendance</a>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="info-box">
+                    <a href="/hr/note" class="link-detail">Note</a>
                 </div>
             </div>
 
