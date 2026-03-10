@@ -170,9 +170,8 @@
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                            <a class="dropdown-item py-2 text-danger"
-                                               href="/promotion/detail/delete?detailId=${detail.promoDetailId}&promotionId=${promotion.promotionId}"
-                                               onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này khỏi đợt khuyến mãi?')">
+                                            <a class="dropdown-item py-2 text-danger" href="#"
+                                               onclick="confirmDelete('/promotion/detail/delete?detailId=${detail.promoDetailId}&promotionId=${promotion.promotionId}', 'this product from the promotion')">
                                                 <i class="fa-solid fa-trash me-2"></i> Delete
                                             </a>
                                         </li>
