@@ -21,173 +21,199 @@
 <jsp:include page="../layer/sidebar.jsp" />
 
 <div class="main-content">
+
+    <%-- Header: Title + Buttons --%>
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0">Manage Combo</h2>
-    </div>
-
-    <div class="row g-4 mb-4">
-        <div class="col-md-4">
-            <div class="stat-card">
-                <i class="fa-solid fa-layer-group stat-icon"></i>
-                <div class="stat-title">Total Combos</div>
-                <div class="stat-value text-total">${totalCombos}</div>
-                <div class="small text-muted mt-2">Active Packages</div>
-            </div>
+        <div>
+            <h2 class="fw-bold mb-0">Manage Combos</h2>
+            <small class="text-muted">Combo List</small>
         </div>
-        <div class="col-md-4">
-            <div class="stat-card">
-                <i class="fa-solid fa-check-double stat-icon"></i>
-                <div class="stat-title">Active</div>
-                <div class="stat-value text-category" style="color: #16a34a !important;">${activeCount}</div>
-                <div class="small text-muted mt-2">Ready to Sell</div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="stat-card">
-                <i class="fa-solid fa-clock-rotate-left stat-icon"></i>
-                <div class="stat-title">Pending Approval</div>
-                <div class="stat-value text-pending">${pendingCount}</div>
-                <div class="small text-muted mt-2">Waiting for Review</div>
-            </div>
+        <div class="d-flex gap-2">
+            <a href="<c:url value='/combos/export-excel' />" class="btn btn-outline-success px-4 py-2">
+                <i class="fa-solid fa-download me-2"></i>Export
+            </a>
+            <a href="<c:url value='/combos/add' />" class="btn btn-add px-4 py-2 d-inline-flex align-items-center text-decoration-none">
+                <i class="fa-solid fa-plus me-2"></i>Add Combo
+            </a>
         </div>
     </div>
 
-    <div class="card shadow-sm border-0">
-        <div class="card-body p-4 product-list-container">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h5 class="fw-bold mb-0">Combo List</h5>
-                    <small class="text-muted">Manage product bundles and special offers.</small>
-                </div>
-                <div>
-                    <a href="<c:url value='/combos/export-excel' />" class="btn btn-outline-success px-4 py-2 me-2">
-                        <i class="fa-solid fa-file-excel me-2"></i>Export
-                    </a>
-                    <a href="<c:url value='/combos/add' />" class="btn btn-add px-4 py-2 text-decoration-none">
-                        <i class="fa-solid fa-plus me-2"></i>Add Combo
-                    </a>
-                </div>
-            </div>
-
-            <div class="row g-2 mb-4 align-items-center">
-                <div class="col-md-4">
-                    <div class="search-box">
-                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                        <input type="text" id="comboSearchInput" class="form-control ps-5" placeholder="Find by Combo Name or ID...">
+    <%-- Stat Cards --%>
+    <div class="row g-4">
+        <!-- Total Combos -->
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-card-info">
+                        <div class="stat-title">Total Combos</div>
+                        <div class="stat-value text-combo-total">${totalCombos}</div>
+                    </div>
+                    <div class="stat-card-icon stat-icon-combo-total">
+                        <i class="fa-solid fa-layer-group"></i>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="dropdown">
-                        <button class="btn btn-filter w-100 text-start d-flex justify-content-between align-items-center" type="button" data-bs-toggle="dropdown">
-                            <span>Status</span>
-                            <i class="fa-solid fa-chevron-down ms-1 tiny-icon"></i>
-                        </button>
-                        <div class="dropdown-menu shadow border-0 p-2">
-                            <label class="dropdown-item d-flex align-items-center py-2">
-                                <input type="checkbox" class="filter-checkbox status-cb" value="ACTIVE">
-                                <span class="ms-2">Active</span>
-                            </label>
-                            <label class="dropdown-item d-flex align-items-center py-2">
-                                <input type="checkbox" class="filter-checkbox status-cb" value="DISCONTINUED">
-                                <span class="ms-2">Discontinued</span>
-                            </label>
-                            <label class="dropdown-item d-flex align-items-center py-2">
-                                <input type="checkbox" class="filter-checkbox status-cb" value="PENDING_APPROVAL">
-                                <span class="ms-2">Pending Approval</span>
-                            </label>
-                        </div>
+                <div class="stat-sub">Active Packages</div>
+            </div>
+        </div>
+
+        <!-- Active -->
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-card-info">
+                        <div class="stat-title">Active</div>
+                        <div class="stat-value text-combo-active">${activeCount}</div>
+                    </div>
+                    <div class="stat-card-icon stat-icon-combo-active">
+                        <i class="fa-solid fa-check-double"></i>
                     </div>
                 </div>
+                <div class="stat-sub">Ready to Sell</div>
             </div>
+        </div>
 
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead>
+        <!-- Pending Approval -->
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div class="stat-card-info">
+                        <div class="stat-title">Pending Approval</div>
+                        <div class="stat-value text-pending">${pendingCount}</div>
+                    </div>
+                    <div class="stat-card-icon stat-icon-pending">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                </div>
+                <div class="stat-sub">Waiting for Review</div>
+            </div>
+        </div>
+    </div>
+
+    <%-- Filter Bar --%>
+    <div class="filter-bar mb-3">
+        <div class="search-box-standalone">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="comboSearchInput" class="form-control" placeholder="Search by Combo Name or ID...">
+        </div>
+
+        <div class="filter-actions">
+            <div class="dropdown">
+                <button class="btn btn-filter" type="button" data-bs-toggle="dropdown" data-bs-auto-close="outside">
+                    <span>Status</span>
+                    <i class="fa-solid fa-chevron-down ms-1 tiny-icon"></i>
+                </button>
+                <div class="dropdown-menu shadow border-0 p-2" style="min-width: 200px;">
+                    <label class="dropdown-item d-flex align-items-center py-2" style="cursor: pointer;">
+                        <input type="checkbox" class="filter-checkbox status-cb" value="ACTIVE">
+                        <span class="ms-2">Active</span>
+                    </label>
+                    <label class="dropdown-item d-flex align-items-center py-2" style="cursor: pointer;">
+                        <input type="checkbox" class="filter-checkbox status-cb" value="DISCONTINUED">
+                        <span class="ms-2">Discontinued</span>
+                    </label>
+                    <label class="dropdown-item d-flex align-items-center py-2" style="cursor: pointer;">
+                        <input type="checkbox" class="filter-checkbox status-cb" value="PENDING_APPROVAL">
+                        <span class="ms-2">Pending Approval</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%-- Combo Table --%>
+    <div class="product-table-card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr class="thead-row">
+                        <th class="th-cell">ID</th>
+                        <th class="th-cell">Combo Name</th>
+                        <th class="th-cell">Included Products</th>
+                        <th class="th-cell">Total Price</th>
+                        <th class="th-cell">Status</th>
+                        <th class="th-cell text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="c" items="${listCombos}">
                         <tr>
-                            <th>ID</th>
-                            <th>Combo Name</th>
-                            <th>Included Products</th>
-                            <th>Total Price</th>
-                            <th>Status</th>
-                            <th class="text-end">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <c:forEach var="c" items="${listCombos}">
-                            <tr>
-                                <td class="text-sku small">${c.comboId}</td>
-                                <td class="product-name">
-                                                <div class="d-flex align-items-center gap-3">
-                                                    <div class="product-img-container shadow-sm" style="width: 45px; height: 45px; overflow: hidden; border-radius: 8px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">
-                                                        <c:choose>
-                                                            <c:when test="${not empty c.imageUrl}">
-                                                                <img src="${c.imageUrl}" alt="Combo" class="product-img-table" style="width: 100%; height: 100%; object-fit: cover;">
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <i class="fa-solid fa-layer-group text-muted" style="font-size: 1.2rem;"></i>
-                                                            </c:otherwise>
-                                                        </c:choose>
-                                                    </div>
-                                                    <div class="fw-bold text-dark">
-                                                        ${c.comboName}
-                                                    </div>
-                                                </div>
-                                            </td>
-                                <td>
-                                    <div class="small text-muted">
-                                        <c:forEach var="detail" items="${c.comboDetails}" varStatus="status">
-                                            ${detail.product.productName} (x${detail.quantity})${not status.last ? ', ' : ''}
-                                        </c:forEach>
-                                    </div>
-                                </td>
-                                <td class="price">
-                                    <fmt:formatNumber value="${c.totalPrice}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
-                                </td>
-                                <td>
-                                    <span class="status-badge status-text
+                            <td class="td-cell text-sku small">${c.comboId}</td>
+                            <td class="td-cell product-name">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="product-img-container shadow-sm">
                                         <c:choose>
-                                            <c:when test="${c.statusCombo == 'ACTIVE'}">status-active</c:when>
-                                            <c:when test="${c.statusCombo == 'PENDING_APPROVAL'}">status-pending</c:when>
-                                            <c:otherwise>status-discontinued</c:otherwise>
-                                        </c:choose>"
-                                        data-status="${c.statusCombo}"> ${c.statusCombo == 'ACTIVE' ? 'Active' :
-                                          c.statusCombo == 'PENDING_APPROVAL' ? 'Pending Approval' : 'Discontinued'}
-                                    </span>
-                                </td>
-                                <td class="text-end">
-                                    <div class="dropdown">
-                                        <button class="btn btn-action-more" type="button" data-bs-toggle="dropdown" aria-expanded="false"
-                                                style="background: #f8f9fa; border: 1px solid #eee; border-radius: 50%; width: 32px; height: 32px; padding: 0;">
-                                            <i class="fa-solid fa-ellipsis-vertical"></i>
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-2">
-                                            <li>
-                                                <button class="dropdown-item btn-view-combo" data-id="${c.comboId}">
-                                                    <i class="fa-regular fa-eye me-2 text-primary"></i>View
-                                                </button>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="<c:url value='/combos/update/${c.comboId}'/>">
-                                                    <i class="fa-regular fa-pen-to-square me-2 text-warning"></i>Update
-                                                </a>
-                                            </li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li>
-                                                <a class="dropdown-item text-danger btn-delete-combo" href="javascript:void(0)"
-                                                   onclick="confirmDelete('${c.comboId}', '<c:url value='/combos/delete/${c.comboId}'/>')">
-                                                    <i class="fa-regular fa-trash-can me-2"></i>Delete
-                                                </a>
-                                            </li>
-                                        </ul>
+                                            <c:when test="${not empty c.imageUrl}">
+                                                <img src="${c.imageUrl}" alt="Combo" class="product-img-table">
+                                            </c:when>
+                                            <c:otherwise>
+                                                <i class="fa-solid fa-layer-group no-image-icon"></i>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </div>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                    </tbody>
-                </table>
-            </div>
+                                    <div class="fw-bold">${c.comboName}</div>
+                                </div>
+                            </td>
+                            <td class="td-cell">
+                                <div class="combo-products-list">
+                                    <c:forEach var="detail" items="${c.comboDetails}" varStatus="status">
+                                        ${detail.product.productName} (x${detail.quantity})${not status.last ? ', ' : ''}
+                                    </c:forEach>
+                                </div>
+                            </td>
+                            <td class="td-cell price">
+                                <fmt:formatNumber value="${c.totalPrice}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
+                            </td>
+                            <td class="td-cell">
+                                <span class="status-badge status-text
+                                    <c:choose>
+                                        <c:when test="${c.statusCombo == 'ACTIVE'}">status-active</c:when>
+                                        <c:when test="${c.statusCombo == 'PENDING_APPROVAL'}">status-pending</c:when>
+                                        <c:otherwise>status-discontinued</c:otherwise>
+                                    </c:choose>"
+                                    data-status="${c.statusCombo}">
+                                    ${c.statusCombo == 'ACTIVE' ? 'Active' :
+                                      c.statusCombo == 'PENDING_APPROVAL' ? 'Pending Approval' : 'Discontinued'}
+                                </span>
+                            </td>
+                            <td class="td-cell text-end">
+                                <div class="dropdown">
+                                    <button class="btn btn-light btn-sm rounded-circle shadow-none"
+                                            type="button"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false"
+                                            style="width: 32px; height: 32px;">
+                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-2" style="min-width: 160px; border-radius: 12px; z-index: 9999;">
+                                        <li class="px-2 pb-1 text-muted small fw-bold">Action</li>
+                                        <li>
+                                            <button class="dropdown-item rounded-2 py-2 btn-view-combo" type="button" data-id="${c.comboId}">
+                                                <i class="fa-regular fa-eye me-2 text-primary" style="width: 18px;"></i>View
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item rounded-2 py-2" href="<c:url value='/combos/update/${c.comboId}'/>">
+                                                <i class="fa-regular fa-pen-to-square me-2 text-warning" style="width: 18px;"></i>Update
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider mx-2"></li>
+                                        <li>
+                                            <a class="dropdown-item rounded-2 py-2 text-danger btn-delete-combo"
+                                               href="javascript:void(0)"
+                                               onclick="confirmDelete('${c.comboId}', '<c:url value='/combos/delete/${c.comboId}'/>')">
+                                                <i class="fa-regular fa-trash-can me-2" style="width: 18px;"></i>Delete
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
         </div>
     </div>
+
 </div>
 
 <div class="modal fade" id="comboDetailModal" tabindex="-1" aria-hidden="true">

@@ -336,43 +336,48 @@
     setInterval(updateClock, 1000);
     updateClock();
 </script>
-
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer);
+                toast.addEventListener('mouseleave', Swal.resumeTimer);
+            },
+            customClass: { popup: 'rounded-3 border-0' },
+            showClass: { popup: 'animate__animated animate__fadeInDown' },
+            hideClass: { popup: 'animate__animated animate__fadeOutUp' }
+        });
+
+        // Lỗi từ Filter (session)
         const urlParams = new URLSearchParams(window.location.search);
-
         if (urlParams.get('authError') === '1') {
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 2000,
-                timerProgressBar: true,
-
-                customClass: {
-                    popup: 'rounded-3 border-0 shadow-lg'
-                },
-                // Hiệu ứng bay từ phải qua (Cần thư viện Animate.css)
-                showClass: {
-                    popup: 'animate__animated animate__fadeInRight'
-                },
-                hideClass: {
-                    popup: 'animate__animated animate__fadeOutRight'
-                }
-            });
-
             Toast.fire({
                 icon: 'error',
-                title: 'Access Denied!',
-                // Màu sắc đỏ nhẹ cho phù hợp với thông báo lỗi
-                background: '#fff',
-                iconColor: '#ef4444'
+                title: '${sessionScope.errorMessage != null ? sessionScope.errorMessage : "Access Denied!"}'
             });
-
-            // Xóa tham số trên URL để tránh hiện lại khi F5
-            const newUrl = window.location.pathname;
-            window.history.replaceState({}, document.title, newUrl);
+            window.history.replaceState({}, document.title, window.location.pathname);
         }
+
+        // Thông báo thường từ Controller (flash attribute)
+        <c:if test="${not empty notification}">
+        Toast.fire({
+            icon: '${not empty notificationType ? notificationType : "success"}',
+            title: '${notification}'
+        });
+        </c:if>
+
+        // Lỗi từ Controller (flash attribute)
+        <c:if test="${not empty errorMessage}">
+        Toast.fire({
+            icon: 'error',
+            title: '${errorMessage}'
+        });
+        </c:if>
     });
 </script>
 

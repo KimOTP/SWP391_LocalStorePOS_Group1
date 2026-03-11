@@ -1,13 +1,16 @@
 package com.swp391pos.controller.product;
 
 import com.swp391pos.entity.Combo;
+import com.swp391pos.entity.Product;
 import com.swp391pos.service.ComboService;
 import com.swp391pos.service.ProductService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -103,5 +106,16 @@ public class ComboController {
     public String delete(@PathVariable String id) {
         comboService.deleteCombo(id);
         return "redirect:/combos/manage";
+    }
+
+    @GetMapping("/export-excel")
+    public void exportToExcel(HttpServletResponse response) throws IOException {
+        response.setContentType("application/octet-stream");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=combos_list.xlsx";
+        response.setHeader(headerKey, headerValue);
+
+        List<Combo> list = comboService.getAllCombos();
+        comboService.exportCombosToExcel(list, response);
     }
 }

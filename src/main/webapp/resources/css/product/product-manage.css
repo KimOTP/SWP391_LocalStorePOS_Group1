@@ -350,6 +350,7 @@ tr:hover .product-img-table,
 
 /* --- 7. Status Badges --- */
 .status-badge {
+    width: max-content;
     padding: 6px 12px !important;
     border-radius: 999px !important;
     font-size: 0.75rem !important;
@@ -436,7 +437,7 @@ tr:hover .product-img-table,
 .product-table-card .table > tbody > tr:hover > td,
 .table-hover > tbody > tr:hover > td,
 .table > tbody > tr:hover > * {
-    background-color: rgba(248, 250, 252, 0.7) !important;
+    background-color: rgba(248, 250, 252, 1) !important;
     --bs-table-bg-state: transparent !important;
     --bs-table-accent-bg: transparent !important;
     transition: background-color 0.15s ease !important;
