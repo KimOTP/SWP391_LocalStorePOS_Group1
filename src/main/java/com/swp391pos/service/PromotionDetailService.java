@@ -47,6 +47,53 @@ public class PromotionDetailService {
         promotionDetailRepository.save(detail);
     }
 
+    public void addPromotionDetail(Integer promotionId, String productId, Integer minQuantity, BigDecimal discountValue, String discountTypeStr) {
+        Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new RuntimeException("Cannot find promotion"));
+        Product product = productRepository.findProductByProductId(productId);
+        PromotionDetail.DiscountType discountType = PromotionDetail.DiscountType.valueOf(discountTypeStr);
+
+        validateDiscount(discountValue, discountType, product.getPrice());
+
+        PromotionDetail detail = new PromotionDetail();
+        detail.setPromotion(promotion);
+        detail.setProduct(product);
+        detail.setMinQuantity(minQuantity);
+        detail.setDiscountValue(discountValue);
+        detail.setDiscountType(discountType);
+
+        promotionDetailRepository.save(detail);
+    }
+
+    public void updatePromotionDetail(Long promoDetailId, Integer promotionId, String productId, Integer minQuantity, BigDecimal discountValue, String discountTypeStr) {
+        Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new RuntimeException("Cannot find promotion"));
+        Product product = productRepository.findProductByProductId(productId);
+        PromotionDetail.DiscountType discountType = PromotionDetail.DiscountType.valueOf(discountTypeStr);
+
+        validateDiscount(discountValue, discountType, product.getPrice());
+
+        PromotionDetail detail = new PromotionDetail();
+        detail.setPromoDetailId(promoDetailId);
+        detail.setPromotion(promotion);
+        detail.setProduct(product);
+        detail.setMinQuantity(minQuantity);
+        detail.setDiscountValue(discountValue);
+        detail.setDiscountType(discountType);
+
+        promotionDetailRepository.save(detail);
+    }
+
+    private void validateDiscount(BigDecimal discountValue, PromotionDetail.DiscountType discountType, BigDecimal productPrice) {
+        if (discountValue.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("The discount must be greater than 0.");
+        }
+        if (discountType == PromotionDetail.DiscountType.PERCENT && discountValue.compareTo(new BigDecimal("100")) >= 0) {
+            throw new IllegalArgumentException("The percentage discount must not exceed 100%.");
+        }
+        if (discountType == PromotionDetail.DiscountType.AMOUNT && discountValue.compareTo(productPrice) >= 0) {
+            throw new IllegalArgumentException("The discount amount must not exceed the product's original price.");
+        }
+    }
+
     public void deletePromotionDetail(Long promoDetailId) {
         promotionDetailRepository.deleteById(promoDetailId);
     }
@@ -84,6 +131,10 @@ public class PromotionDetailService {
                 BigDecimal disCountValue = BigDecimal.valueOf(row.getCell(1).getNumericCellValue());
                 String discountType = row.getCell(2).getStringCellValue();
                 int minQuantity = (int)row.getCell(3).getNumericCellValue();
+
+                //Validate detail promotion
+                PromotionDetail.DiscountType typeEnum = PromotionDetail.DiscountType.valueOf(discountType);
+                validateDiscount(disCountValue, typeEnum, product.getPrice());
 
                 PromotionDetail detail = new PromotionDetail();
                 detail.setPromotion(promotion);

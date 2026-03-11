@@ -264,7 +264,7 @@ function openEditDetailModal(detailId, productId, minQty, discountVal, discountT
         editModal.show();
 }
 
-async function uploadExcel() {
+async function uploadExcel(promotionId) {
     const fileInput = document.getElementById('excelFile');
     if (fileInput.files.length === 0) return;
 
@@ -272,7 +272,7 @@ async function uploadExcel() {
     formData.append("file", fileInput.files[0]);
 
     // Thay thế bằng biến chứa promotionId hiện tại
-    const promotionId = ${promotion.promotionId};
+    //const promotionId = ${promotion.promotionId};
 
     try {
         const response = await fetch('/promotion/' + promotionId + '/import-details', {

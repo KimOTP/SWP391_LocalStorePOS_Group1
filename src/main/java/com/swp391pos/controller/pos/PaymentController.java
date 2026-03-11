@@ -37,6 +37,7 @@ public class PaymentController {
     private final OrderItemService orderItemService;
     private final PosService posService;
     private final OrderStatusService orderStatusService;
+    private final SystemSettingService systemSettingService;
 
     /* ================================================================
        PAYMENT PAGE
@@ -59,7 +60,10 @@ public class PaymentController {
         }).collect(Collectors.toList());
 
         PaymentDTO.PaymentSummary summary = posService.calculatePromotion(cartItems);
-
+        Map<String, String> pointConfig = systemSettingService.getAllSettings();
+        //Gửi cho Vanh cấu hình điểm
+        model.addAttribute("pointConfig", pointConfig);
+        //Gửi cho Vanh áp dụng giảm giá sản phẩm
         model.addAttribute("summary", summary);
         model.addAttribute("order", order);
         model.addAttribute("bankConfig", session.getAttribute("posBankConfig"));
