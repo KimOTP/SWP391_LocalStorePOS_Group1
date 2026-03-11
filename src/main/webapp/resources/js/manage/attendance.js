@@ -12,12 +12,12 @@ function editRow(id) {
         edits.forEach(e => e.classList.remove("d-none"));
 
         btn.innerText = "Save";
-        btn.classList.remove("btn-success");
-        btn.classList.add("btn-warning");
+        btn.classList.remove("btn-edit");
+        btn.classList.add("btn-save");
 
         let cancelBtn = document.createElement("button");
         cancelBtn.innerText = "Cancel";
-        cancelBtn.className = "btn btn-danger btn-sm ms-1";
+        cancelBtn.className = "btn-action btn-cancel ms-2";
         cancelBtn.id = "cancel-" + id;
 
         cancelBtn.onclick = function () {
@@ -26,8 +26,8 @@ function editRow(id) {
             edits.forEach(e => e.classList.add("d-none"));
 
             btn.innerText = "Edit";
-            btn.classList.remove("btn-warning");
-            btn.classList.add("btn-success");
+            btn.classList.remove("btn-save");
+            btn.classList.add("btn-edit");
 
             cancelBtn.remove();
         };
@@ -40,7 +40,7 @@ function editRow(id) {
         let checkIn = document.getElementById("checkin-" + id).value;
         let checkOut = document.getElementById("checkout-" + id).value;
 
-        fetch(contextPath + "/shift/manager/attendance/update", {
+        fetch(contextPath + "/shift/attendance/update", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

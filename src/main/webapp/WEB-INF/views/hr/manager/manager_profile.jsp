@@ -23,15 +23,14 @@
 <jsp:include page="/WEB-INF/views/layer/sidebar.jsp" />
 
 <div class="main-content">
-        <div class="text-end mt-4">
-            <a href="/dashboard" class="back-link">← Back To Homepage</a>
-        </div>
-        <div class="section-title">Personal Information</div>
-        <div class="section-subtitle">Basic Information</div>
-    <div class="profile-wrapper">
+    <div class="text-end mb-4">
+        <a href="/dashboard" class="back-link">← Back To Homepage</a>
+    </div>
+    <div class="section-title">Personal Information</div>
+    <div class="section-subtitle">Basic Information</div>
 
-
-        <div class="row">
+    <div class="profile-wrapper mb-5">
+        <div class="row g-4">
             <div class="col-md-3">
                 <div class="info-label">Id</div>
                 <div class="info-box">${account.accountId}</div>
@@ -41,7 +40,7 @@
 
                 <button class="btn-change mt-2"
                 onclick="window.location.href='${pageContext.request.contextPath}/hr/change_information'">
-                    Change Info
+                    <i class="fas fa-pen me-1"></i> Change Info
                 </button>
             </div>
 
@@ -57,7 +56,7 @@
                 <div class="info-label">Login Name</div>
                 <div class="info-box">${account.username}</div>
 
-            <div class="info-label">Status</div>
+                <div class="info-label">Status</div>
                 <div class="info-box">
                     <c:choose>
                         <c:when test="${account.employee.status}">
@@ -74,53 +73,64 @@
                 <div class="info-label">Password</div>
                 <div class="info-box">********</div>
 
-            <div class="info-label">Last Login</div>
-                <div class="info-box">
-                    ${lastLoginFormatted}
-                </div>
+                <div class="info-label">Last Login</div>
+                <div class="info-box">${lastLoginFormatted}</div>
             </div>
         </div>
+    </div>
 
-        <!-- MANAGE -->
-        <div class="section-divider">Manage</div>
-        <div class="row row-cols-1 row-cols-md-6 g-3">
+    <!-- MANAGE -->
+    <div class="manage-section-title">
+        <span class="manage-accent"></span> Manage
+    </div>
+    <div class="row row-cols-1 row-cols-md-6 g-3">
 
-            <div class="col">
-                <div class="info-box">
-                    <a href="/hr/employee_list" class="link-detail">Employee List</a>
-                </div>
-            </div>
+        <div class="col">
+            <a href="/hr/employee_list" class="manage-card">
+                <div class="manage-card-icon"><i class="fas fa-id-badge"></i></div>
+                <span class="manage-card-label">Employee List</span>
+                <i class="fas fa-chevron-right manage-card-arrow"></i>
+            </a>
+        </div>
 
-            <div class="col">
-                <div class="info-box">
-                    <a href="/hr/create_emp_account" class="link-detail">Create Emp Accounts</a>
-                </div>
-            </div>
+        <div class="col">
+            <a href="/hr/create_emp_account" class="manage-card">
+                <div class="manage-card-icon"><i class="fas fa-user-plus"></i></div>
+                <span class="manage-card-label">Create Emp Accounts</span>
+                <i class="fas fa-chevron-right manage-card-arrow"></i>
+            </a>
+        </div>
 
-            <div class="col">
-                <div class="info-box">
-                    <a href="/shift/shift_management" class="link-detail">Shifts</a>
-                </div>
-            </div>
+        <div class="col">
+            <a href="/shift/shift_management" class="manage-card">
+                <div class="manage-card-icon"><i class="fas fa-clock"></i></div>
+                <span class="manage-card-label">Shifts</span>
+                <i class="fas fa-chevron-right manage-card-arrow"></i>
+            </a>
+        </div>
 
-            <div class="col">
-                <div class="info-box">
-                    <a href="/shift/shift_change_req" class="link-detail">Shift Change Request</a>
-                </div>
-            </div>
+        <div class="col">
+            <a href="/shift/shift_change_req" class="manage-card">
+                <div class="manage-card-icon"><i class="fas fa-retweet"></i></div>
+                <span class="manage-card-label">Shift Change Request</span>
+                <i class="fas fa-chevron-right manage-card-arrow"></i>
+            </a>
+        </div>
 
-            <div class="col">
-                <div class="info-box">
-                    <a href="/shift/attendance" class="link-detail">Attendance</a>
-                </div>
-            </div>
+        <div class="col">
+            <a href="/shift/attendance" class="manage-card">
+                <div class="manage-card-icon"><i class="fas fa-calendar-check"></i></div>
+                <span class="manage-card-label">Attendance</span>
+                <i class="fas fa-chevron-right manage-card-arrow"></i>
+            </a>
+        </div>
 
-            <div class="col">
-                <div class="info-box">
-                    <a href="/hr/note" class="link-detail">Note</a>
-                </div>
-            </div>
-
+        <div class="col">
+            <a href="/hr/note" class="manage-card">
+                <div class="manage-card-icon"><i class="fas fa-file-alt"></i></div>
+                <span class="manage-card-label">Note</span>
+                <i class="fas fa-chevron-right manage-card-arrow"></i>
+            </a>
         </div>
 
     </div>

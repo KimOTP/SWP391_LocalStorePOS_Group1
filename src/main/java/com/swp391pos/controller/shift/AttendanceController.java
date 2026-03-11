@@ -27,7 +27,11 @@ public class AttendanceController {
     public void update(@RequestBody Map<String, String> data) {
 
         Integer attendanceId = Integer.parseInt(data.get("attendanceId"));
-        Integer shiftId = Integer.parseInt(data.get("shiftId"));
+
+        Integer shiftId = null;
+        if (data.get("shiftId") != null && !data.get("shiftId").isBlank()) {
+            shiftId = Integer.parseInt(data.get("shiftId"));
+        }
 
         LocalDateTime checkIn = null;
         LocalDateTime checkOut = null;
@@ -71,11 +75,19 @@ public class AttendanceController {
                         pageable
                 );
 
+        if(page >= attendancePage.getTotalPages()){
+            page = 0;
+        }
+
         model.addAttribute("attendancePage", attendancePage);
         model.addAttribute("attendanceList", attendancePage.getContent());
         model.addAttribute("shiftList",
                 attendanceService.getAllShifts());
         model.addAttribute("currentPage", page);
+
+        model.addAttribute("fullName", fullName);
+        model.addAttribute("shift", shift);
+        model.addAttribute("status", status);
 
         return "shift/manager/attendance";
     }

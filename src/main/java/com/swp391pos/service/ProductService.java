@@ -2,12 +2,8 @@ package com.swp391pos.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.swp391pos.entity.Category;
-import com.swp391pos.entity.Product;
-import com.swp391pos.entity.ProductStatus;
-import com.swp391pos.repository.CategoryRepository;
-import com.swp391pos.repository.ProductRepository;
-import com.swp391pos.repository.ProductStatusRepository;
+import com.swp391pos.entity.*;
+import com.swp391pos.repository.*;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -33,7 +29,12 @@ public class ProductService {
     private CategoryRepository categoryRepository;
 
     @Autowired
+    private InventoryRepository inventoryRepository;
+
+    @Autowired
     private Cloudinary cloudinary;
+    @Autowired
+    private ComboRepository comboRepository;
 
     public void saveProduct(Product product) {
         productRepository.save(product);
@@ -53,7 +54,7 @@ public class ProductService {
                 product.setImageUrl(imageUrl);
             }
 
-            if(product.getAttribute() == null && product.getAttribute().isEmpty()){
+            if (product.getAttribute() == null && product.getAttribute().isEmpty()) {
                 product.setAttribute("ORIGIN");
             }
 
@@ -110,7 +111,7 @@ public class ProductService {
                 product.setImageUrl(oldProduct.getImageUrl());
             }
 
-            if(product.getAttribute() == null || product.getAttribute().isEmpty()){
+            if (product.getAttribute() == null || product.getAttribute().isEmpty()) {
                 product.setAttribute("ORIGIN");
             }
 
@@ -136,7 +137,7 @@ public class ProductService {
             Product product = getProductById(id);
             productRepository.delete(product);
             return true;
-        }catch (Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -204,5 +205,32 @@ public class ProductService {
         // 3. Xuất file về trình duyệt
         workbook.write(response.getOutputStream());
         workbook.close();
+    }
+
+    public void updateStockAndSyncStatus(String productId, int newQuantity) {
+        Inventory inventory = inventoryRepository.findById(productId).get();
+        List<Combo> listCombo = null;
+        inventory.setCurrentQuantity(newQuantity);
+
+        // Tự động set OUT_OF_STOCK, không cho phép override
+        if (newQuantity <= 0) {
+            inventory.getProduct().getStatus().setProductStatusId(3);
+            listCombo = comboRepository.findComboByProductId(productId);
+            for (Combo combo : listCombo) {
+                combo.setStatusCombo(Combo.Status.DISCONTINUED);
+            }
+
+        } else {
+            // Chỉ đổi lại ACTIVE nếu đang OUT_OF_STOCK, giữ nguyên các status khác
+            if (inventory.getProduct().getStatus().getProductStatusId() == 3) {
+                inventory.getProduct().getStatus().setProductStatusId(1);
+            }
+        }
+        inventoryRepository.save(inventory);
+        if (listCombo != null) {
+            for (Combo combo : listCombo) {
+                comboRepository.save(combo);
+            }
+        }
     }
 }

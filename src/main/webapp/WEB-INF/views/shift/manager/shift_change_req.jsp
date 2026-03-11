@@ -40,57 +40,139 @@
                     </div>
                 </div>
 
-                <!-- Current Shift (select) -->
+                <!-- Current Shift -->
                 <div class="col-md-3">
                     <div class="info-label">Current Shift</div>
-                    <div class="info-box">
-                        <select name="currentShiftId" class="info-input">
-                            <option value="">All</option>
+
+                    <div class="info-box dropdown-custom">
+
+                        <div class="dropdown-selected"
+                             onclick="toggleDropdown('currentShiftMenu')">
+
+                            <span id="selectedCurrentShift">
+                                ${empty param.currentShiftId ? 'All' : param.currentShiftId}
+                            </span>
+
+                            <span class="fa-solid fa-angle-down"></span>
+                        </div>
+
+                        <input type="hidden"
+                               name="currentShiftId"
+                               id="currentShiftInput"
+                               value="${param.currentShiftId}">
+
+                        <div id="currentShiftMenu" class="dropdown-menu">
+
+                            <div onclick="selectOption(
+                                '','All',
+                                'selectedCurrentShift','currentShiftInput','currentShiftMenu')">
+                                All
+                            </div>
+
                             <c:forEach var="s" items="${shiftList}">
-                                <option value="${s.shiftId}"
-                                    ${param.currentShiftId == s.shiftId ? 'selected' : ''}>
+                                <div onclick="selectOption(
+                                    '${s.shiftId}','${s.shiftName}',
+                                    'selectedCurrentShift','currentShiftInput','currentShiftMenu')">
                                     ${s.shiftName}
-                                </option>
+                                </div>
                             </c:forEach>
-                        </select>
+
+                        </div>
+
                     </div>
                 </div>
 
-                <!-- Requested Shift (select) -->
+                <!-- Requested Shift -->
                 <div class="col-md-3">
                     <div class="info-label">Requested Shift</div>
-                    <div class="info-box">
-                        <select name="requestedShiftId" class="info-input">
-                            <option value="">All</option>
+
+                    <div class="info-box dropdown-custom">
+
+                        <div class="dropdown-selected"
+                             onclick="toggleDropdown('requestedShiftMenu')">
+
+                            <span id="selectedRequestedShift">
+                                ${empty param.requestedShiftId ? 'All' : param.requestedShiftId}
+                            </span>
+
+                            <span class="fa-solid fa-angle-down"></span>
+                        </div>
+
+                        <input type="hidden"
+                               name="requestedShiftId"
+                               id="requestedShiftInput"
+                               value="${param.requestedShiftId}">
+
+                        <div id="requestedShiftMenu" class="dropdown-menu">
+
+                            <div onclick="selectOption(
+                                '','All',
+                                'selectedRequestedShift','requestedShiftInput','requestedShiftMenu')">
+                                All
+                            </div>
+
                             <c:forEach var="s" items="${shiftList}">
-                                <option value="${s.shiftId}"
-                                    ${param.requestedShiftId == s.shiftId ? 'selected' : ''}>
+                                <div onclick="selectOption(
+                                    '${s.shiftId}','${s.shiftName}',
+                                    'selectedRequestedShift','requestedShiftInput','requestedShiftMenu')">
                                     ${s.shiftName}
-                                </option>
+                                </div>
                             </c:forEach>
-                        </select>
+
+                        </div>
+
                     </div>
                 </div>
 
-                <!-- Status (select) -->
+                <!-- Status -->
                 <div class="col-md-3">
                     <div class="info-label">Status</div>
-                    <div class="info-box">
-                        <select name="status" class="info-input">
-                            <option value="">All</option>
-                            <option value="Pending"
-                                ${param.status == 'Pending' ? 'selected' : ''}>
+
+                    <div class="info-box dropdown-custom">
+
+                        <div class="dropdown-selected"
+                             onclick="toggleDropdown('statusMenuShift')">
+
+                            <span id="selectedStatusShift">
+                                ${empty param.status ? 'All' : param.status}
+                            </span>
+
+                            <span class="fa-solid fa-angle-down"></span>
+                        </div>
+
+                        <input type="hidden"
+                               name="status"
+                               id="statusShiftInput"
+                               value="${param.status}">
+
+                        <div id="statusMenuShift" class="dropdown-menu">
+
+                            <div onclick="selectOption(
+                                '','All',
+                                'selectedStatusShift','statusShiftInput','statusMenuShift')">
+                                All
+                            </div>
+
+                            <div onclick="selectOption(
+                                'Pending','Pending',
+                                'selectedStatusShift','statusShiftInput','statusMenuShift')">
                                 Pending
-                            </option>
-                            <option value="Approved"
-                                ${param.status == 'Approved' ? 'selected' : ''}>
+                            </div>
+
+                            <div onclick="selectOption(
+                                'Approved','Approved',
+                                'selectedStatusShift','statusShiftInput','statusMenuShift')">
                                 Approved
-                            </option>
-                            <option value="Rejected"
-                                ${param.status == 'Rejected' ? 'selected' : ''}>
+                            </div>
+
+                            <div onclick="selectOption(
+                                'Rejected','Rejected',
+                                'selectedStatusShift','statusShiftInput','statusMenuShift')">
                                 Rejected
-                            </option>
-                        </select>
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
 
@@ -127,13 +209,13 @@
                         <td>
                             <c:choose>
                                 <c:when test="${req.status == 'Approved'}">
-                                    <span class="text-success">Approved</span>
+                                    <span class="status-active">Approved</span>
                                 </c:when>
                                 <c:when test="${req.status == 'Rejected'}">
-                                    <span class="text-danger">Rejected</span>
+                                    <span class="status-deactive">Rejected</span>
                                 </c:when>
                                 <c:otherwise>
-                                    <span class="text-warning">Pending</span>
+                                    <span class="status-pending">Pending</span>
                                 </c:otherwise>
                             </c:choose>
                         </td>
@@ -240,6 +322,7 @@
     </div>
 </div>
 <script src="<c:url value='/resources/js/manage/shift_change_req.js'/>"></script>
+<script src="<c:url value='/resources/js/manage/dropdown.js'/>"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

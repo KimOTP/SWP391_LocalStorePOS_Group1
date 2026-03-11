@@ -21,9 +21,6 @@
     <div class="main-content">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold mb-0">Update Product</h2>
-            <a href="<c:url value='/products/manage'/>" class="btn btn-light border fw-bold px-3">
-                <i class="fa-solid fa-arrow-left me-2"></i>Back to List
-            </a>
         </div>
 
         <div class="card border-0 shadow-sm">
@@ -100,11 +97,13 @@
                                 <label class="form-label text-muted fw-bold small">Status</label>
                                 <div class="status-option-container">
                                     <c:forEach var="st" items="${statuses}">
+                                        <c:if test="${st.productStatusId != 3}">
                                         <div class="status-item">
                                             <input type="radio" name="statusId" id="st-${st.productStatusId}"
                                                    value="${st.productStatusId}" ${st.productStatusId == product.status.productStatusId ? 'checked' : ''}>
                                             <label for="st-${st.productStatusId}">${st.productStatusName}</label>
                                         </div>
+                                        </c:if>
                                     </c:forEach>
                                 </div>
                             </div>

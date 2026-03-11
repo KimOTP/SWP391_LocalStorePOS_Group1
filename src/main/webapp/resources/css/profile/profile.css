@@ -126,26 +126,55 @@
 /* ===== 9. BACK LINK ===== */
 .back-link {
     display: inline-block;
-    background-color: #334155;
-    color: #ffffff;
+    float: right;
+
+    background-color: #ffffff;
+    color: #64748b;
+
     padding: 8px 18px;
     font-size: 14px;
     font-weight: 600;
-    border-radius: 8px;
+
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+
     text-decoration: none;
-    float: right;
     transition: all 0.2s ease;
 }
 
 .back-link:hover {
-    background-color: #1d4ed8;
-    color: #ffffff;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    background-color: #f8fafc;
+    color: #1e293b;
+
+    border-color: #94a3b8;
+
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
 }
 
 
-/* ===== 10. SECTION DIVIDER ===== */
+/* ===== 10. MANAGE SECTION TITLE ===== */
+.manage-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 30px 0 16px;
+    font-weight: 700;
+    font-size: 16px;
+    color: #1e293b;
+}
+
+.manage-accent {
+    display: inline-block;
+    width: 4px;
+    height: 22px;
+    background: #2563eb;
+    border-radius: 4px;
+}
+
+/* kept for backward compat */
 .section-divider {
     margin: 35px 0 20px;
     font-weight: 700;
@@ -207,22 +236,19 @@
 .change-shift-page {
     display: flex;
     flex-direction: column;
-    align-items: center;   /* căn giữa ngang */
+    align-items: center;
 }
 
-/* Căn giữa form */
 .change-shift-page form {
     width: 100%;
     max-width: 420px;
 }
 
-/* Căn giữa title */
 .change-shift-page .section-title {
     text-align: center;
     margin-bottom: 25px;
 }
 
-/* Nút back không float nữa */
 .change-shift-page .back-link {
     float: none;
 }
@@ -231,4 +257,195 @@
     color: #64748b;
     font-size: 14px;
     font-weight: 500;
+}
+
+
+/* ===== 13. MANAGE CARDS ===== */
+.manage-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 18px 20px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.manage-card:hover {
+    border-color: #2563eb;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+    transform: translateY(-1px);
+}
+
+.manage-card-icon {
+    width: 40px;
+    height: 40px;
+    background: #eff6ff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2563eb;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.manage-card-label {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.manage-card-arrow {
+    color: #cbd5e1;
+    font-size: 13px;
+    transition: color 0.2s ease;
+}
+
+.manage-card:hover .manage-card-arrow {
+    color: #2563eb;
+}
+
+/* Custom Dropdown*/
+
+/* DROPDOWN */
+
+.dropdown-custom{
+    position:relative;
+    cursor:pointer;
+}
+
+.dropdown-selected{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.dropdown-arrow{
+    font-size:12px;
+    color:#64748b;
+}
+
+.profile-wrapper .dropdown-menu{
+    position:absolute;
+    top:45px;
+    left:0;
+    width:100%;
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.08);
+    display:none;
+    z-index:100;
+}
+
+.profile-wrapper .dropdown-menu div{
+    padding:10px 14px;
+    cursor:pointer;
+}
+
+.profile-wrapper  .dropdown-menu div:hover{
+    background:#f1f5f9;
+}
+
+
+/* DATE MENU */
+
+.date-menu{
+    padding:10px;
+}
+
+.date-picker{
+    width:100%;
+    border:none;
+    outline:none;
+    font-size:14px;
+}
+
+.calendar-menu{
+    position:absolute;
+    top:48px;
+    right:0;
+    width:260px;
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+    display:none;
+    z-index:100;
+}
+
+/* header */
+
+.calendar-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+    font-weight:600;
+}
+
+.calendar-header button{
+    border:none;
+    background:none;
+    font-size:18px;
+    cursor:pointer;
+}
+
+/* weekday */
+
+.calendar-days{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    font-size:10px;
+    text-align:center;
+    color:#94a3b8;
+    margin-bottom:6px;
+}
+
+/* dates */
+
+.calendar-dates{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:4px;
+}
+
+.calendar-dates div{
+    text-align:center;
+    padding:6px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.calendar-dates div:hover{
+    background:#eff6ff;
+    color:#2563eb;
+}
+
+.calendar-selected{
+    background:#2563eb;
+    color:white;
+}
+
+/* footer */
+
+.calendar-footer{
+    display:flex;
+    justify-content:space-between;
+    margin-top:10px;
+    font-size:12px;
+}
+
+.calendar-footer button{
+    border:none;
+    background:none;
+    color:#2563eb;
+    cursor:pointer;
 }
