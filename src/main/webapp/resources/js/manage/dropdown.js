@@ -1,7 +1,7 @@
-function toggleDropdown(menuId){
-    let menu = document.getElementById(menuId);
-    menu.style.display = (menu.style.display === "block") ? "none" : "block";
-}
+//function toggleDropdown(menuId){
+//    let menu = document.getElementById(menuId);
+//    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+//}
 
 function selectOption(value,text,labelId,inputId,menuId){
 
@@ -50,8 +50,8 @@ function renderCalendar(){
     let month=currentDate.getMonth();
     let year=currentDate.getFullYear();
 
-    document.getElementById("calendarMonth").innerText =
-        monthNames[month]+" "+year;
+    document.querySelectorAll("#calendarMonth, #calendarMonth2")
+        .forEach(e => e.innerText = monthNames[month]+" "+year);
 
     let firstDay=new Date(year,month,1).getDay();
     let daysInMonth=new Date(year,month+1,0).getDate();
@@ -69,7 +69,8 @@ function renderCalendar(){
         `;
     }
 
-    document.getElementById("calendarDates").innerHTML=datesHTML;
+    document.querySelectorAll("#calendarDates, #calendarDates2")
+        .forEach(e => e.innerHTML = datesHTML);
 }
 
 function pickDate(day){
@@ -154,4 +155,40 @@ function applySwitchDate(){
     document.getElementById("switchDateInput").value = date;
 
     document.getElementById("switchCalendarMenu").style.display="none";
+}
+
+function applyFromDate(){
+
+    if(!selectedDate) return;
+
+    let yyyy = selectedDate.getFullYear();
+    let mm = String(selectedDate.getMonth()+1).padStart(2,'0');
+    let dd = String(selectedDate.getDate()).padStart(2,'0');
+
+    let date = yyyy+"-"+mm+"-"+dd;
+
+    document.getElementById("selectedFromDateText").innerText = date;
+    document.getElementById("fromDateInput").value = date;
+
+    document.getElementById("fromCalendarMenu").style.display="none";
+
+    document.getElementById("searchForm").submit();
+}
+
+function applyToDate(){
+
+    if(!selectedDate) return;
+
+    let yyyy = selectedDate.getFullYear();
+    let mm = String(selectedDate.getMonth()+1).padStart(2,'0');
+    let dd = String(selectedDate.getDate()).padStart(2,'0');
+
+    let date = yyyy+"-"+mm+"-"+dd;
+
+    document.getElementById("selectedToDateText").innerText = date;
+    document.getElementById("toDateInput").value = date;
+
+    document.getElementById("toCalendarMenu").style.display="none";
+
+    document.getElementById("searchForm").submit();
 }
