@@ -1,68 +1,395 @@
-/* customer.css */
+/* ============================================================
+   customer1.css  —  Shared style for Customer / Promotion pages
+   Design system mirrors product-manage.css
+   ============================================================ */
+
+/* --- 1. Base & Layout --------------------------------------- */
 body {
-    background-color: #f8f9fa;
+    background-color: #f8fafc !important;
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* Layout Adjustment */
 .main-content {
-    margin-top: 70px; /* Né Header */
-    margin-left: 80px; /* Né Sidebar (khi thu gọn) */
-    padding: 30px;
-    transition: margin-left 0.3s;
-
-
-    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        will-change: margin-left;
+    background-color: #f8fafc !important;
+    padding: 30px 40px !important;
+    margin-top: 70px !important;
+    margin-left: 80px;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    will-change: margin-left;
 }
+
 #sidebar.expanded ~ .main-content {
-    margin-left: 260px;
+    margin-left: 260px !important;
 }
-/* Stats Card Style */
+
+/* --- 2. Stat Cards ------------------------------------------ */
 .stat-card {
-    background-color: #e9ecef;
-    border: none;
-    border-radius: 12px;
-    padding: 20px;
-    height: 100%;
-    transition: transform 0.2s;
+    background: #fff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    height: 100% !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
 }
 
 .stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transform: translateY(-2px) !important;
+    box-shadow: 0 7px 10px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.stat-card-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 14px !important;
+    margin-bottom: 10px !important;
+}
+
+.stat-card-info {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+}
+
+.stat-card-icon {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.15rem !important;
+    flex-shrink: 0 !important;
+}
+
+/* Icon colour variants */
+.stat-icon-blue   { background: rgba(37,  99,  235, 0.10) !important; color: #2563eb !important; }
+.stat-icon-green  { background: rgba(22,  163, 74,  0.10) !important; color: #16a34a !important; }
+.stat-icon-red    { background: rgba(220, 38,  38,  0.08) !important; color: #dc2626 !important; }
+.stat-icon-yellow { background: rgba(234, 179, 8,   0.10) !important; color: #ca8a04 !important; }
+.stat-icon-cyan   { background: rgba(6,   182, 212, 0.10) !important; color: #0891b2 !important; }
+.stat-icon-orange { background: rgba(234, 118, 0,   0.10) !important; color: #ea7600 !important; }
+.stat-icon-dark   { background: rgba(30,  41,  59,  0.08) !important; color: #1e293b !important; }
+
+.stat-title {
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: #94a3b8 !important;
 }
 
 .stat-value {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: #212529;
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    margin-top: 2px !important;
+    line-height: 1.2 !important;
 }
 
-.stat-title {
-    font-size: 0.9rem;
+.stat-sub {
+    font-size: 0.78rem !important;
+    color: #94a3b8 !important;
+    margin-top: 2px !important;
+}
+
+/* Value colours */
+.text-1 { color: #0E549C !important; }
+.text-2 { color: #ca8a04 !important; }
+.text-3 { color: #0891b2 !important; }
+.text-4 { color: #16a34a !important; }
+.text-5 { color: #0E549C !important; }
+.text-6 { color: #16a34a !important; }
+.text-7 { color: #dc2626 !important; }
+.text-8 { color: #ea7600 !important; }
+
+/* --- 3. Filter Bar ------------------------------------------ */
+.filter-bar {
+    margin-top: 24px;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 14px 20px !important;
+    flex-wrap: wrap !important;
+    background: #fff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
+}
+
+.search-box-standalone {
+    width: 320px !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 12px !important;
+    height: 40px !important;
+    transition: border-color 0.2s ease !important;
+}
+
+.search-box-standalone:focus-within {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+    background: #fff !important;
+}
+
+.search-box-standalone .search-icon {
+    color: #94a3b8 !important;
+    font-size: 0.85rem !important;
+    margin-right: 10px !important;
+    flex-shrink: 0 !important;
+}
+
+.search-box-standalone .form-control {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    height: 100% !important;
+    font-size: 0.85rem !important;
+    box-shadow: none !important;
+    color: #1e293b !important;
+}
+
+.search-box-standalone .form-control:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.filter-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    margin-left: auto !important;
+}
+
+/* --- 4. Filter Buttons -------------------------------------- */
+.btn-filter {
+    height: 38px !important;
+    background-color: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 0 16px !important;
+    color: #475569 !important;
+    font-size: 0.82rem !important;
+    font-weight: 500 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.2s ease !important;
+    white-space: nowrap !important;
+}
+
+.btn-filter:hover,
+.btn-filter.show,
+.btn-filter:focus {
+    border-color: #2563eb !important;
+    color: #2563eb !important;
+    background-color: #eff6ff !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+}
+
+/* --- 5. Action Buttons -------------------------------------- */
+.btn-add {
+    background-color: #2563eb !important;
+    color: #fff !important;
+    border: none !important;
+    height: 38px !important;
+    padding: 0 18px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+}
+
+.btn-add:hover {
+    background-color: #1d4ed8 !important;
+    color: #fff !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
+}
+
+.btn-add:active { transform: scale(0.96) !important; }
+
+.btn-success-outline {
+    height: 38px !important;
+    border: 1.5px solid #16a34a !important;
+    color: #16a34a !important;
+    background-color: #fff !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    padding: 0 18px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-success-outline:hover {
+    background-color: #16a34a !important;
+    color: #fff !important;
+    transform: translateY(-1px) !important;
+}
+
+/* --- 6. Data Table Card ------------------------------------- */
+.data-table-card {
+    margin-top: 24px;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+}
+
+.card.shadow-sm.border-0 {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+    margin-top: 24px !important;
+}
+
+/* --- 7. Table ----------------------------------------------- */
+.table-responsive {
+    max-height: 600px !important;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+.table-responsive thead {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+}
+
+.thead-row {
+    background-color: #f1f5f9 !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+}
+
+.th-cell {
+    padding: 14px 20px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #94a3b8 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    background-color: #f1f5f9 !important;
+    white-space: nowrap !important;
+}
+
+.td-cell {
+    padding: 14px 20px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    vertical-align: middle !important;
+}
+
+.table > tbody > tr:hover > * {
+    background-color: rgba(248, 250, 252, 0.7) !important;
+    --bs-table-bg-state: transparent !important;
+    transition: background-color 0.15s ease !important;
+}
+
+/* Scrollbar */
+.table-responsive::-webkit-scrollbar        { width: 6px; height: 6px; }
+.table-responsive::-webkit-scrollbar-track  { background: #f1f5f9; border-radius: 10px; }
+.table-responsive::-webkit-scrollbar-thumb  { background: #cbd5e1; border-radius: 10px; }
+.table-responsive::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+.table-responsive table { margin-bottom: 0 !important; border-collapse: separate !important; border-spacing: 0 !important; }
+
+/* --- 8. Status Badges --------------------------------------- */
+.badge-active, .badge-inactive, .badge-expired {
+    padding: 5px 12px !important;
+    border-radius: 999px !important;
+    font-size: 0.74rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+.badge-active::before, .badge-inactive::before, .badge-expired::before {
+    content: "" !important;
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+    flex-shrink: 0 !important;
+}
+
+.badge-active   { background: #dcfce7 !important; color: #16a34a !important; }
+.badge-active::before   { background: #16a34a !important; }
+
+.badge-inactive { background: #fef2f2 !important; color: #dc2626 !important; }
+.badge-inactive::before { background: #dc2626 !important; }
+
+.badge-expired  { background: #fff8e3 !important; color: #ea7600 !important; }
+.badge-expired::before  { background: #ea7600 !important; }
+
+/* --- 9. Dropdown menus -------------------------------------- */
+.dropdown-menu.shadow {
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
+    padding: 6px !important;
+    min-width: 170px !important;
+}
+
+.dropdown-menu .dropdown-item {
+    border-radius: 8px !important;
+    font-size: 0.84rem !important;
+    font-weight: 500 !important;
+    color: #475569 !important;
+    padding: 8px 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: background 0.15s ease !important;
+}
+
+.dropdown-menu .dropdown-item:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+}
+
+/* --- 10. Info Card (promotion-detail header) ---------------- */
+.info-card {
+    background: #fff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    padding: 24px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+    margin-bottom: 24px !important;
+}
+
+/* --- 11. Customer Detail Modal Tabs ------------------------- */
+#detailTab {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 4px;
+}
+
+#detailTab .nav-link {
+    color: #475569;
     font-weight: 600;
-    color: #495057;
+    transition: all 0.2s ease;
 }
 
-/* Table Style */
-.badge-active {
-    background-color: #198754;
-    color: white;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-}
+#detailTab .nav-link:hover { color: #2563eb; }
 
-.badge-inactive {
-    background-color: #ffc107;
-    color: #000;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
+#detailTab .nav-link.active {
+    background-color: #fff !important;
+    color: #2563eb !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-
-/* Style cho Tab Detail */
-#detailTab { background-color: #f8f9fa; border: 1px solid #eee; }
-#detailTab .nav-link { color: #495057; font-weight: 500; }
-#detailTab .nav-link.active { background-color: white !important; color: black !important; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }

@@ -21,7 +21,7 @@ public class SystemSettingService {
     @Autowired
     private EmployeeRepository employeeRepository; // Để tìm nhân viên
 
-    // 1. Lấy tất cả setting về dạng Map (Key -> Value)
+    //  Lấy tất cả setting về dạng Map (Key -> Value)
     public Map<String, String> getAllSettings() {
         List<SystemSetting> list = settingRepository.findAll();
         Map<String, String> map = new HashMap<>();
@@ -31,17 +31,17 @@ public class SystemSettingService {
         return map;
     }
 
-    // 2. Cập nhật Setting
-    public void updateSetting(String key, String value) {
+    //  Cập nhật point config
+    public void updateSetting(String key, String value, Employee updater) {
         SystemSetting setting = settingRepository.findById(key).orElse(null);
         if (setting != null) {
             setting.setSettingValue(value);
             setting.setUpdatedAt(LocalDateTime.now());
 
-            // --- XỬ LÝ UPDATE BY (EMPLOYEE) ---
+            // XỬ LÝ UPDATE BY
             // Tạm thời lấy Employee ID = 2 (Admin/Manager) như trong SQL mẫu của bạn
             // Sau này bạn thay bằng: employeeRepository.findById(sessionUserId)...
-            Employee updater = employeeRepository.findById(2).orElse(null);
+            //Employee updater = employeeRepository.findById(2).orElse(null);
             setting.setUpdatedBy(updater);
 
             settingRepository.save(setting);
