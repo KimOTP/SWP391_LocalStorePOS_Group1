@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Receipt</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/pos.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/pos/pos.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/pos/receipt.css">
 </head>
 <body>
@@ -120,8 +120,8 @@
             </div>
             <select class="filter-select" id="statusFilter" onchange="filterTable()">
                 <option value="">All states</option>
-                <option value="PENDING">Pending</option>
-                <option value="COMPLETED">Completed</option>
+                <option value="PENDING_PAYMENT">Pending</option>
+                <option value="PAID">Completed</option>
                 <option value="CANCELLED">Cancelled</option>
             </select>
             <select class="filter-select" id="paymentFilter" onchange="filterTable()">
@@ -161,19 +161,13 @@
             <tbody id="receiptTableBody">
 
                 <c:forEach var="r" items="${receipts}">
-                <%--
-                    PosReceipt  : r.receiptNumber, r.printedAt, r.printedBy (Employee)
-                    Order       : r.order.createdAt, r.order.totalAmount, r.order.discountAmount
-                                  r.order.paymentMethod (enum PaymentMethod)
-                                  r.order.orderStatus.orderStatusName (enum OrderStatusName)
-                                  r.order.customer (nullable)
-                                  r.order.employee  ← cashier on the order
-                --%>
+                <%-- r is a Map with keys: receiptNumber, createdAt, customerName,
+                     cashierName, totalAmount, paymentMethod, orderStatus, statusLabel --%>
                 <tr data-code="${r.receiptNumber}"
-                    data-status="${r.order.orderStatus.orderStatusName}"
-                    data-payment="${r.order.paymentMethod}"
-                    data-customer="${not empty r.order.customer ? r.order.customer.fullName : 'Guest'}"
-                    data-cashier="${r.order.employee.fullName}">
+                    data-status="${r.orderStatus}"
+                    data-payment="${r.paymentMethod}"
+                    data-customer="${r.customerName}"
+                    data-cashier="${r.cashierName}">
 
                     <td class="td-check">
                         <input type="checkbox" class="row-checkbox">
@@ -182,60 +176,47 @@
                     <%-- Invoice code --%>
                     <td><span class="invoice-code">${r.receiptNumber}</span></td>
 
-                    <%-- Creation date – use Order.createdAt (LocalDateTime) --%>
-                    <td>
-                        <c:choose>
-                            <c:when test="${r.order.createdAt != null}">
-                                <fmt:formatDate value="${r.order.createdAt}"
-                                               pattern="dd/MM/yyyy" type="date"/>
-                            </c:when>
-                            <c:otherwise>—</c:otherwise>
-                        </c:choose>
-                    </td>
+                    <%-- Creation date – already formatted String from Service --%>
+                    <td>${not empty r.createdAt ? r.createdAt : '—'}</td>
 
                     <%-- Customer (nullable) --%>
-                    <td>
-                        <c:choose>
-                            <c:when test="${not empty r.order.customer}">${r.order.customer.fullName}</c:when>
-                            <c:otherwise>Guest</c:otherwise>
-                        </c:choose>
-                    </td>
+                    <td>${not empty r.customerName ? r.customerName : 'Guest'}</td>
 
-                    <%-- Cashier = Order.employee --%>
-                    <td>${r.order.employee.fullName}</td>
+                    <%-- Cashier --%>
+                    <td>${not empty r.cashierName ? r.cashierName : '—'}</td>
 
                     <%-- Total amount (BigDecimal) --%>
                     <td>
                         <c:choose>
-                            <c:when test="${r.order.totalAmount != null}">
-                                <fmt:formatNumber value="${r.order.totalAmount}"
-                                                 type="number" maxFractionDigits="0"/>
+                            <c:when test="${r.totalAmount != null}">
+                                <fmt:formatNumber value="${r.totalAmount}"
+                                                 type="number" maxFractionDigits="0"/> ₫
                             </c:when>
                             <c:otherwise>—</c:otherwise>
                         </c:choose>
                     </td>
 
-                    <%-- Payment method (enum name) --%>
+                    <%-- Payment method --%>
                     <td>
                         <c:choose>
-                            <c:when test="${r.order.paymentMethod == 'CASH'}">
+                            <c:when test="${r.paymentMethod == 'CASH'}">
                                 <span class="payment-badge cash">
                                     <i class="fa-solid fa-coins"></i> Cashing
                                 </span>
                             </c:when>
-                            <c:when test="${r.order.paymentMethod == 'BANKING'}">
+                            <c:when test="${r.paymentMethod == 'BANKING'}">
                                 <span class="payment-badge banking">
                                     <i class="fa-solid fa-building-columns"></i> Banking
                                 </span>
                             </c:when>
-                            <c:when test="${r.order.paymentMethod == 'QR'}">
+                            <c:when test="${r.paymentMethod == 'QR'}">
                                 <span class="payment-badge qr">
                                     <i class="fa-solid fa-qrcode"></i> QR
                                 </span>
                             </c:when>
                             <c:otherwise>
                                 <span class="payment-badge cash">
-                                    ${r.order.paymentMethod}
+                                    ${not empty r.paymentMethod ? r.paymentMethod : '—'}
                                 </span>
                             </c:otherwise>
                         </c:choose>

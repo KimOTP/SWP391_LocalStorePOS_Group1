@@ -25,16 +25,16 @@ public class ReceiptController {
     /* --------------------------------------------------------
        GET /pos/receipts/manage  →  render manage receipt page
        -------------------------------------------------------- */
-    @GetMapping("/manage")
+    @GetMapping("")
     public String manageReceipt(Model model) {
-        model.addAttribute("receipts",     posReceiptService.getAllReceipts());
+        model.addAttribute("receipts",     posReceiptService.getAllReceiptRows());
         model.addAttribute("totalBill",    posReceiptService.countAll());
         model.addAttribute("totalRevenue", posReceiptService.sumRevenue());
         model.addAttribute("pending",      posReceiptService.countByOrderStatus(OrderStatusName.PENDING_PAYMENT));
         model.addAttribute("completed",    posReceiptService.countByOrderStatus(OrderStatusName.PAID));
         model.addAttribute("cancelled",    posReceiptService.countByOrderStatus(OrderStatusName.CANCELLED));
         model.addAttribute("today",        posReceiptService.countToday());
-        return "pos/receipt-manage";
+        return "pos/manager/receipt-manage";
     }
 
     /* --------------------------------------------------------

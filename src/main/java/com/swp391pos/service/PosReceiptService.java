@@ -36,6 +36,40 @@ public class PosReceiptService {
         return posReceiptRepository.findAllWithDetails();
     }
 
+    public PosReceipt save(PosReceipt receipt) {
+        return posReceiptRepository.save(receipt);
+    }
+    public List<Map<String, Object>> getAllReceiptRows() {
+        return posReceiptRepository.findAllWithDetails().stream().map(r -> {
+            Map<String, Object> row = new HashMap<>();
+            row.put("receiptNumber", r.getReceiptNumber());
+            row.put("printedAt", r.getPrintedAt() != null
+                    ? r.getPrintedAt().format(DATETIME_FMT) : "—");
+            row.put("printedBy", r.getPrintedBy() != null
+                    ? r.getPrintedBy().getFullName() : "—");
+
+            var order = r.getOrder();
+            if (order != null) {
+                row.put("orderId", order.getOrderId());
+                row.put("createdAt", order.getCreatedAt() != null
+                        ? order.getCreatedAt().format(DATE_FMT) : "—");
+                row.put("customerName", order.getCustomer() != null
+                        ? order.getCustomer().getFullName() : "Guest");
+                row.put("cashierName", order.getEmployee() != null
+                        ? order.getEmployee().getFullName() : "—");
+                row.put("paymentMethod", order.getPaymentMethod() != null
+                        ? order.getPaymentMethod().name() : "—");
+                row.put("totalAmount", order.getTotalAmount());
+                row.put("discountAmount", order.getDiscountAmount());
+                OrderStatusName statusEnum = order.getOrderStatus() != null
+                        ? order.getOrderStatus().getOrderStatusName() : null;
+                row.put("orderStatus", statusEnum != null ? statusEnum.name() : "—");
+                row.put("statusLabel", resolveStatusLabel(statusEnum));
+            }
+            return row;
+        }).toList();
+    }
+
     public PosReceipt getByReceiptNumber(String receiptNumber) {
         return posReceiptRepository.findByReceiptNumber(receiptNumber).orElse(null);
     }

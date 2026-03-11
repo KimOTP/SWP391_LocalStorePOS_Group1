@@ -39,7 +39,7 @@ function viewDetail(receiptNumber) {
 
     document.getElementById('modalTitle').textContent = 'Invoice details ' + receiptNumber;
 
-    fetch('/receipt/api/detail/' + encodeURIComponent(receiptNumber))
+    fetch('/pos/receipts/api/detail/' + encodeURIComponent(receiptNumber))
         .then(res => {
             if (!res.ok) throw new Error('not found');
             return res.json();
@@ -133,7 +133,7 @@ document.addEventListener('keydown', e => {
    ============================================================ */
 function printReceipt(receiptNumber) {
     document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('open'));
-    window.location.href = '/receipt/print/' + encodeURIComponent(receiptNumber);
+    window.location.href = '/pos/receipts/print/' + encodeURIComponent(receiptNumber);
 }
 
 /* ============================================================
@@ -175,7 +175,7 @@ function toggleAll(master) {
 function loadReceipts() { location.reload(); }
 
 function exportExcel() {
-    window.location.href = '/receipt/export-excel';
+    window.location.href = '/pos/receipts/export-excel';
 }
 
 /* ============================================================
