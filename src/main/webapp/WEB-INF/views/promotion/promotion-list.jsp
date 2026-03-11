@@ -182,14 +182,12 @@
                                     <li>
                                         <c:choose>
                                             <c:when test="${promo.status == 'ACTIVE'}">
-                                                <a class="dropdown-item" href="/promotion/status?id=${promo.promotionId}&status=INACTIVE"
-                                                   onclick="return confirm('Pause this promotion?')">
+                                                <a class="dropdown-item" href="/promotion/status?id=${promo.promotionId}&status=INACTIVE">
                                                     <i class="fa-solid fa-pause text-secondary"></i> Set Inactive
                                                 </a>
                                             </c:when>
                                             <c:when test="${promo.status == 'INACTIVE'}">
-                                                <a class="dropdown-item" href="/promotion/status?id=${promo.promotionId}&status=ACTIVE"
-                                                   onclick="return confirm('Activate this promotion?')">
+                                                <a class="dropdown-item" href="/promotion/status?id=${promo.promotionId}&status=ACTIVE">
                                                     <i class="fa-solid fa-play text-success"></i> Set Active
                                                 </a>
                                             </c:when>

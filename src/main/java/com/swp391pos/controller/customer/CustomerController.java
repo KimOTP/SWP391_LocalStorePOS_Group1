@@ -64,7 +64,7 @@ public class CustomerController {
             String errorMessage = result.getFieldError().getDefaultMessage();
 
             // Gửi thông báo lỗi về giao diện
-            redirectAttributes.addFlashAttribute("error", errorMessage);
+            redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
 
             // Quay về trang cũ
             return "redirect:/customer";
@@ -83,9 +83,9 @@ public class CustomerController {
     public String deleteCustomer(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
             customerService.deleteById(id);
-            redirectAttributes.addFlashAttribute("success", "Customer successfully deleted!");
+            redirectAttributes.addFlashAttribute("notification", "Customer successfully deleted!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error: Cannot delete this customer.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: Cannot delete this customer.");
         }
         return "redirect:/customer";
     }
@@ -101,7 +101,7 @@ public class CustomerController {
             // Lấy lỗi đầu tiên ra để thông báo
             String errorMessage = result.getFieldError().getDefaultMessage();
             // Báo lỗi đỏ ra màn hình
-            redirectAttributes.addFlashAttribute("error", "Update failed: " + errorMessage);
+            redirectAttributes.addFlashAttribute("errorMessage", "Update failed: " + errorMessage);
             // Quay về trang danh sách
             return "redirect:/customer";
         }
@@ -111,9 +111,9 @@ public class CustomerController {
             // Lưu ý: customerService.saveCustomer sẽ tự xử lý việc giữ nguyên các field cũ (điểm, tổng tiền...)
             // nếu bạn code hàm save cẩn thận, hoặc JPA sẽ tự merge dựa trên ID.
             customerService.saveCustomer(customer);
-            redirectAttributes.addFlashAttribute("success", "Information updated successfully.!");
+            redirectAttributes.addFlashAttribute("notification", "Information updated successfully.!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "An error occurred during the data saving process.");
+            redirectAttributes.addFlashAttribute("errorMessage", "An error occurred during the data saving process.");
         }
 
         return "redirect:/customer";
@@ -173,10 +173,10 @@ public class CustomerController {
             systemSettingService.updateSetting("MAX_REDEEM_PERCENT", maxRedeemPercent, updater);
             systemSettingService.updateSetting("MIN_POINT_TO_REDEEM", minPointRedeem, updater);
 
-            redirectAttributes.addFlashAttribute("success", "The point configuration has been successfully updated.!");
+            redirectAttributes.addFlashAttribute("notification", "The point configuration has been successfully updated.!");
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Configuration update error.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Configuration update error.");
         }
 
         return "redirect:/customer";

@@ -63,10 +63,10 @@ public class PromotionController {
     public String addPromotion(@ModelAttribute Promotion promotion, RedirectAttributes redirectAttributes) {
         try {
             promotionService.savePromotion(promotion);
-            redirectAttributes.addFlashAttribute("success", "Add promotion successfully!");
+            redirectAttributes.addFlashAttribute("notification", "Add promotion successfully!");
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Failed to add promotion");
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to add promotion");
         }
         return "redirect:/promotion";
     }
@@ -75,10 +75,10 @@ public class PromotionController {
     public String updatePromotion(@ModelAttribute Promotion promotion, RedirectAttributes redirectAttributes) {
         try {
             promotionService.savePromotion(promotion);
-            redirectAttributes.addFlashAttribute("success", "Update promotion successfully!");
+            redirectAttributes.addFlashAttribute("notification", "Update promotion successfully!");
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Failed to update promotion");
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update promotion");
         }
         return "redirect:/promotion";
     }
@@ -87,9 +87,9 @@ public class PromotionController {
     public String deletePromotion(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
         try {
             promotionService.deletePromotion(id);
-            redirectAttributes.addFlashAttribute("success", "Deleted promotion successfully!");
+            redirectAttributes.addFlashAttribute("notification", "Deleted promotion successfully!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to delete promotion");
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete promotion");
         }
         return "redirect:/promotion";
     }
@@ -103,9 +103,9 @@ public class PromotionController {
             PromotionStatus newStatus = PromotionStatus.valueOf(status);
             promotionService.updateStatus(id, newStatus);
             String msg = (newStatus == PromotionStatus.ACTIVE) ? "Activated promotion!" : "Inactivated promotion!";
-            redirectAttributes.addFlashAttribute("success", msg);
+            redirectAttributes.addFlashAttribute("notification", msg);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to update status");
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update status");
         }
         return "redirect:/promotion";
     }
@@ -146,12 +146,12 @@ public class PromotionController {
             RedirectAttributes redirectAttributes) {
         try {
             promotionDetailService.addPromotionDetail(promotionId, productId, minQuantity, discountValue, discountType);
-            redirectAttributes.addFlashAttribute("success", "Successfully added a promotional product!");
+            redirectAttributes.addFlashAttribute("notification", "Successfully added a promotional product!");
         } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Error when adding promotional products");
+            redirectAttributes.addFlashAttribute("errorMessage", "Error when adding promotional products");
         }
         return "redirect:/promotion/detail?id=" + promotionId;
     }
@@ -168,12 +168,12 @@ public class PromotionController {
             RedirectAttributes redirectAttributes) {
         try {
             promotionDetailService.updatePromotionDetail(promoDetailId, promotionId, productId, minQuantity, discountValue, discountType);
-            redirectAttributes.addFlashAttribute("success", "Promotional product update successful!");
+            redirectAttributes.addFlashAttribute("notification", "Promotional product update successful!");
         } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Error when updating promotional products");
+            redirectAttributes.addFlashAttribute("errorMessage", "Error when updating promotional products");
         }
         return "redirect:/promotion/detail?id=" + promotionId;
     }
@@ -186,9 +186,9 @@ public class PromotionController {
             RedirectAttributes redirectAttributes) {
         try {
             promotionDetailService.deletePromotionDetail(detailId);
-            redirectAttributes.addFlashAttribute("success", "Product successfully removed from promotion!");
+            redirectAttributes.addFlashAttribute("notification", "Product successfully removed from promotion!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Error when deleting a product");
+            redirectAttributes.addFlashAttribute("errorMessage", "Error when deleting a product");
         }
         return "redirect:/promotion/detail?id=" + promotionId;
     }
