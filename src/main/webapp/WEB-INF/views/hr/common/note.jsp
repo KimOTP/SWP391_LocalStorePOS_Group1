@@ -23,17 +23,19 @@
 
 <div class="profile-wrapper">
 
-    <c:choose>
-        <c:when test="${account.employee.role == 'MANAGER'}">
-            <a href="${pageContext.request.contextPath}/hr/manager_profile"
-               class="back-link">← Back To Profile</a>
-        </c:when>
+    <div class="text-end mb-4">
+        <c:choose>
+            <c:when test="${account.employee.role == 'MANAGER'}">
+                <a href="${pageContext.request.contextPath}/hr/manager_profile"
+                   class="back-link">← Back To Profile</a>
+            </c:when>
 
-        <c:otherwise>
-            <a href="${pageContext.request.contextPath}/hr/cashier_profile"
-               class="back-link">← Back To Profile</a>
-        </c:otherwise>
-    </c:choose>
+            <c:otherwise>
+                <a href="${pageContext.request.contextPath}/hr/cashier_profile"
+                   class="back-link">← Back To Profile</a>
+            </c:otherwise>
+        </c:choose>
+    </div>
 
     <!-- PAGE -->
     <div class="change-shift-page">
@@ -55,14 +57,36 @@
 
             <!-- SHIFT -->
             <div class="info-label">Shift</div>
-            <div class="info-box">
-                <select name="shiftId" class="info-input">
+
+            <div class="info-box dropdown-custom">
+
+                <div class="dropdown-selected"
+                     onclick="toggleDropdown('shiftMenuForm')">
+
+                    <span id="selectedShiftForm">
+                        Select Shift
+                    </span>
+
+                    <span class="fa-solid fa-angle-down"></span>
+                </div>
+
+                <input type="hidden"
+                       name="shiftId"
+                       id="shiftFormInput">
+
+                <div id="shiftMenuForm" class="dropdown-menu">
+
                     <c:forEach var="s" items="${shifts}">
-                        <option value="${s.shiftId}">
+                        <div onclick="selectOption(
+                            '${s.shiftId}','${s.shiftName}',
+                            'selectedShiftForm','shiftFormInput','shiftMenuForm')">
+
                             ${s.shiftName}
-                        </option>
+                        </div>
                     </c:forEach>
-                </select>
+
+                </div>
+
             </div>
 
             <!-- TITLE -->
@@ -110,6 +134,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="<c:url value='/resources/js/manage/dropdown.js'/>"></script>
 </body>
 </html>

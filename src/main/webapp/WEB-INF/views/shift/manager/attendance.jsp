@@ -44,26 +44,104 @@
                 <!-- Shift -->
                 <div class="col-md-3">
                     <div class="info-label">Shift</div>
-                    <div class="info-box">
-                        <select class="info-input" name="shift">
-                            <option value="">All</option>
-                            <option value="Morning" ${param.shift == 'Morning' ? 'selected' : ''}>Morning</option>
-                            <option value="Afternoon" ${param.shift == 'Afternoon' ? 'selected' : ''}>Afternoon</option>
-                            <option value="Evening" ${param.shift == 'Evening' ? 'selected' : ''}>Evening</option>
-                        </select>
+
+                    <div class="info-box dropdown-custom">
+
+                        <div class="dropdown-selected"
+                             onclick="toggleDropdown('shiftMenu')">
+
+                            <span id="selectedShift">
+                                ${empty param.shift ? 'All' : param.shift}
+                            </span>
+
+                            <span class="fa-solid fa-angle-down"></span>
+                        </div>
+
+                        <input type="hidden"
+                               name="shift"
+                               id="shiftInput"
+                               value="${param.shift}">
+
+                        <div id="shiftMenu" class="dropdown-menu">
+
+                            <div onclick="selectOption(
+                                '','All',
+                                'selectedShift','shiftInput','shiftMenu')">
+                                All
+                            </div>
+
+                            <div onclick="selectOption(
+                                'Morning','Morning',
+                                'selectedShift','shiftInput','shiftMenu')">
+                                Morning
+                            </div>
+
+                            <div onclick="selectOption(
+                                'Afternoon','Afternoon',
+                                'selectedShift','shiftInput','shiftMenu')">
+                                Afternoon
+                            </div>
+
+                            <div onclick="selectOption(
+                                'Evening','Evening',
+                                'selectedShift','shiftInput','shiftMenu')">
+                                Evening
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
 
                 <!-- Status -->
                 <div class="col-md-3">
                     <div class="info-label">Status</div>
-                    <div class="info-box">
-                        <select class="info-input" name="status">
-                            <option value="">All</option>
-                            <option value="Normal" ${param.status == 'Normal' ? 'selected' : ''}>Normal</option>
-                            <option value="Late" ${param.status == 'Late' ? 'selected' : ''}>Late</option>
-                            <option value="Early Leave" ${param.status == 'Early Leave' ? 'selected' : ''}>Early Leave</option>
-                        </select>
+
+                    <div class="info-box dropdown-custom">
+
+                        <div class="dropdown-selected"
+                             onclick="toggleDropdown('attendanceStatusMenu')">
+
+                            <span id="selectedAttendanceStatus">
+                                ${empty param.status ? 'All' : param.status}
+                            </span>
+
+                            <span class="fa-solid fa-angle-down"></span>
+                        </div>
+
+                        <input type="hidden"
+                               name="status"
+                               id="attendanceStatusInput"
+                               value="${param.status}">
+
+                        <div id="attendanceStatusMenu" class="dropdown-menu">
+
+                            <div onclick="selectOption(
+                                '','All',
+                                'selectedAttendanceStatus','attendanceStatusInput','attendanceStatusMenu')">
+                                All
+                            </div>
+
+                            <div onclick="selectOption(
+                                'Normal','Normal',
+                                'selectedAttendanceStatus','attendanceStatusInput','attendanceStatusMenu')">
+                                Normal
+                            </div>
+
+                            <div onclick="selectOption(
+                                'Late','Late',
+                                'selectedAttendanceStatus','attendanceStatusInput','attendanceStatusMenu')">
+                                Late
+                            </div>
+
+                            <div onclick="selectOption(
+                                'Early Leave','Early Leave',
+                                'selectedAttendanceStatus','attendanceStatusInput','attendanceStatusMenu')">
+                                Early Leave
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
 
@@ -113,7 +191,11 @@
 
                     <!-- CHECK IN -->
                     <td>
-                        <span class="view">${a.checkInTime.toString().replace('T',' ').substring(0,16)}</span>
+                        <span class="view">
+                        <c:if test="${a.checkInTime != null}">
+                            ${a.checkInTime.toString().replace('T',' ').substring(0,16)}
+                        </c:if>
+                        </span>
                         <input type="datetime-local"
                                class="edit d-none form-control form-control-sm"
                                id="checkin-${a.attendanceId}"
@@ -122,7 +204,11 @@
 
                     <!-- CHECK OUT -->
                     <td>
-                        <span class="view">${a.checkOutTime.toString().replace('T',' ').substring(0,16)}</span>
+                        <span class="view">
+                        <c:if test="${a.checkOutTime != null}">
+                            ${a.checkOutTime.toString().replace('T',' ').substring(0,16)}
+                        </c:if>
+                        </span>
                         <input type="datetime-local"
                                class="edit d-none form-control form-control-sm"
                                id="checkout-${a.attendanceId}"
@@ -132,31 +218,27 @@
                     <td>
                         <c:choose>
 
-                            <c:when test="${a.autoCheckout}">
-                                <span class="text-danger">Expired</span>
-                            </c:when>
-
                             <c:when test="${a.isLate and a.isEarlyLeave}">
-                                <span class="text-warning">Late, Early Leave</span>
+                                <span class="status-pending">Late, Early Leave</span>
                             </c:when>
 
                             <c:when test="${a.isLate}">
-                                <span class="text-warning">Late</span>
+                                <span class="status-deactive">Late</span>
                             </c:when>
 
                             <c:when test="${a.isEarlyLeave}">
-                                <span class="text-warning">Early Leave</span>
+                                <span class="status-pending">Early Leave</span>
                             </c:when>
 
                             <c:otherwise>
-                                <span class="text-success">Normal</span>
+                                <span class="status-active">Normal</span>
                             </c:otherwise>
 
                         </c:choose>
                     </td>
 
                     <td>
-                        <button class="btn btn-success btn-sm"
+                        <button class="btn-action btn-edit"
                                 onclick="editRow(${a.attendanceId})"
                                 id="editBtn-${a.attendanceId}">
                             Edit
@@ -172,60 +254,95 @@
         <!-- PAGINATION -->
         <div class="d-flex justify-content-center gap-2 mt-4">
 
-            <c:if test="${attendancePage.totalPages > 1}">
+        <c:if test="${attendancePage.totalPages > 1}">
 
-                <!-- LIMIT 5 PAGES -->
-                <c:set var="startPage" value="${currentPage - 2}" />
-                <c:set var="endPage" value="${currentPage + 2}" />
+            <!-- LIMIT 5 PAGES -->
+            <c:set var="startPage" value="${currentPage - 2}" />
+            <c:set var="endPage" value="${currentPage + 2}" />
 
-                <c:if test="${startPage < 0}">
-                    <c:set var="startPage" value="0"/>
-                </c:if>
-
-                <c:if test="${endPage >= attendancePage.totalPages}">
-                    <c:set var="endPage" value="${attendancePage.totalPages - 1}"/>
-                </c:if>
-
-                <!-- << FIRST -->
-                <c:if test="${currentPage > 0}">
-                    <a href="?page=0"
-                       class="btn btn-light">
-                        <<
-                    </a>
-                </c:if>
-
-                <!-- < PREVIOUS -->
-                <c:if test="${currentPage > 0}">
-                    <a href="?page=${currentPage - 1}"
-                       class="btn btn-light">
-                        <
-                    </a>
-                </c:if>
-
-                <!-- PAGE NUMBERS -->
-                <c:forEach begin="${startPage}" end="${endPage}" var="i">
-                    <a href="?page=${i}"
-                       class="btn ${i == currentPage ? 'page-active' : 'btn-light'}">
-                       ${i + 1}
-                    </a>
-                </c:forEach>
-
-                <!-- > NEXT -->
-                <c:if test="${currentPage < attendancePage.totalPages - 1}">
-                    <a href="?page=${currentPage + 1}"
-                       class="btn btn-light">
-                        >
-                    </a>
-                </c:if>
-
-                <!-- >> LAST -->
-                <c:if test="${currentPage < attendancePage.totalPages - 1}">
-                    <a href="?page=${attendancePage.totalPages - 1}"
-                       class="btn btn-light">
-                        >>
-                    </a>
-                </c:if>
+            <c:if test="${startPage < 0}">
+                <c:set var="startPage" value="0"/>
             </c:if>
+
+            <c:if test="${endPage >= attendancePage.totalPages}">
+                <c:set var="endPage" value="${attendancePage.totalPages - 1}"/>
+            </c:if>
+
+            <!-- << FIRST -->
+            <c:if test="${currentPage > 0}">
+                <c:url var="firstUrl" value="/shift/attendance">
+                    <c:param name="page" value="0"/>
+                    <c:param name="fullName" value="${param.fullName}"/>
+                    <c:param name="shift" value="${param.shift}"/>
+                    <c:param name="status" value="${param.status}"/>
+                </c:url>
+
+                <a href="${firstUrl}" class="btn btn-light">
+                    <<
+                </a>
+            </c:if>
+
+            <!-- < PREVIOUS -->
+            <c:if test="${currentPage > 0}">
+                <c:url var="prevUrl" value="/shift/attendance">
+                    <c:param name="page" value="${currentPage - 1}"/>
+                    <c:param name="fullName" value="${param.fullName}"/>
+                    <c:param name="shift" value="${param.shift}"/>
+                    <c:param name="status" value="${param.status}"/>
+                </c:url>
+
+                <a href="${prevUrl}" class="btn btn-light">
+                    <
+                </a>
+            </c:if>
+
+            <!-- PAGE NUMBERS -->
+            <c:forEach begin="${startPage}" end="${endPage}" var="i">
+
+                <c:url var="pageUrl" value="/shift/attendance">
+                    <c:param name="page" value="${i}"/>
+                    <c:param name="fullName" value="${param.fullName}"/>
+                    <c:param name="shift" value="${param.shift}"/>
+                    <c:param name="status" value="${param.status}"/>
+                </c:url>
+
+                <a href="${pageUrl}"
+                   class="btn ${i == currentPage ? 'page-active' : 'btn-light'}">
+                   ${i + 1}
+                </a>
+
+            </c:forEach>
+
+            <!-- > NEXT -->
+            <c:if test="${currentPage < attendancePage.totalPages - 1}">
+                <c:url var="nextUrl" value="/shift/attendance">
+                    <c:param name="page" value="${currentPage + 1}"/>
+                    <c:param name="fullName" value="${param.fullName}"/>
+                    <c:param name="shift" value="${param.shift}"/>
+                    <c:param name="status" value="${param.status}"/>
+                </c:url>
+
+                <a href="${nextUrl}" class="btn btn-light">
+                    >
+                </a>
+            </c:if>
+
+            <!-- >> LAST -->
+            <c:if test="${currentPage < attendancePage.totalPages - 1}">
+                <c:url var="lastUrl" value="/shift/attendance">
+                    <c:param name="page" value="${attendancePage.totalPages - 1}"/>
+                    <c:param name="fullName" value="${param.fullName}"/>
+                    <c:param name="shift" value="${param.shift}"/>
+                    <c:param name="status" value="${param.status}"/>
+                </c:url>
+
+                <a href="${lastUrl}" class="btn btn-light">
+                    >>
+                </a>
+            </c:if>
+
+        </c:if>
+
         </div>
 
         <!-- ACTION -->
@@ -245,6 +362,7 @@
     const contextPath = "${pageContext.request.contextPath}";
 </script>
 <script src="<c:url value='/resources/js/manage/attendance.js'/>"></script>
+<script src="<c:url value='/resources/js/manage/dropdown.js'/>"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
