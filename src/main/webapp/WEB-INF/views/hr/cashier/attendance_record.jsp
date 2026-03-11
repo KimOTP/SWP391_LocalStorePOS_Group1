@@ -71,16 +71,16 @@
                         <td>
                             <c:choose>
                                 <c:when test="${att.isLate and att.isEarlyLeave}">
-                                    <span class="text-warning">Late, Early Leave</span>
+                                    <span class="status-pending">Late, Early Leave</span>
                                 </c:when>
                                 <c:when test="${att.isLate}">
-                                    <span class="text-danger">Late</span>
+                                    <span class="status-deactive">Late</span>
                                 </c:when>
                                 <c:when test="${att.isEarlyLeave}">
-                                    <span class="text-warning">Early Leave</span>
+                                    <span class="status-pending">Early Leave</span>
                                 </c:when>
                                 <c:otherwise>
-                                    <span class="text-success">Normal</span>
+                                    <span class="status-active">Normal</span>
                                 </c:otherwise>
                             </c:choose>
                         </td>
