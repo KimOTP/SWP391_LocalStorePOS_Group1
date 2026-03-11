@@ -41,7 +41,7 @@
                     </div>
                     <div class="stat-card-icon stat-icon-import"><i class="fa-solid fa-file-import"></i></div>
                 </div>
-                <div class="stat-sub">Tổng giá trị hàng nhập</div>
+                <div class="stat-sub">Total value of stock-in product</div>
             </div>
         </div>
 
@@ -54,7 +54,7 @@
                     </div>
                     <div class="stat-card-icon stat-icon-export"><i class="fa-solid fa-file-export"></i></div>
                 </div>
-                <div class="stat-sub">Tổng giá trị hàng xuất</div>
+                <div class="stat-sub">Total value of stock-out product</div>
             </div>
         </div>
 
@@ -67,7 +67,7 @@
                     </div>
                     <div class="stat-card-icon stat-icon-value"><i class="fa-solid fa-warehouse"></i></div>
                 </div>
-                <div class="stat-sub">Giá trị hàng tại kho</div>
+                <div class="stat-sub">Products value remaining</div>
             </div>
         </div>
 
@@ -80,7 +80,7 @@
                     </div>
                     <div class="stat-card-icon stat-icon-alert"><i class="fa-solid fa-triangle-exclamation"></i></div>
                 </div>
-                <div class="stat-sub">Dưới mức tối thiểu</div>
+                <div class="stat-sub">Products under minimum threshold</div>
             </div>
         </div>
     </div>
