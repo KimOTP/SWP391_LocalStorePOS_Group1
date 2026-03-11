@@ -118,23 +118,38 @@
                 <input type="text" class="search-input" id="searchInput"
                        placeholder="Search for receipt" oninput="filterTable()">
             </div>
-            <select class="filter-select" id="statusFilter" onchange="filterTable()">
-                <option value="">All states</option>
-                <option value="PENDING_PAYMENT">Pending</option>
-                <option value="PAID">Completed</option>
-                <option value="CANCELLED">Cancelled</option>
-            </select>
-            <select class="filter-select" id="paymentFilter" onchange="filterTable()">
-                <option value="">All payment methods</option>
-                <%-- Values match PaymentMethod enum .name() --%>
-                <option value="CASH">Cashing</option>
-                <option value="BANKING">Banking</option>
-                <option value="QR">QR</option>
-            </select>
-            <button class="date-range-btn" onclick="openDatePicker()">
-                <i class="fa-regular fa-calendar-days"></i>
-                Select a time range
-            </button>
+
+            <%-- Custom dropdown Payment giống pos.css --%>
+            <div class="pos-dropdown" id="paymentDropdown">
+                <div class="pos-dropdown-selected" onclick="toggleDropdown('paymentDropdown')">
+                    <span id="paymentDropdownLabel">All payment methods</span>
+                    <div class="pos-dropdown-arrow"></div>
+                </div>
+                <div class="pos-dropdown-menu">
+                    <div class="pos-dropdown-item" onclick="selectPayment('', 'All payment methods')">All payment methods</div>
+                    <div class="pos-dropdown-item" onclick="selectPayment('CASH', 'Cashing')">Cashing</div>
+                    <div class="pos-dropdown-item" onclick="selectPayment('BANKING', 'Banking')">Banking</div>
+                    <div class="pos-dropdown-item" onclick="selectPayment('QR', 'QR')">QR</div>
+                </div>
+            </div>
+            <input type="hidden" id="paymentFilter" value="">
+
+            <div class="date-range-wrap">
+                <button class="date-range-btn" id="dateRangeBtn" onclick="toggleDatePicker(event)">
+                    <i class="fa-regular fa-calendar-days"></i>
+                    <span id="dateRangeLabel">Select a time range</span>
+                </button>
+                <div class="date-picker-popup" id="datePickerPopup">
+                    <label>From date</label>
+                    <input type="date" id="dateFrom">
+                    <label>To date</label>
+                    <input type="date" id="dateTo">
+                    <div class="date-picker-actions">
+                        <button class="btn-clear" onclick="clearDateFilter()">Clear</button>
+                        <button class="btn-apply" onclick="applyDateFilter()">Apply</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

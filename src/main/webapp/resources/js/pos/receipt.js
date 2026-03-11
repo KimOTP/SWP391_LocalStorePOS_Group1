@@ -1,11 +1,5 @@
 /* ============================================================
    RECEIPT.JS – Manage Receipt page logic
-   Entity mapping:
-     PosReceipt  : receiptNumber, printedAt, printedBy (Employee)
-     Order       : createdAt, totalAmount, discountAmount,
-                   paymentMethod (PaymentMethod enum),
-                   orderStatus.orderStatusName (OrderStatusName enum),
-                   employee (cashier), customer (nullable)
    ============================================================ */
 
 /* ============================================================
@@ -22,13 +16,6 @@ function toggleMenu(btn) {
     menu.classList.toggle('open');
     btn.classList.toggle('active');
 }
-
-document.addEventListener('click', function (e) {
-    if (!e.target.closest('.action-wrap')) {
-        document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('open'));
-        document.querySelectorAll('.btn-dots').forEach(b => b.classList.remove('active'));
-    }
-});
 
 /* ============================================================
    DETAIL MODAL
@@ -51,29 +38,19 @@ function viewDetail(receiptNumber) {
 }
 
 function populateModal(data) {
-    // Receipt information section
-    document.getElementById('detailCode').textContent    = data.receiptNumber || '—';
-    // Use order's createdAt as the creation date shown in modal
-    document.getElementById('detailDate').textContent    = data.createdAt     || data.printedAt || '—';
-    document.getElementById('detailStatus').textContent  = data.statusLabel   || '—';
-    // Cashier = Order.employee (returned as cashierName in the map)
-    document.getElementById('detailCashier').textContent = data.cashierName   || '—';
-
-    // Customer information section
+    document.getElementById('detailCode').textContent     = data.receiptNumber || '—';
+    document.getElementById('detailDate').textContent     = data.createdAt     || data.printedAt || '—';
+    document.getElementById('detailStatus').textContent   = data.statusLabel   || '—';
+    document.getElementById('detailCashier').textContent  = data.cashierName   || '—';
     document.getElementById('detailCustomer').textContent = data.customerName  || 'Guest';
     document.getElementById('detailPayment').textContent  = resolvePaymentLabel(data.paymentMethod);
-
-    // Payment summary
     document.getElementById('detailSubtotal').textContent = formatCurrency(data.subtotal);
     document.getElementById('detailDiscount').textContent = formatCurrency(data.discount);
-
-    // customerPayment / change not available in Order entity → show "—"
-    document.getElementById('detailPaid').textContent   = data.customerPayment != null
+    document.getElementById('detailPaid').textContent     = data.customerPayment != null
         ? formatCurrency(data.customerPayment) : '—';
-    document.getElementById('detailChange').textContent = data.change != null
+    document.getElementById('detailChange').textContent   = data.change != null
         ? formatCurrency(data.change) : '—';
 
-    // Order items
     const tbody = document.getElementById('detailItems');
     if (data.items && data.items.length > 0) {
         tbody.innerHTML = data.items.map(item => `
@@ -91,22 +68,16 @@ function populateModal(data) {
     }
 }
 
-// Fallback: read data already rendered in the table row
 function populateModalFromRow(receiptNumber) {
     const row = document.querySelector(`tr[data-code="${receiptNumber}"]`);
     if (!row) return;
-
     const cells = row.querySelectorAll('td');
-
     document.getElementById('detailCode').textContent     = receiptNumber;
     document.getElementById('detailDate').textContent     = cells[2]?.textContent.trim() || '—';
     document.getElementById('detailStatus').textContent   = resolveStatusLabel(row.dataset.status);
-    // cashier stored in data-cashier = r.order.employee.fullName
     document.getElementById('detailCashier').textContent  = row.dataset.cashier   || '—';
     document.getElementById('detailCustomer').textContent = row.dataset.customer  || 'Guest';
-    document.getElementById('detailPayment').textContent  =
-        resolvePaymentLabel(row.dataset.payment);
-
+    document.getElementById('detailPayment').textContent  = resolvePaymentLabel(row.dataset.payment);
     const amount = cells[5]?.textContent.trim() || '0';
     document.getElementById('detailSubtotal').textContent = amount + ' ₫';
     document.getElementById('detailDiscount').textContent = '0 ₫';
@@ -124,10 +95,6 @@ function closeModalOnBg(e) {
     if (e.target === document.getElementById('detailModal')) closeModal();
 }
 
-document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeModal();
-});
-
 /* ============================================================
    PRINT RECEIPT
    ============================================================ */
@@ -137,26 +104,35 @@ function printReceipt(receiptNumber) {
 }
 
 /* ============================================================
-   FILTER / SEARCH
+   FILTER / SEARCH – 1 hàm duy nhất, không duplicate
    ============================================================ */
 function filterTable() {
     const search  = document.getElementById('searchInput').value.toLowerCase().trim();
-    const status  = document.getElementById('statusFilter').value;   // e.g. "COMPLETED"
-    const payment = document.getElementById('paymentFilter').value;  // e.g. "CASH"
+    const payment = (document.getElementById('paymentFilter')?.value || '');
+    const from    = (document.getElementById('dateFrom')?.value || '');
+    const to      = (document.getElementById('dateTo')?.value   || '');
 
     document.querySelectorAll('#receiptTableBody tr[data-code]').forEach(row => {
         const code     = (row.dataset.code     || '').toLowerCase();
         const customer = (row.dataset.customer || '').toLowerCase();
         const cashier  = (row.dataset.cashier  || '').toLowerCase();
-        // data-status = orderStatus.orderStatusName (enum), data-payment = paymentMethod.name()
-        const st       = (row.dataset.status   || '');
         const pm       = (row.dataset.payment  || '');
+        const dateRaw  = (row.dataset.date     || ''); // dd/MM/yyyy
 
         const matchSearch  = !search  || code.includes(search) || customer.includes(search) || cashier.includes(search);
-        const matchStatus  = !status  || st === status;
         const matchPayment = !payment || pm === payment;
 
-        row.style.display = (matchSearch && matchStatus && matchPayment) ? '' : 'none';
+        let matchDate = true;
+        if ((from || to) && dateRaw) {
+            const parts = dateRaw.split('/');
+            if (parts.length === 3) {
+                const rowDate = parts[2] + '-' + parts[1] + '-' + parts[0];
+                if (from && rowDate < from) matchDate = false;
+                if (to   && rowDate > to)   matchDate = false;
+            }
+        }
+
+        row.style.display = (matchSearch && matchPayment && matchDate) ? '' : 'none';
     });
 }
 
@@ -179,12 +155,86 @@ function exportExcel() {
 }
 
 /* ============================================================
-   DATE RANGE PICKER (placeholder)
+   DATE RANGE PICKER
    ============================================================ */
-function openDatePicker() {
-    // TODO: integrate flatpickr or similar
-    alert('Date range picker – integrate your preferred date picker here.');
+function toggleDatePicker(e) {
+    e.stopPropagation();
+    document.querySelectorAll('.pos-dropdown.active').forEach(el => el.classList.remove('active'));
+    document.getElementById('datePickerPopup').classList.toggle('open');
 }
+
+function applyDateFilter() {
+    const from = document.getElementById('dateFrom').value;
+    const to   = document.getElementById('dateTo').value;
+    if (from || to) {
+        const fromLabel = from ? formatDisplayDate(from) : '...';
+        const toLabel   = to   ? formatDisplayDate(to)   : '...';
+        document.getElementById('dateRangeLabel').textContent = fromLabel + ' – ' + toLabel;
+        document.getElementById('dateRangeBtn').style.borderColor = '#2563eb';
+        document.getElementById('dateRangeBtn').style.color = '#2563eb';
+    }
+    document.getElementById('datePickerPopup').classList.remove('open');
+    filterTable();
+}
+
+function clearDateFilter() {
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value   = '';
+    document.getElementById('dateRangeLabel').textContent = 'Select a time range';
+    document.getElementById('dateRangeBtn').style.borderColor = '';
+    document.getElementById('dateRangeBtn').style.color = '';
+    document.getElementById('datePickerPopup').classList.remove('open');
+    filterTable();
+}
+
+function formatDisplayDate(dateStr) {
+    const [y, m, d] = dateStr.split('-');
+    return d + '/' + m + '/' + y;
+}
+
+/* ============================================================
+   CUSTOM PAYMENT DROPDOWN
+   ============================================================ */
+function toggleDropdown(id) {
+    const dd = document.getElementById(id);
+    const isActive = dd.classList.contains('active');
+    document.querySelectorAll('.pos-dropdown.active').forEach(el => el.classList.remove('active'));
+    document.getElementById('datePickerPopup')?.classList.remove('open');
+    if (!isActive) dd.classList.add('active');
+}
+
+function selectPayment(value, label) {
+    document.getElementById('paymentFilter').value = value;
+    document.getElementById('paymentDropdownLabel').textContent = label;
+    document.getElementById('paymentDropdown').classList.remove('active');
+    filterTable();
+}
+
+/* ============================================================
+   GLOBAL CLICK – 1 listener duy nhất xử lý tất cả
+   ============================================================ */
+document.addEventListener('click', function(e) {
+    // Đóng action menu 3 chấm
+    if (!e.target.closest('.action-wrap')) {
+        document.querySelectorAll('.action-menu').forEach(m => m.classList.remove('open'));
+        document.querySelectorAll('.btn-dots').forEach(b => b.classList.remove('active'));
+    }
+    // Đóng payment dropdown
+    if (!e.target.closest('.pos-dropdown')) {
+        document.querySelectorAll('.pos-dropdown.active').forEach(el => el.classList.remove('active'));
+    }
+    // Đóng date picker popup
+    const popup = document.getElementById('datePickerPopup');
+    const wrap  = document.querySelector('.date-range-wrap');
+    if (popup && wrap && !wrap.contains(e.target)) {
+        popup.classList.remove('open');
+    }
+});
+
+/* Đóng modal bằng Escape */
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+});
 
 /* ============================================================
    HELPERS
@@ -203,9 +253,9 @@ function resolvePaymentLabel(method) {
 function resolveStatusLabel(status) {
     if (!status) return '—';
     const map = {
-        COMPLETED: 'Đã thanh toán',
-        PENDING:   'Chờ xác nhận',
-        CANCELLED: 'Đã huỷ'
+        PAID:            'Đã thanh toán',
+        PENDING_PAYMENT: 'Chờ xác nhận',
+        CANCELLED:       'Đã huỷ'
     };
     return map[status.toUpperCase()] || status;
 }
