@@ -68,13 +68,13 @@
                         <td>
                             <c:choose>
                                 <c:when test="${req.status == 'Pending'}">
-                                    <span class="text-warning">Pending</span>
+                                    <span class="status-pending">Pending</span>
                                 </c:when>
                                 <c:when test="${req.status == 'Approved'}">
-                                    <span class="text-success">Approved</span>
+                                    <span class="status-active">Approved</span>
                                 </c:when>
                                 <c:when test="${req.status == 'Rejected'}">
-                                    <span class="text-danger">Rejected</span>
+                                    <span class="status-deactive">Rejected</span>
                                 </c:when>
                                 <c:otherwise>${req.status}</c:otherwise>
                             </c:choose>

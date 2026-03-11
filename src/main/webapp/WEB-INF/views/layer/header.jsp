@@ -136,6 +136,7 @@
         opacity: 1 !important;
     }
 
+/* ---------- NOTIFICATION ---------- */
     .notification-dropdown{
         width:320px;
         border-radius:12px;
@@ -153,11 +154,44 @@
     .notification-item{
         font-size:13px;
         padding:10px 16px;
+        max-width:300px;
+    }
+
+    .notification-item div{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .notification-item:hover{
         background:#f1f5f9;
     }
+
+    .notification-dropdown{
+        width:320px;
+        border-radius:12px;
+        padding:0;
+        max-height:420px;
+        overflow-y:auto;
+    }
+
+    /* notification chưa đọc */
+    .notification-unread{
+        background:#eff6ff;
+        border-left:3px solid #3b82f6;
+        font-weight:600;
+    }
+
+    /* chấm xanh */
+    .unread-dot{
+        width:7px;
+        height:7px;
+        background:#3b82f6;
+        border-radius:50%;
+        display:inline-block;
+        margin-right:6px;
+    }
+
 </style>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top" style="height: 70px;">
@@ -195,10 +229,15 @@
 
                 <c:forEach var="n" items="${todayNotifications}">
                 <li>
-                    <a class="dropdown-item notification-item"
+                    <a class="dropdown-item notification-item ${!n.isRead ? 'notification-unread' : ''}"
                        href="/hr/notification/read/${n.notificationId}">
 
-                        <div class="fw-semibold">${n.title}</div>
+                        <div class="fw-semibold">
+                            <c:if test="${!n.isRead}">
+                                <span class="unread-dot"></span>
+                            </c:if>
+                            ${n.title}
+                        </div>
                         <div class="text-muted small">${n.message}</div>
 
                     </a>
@@ -212,10 +251,16 @@
 
                 <c:forEach var="n" items="${oldNotifications}">
                 <li>
-                    <a class="dropdown-item notification-item"
+                    <a class="dropdown-item notification-item ${!n.isRead ? 'notification-unread' : ''}"
                        href="/hr/notification/read/${n.notificationId}">
 
-                        <div>${n.title}</div>
+                        <div>
+                            <c:if test="${!n.isRead}">
+                                <span class="unread-dot"></span>
+                            </c:if>
+                            ${n.title}
+                        </div>
+
                         <div class="text-muted small">${n.message}</div>
 
                     </a>
@@ -268,8 +313,8 @@
                 </li>
                 <li>
                     <a class="dropdown-item text-danger"
-                       href="${pageContext.request.contextPath}/auth/logout"
-                       onclick="return confirm('Are you sure you want to logout?')">
+                       href="#"
+                       onclick="confirmLogout()">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
                     </a>
                 </li>
@@ -329,4 +374,48 @@
             window.history.replaceState({}, document.title, newUrl);
         }
     });
+</script>
+
+<script>
+function confirmLogout() {
+
+    Swal.fire({
+        title: "Log out of your account?",
+        text: "You will need to sign in again to access the system.",
+        icon: "warning",
+        iconColor: "#f59e0b",
+
+        showCancelButton: true,
+
+        confirmButtonText: "Logout",
+        cancelButtonText: "Cancel",
+
+        confirmButtonColor: "#ef4444",
+        cancelButtonColor: "#e5e7eb",
+
+        reverseButtons: true,
+
+        customClass: {
+            popup: "rounded-4 shadow-lg"
+        },
+
+        showClass: {
+            popup: "animate__animated animate__fadeInDown"
+        },
+        hideClass: {
+            popup: "animate__animated animate__fadeOutUp"
+        }
+
+    }).then((result) => {
+
+        if (result.isConfirmed) {
+
+            window.location.href =
+            "${pageContext.request.contextPath}/auth/logout";
+
+        }
+
+    });
+
+}
 </script>

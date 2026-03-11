@@ -64,21 +64,48 @@
             <div class="col-md-6">
 
                 <div class="info-label">Role</div>
-                <div class="info-box">
-                    <select class="info-input" name="role">
-                        <option value="CASHIER"
-                            ${employee.role == 'CASHIER' ? 'selected' : ''}>
+
+                <div class="info-box dropdown-custom">
+
+                    <div class="dropdown-selected"
+                         onclick="toggleDropdown('roleMenuEdit')">
+
+                        <span id="selectedRoleEdit">
+
+                            ${employee.role}
+
+                        </span>
+
+                        <span class="fa-solid fa-angle-down"></span>
+                    </div>
+
+                    <input type="hidden"
+                           name="role"
+                           id="roleInputEdit"
+                           value="${employee.role}">
+
+                    <div id="roleMenuEdit" class="dropdown-menu">
+
+                        <div onclick="selectOptionNoSubmit(
+                            'CASHIER','CASHIER',
+                            'selectedRoleEdit','roleInputEdit','roleMenuEdit')">
                             CASHIER
-                        </option>
-                        <option value="MANAGER"
-                            ${employee.role == 'MANAGER' ? 'selected' : ''}>
+                        </div>
+
+                        <div onclick="selectOptionNoSubmit(
+                            'MANAGER','MANAGER',
+                            'selectedRoleEdit','roleInputEdit','roleMenuEdit')">
                             MANAGER
-                        </option>
-                        <option value="INVENTORY STAFF"
-                            ${employee.role == 'INVENTORY STAFF' ? 'selected' : ''}>
+                        </div>
+
+                        <div onclick="selectOptionNoSubmit(
+                            'INVENTORY STAFF','INVENTORY STAFF',
+                            'selectedRoleEdit','roleInputEdit','roleMenuEdit')">
                             INVENTORY STAFF
-                        </option>
-                    </select>
+                        </div>
+
+                    </div>
+
                 </div>
 
                 <div class="info-label">E-Mail</div>
@@ -89,17 +116,42 @@
                 </div>
 
                 <div class="info-label">Status</div>
-                <div class="info-box">
-                    <select class="info-input" name="status">
-                        <option value="true"
-                            ${employee.status ? 'selected' : ''}>
+
+                <div class="info-box dropdown-custom">
+
+                    <div class="dropdown-selected"
+                         onclick="toggleDropdown('statusMenuEdit')">
+
+                        <span id="selectedStatusEdit">
+
+                            ${employee.status ? 'Active' : 'Deactive'}
+
+                        </span>
+
+                        <span class="fa-solid fa-angle-down"></span>
+                    </div>
+
+                    <input type="hidden"
+                           name="status"
+                           id="statusInputEdit"
+                           value="${employee.status}">
+
+                    <div id="statusMenuEdit" class="dropdown-menu">
+
+                        <div onclick="selectOptionNoSubmit(
+                            'true','Active',
+                            'selectedStatusEdit','statusInputEdit','statusMenuEdit')">
                             Active
-                        </option>
-                        <option value="false"
-                            ${!employee.status ? 'selected' : ''}>
+                        </div>
+
+                        <div onclick="selectOptionNoSubmit(
+                            'false','Deactive',
+                            'selectedStatusEdit','statusInputEdit','statusMenuEdit')">
                             Deactive
-                        </option>
-                    </select>
+                        </div>
+
+                    </div>
+
                 </div>
 
                 <div class="info-label">Account Creation Time</div>
@@ -116,6 +168,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="<c:url value='/resources/js/manage/dropdown.js'/>"></script>
 </body>
 </html>

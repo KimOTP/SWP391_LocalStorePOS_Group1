@@ -72,10 +72,10 @@
                         <div class="info-box">
                             <c:choose>
                                 <c:when test="${account.employee.status}">
-                                    <span style="color: green;">Active</span>
+                                    <span class="status-active">Active</span>
                                 </c:when>
                                 <c:otherwise>
-                                    <span style="color: red;">Deactive</span>
+                                    <span class="status-deactive">Deactive</span>
                                 </c:otherwise>
                             </c:choose>
                         </div>
@@ -143,6 +143,10 @@
                         </c:when>
 
                         <c:when test="${sessionScope.account.employee.role == 'CASHIER'}">
+                            <a href="/hr/cashier_profile" class="back-link">← Back To Profile</a>
+                        </c:when>
+
+                        <c:when test="${sessionScope.account.employee.role == 'INVENTORY STAFF'}">
                             <a href="/hr/cashier_profile" class="back-link">← Back To Profile</a>
                         </c:when>
 

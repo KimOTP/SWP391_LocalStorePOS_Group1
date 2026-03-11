@@ -1,5 +1,6 @@
 package com.swp391pos.repository;
 
+import com.swp391pos.entity.Note;
 import com.swp391pos.entity.Notification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
