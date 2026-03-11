@@ -90,7 +90,7 @@ public class ChangeShiftController {
         // Nếu vượt quá phạm vi
         if (workDate.isBefore(today) || workDate.isAfter(maxDate)) {
 
-            redirectAttributes.addFlashAttribute("error",
+            redirectAttributes.addFlashAttribute("errorMessage",
                     "You can only request within 7 days from today!");
 
             return "redirect:/shift/change_shift?date=" + today;
@@ -105,7 +105,7 @@ public class ChangeShiftController {
                         .orElse(null);
 
         if (attendance == null) {
-            redirectAttributes.addFlashAttribute("error",
+            redirectAttributes.addFlashAttribute("errorMessage",
                     "No shift found for this date!");
 
             return "redirect:/shift/change_shift?date=" + workDate;
@@ -117,7 +117,7 @@ public class ChangeShiftController {
                         .orElse(null);
 
         if (requestedShift == null) {
-            redirectAttributes.addFlashAttribute("error",
+            redirectAttributes.addFlashAttribute("errorMessage",
                     "Shift not found!");
 
             return "redirect:/shift/change_shift?date=" + workDate;
@@ -126,7 +126,7 @@ public class ChangeShiftController {
         if (attendance.getShift().getShiftId()
                 .equals(requestedShift.getShiftId())) {
 
-            redirectAttributes.addFlashAttribute("error",
+            redirectAttributes.addFlashAttribute("errorMessage",
                     "You are already assigned to this shift!");
 
             return "redirect:/shift/change_shift?date=" + workDate;
@@ -142,7 +142,7 @@ public class ChangeShiftController {
 
         shiftChangeRequestRepository.save(request);
 
-        redirectAttributes.addFlashAttribute("success",
+        redirectAttributes.addFlashAttribute("notification",
                 "Request sent successfully!");
 
         return "redirect:/shift/change_shift?date=" + workDate;

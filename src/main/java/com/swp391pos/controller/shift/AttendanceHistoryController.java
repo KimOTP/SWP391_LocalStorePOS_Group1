@@ -55,7 +55,7 @@ public class AttendanceHistoryController {
             mappedStatus = "NORMAL";
         }
 
-        Page<Attendance> attendancePage = attendanceRepository.searchAttendance(
+        Page<Attendance> attendancePage = attendanceRepository.searchAttendance1(
                 fullName,
                 shift,
                 fromDate,

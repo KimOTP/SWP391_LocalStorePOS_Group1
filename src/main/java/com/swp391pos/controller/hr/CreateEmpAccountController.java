@@ -42,11 +42,11 @@ public class CreateEmpAccountController {
         model.addAttribute("role", role);
 
         if (!result.equals("success")) {
-            model.addAttribute("error", result);
+            model.addAttribute("errorMessage", result);
             return "hr/manager/create_emp_account";
         }
 
-        model.addAttribute("success", "Create Successfully!");
+        model.addAttribute("notification", "Create Successfully!");
         return "hr/manager/create_emp_account";
     }
 }
