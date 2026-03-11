@@ -78,17 +78,17 @@ public class LoginController {
         String role = account.getEmployee().getRole();
 
 //------------------------------------------------------------------------------------------------------------------
-//        // ===== CASHIER CHỈ LOGIN 1 LẦN / NGÀY =====
-//        if (role.equals("CASHIER") && account.getLastLogin() != null) {
-//
-//            LocalDate lastLoginDate = account.getLastLogin().toLocalDate();
-//            LocalDate today = LocalDate.now();
-//
-//            if (lastLoginDate.equals(today)) {
-//                model.addAttribute("error", "Cashier can only login once per day.");
-//                return "auth/login";
-//            }
-//        }
+        // ===== CASHIER CHỈ LOGIN 1 LẦN / NGÀY =====
+        if (role.equals("CASHIER") && account.getLastLogin() != null) {
+
+            LocalDate lastLoginDate = account.getLastLogin().toLocalDate();
+            LocalDate today = LocalDate.now();
+
+            if (lastLoginDate.equals(today)) {
+                model.addAttribute("error", "Cashier can only login once per day.");
+                return "auth/login";
+            }
+        }
 //------------------------------------------------------------------------------------------------------------------
         //Lấy thời gian login cũ
         LocalDateTime previousLogin = account.getLastLogin();
