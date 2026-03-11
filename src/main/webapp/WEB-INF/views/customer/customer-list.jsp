@@ -28,7 +28,7 @@
             <small class="text-muted">Manage customer data and loyalty points</small>
         </div>
         <div class="d-flex gap-2">
-            <button class="btn-add" style="background-color:#0B4984 !important;" onclick="openConfigModal()">
+            <button class="btn-add" style="background-color:#089ECC !important;" onclick="openConfigModal()">
                 <i class="fa-solid fa-gear"></i> Config Point
             </button>
             <button class="btn-add" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
