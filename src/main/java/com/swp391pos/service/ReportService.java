@@ -1,6 +1,7 @@
 package com.swp391pos.service;
 
 import com.swp391pos.entity.*;
+import com.swp391pos.enums.PaymentMethod;
 import com.swp391pos.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
@@ -25,7 +26,6 @@ public class ReportService {
     private final OrderRepository      orderRepository;
     private final OrderItemRepository  orderItemRepository;
     private final EmployeeRepository   employeeRepository;
-    private final PaymentRepository    paymentRepository;
 
     // ─────────────────────────────────────────────────────
     // Public API
@@ -51,7 +51,7 @@ public class ReportService {
     }
 
     public Map<String, Object> getReportByPaymentMethod(LocalDate startDate, LocalDate endDate,
-                                                        Order.PaymentMethod paymentMethod) {
+                                                        PaymentMethod paymentMethod) {
         LocalDateTime start = startDate.atStartOfDay();
         LocalDateTime end   = endDate.atTime(LocalTime.MAX);
         return buildReportData(fetchOrders(start, end, null, paymentMethod));
@@ -155,7 +155,7 @@ public class ReportService {
                         o.getEmployee() != null ? o.getEmployee().getFullName() : "—");
                 String pm = "—";
                 if (o.getPaymentMethod() != null) {
-                    pm = o.getPaymentMethod() == Order.PaymentMethod.CASH ? "Tiền mặt" : "Chuyển khoản";
+                    pm = o.getPaymentMethod() == PaymentMethod.CASH ? "Tiền mặt" : "Chuyển khoản";
                 }
                 row.createCell(3).setCellValue(pm);
 
@@ -187,7 +187,7 @@ public class ReportService {
     // ─────────────────────────────────────────────────────
 
     private List<Order> fetchOrders(LocalDateTime start, LocalDateTime end,
-                                    Integer employeeId, Order.PaymentMethod paymentMethod) {
+                                    Integer employeeId, PaymentMethod paymentMethod) {
         return orderRepository.findAll().stream()
                 .filter(o -> o.getCreatedAt() != null
                         && !o.getCreatedAt().isBefore(start)

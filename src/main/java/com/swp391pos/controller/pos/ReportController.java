@@ -1,7 +1,7 @@
 package com.swp391pos.controller.pos;
 
 import com.swp391pos.entity.Employee;
-import com.swp391pos.entity.Order;
+import com.swp391pos.enums.PaymentMethod;
 import com.swp391pos.service.ReportService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -91,7 +91,7 @@ public class ReportController {
             @RequestParam String endDate,
             @RequestParam String paymentMethod) {
         try {
-            Order.PaymentMethod method = Order.PaymentMethod.valueOf(paymentMethod.toUpperCase());
+            PaymentMethod method = PaymentMethod.valueOf(paymentMethod.toUpperCase());
             return successResponse(
                     reportService.getReportByPaymentMethod(
                             LocalDate.parse(startDate), LocalDate.parse(endDate), method));

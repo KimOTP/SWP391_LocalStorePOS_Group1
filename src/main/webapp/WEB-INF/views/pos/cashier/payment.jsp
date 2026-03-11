@@ -111,7 +111,7 @@
                                oninput="calcChange(this.value)">
                     </div>
                     <div class="pay-field-group">
-                        <label class="pay-label">Change (VNDI):</label>
+                        <label class="pay-label">Change (VND):</label>
                         <input type="text" class="pay-input pay-input-readonly" id="changeAmount"
                                readonly value="0">
                     </div>
