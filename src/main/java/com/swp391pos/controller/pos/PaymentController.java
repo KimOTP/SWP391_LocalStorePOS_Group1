@@ -7,6 +7,8 @@ import com.swp391pos.entity.Order;
 import com.swp391pos.entity.OrderItem;
 import com.swp391pos.entity.OrderStatus;
 import com.swp391pos.entity.Payment;
+import com.swp391pos.entity.PosReceipt;
+import com.swp391pos.enums.OrderStatusName;
 import com.swp391pos.enums.PaymentMethod;
 import com.swp391pos.enums.PaymentStatus;
 import com.swp391pos.service.*;
@@ -37,6 +39,7 @@ public class PaymentController {
     private final OrderItemService orderItemService;
     private final PosService posService;
     private final OrderStatusService orderStatusService;
+    private final PosReceiptService posReceiptService;
 
     /* ================================================================
        PAYMENT PAGE
@@ -86,14 +89,14 @@ public class PaymentController {
             Order order = orderService.findById(orderId);
 
             OrderStatus completed = orderStatusService.findByOrderStatusName(
-                    OrderStatus.OrderStatusName.valueOf("PAID"));
+                    OrderStatusName.valueOf("PAID"));
             order.setOrderStatus(completed);
             order.setPaidAt(LocalDateTime.now());
 
             // Map enums.PaymentMethod → Order.PaymentMethod để report đọc được
-            Order.PaymentMethod orderPayMethod = paymentMethod.equalsIgnoreCase("BANKING")
-                    ? Order.PaymentMethod.ONLINE
-                    : Order.PaymentMethod.CASH;
+            PaymentMethod orderPayMethod = paymentMethod.equalsIgnoreCase("BANKING")
+                    ? PaymentMethod.BANKING
+                    : PaymentMethod.CASH;
             order.setPaymentMethod(orderPayMethod);
             orderService.save(order);
 
@@ -105,6 +108,14 @@ public class PaymentController {
             payment.setAmount(BigDecimal.valueOf(totalPaid));
             payment.setPaidAt(LocalDateTime.now());
             paymentService.save(payment);
+
+            // Tạo PosReceipt sau khi thanh toán thành công
+            PosReceipt receipt = new PosReceipt();
+            receipt.setOrder(order);
+            receipt.setReceiptNumber("RCP-" + orderId + "-" + System.currentTimeMillis());
+            receipt.setPrintedAt(LocalDateTime.now());
+            receipt.setPrintedBy(order.getEmployee()); // cashier = người tạo order
+            posReceiptService.save(receipt);
 
             session.removeAttribute(SESSION_CART_ORDER_JSON);
 

@@ -1,5 +1,6 @@
 package com.swp391pos.entity;
 
+import com.swp391pos.enums.OrderStatusName;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -16,11 +17,5 @@ public class OrderStatus {
     @Column(name = "orderStatusName", nullable = false, length = 30)
     private OrderStatusName orderStatusName;
 
-    public enum OrderStatusName {
-        DRAFT,
-        PENDING_PAYMENT,
-        PAID,
-        CANCELLED
-    }
 
 }

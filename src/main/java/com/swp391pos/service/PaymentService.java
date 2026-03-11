@@ -5,11 +5,13 @@ import com.swp391pos.dto.PaymentResponse;
 import com.swp391pos.dto.WebhookPayload;
 import com.swp391pos.entity.Order;
 import com.swp391pos.entity.Payment;
+import com.swp391pos.entity.PosReceipt;
 import com.swp391pos.enums.PaymentMethod;
 import com.swp391pos.enums.PaymentStatus;
 import com.swp391pos.gateway.PaymentGateway;
 import com.swp391pos.repository.OrderRepository;
 import com.swp391pos.repository.PaymentRepository;
+import com.swp391pos.repository.PosReceiptRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +36,7 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
     private final PaymentGateway paymentGateway;
+    private final PosReceiptRepository posReceiptRepository;
 
     // -------------------------------------------------------------------------
     // CRUD cơ bản
@@ -145,6 +148,20 @@ public class PaymentService {
             if (order != null) {
                 order.setPaidAt(LocalDateTime.now());
                 orderRepository.save(order);
+
+                // Tạo PosReceipt cho thanh toán online (QR/Banking)
+                boolean receiptExists = posReceiptRepository
+                        .findByReceiptNumber("RCP-" + order.getOrderId() + "-ONLINE")
+                        .isPresent();
+                if (!receiptExists) {
+                    PosReceipt receipt = new PosReceipt();
+                    receipt.setOrder(order);
+                    receipt.setReceiptNumber("RCP-" + order.getOrderId() + "-" + System.currentTimeMillis());
+                    receipt.setPrintedAt(LocalDateTime.now());
+                    receipt.setPrintedBy(order.getEmployee());
+                    posReceiptRepository.save(receipt);
+                    log.info("[Webhook] PosReceipt created for orderId={}", order.getOrderId());
+                }
             }
         } else if (PaymentStatus.CANCELLED.name().equals(payload.getStatus())
                 || PaymentStatus.FAILED.name().equals(payload.getStatus())) {
