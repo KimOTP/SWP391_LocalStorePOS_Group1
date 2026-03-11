@@ -74,7 +74,7 @@ public class CustomerController {
         customerService.saveCustomer(customer);
 
         // Thông báo thành công
-        redirectAttributes.addFlashAttribute("success", "Successfully added a customer!");
+        redirectAttributes.addFlashAttribute("notification", "Successfully added a customer!");
 
         return "redirect:/customer";
     }
