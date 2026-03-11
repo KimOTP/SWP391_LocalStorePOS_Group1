@@ -77,31 +77,31 @@ public class NoteController {
 
         // CHECK SHIFT
         if (shiftId == null) {
-            redirect.addFlashAttribute("error", "Please select shift");
+            redirect.addFlashAttribute("errorMessage", "Please select shift!");
             return "redirect:/hr/note";
         }
 
         // CHECK TITLE EMPTY
         if (title == null || title.trim().isEmpty()) {
-            redirect.addFlashAttribute("error", "Title cannot be empty");
+            redirect.addFlashAttribute("errorMessage", "Title cannot be empty!");
             return "redirect:/hr/note";
         }
 
         // CHECK CONTENT EMPTY
         if (content == null || content.trim().isEmpty()) {
-            redirect.addFlashAttribute("error", "Content cannot be empty");
+            redirect.addFlashAttribute("errorMessage", "Content cannot be empty!");
             return "redirect:/hr/note";
         }
 
         // CHECK TITLE LENGTH
         if (title.length() > 255) {
-            redirect.addFlashAttribute("error", "Title is too long (max 255 characters)");
+            redirect.addFlashAttribute("errorMessage", "Title is too long (max 255 characters)!");
             return "redirect:/hr/note";
         }
 
         // CHECK CONTENT LENGTH
         if (content.length() > 255) {
-            redirect.addFlashAttribute("error", "Content is too long (max 255 characters)");
+            redirect.addFlashAttribute("errorMessage", "Content is too long (max 255 characters)!");
             return "redirect:/hr/note";
         }
 
@@ -135,7 +135,7 @@ public class NoteController {
             notificationRepository.save(noti);
         }
 
-        redirect.addFlashAttribute("success", "Send Successfully!");
+        redirect.addFlashAttribute("notification", "Send Successfully!");
 
         return "redirect:/hr/note";
     }
