@@ -8,11 +8,15 @@ import com.swp391pos.entity.Product;
 import com.swp391pos.repository.ComboDetailRepository;
 import com.swp391pos.repository.ComboRepository;
 import com.swp391pos.repository.ProductRepository;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -158,6 +162,52 @@ public class ComboService {
             e.printStackTrace();
             return false;
         }
+    }
+
+    // export to file exel
+    public void exportCombosToExcel(List<Combo> combos, HttpServletResponse response) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Combos");
+
+        // 1. Tạo Header (Dòng tiêu đề)
+        Row headerRow = sheet.createRow(0);
+        String[] columns = {"SKU", "Combo Name", "Include Products", "Total Price", "Status"};
+
+        // Style cho Header
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(true);
+        headerStyle.setFont(font);
+
+        for (int i = 0; i < columns.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(columns[i]);
+            cell.setCellStyle(headerStyle);
+        }
+
+        // 2. Đổ dữ liệu từ danh sách combos vào các dòng tiếp theo
+        int rowIdx = 1;
+        for (Combo c : combos) {
+            Row row = sheet.createRow(rowIdx++);
+            row.createCell(0).setCellValue(c.getComboId());
+            row.createCell(1).setCellValue(c.getComboName());
+
+            StringBuilder productsInfo = new StringBuilder();
+            for (ComboDetail detail : c.getComboDetails()) {
+                if (productsInfo.length() > 0) productsInfo.append(", ");
+                productsInfo.append(detail.getProduct().getProductName())
+                        .append(" x")
+                        .append(detail.getQuantity());
+            }
+            row.createCell(2).setCellValue(productsInfo.toString());
+
+            row.createCell(3).setCellValue(c.getTotalPrice().toString());
+            row.createCell(4).setCellValue(c.getStatusCombo().toString());
+        }
+
+        // 3. Xuất file về trình duyệt
+        workbook.write(response.getOutputStream());
+        workbook.close();
     }
 
     // --- Các hàm phục vụ thống kê (Stat Cards) ---
