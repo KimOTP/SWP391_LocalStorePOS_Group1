@@ -1,0 +1,260 @@
+/* Import base styles */
+@import url('../product/product-manage.css');
+
+/* =============================================
+   Combo Detail Modal Styles
+   ============================================= */
+
+.combo-detail-wrapper {
+    display: flex !important;
+    gap: 0 !important;
+    min-height: 420px !important;
+}
+
+/* ---- Left Column: Image ---- */
+.combo-detail-image-col {
+    flex: 0 0 42% !important;
+    background-color: #f8fafc !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 32px !important;
+    border-right: 1px solid #f1f5f9 !important;
+}
+
+.combo-detail-image-box {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 300px !important;
+    aspect-ratio: 1 / 1 !important;
+}
+
+.combo-detail-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 14px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07) !important;
+}
+
+/* ---- Right Column: Info ---- */
+.combo-detail-info-col {
+    flex: 1 !important;
+    padding: 10px 28px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    overflow-y: auto !important;
+}
+
+/* ID + badge row */
+.combo-detail-meta {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin-bottom: 10px !important;
+}
+
+.combo-detail-id-badge {
+    background: rgba(99, 102, 241, 0.08) !important;
+    color: #6366f1 !important;
+    padding: 4px 12px !important;
+    border-radius: 999px !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+}
+
+.combo-detail-sku {
+    color: #94a3b8 !important;
+    font-size: 0.82rem !important;
+    font-family: 'Monaco', 'Consolas', monospace !important;
+}
+
+/* Combo name */
+.combo-detail-name {
+    font-size: 1.6rem !important;
+    font-weight: 800 !important;
+    color: #1e293b !important;
+    line-height: 1.2 !important;
+    margin-bottom: 12px !important;
+}
+
+/* Price */
+.combo-detail-price {
+    font-size: 1.9rem !important;
+    font-weight: 800 !important;
+    color: #059669 !important;
+    margin-bottom: 18px !important;
+}
+
+/* Divider */
+.combo-detail-divider {
+    width: 100% !important;
+    height: 1px !important;
+    background: #f1f5f9 !important;
+    margin-bottom: 16px !important;
+}
+
+/* Specs & Products section title */
+.combo-detail-specs-title {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #94a3b8 !important;
+    margin-bottom: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+/* Specs rows */
+.combo-detail-specs {
+    margin-bottom: 16px !important;
+}
+
+.combo-detail-spec-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 8px 0 !important;
+    border-bottom: 1px solid #f8fafc !important;
+}
+
+.combo-detail-spec-label {
+    color: #94a3b8 !important;
+    font-size: 0.85rem !important;
+}
+
+.combo-detail-spec-value {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+}
+
+/* Included products list */
+.combo-detail-products {
+    flex: 1 !important;
+    margin-bottom: 16px !important;
+}
+
+.combo-detail-product-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 8px 0 !important;
+    border-bottom: 1px solid #f8fafc !important;
+}
+
+.combo-detail-product-row:last-child {
+    border-bottom: none !important;
+}
+
+.combo-detail-product-img {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #94a3b8 !important;
+    font-size: 0.9rem !important;
+}
+
+.combo-detail-product-img img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+}
+
+.combo-detail-product-name {
+    flex: 1 !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    color: #1e293b !important;
+}
+
+.combo-detail-product-unit-price {
+    font-size: 0.8rem !important;
+    color: #94a3b8 !important;
+    margin-right: 4px !important;
+    white-space: nowrap !important;
+}
+
+.combo-detail-product-qty {
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
+    color: #6366f1 !important;
+    background: rgba(99, 102, 241, 0.08) !important;
+    padding: 3px 10px !important;
+    border-radius: 999px !important;
+}
+
+/* Price summary block */
+.combo-detail-price-summary {
+    background: #f8fafc !important;
+    border: 1px solid #f1f5f9 !important;
+    border-radius: 12px !important;
+    padding: 14px 16px !important;
+    margin-bottom: 16px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+}
+
+.combo-detail-summary-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.combo-detail-summary-label {
+    font-size: 0.83rem !important;
+    color: #94a3b8 !important;
+}
+
+.combo-detail-summary-original {
+    font-size: 0.83rem !important;
+    color: #94a3b8 !important;
+    text-decoration: line-through !important;
+}
+
+.combo-detail-summary-save {
+    font-size: 0.83rem !important;
+    font-weight: 700 !important;
+    color: #dc2626 !important;
+}
+
+.combo-detail-summary-total {
+    border-top: 1px dashed #e2e8f0 !important;
+    padding-top: 8px !important;
+    margin-top: 2px !important;
+}
+
+.combo-detail-summary-price {
+    font-size: 1rem !important;
+    font-weight: 800 !important;
+    color: #059669 !important;
+}
+
+/* Action buttons */
+.combo-detail-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin-top: 16px !important;
+    padding-top: 16px !important;
+    border-top: 1px solid #f1f5f9 !important;
+}
+
+.combo-detail-btn-edit {
+    flex: 1 !important;
+    justify-content: center !important;
+    border-radius: 10px !important;
+    height: 42px !important;
+}
