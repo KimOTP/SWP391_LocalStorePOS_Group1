@@ -99,7 +99,7 @@ public class ProductController {
         boolean success = productService.addProduct(product, imageFile, statusId, categoryId);
 
         if (success) {
-            redirectAttributes.addFlashAttribute("message", "Product added successfully!");
+            redirectAttributes.addFlashAttribute("notification", "Product added successfully!");
             return "redirect:/products/manage";
         } else {
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to add product!");

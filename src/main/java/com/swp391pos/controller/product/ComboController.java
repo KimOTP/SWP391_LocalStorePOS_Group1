@@ -8,7 +8,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.util.List;
@@ -84,13 +86,16 @@ public class ComboController {
                               @RequestParam(value = "productIds", required = false) List<String> productIds,
                               @RequestParam(value = "quantities", required = false) List<Integer> quantities,
                               @RequestParam("imageFile") MultipartFile imageFile,
-                              @RequestParam("existingImageUrl") String existingImageUrl) {
+                              @RequestParam("existingImageUrl") String existingImageUrl,
+                              RedirectAttributes redirectAttributes) {
         try {
             comboService.updateCombo(combo, productIds, quantities, imageFile, existingImageUrl);
-            return "redirect:/combos/manage?updatesuccess";
+            redirectAttributes.addFlashAttribute("notification", "Combo update successfully!");
+            return "redirect:/combos/manage";
         } catch (Exception e) {
             e.printStackTrace();
-            return "redirect:/combos/update/" + combo.getComboId() + "?error";
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update combo!");
+            return "redirect:/combos/update/";
         }
     }
 
