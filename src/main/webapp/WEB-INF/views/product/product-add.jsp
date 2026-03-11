@@ -18,9 +18,6 @@
     <div class="main-content">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold mb-0">Add New Product</h2>
-            <a href="<c:url value='/products/manage' />" class="btn btn-light border fw-bold px-3">
-                <i class="fa-solid fa-arrow-left me-2"></i>Back to List
-            </a>
         </div>
 
         <div class="card border-0 shadow-sm" style="border-radius: 15px;">
@@ -93,11 +90,13 @@
                                 <div class="status-option-container">
                                     <%-- Lấy động từ danh sách ProductStatus truyền từ Controller --%>
                                     <c:forEach var="st" items="${statuses}" varStatus="loop">
-                                        <div class="status-item">
-                                            <input type="radio" name="statusId" id="st-${st.productStatusId}"
-                                                   value="${st.productStatusId}" ${loop.first ? 'checked' : ''}>
-                                            <label for="st-${st.productStatusId}">${st.productStatusName}</label>
-                                        </div>
+                                        <c:if test="${st.productStatusId != 3}">
+                                            <div class="status-item">
+                                                <input type="radio" name="statusId" id="st-${st.productStatusId}"
+                                                       value="${st.productStatusId}" ${loop.first ? 'checked' : ''}>
+                                                <label for="st-${st.productStatusId}">${st.productStatusName}</label>
+                                            </div>
+                                        </c:if>
                                     </c:forEach>
                                 </div>
                             </div>
