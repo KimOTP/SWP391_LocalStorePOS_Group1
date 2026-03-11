@@ -7,11 +7,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-```
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link rel="stylesheet" href="<c:url value='/resources/css/profile/profile.css'/>">
-```
+<link rel="stylesheet" href="<c:url value='/resources/css/manage/note.css'/>">
+
 
 </head>
 <body>
@@ -21,7 +22,7 @@
 
 <div class="main-content">
 
-<div class="profile-wrapper">
+<div class="profile-wrapper1">
 
     <!-- PAGE -->
     <div class="change-shift-page">
@@ -29,24 +30,53 @@
         <!-- TITLE -->
         <div class="section-title">Note View</div>
 
-        <div class="container mt-4">
+        <div class="container mt-4 note-view-container">
 
-            <h4>${note.workShift.shiftName} - ${note.workDate}</h4>
+            <!-- HEADER NOTE -->
+            <div class="note-header">
 
-            <div class="card mt-3">
-                <div class="card-body">
+                <div class="note-shift">
+                    <i class="fa-solid fa-clock"></i>
+                    ${note.workShift.shiftName} - ${note.workDate}
+                </div>
 
-                    <h5>${note.sender.fullName}</h5>
+                <a href="javascript:history.back()" class="back-link">
+                    <i class="fa-solid fa-arrow-left"></i> Back
+                </a>
 
-                    <p class="text-muted">
-                        ${note.createdAt.toString().replace('T',' ').substring(0,16)}
-                    </p>
+            </div>
 
-                    <hr>
 
-                    <p>${note.content}</p>
+            <!-- NOTE CARD -->
+            <div class="note-card">
+
+                <!-- AUTHOR -->
+                <div class="note-author">
+
+                    <div class="note-avatar">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+                    <div class="note-author-info">
+                        <div class="note-author-name">
+                            ${note.sender.fullName}
+                        </div>
+
+                        <div class="note-time">
+                            <i class="fa-regular fa-clock"></i>
+                            ${note.createdAt.toString().replace('T',' ').substring(0,16)}
+                        </div>
+                    </div>
 
                 </div>
+
+                <div class="note-divider"></div>
+
+                <!-- CONTENT -->
+                <div class="note-content">
+                    ${note.content}
+                </div>
+
             </div>
 
         </div>

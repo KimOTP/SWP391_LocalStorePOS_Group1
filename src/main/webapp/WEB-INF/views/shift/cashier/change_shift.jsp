@@ -30,14 +30,64 @@
             <!-- FORM -->
             <form action="/shift/change_shift" method="post" style="max-width: 420px;">
 
-                <div class="info-label">Day I Want To Switch Shift</div>
-                <div class="info-box">
+                <!--<div class="info-label">Day I Want To Switch Shift</div>-->
+                <!--<div class="info-box">
                     <input type="date"
                            name="workDate"
                            class="info-input"
                            min="<%= java.time.LocalDate.now() %>"
                            max="<%= java.time.LocalDate.now().plusDays(7) %>"
                            value="${selectedDate}" />
+                </div>-->
+
+                <!-- DAY I WANT TO SWITCH SHIFT -->
+                <div class="info-label">Day I Want To Switch Shift</div>
+
+                <div class="info-box dropdown-custom">
+
+                    <div class="dropdown-selected" onclick="toggleDropdown('switchCalendarMenu')">
+                        <span id="selectedSwitchDateText">
+                            ${empty selectedDate ? 'Select Date' : selectedDate}
+                        </span>
+                        <span class="dropdown-arrow">📅</span>
+                    </div>
+
+                    <!-- VALUE SEND TO BACKEND -->
+                    <input type="hidden"
+                           name="workDate"
+                           id="switchDateInput"
+                           min="<%= java.time.LocalDate.now() %>"
+                           max="<%= java.time.LocalDate.now().plusDays(7) %>"
+                           value="${selectedDate}">
+
+                    <!-- CALENDAR -->
+                    <div id="switchCalendarMenu" class="calendar-menu">
+
+                        <div class="calendar-header">
+                            <button type="button" onclick="changeMonth(-1)">‹</button>
+                            <span id="calendarMonth"></span>
+                            <button type="button" onclick="changeMonth(1)">›</button>
+                        </div>
+
+                        <div class="calendar-days">
+                            <span>SU</span>
+                            <span>MO</span>
+                            <span>TU</span>
+                            <span>WE</span>
+                            <span>TH</span>
+                            <span>FR</span>
+                            <span>SA</span>
+                        </div>
+
+                        <div id="calendarDates" class="calendar-dates"></div>
+
+                        <div class="calendar-footer">
+                            <button type="button" onclick="selectToday()">Today</button>
+                            <button type="button" onclick="applySwitchDate()">Apply</button>
+                        </div>
+
+                    </div>
+
                 </div>
 
                 <div class="info-label">Current Shift</div>
@@ -48,13 +98,62 @@
                            readonly>
                 </div>
 
+                <!-- REQUESTED SHIFT -->
                 <div class="info-label">Requested Shift</div>
-                <div class="info-box">
-                    <select name="requestedShift" class="info-input">
-                        <option value="Morning">Morning</option>
-                        <option value="Afternoon">Afternoon</option>
-                        <option value="Evening">Evening</option>
-                    </select>
+
+                <div class="info-box dropdown-custom">
+
+                    <div class="dropdown-selected"
+                         onclick="toggleDropdown('shiftMenu')">
+
+                        <span id="selectedShiftText">
+                            Select Shift
+                        </span>
+
+                        <span class="fa-solid fa-angle-down"></span>
+
+                    </div>
+
+                    <!-- VALUE SEND TO BACKEND -->
+                    <input type="hidden"
+                           name="requestedShift"
+                           id="shiftInput">
+
+                    <!-- MENU -->
+                    <div id="shiftMenu" class="dropdown-menu">
+
+                        <div onclick="selectOptionNoSubmit(
+                                'Morning',
+                                'Morning',
+                                'selectedShiftText',
+                                'shiftInput',
+                                'shiftMenu'
+                        )">
+                            Morning
+                        </div>
+
+                        <div onclick="selectOptionNoSubmit(
+                                'Afternoon',
+                                'Afternoon',
+                                'selectedShiftText',
+                                'shiftInput',
+                                'shiftMenu'
+                        )">
+                            Afternoon
+                        </div>
+
+                        <div onclick="selectOptionNoSubmit(
+                                'Evening',
+                                'Evening',
+                                'selectedShiftText',
+                                'shiftInput',
+                                'shiftMenu'
+                        )">
+                            Evening
+                        </div>
+
+                    </div>
+
                 </div>
 
                 <div class="info-label">Reason</div>
@@ -84,5 +183,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<c:url value='/resources/js/manage/dropdown.js'/>"></script>
 </body>
 </html>

@@ -69,11 +69,41 @@ public class NoteController {
     }
 
     @PostMapping("/note/send")
-    public String sendNote(@RequestParam String title,
-                           @RequestParam String content,
-                           @RequestParam Integer shiftId,
+    public String sendNote(@RequestParam(required = false) String title,
+                           @RequestParam(required = false) String content,
+                           @RequestParam(required = false) Integer shiftId,
                            HttpSession session,
                            RedirectAttributes redirect) {
+
+        // CHECK SHIFT
+        if (shiftId == null) {
+            redirect.addFlashAttribute("error", "Please select shift");
+            return "redirect:/hr/note";
+        }
+
+        // CHECK TITLE EMPTY
+        if (title == null || title.trim().isEmpty()) {
+            redirect.addFlashAttribute("error", "Title cannot be empty");
+            return "redirect:/hr/note";
+        }
+
+        // CHECK CONTENT EMPTY
+        if (content == null || content.trim().isEmpty()) {
+            redirect.addFlashAttribute("error", "Content cannot be empty");
+            return "redirect:/hr/note";
+        }
+
+        // CHECK TITLE LENGTH
+        if (title.length() > 255) {
+            redirect.addFlashAttribute("error", "Title is too long (max 255 characters)");
+            return "redirect:/hr/note";
+        }
+
+        // CHECK CONTENT LENGTH
+        if (content.length() > 255) {
+            redirect.addFlashAttribute("error", "Content is too long (max 255 characters)");
+            return "redirect:/hr/note";
+        }
 
         Account account = (Account) session.getAttribute("account");
 
@@ -99,7 +129,7 @@ public class NoteController {
             noti.setMessage(content);
             noti.setType("NOTE");
             noti.setCreatedAt(LocalDateTime.now());
-            noti.setIsRead(false); // QUAN TRỌNG
+            noti.setIsRead(false);
             noti.setNote(note);
 
             notificationRepository.save(noti);
