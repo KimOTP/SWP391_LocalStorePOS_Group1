@@ -1,0 +1,282 @@
+/* --- 1. Tổng thể nội dung --- */
+.main-content {
+    background-color: #f8fafc !important;
+    padding: 30px 40px !important;
+    margin-top: 70px !important;
+    margin-left: 80px;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    will-change: margin-left;
+}
+
+#sidebar.expanded ~ .main-content {
+    margin-left: 260px !important;
+}
+
+/* --- 2. Thẻ Thông Tin (Info Card) & Layout --- */
+.info-label {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #94a3b8 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 6px !important;
+    display: block;
+}
+
+.info-value {
+    font-size: 0.95rem !important;
+    color: #1e293b !important;
+    display: flex;
+    align-items: center;
+}
+
+/* Select Box */
+.custom-select {
+    height: 42px !important;
+    background-color: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    color: #1e293b !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer;
+}
+
+.custom-select:focus {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+    background-color: #fff !important;
+}
+
+/* Box Tổng kết (Summary Box) */
+.summary-box {
+    background: #f8fafc !important;
+    border: 1px dashed #cbd5e1 !important;
+    border-radius: 16px !important;
+}
+
+/* --- 3. Bảng Dữ Liệu (Table Card) --- */
+.product-table-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+}
+
+.table-responsive {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+.thead-row {
+    background-color: #f1f5f9 !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+}
+
+.th-cell {
+    padding: 14px 20px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #94a3b8 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    background-color: #f1f5f9 !important;
+    white-space: nowrap !important;
+}
+
+.td-cell {
+    padding: 14px 20px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    vertical-align: middle !important; /* Đảm bảo ô cell ăn căn giữa */
+}
+
+.text-sku {
+    color: #2563eb !important;
+    font-weight: 600 !important;
+    font-family: 'Monaco', 'Consolas', monospace !important;
+    letter-spacing: 0.5px !important;
+    background: #eff6ff !important;
+    padding: 6px 12px !important;
+    border-radius: 6px !important;
+    display: inline-block !important; /* Chuyển thành dạng khối nội tuyến */
+    vertical-align: middle !important;
+    margin: 0 !important;
+}
+
+.table-hover > tbody > tr:hover > td {
+    background-color: rgba(248, 250, 252, 0.7) !important;
+    --bs-table-bg-state: transparent !important;
+    --bs-table-accent-bg: transparent !important;
+    transition: background-color 0.15s ease !important;
+}
+
+/* --- 4. Inputs trong bảng & Elements --- */
+/* Search Box */
+.search-box-standalone {
+    position: relative !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 10px 0 10px !important;
+    height: 42px !important;
+    transition: border-color 0.2s ease !important;
+}
+
+.search-box-standalone:focus-within {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+    background: #fff !important;
+}
+
+.search-box-standalone .search-icon {
+    color: #94a3b8 !important;
+    font-size: 0.85rem !important;
+    margin-right: 10px !important;
+    flex-shrink: 0 !important;
+}
+
+.search-box-standalone .form-control {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    height: 100% !important;
+    font-size: 0.85rem !important;
+    box-shadow: none !important;
+    color: #1e293b !important;
+}
+
+.search-box-standalone .form-control:focus { outline: none !important; box-shadow: none !important; }
+
+/* Status Badge In Progress */
+.status-badge {
+    padding: 6px 16px !important;
+    border-radius: 8px !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+}
+.status-pending { background: #fef9c3 !important; color: #ca8a04 !important; border: 1px solid #fef08a !important; }
+
+/* Input số lượng và giá */
+.qty-input, .price-input {
+    height: 38px !important;
+    border-radius: 8px !important;
+    border: 1px solid #cbd5e1 !important;
+    font-weight: 700 !important;
+    background-color: #fff !important;
+    transition: all 0.2s ease !important;
+}
+
+.qty-input {
+    width: 100px !important;
+    text-align: center !important;
+    color: #059669 !important; /* Màu xanh lá cho Quantity */
+}
+
+.qty-input:focus {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
+    outline: none !important;
+}
+
+/* Đơn giá */
+.price-input {
+    width: auto !important; /* KHÔNG set cứng width để tránh đẩy VND xuống dòng */
+    color: #2563eb !important; /* Màu xanh dương cho tiền */
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.price-input:focus {
+    border-color: #2563eb !important;
+    box-shadow: inset 0 0 0 1px #2563eb, 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+    outline: none !important;
+    z-index: 1 !important; /* Tránh bị thẻ span đè mất viền */
+}
+
+.input-group-text {
+    border-radius: 0 8px 8px 0 !important;
+    border: 1px solid #cbd5e1 !important;
+}
+
+/* Highlight "Low Stock" trong modal */
+.low-stock-badge {
+    font-size: 0.7rem !important;
+    font-weight: 700 !important;
+    padding: 4px 8px !important;
+    background: #fef2f2 !important;
+    color: #dc2626 !important;
+    border: 1px solid #fecaca !important;
+    border-radius: 6px !important;
+    margin-left: 8px !important;
+}
+
+/* Warning row for low stock */
+.row-warning { background-color: #fef2f2 !important; }
+
+/* --- 5. Buttons --- */
+.btn-add {
+    background-color: #2563eb !important;
+    color: #fff !important;
+    border: none !important;
+    height: 40px !important;
+    padding: 0 24px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-add:hover { background-color: #1d4ed8 !important; transform: translateY(-1px) !important; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important; color: #fff !important; }
+
+.btn-cancel {
+    height: 40px !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 0 24px !important;
+    color: #64748b !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-cancel:hover { color: #1e293b !important; background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
+
+.btn-remove {
+    color: #ef4444 !important;
+    background: #fef2f2 !important;
+    border: none !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-remove:hover { background: #dc2626 !important; color: #fff !important; }
+
+/* Modal Customize */
+.modal-content { border-radius: 16px !important; }
+.modal-header { border-bottom: 1px solid #f1f5f9 !important; }
+
+/* Scrollbar mượt mà cho Table */
+.table-responsive::-webkit-scrollbar { width: 6px; height: 6px; }
+.table-responsive::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+.table-responsive::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.table-responsive::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
