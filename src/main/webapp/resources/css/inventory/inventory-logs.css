@@ -1,143 +1,303 @@
-/* --- 1. Main Layout --- */
+/* --- 1. Tổng thể nội dung & Logic Co Giãn --- */
 .main-content {
-    background-color: #f8fafc;
-    padding: 30px 20px;
-    margin-top: 70px;
+    background-color: #f8fafc !important;
+    padding: 30px 40px !important;
+    margin-top: 70px !important;
     margin-left: 80px;
-    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    will-change: margin-left;
 }
 
 #sidebar.expanded ~ .main-content {
-    margin-left: 260px;
+    margin-left: 260px !important;
 }
 
-/* --- 2. Stat Cards --- */
+/* Đảm bảo khoảng cách giữa các khối */
+.main-content > .row.g-4 {
+    margin-bottom: 24px !important;
+}
+
+/* --- 2. Thẻ thống kê (Stat Cards) --- */
 .stat-card {
-    position: relative;
-    background: #fff;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 24px;
-    transition: transform 0.3s ease;
-    overflow: hidden;
-    height: 100%;
+    background: #fff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    height: 100% !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
 }
 
-.stat-icon {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    font-size: 1.5rem;
-    opacity: 0.15;
-    color: #64748b;
+.stat-card:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 7px 10px -3px rgba(0, 0, 0, 0.1) !important;
 }
 
-.stat-card:hover { transform: scale(1.02); }
-
-.stat-value {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #2563eb;
-    margin-top: 8px;
+.stat-card-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 14px !important;
+    margin-bottom: 10px !important;
 }
+
+.stat-card-info {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+}
+
+.stat-card-icon {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.15rem !important;
+}
+
+/* Bảng màu icon thống kê */
+.stat-icon-total    { background: rgba(30,  41,  59,  0.08) !important; color: #1e293b !important; }
+.stat-icon-stockin  { background: rgba(67, 56, 202, 0.10) !important; color: #4338ca !important; } /* Indigo */
+.stat-icon-stockout { background: rgba(220, 38,  38,  0.08) !important; color: #dc2626 !important; } /* Đỏ */
+.stat-icon-audit    { background: rgba(3, 105, 161, 0.10) !important; color: #0369a1 !important; } /* Blue/Info */
 
 .stat-title {
-    font-size: 0.85rem;
-    color: #64748b;
-    font-weight: 600;
-    text-transform: uppercase;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: #94a3b8 !important;
 }
 
-/* --- 3. Filters --- */
-.btn-filter {
-    height: 40px;
-    font-size: 0.85rem;
-    border-radius: 10px;
-    border: 1px solid #e2e8f0;
-    background-color: #ffffff;
-    color: #64748b;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.stat-value {
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    margin-top: 2px !important;
+    line-height: 1.2 !important;
 }
 
-.search-box {
-    position: relative;
+/* Bảng màu text thống kê */
+.text-total    { color: #1e293b !important; }
+.text-stockin  { color: #4338ca !important; }
+.text-stockout { color: #dc2626 !important; }
+.text-audit    { color: #0369a1 !important; }
+
+.stat-sub {
+    font-size: 0.78rem !important;
+    color: #94a3b8 !important;
+    margin-top: 2px !important;
 }
 
-.search-box .form-control {
-    padding-left: 40px !important;
-    height: 40px;
-    border-radius: 10px;
-    border: 1px solid #e2e8f0;
-    font-size: 0.85rem;
+/* --- 3. Filter Controls --- */
+.search-box-standalone {
+    position: relative !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 10px 0 10px !important;
+    height: 42px !important;
+    transition: border-color 0.2s ease !important;
 }
 
-.search-box .search-icon {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #94a3b8;
-    z-index: 5;
+.search-box-standalone:focus-within {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+    background: #fff !important;
 }
 
-/* --- 4. Table & Actions --- */
-.table-section {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 24px;
-    border: 1px solid #e2e8f0;
+.search-box-standalone .search-icon {
+    color: #94a3b8 !important;
+    font-size: 0.85rem !important;
+    margin-right: 10px !important;
+    flex-shrink: 0 !important;
 }
 
-.table thead th {
-    background-color: #f8fafc;
-    color: #64748b;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    padding: 16px;
+.search-box-standalone .form-control {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    height: 100% !important;
+    font-size: 0.85rem !important;
+    box-shadow: none !important;
+    color: #1e293b !important;
 }
 
-.log-id {
-    color: #2563eb;
-    font-weight: 600;
-    background: #eff6ff;
-    padding: 4px 10px;
-    border-radius: 6px;
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
 }
 
-/* Status Badges Standard POS */
+.custom-filter-select {
+    height: 42px !important;
+    background-color: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    color: #475569 !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    box-shadow: none !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer;
+}
+
+.custom-filter-select:focus {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+    background-color: #fff !important;
+}
+
+.btn-filter-reset {
+    height: 42px !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    color: #64748b !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.btn-filter-reset:hover {
+    color: #2563eb !important;
+    background-color: #eff6ff !important;
+    border-color: #2563eb !important;
+}
+
+/* --- 4. Bảng Dữ Liệu (Table Card) --- */
+.product-table-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+}
+
+.table-responsive {
+    max-height: 600px !important;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+.table-responsive thead {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+}
+
+.thead-row {
+    background-color: #f1f5f9 !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+}
+
+.th-cell {
+    padding: 14px 24px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #94a3b8 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    background-color: #f1f5f9 !important;
+    white-space: nowrap !important;
+}
+
+.td-cell {
+    padding: 14px 24px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    vertical-align: middle !important;
+}
+
+.table-hover > tbody > tr:hover > td {
+    background-color: rgba(248, 250, 252, 0.7) !important;
+    --bs-table-bg-state: transparent !important;
+    --bs-table-accent-bg: transparent !important;
+    transition: background-color 0.15s ease !important;
+}
+
+/* --- 5. Custom Elements (Nổi bật ID, Status, Type, Nút) --- */
+.text-sku {
+    color: #2563eb !important;
+    font-weight: 600 !important;
+    font-family: 'Monaco', 'Consolas', monospace !important;
+    letter-spacing: 0.5px !important;
+    background: #eff6ff !important;
+    padding: 6px 12px !important;
+    border-radius: 6px !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+}
+
+/* Type Badge Highlight */
+.type-badge {
+    padding: 6px 14px !important;
+    border-radius: 8px !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    display: inline-block !important;
+    text-align: center;
+    min-width: 90px;
+    letter-spacing: 0.3px;
+}
+.type-stockin  { background: #e0e7ff !important; color: #4338ca !important; border: 1px solid #c7d2fe !important; }
+.type-stockout { background: #ffedd5 !important; color: #c2410c !important; border: 1px solid #fed7aa !important; }
+.type-audit    { background: #e0f2fe !important; color: #0369a1 !important; border: 1px solid #bae6fd !important; }
+
+/* Status Badge Pill Standard */
 .status-badge {
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    padding: 6px 12px !important;
+    border-radius: 999px !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+.status-badge::before { content: "" !important; width: 6px !important; height: 6px !important; border-radius: 50% !important; }
+.status-active        { background: #dcfce7 !important; color: #16a34a !important; }
+.status-active::before{ background: #16a34a !important; }
+.status-outstock      { background: #fee2e2 !important; color: #dc2626 !important; }
+.status-outstock::before{ background: #dc2626 !important; }
+.status-pending       { background: #fef9c3 !important; color: #ca8a04 !important; }
+.status-pending::before{ background: #ca8a04 !important; }
+
+/* Nút View Detail */
+.btn-view-detail {
+    background-color: #f8fafc !important;
+    color: #2563eb !important;
+    border: 1px solid #e2e8f0 !important;
+    padding: 6px 12px !important;
+    border-radius: 8px !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    text-decoration: none !important;
+}
+.btn-view-detail:hover {
+    background-color: #eff6ff !important;
+    border-color: #2563eb !important;
+    color: #1d4ed8 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.1) !important;
 }
 
-.status-badge::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-}
-
-.status-active { background: #ecfdf5; color: #059669; }
-.status-active::before { background: #10b981; }
-
-.status-outstock { background: #fef2f2; color: #dc2626; }
-.status-outstock::before { background: #dc2626; }
-
-.status-pending { background: #fffbeb; color: #d97706; }
-.status-pending::before { background: #f59e0b; }
-
-.action-link {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #2563eb;
-    text-decoration: none;
-}
+/* Scrollbar */
+.table-responsive::-webkit-scrollbar { width: 6px; height: 6px; }
+.table-responsive::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+.table-responsive::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.table-responsive::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+.table-responsive table { margin-bottom: 0 !important; border-collapse: separate !important; border-spacing: 0 !important; }
