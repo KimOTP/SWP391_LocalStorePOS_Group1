@@ -1,7 +1,7 @@
 /* --- 1. Tổng thể nội dung & Logic Co Giãn --- */
 .main-content {
     background-color: #f8fafc !important;
-    padding: 30px 40px !important;
+    padding: 30px 20px !important;
     margin-top: 70px !important;
     margin-left: 80px;
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
