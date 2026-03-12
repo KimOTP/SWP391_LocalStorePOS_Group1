@@ -29,26 +29,101 @@
 
         <div class="row mb-4">
 
+            <!-- FROM DATE -->
             <div class="col-md-2">
                 <div class="info-label">From Date</div>
-                <div class="info-box">
-                    <input type="date"
+
+                <div class="info-box dropdown-custom">
+
+                    <div class="dropdown-selected"
+                         onclick="toggleDropdown('fromCalendarMenu')">
+
+                        <span id="selectedFromDateText">
+                            ${empty fromDate ? 'Select Date' : fromDate}
+                        </span>
+
+                        <span class="dropdown-arrow">📅</span>
+
+                    </div>
+
+                    <input type="hidden"
                            name="fromDate"
-                           class="info-input"
+                           id="fromDateInput"
                            value="${fromDate}">
+
+                    <div id="fromCalendarMenu" class="calendar-menu">
+
+                        <div class="calendar-header">
+                            <button type="button" onclick="changeMonth(-1)">‹</button>
+                            <span id="calendarMonth"></span>
+                            <button type="button" onclick="changeMonth(1)">›</button>
+                        </div>
+
+                        <div class="calendar-days">
+                            <span>SU</span><span>MO</span><span>TU</span>
+                            <span>WE</span><span>TH</span><span>FR</span><span>SA</span>
+                        </div>
+
+                        <div id="calendarDates" class="calendar-dates"></div>
+
+                        <div class="calendar-footer">
+                            <button type="button" onclick="selectToday()">Today</button>
+                            <button type="button" onclick="applyFromDate()">Apply</button>
+                        </div>
+
+                    </div>
+
                 </div>
             </div>
 
+            <!-- TO DATE -->
             <div class="col-md-2">
                 <div class="info-label">To Date</div>
-                <div class="info-box">
-                    <input type="date"
+
+                <div class="info-box dropdown-custom">
+
+                    <div class="dropdown-selected"
+                         onclick="toggleDropdown('toCalendarMenu')">
+
+                        <span id="selectedToDateText">
+                            ${empty toDate ? 'Select Date' : toDate}
+                        </span>
+
+                        <span class="dropdown-arrow">📅</span>
+
+                    </div>
+
+                    <input type="hidden"
                            name="toDate"
-                           class="info-input"
+                           id="toDateInput"
                            value="${toDate}">
+
+                    <div id="toCalendarMenu" class="calendar-menu">
+
+                        <div class="calendar-header">
+                            <button type="button" onclick="changeMonth(-1)">‹</button>
+                            <span id="calendarMonth2"></span>
+                            <button type="button" onclick="changeMonth(1)">›</button>
+                        </div>
+
+                        <div class="calendar-days">
+                            <span>SU</span><span>MO</span><span>TU</span>
+                            <span>WE</span><span>TH</span><span>FR</span><span>SA</span>
+                        </div>
+
+                        <div id="calendarDates2" class="calendar-dates"></div>
+
+                        <div class="calendar-footer">
+                            <button type="button" onclick="selectToday()">Today</button>
+                            <button type="button" onclick="applyToDate()">Apply</button>
+                        </div>
+
+                    </div>
+
                 </div>
             </div>
 
+            <!-- SEARCH EMPLOYEE -->
             <div class="col-md-3">
                 <div class="info-label">Employee</div>
                 <div class="info-box">

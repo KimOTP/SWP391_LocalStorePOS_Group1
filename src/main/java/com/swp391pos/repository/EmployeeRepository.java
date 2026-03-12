@@ -31,6 +31,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     Optional<Employee> findByEmail(String email);
 
+    boolean existsByEmailAndEmployeeIdNot(String email, Integer employeeId);
+
     @Query("SELECT e FROM Employee e WHERE e.employeeId = :id")
     Employee getEmployeeByEmployeeId(@Param("id") Integer id);
 }

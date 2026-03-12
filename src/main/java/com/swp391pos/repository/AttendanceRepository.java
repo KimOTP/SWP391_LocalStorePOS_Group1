@@ -64,6 +64,31 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
             Pageable pageable
     );
 
+    @Query("""
+    SELECT a FROM Attendance a
+    WHERE
+        (:fullName IS NULL OR LOWER(a.employee.fullName) LIKE LOWER(CONCAT('%', :fullName, '%')))
+        AND (:shift IS NULL OR a.shift.shiftName = :shift)
+        AND (
+            :status IS NULL
+            OR (:status = 'LATE' AND a.isLate = true)
+            OR (:status = 'EARLY_LEAVE' AND a.isEarlyLeave = true)
+            OR (:status = 'NORMAL' AND a.isLate = false AND a.isEarlyLeave = false)
+        )
+        AND (:fromDate IS NULL OR a.workDate >= :fromDate)
+        AND (:toDate IS NULL OR a.workDate <= :toDate)
+        AND a.workDate <= CURRENT_DATE
+    ORDER BY a.workDate DESC
+    """)
+    Page<Attendance> searchAttendance1(
+            @Param("fullName") String fullName,
+            @Param("shift") String shift,
+            @Param("fromDate") LocalDate fromDate,
+            @Param("toDate") LocalDate toDate,
+            @Param("status") String status,
+            Pageable pageable
+    );
+
     List<Attendance> findTop7ByEmployeeAndWorkDateGreaterThanEqualOrderByWorkDateAsc(
             Employee employee,
             LocalDate workDate
