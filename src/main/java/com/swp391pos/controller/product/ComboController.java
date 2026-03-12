@@ -1,13 +1,18 @@
 package com.swp391pos.controller.product;
 
 import com.swp391pos.entity.Combo;
+import com.swp391pos.entity.Product;
 import com.swp391pos.service.ComboService;
 import com.swp391pos.service.ProductService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -81,13 +86,16 @@ public class ComboController {
                               @RequestParam(value = "productIds", required = false) List<String> productIds,
                               @RequestParam(value = "quantities", required = false) List<Integer> quantities,
                               @RequestParam("imageFile") MultipartFile imageFile,
-                              @RequestParam("existingImageUrl") String existingImageUrl) {
+                              @RequestParam("existingImageUrl") String existingImageUrl,
+                              RedirectAttributes redirectAttributes) {
         try {
             comboService.updateCombo(combo, productIds, quantities, imageFile, existingImageUrl);
-            return "redirect:/combos/manage?updatesuccess";
+            redirectAttributes.addFlashAttribute("notification", "Combo update successfully!");
+            return "redirect:/combos/manage";
         } catch (Exception e) {
             e.printStackTrace();
-            return "redirect:/combos/update/" + combo.getComboId() + "?error";
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update combo!");
+            return "redirect:/combos/update/";
         }
     }
 
@@ -103,5 +111,16 @@ public class ComboController {
     public String delete(@PathVariable String id) {
         comboService.deleteCombo(id);
         return "redirect:/combos/manage";
+    }
+
+    @GetMapping("/export-excel")
+    public void exportToExcel(HttpServletResponse response) throws IOException {
+        response.setContentType("application/octet-stream");
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=combos_list.xlsx";
+        response.setHeader(headerKey, headerValue);
+
+        List<Combo> list = comboService.getAllCombos();
+        comboService.exportCombosToExcel(list, response);
     }
 }

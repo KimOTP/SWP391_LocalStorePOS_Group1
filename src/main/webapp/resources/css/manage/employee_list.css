@@ -112,6 +112,7 @@
     justify-content: center;
     transition: all 0.2s ease;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .btn-change:hover,
@@ -198,22 +199,39 @@
 ========================= */
 .back-link {
     display: inline-block;
-    background-color: #334155;
-    color: #ffffff;
+    float: right;
+
+    background-color: #ffffff;
+    color: #64748b;
+
     padding: 8px 18px;
     font-size: 14px;
     font-weight: 600;
-    border-radius: 8px;
+
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+
     text-decoration: none;
-    float: right;
     transition: all 0.2s ease;
 }
 
 .back-link:hover {
-    background-color: #1d4ed8;
-    color: #ffffff;
+    background-color: #f8fafc;
+    color: #1e293b;
+
+    border-color: #94a3b8;
+
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+}
+
+.back-link:hover {
+    background-color: #f8fafc;
+    color: #1e293b;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 
@@ -267,4 +285,294 @@
     font-weight: 600;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+/* Select box custom*/
+
+
+/* Status active và deactive*/
+.status-active {
+    background: #ecfdf5;
+    color: #059669;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-active::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+}
+
+.status-deactive {
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-deactive::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #dc2626;
+}
+
+/* Pending */
+.status-pending {
+    background: #fffbeb;
+    color: #d97706;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-pending::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #f59e0b;
+}
+
+/* Button Edit/Save/Cancel */
+.btn-action {
+    height: 38px;
+    padding: 0 18px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+/* EDIT */
+.btn-edit {
+    background: #2563eb;
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #1d4ed8;
+}
+
+/* SAVE */
+.btn-save {
+    background: #f59e0b;
+    color: white;
+}
+
+.btn-save:hover {
+    background: #d97706;
+}
+
+/* CANCEL */
+.btn-cancel {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background: #dc2626;
+}
+
+/* Custom Dropdown*/
+
+/* DROPDOWN */
+
+.dropdown-custom{
+    position:relative;
+    cursor:pointer;
+}
+
+.dropdown-selected{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.dropdown-arrow{
+    font-size:12px;
+    color:#64748b;
+}
+
+.profile-wrapper .dropdown-menu{
+    position:absolute;
+    top:45px;
+    left:0;
+    width:100%;
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.08);
+    display:none;
+    z-index:100;
+}
+
+.profile-wrapper .dropdown-menu div{
+    padding:10px 14px;
+    cursor:pointer;
+}
+
+.profile-wrapper .dropdown-menu div:hover{
+    background:#f1f5f9;
+}
+
+
+/* DATE MENU */
+
+.date-menu{
+    padding:10px;
+}
+
+.date-picker{
+    width:100%;
+    border:none;
+    outline:none;
+    font-size:14px;
+}
+
+.calendar-menu{
+    position:absolute;
+    top:48px;
+    right:0;
+    width:260px;
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+    display:none;
+    z-index:100;
+}
+
+/* header */
+
+.calendar-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+    font-weight:600;
+}
+
+.calendar-header button{
+    border:none;
+    background:none;
+    font-size:18px;
+    cursor:pointer;
+}
+
+/* weekday */
+
+.calendar-days{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    font-size:10px;
+    text-align:center;
+    color:#94a3b8;
+    margin-bottom:6px;
+}
+
+/* dates */
+
+.calendar-dates{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:4px;
+}
+
+.calendar-dates div{
+    text-align:center;
+    padding:6px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.calendar-dates div:hover{
+    background:#eff6ff;
+    color:#2563eb;
+}
+
+.calendar-selected{
+    background:#2563eb;
+    color:white;
+}
+
+/* footer */
+
+.calendar-footer{
+    display:flex;
+    justify-content:space-between;
+    margin-top:10px;
+    font-size:12px;
+}
+
+.calendar-footer button{
+    border:none;
+    background:none;
+    color:#2563eb;
+    cursor:pointer;
+}
+
+/* SHIFT EDIT INPUT */
+
+.shift-input{
+
+    width:100%;
+    padding:8px 12px;
+
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+
+    background:#f8fafc;
+
+    font-size:14px;
+
+    transition:all 0.2s ease;
+}
+
+/* focus */
+
+.shift-input:focus{
+
+    outline:none;
+
+    border-color:#3b82f6;
+
+    background:white;
+
+    box-shadow:0 0 0 2px rgba(59,130,246,0.15);
+}
+
+/* time icon alignment */
+
+.shift-input[type="time"]{
+
+    cursor:pointer;
+}
+
+.shift-input{
+    width:174px;
 }

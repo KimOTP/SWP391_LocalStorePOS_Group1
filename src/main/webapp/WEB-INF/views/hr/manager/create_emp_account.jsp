@@ -18,8 +18,10 @@
 <div class="main-content">
     <div class="profile-wrapper">
 
-        <a href="${pageContext.request.contextPath}/hr/manager_profile"
+        <div class="text-end mb-4">
+            <a href="${pageContext.request.contextPath}/hr/manager_profile"
                    class="back-link">← Back To Profile</a>
+        </div>
         <div class="section-title">Create Employee Accounts</div>
         <div class="section-subtitle">Information</div>
         <br/>
@@ -63,23 +65,49 @@
                 <div class="col-md-4">
 
                     <div class="info-label">Role</div>
-                    <div class="info-box">
-                        <select class="info-input" name="role" required>
-                            <option value="CASHIER"
-                                <c:if test="${role == 'CASHIER'}">selected</c:if>>
+
+                    <div class="info-box dropdown-custom">
+
+                        <div class="dropdown-selected"
+                             onclick="toggleDropdown('roleMenuCreate')">
+
+                            <span id="selectedRoleCreate">
+
+                                ${empty role ? 'Select Role' : role}
+
+                            </span>
+
+                            <span class="fa-solid fa-angle-down"></span>
+                        </div>
+
+                        <input type="hidden"
+                               name="role"
+                               id="roleInputCreate"
+                               value="${role}"
+                               required>
+
+                        <div id="roleMenuCreate" class="dropdown-menu">
+
+                            <div onclick="selectOptionNoSubmit(
+                                'CASHIER','CASHIER',
+                                'selectedRoleCreate','roleInputCreate','roleMenuCreate')">
                                 CASHIER
-                            </option>
+                            </div>
 
-                            <option value="INVENTORY STAFF"
-                                <c:if test="${role == 'INVENTORY STAFF'}">selected</c:if>>
+                            <div onclick="selectOptionNoSubmit(
+                                'INVENTORY STAFF','INVENTORY STAFF',
+                                'selectedRoleCreate','roleInputCreate','roleMenuCreate')">
                                 INVENTORY STAFF
-                            </option>
+                            </div>
 
-                            <option value="MANAGER"
-                                <c:if test="${role == 'MANAGER'}">selected</c:if>>
+                            <div onclick="selectOptionNoSubmit(
+                                'MANAGER','MANAGER',
+                                'selectedRoleCreate','roleInputCreate','roleMenuCreate')">
                                 MANAGER
-                            </option>
-                        </select>
+                            </div>
+
+                        </div>
+
                     </div>
 
                     <div class="info-label">E-Mail</div>
@@ -113,6 +141,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+<script src="<c:url value='/resources/js/manage/dropdown.js'/>"></script>
 </body>
 </html>

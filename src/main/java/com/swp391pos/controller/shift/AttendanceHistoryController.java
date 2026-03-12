@@ -37,12 +37,30 @@ public class AttendanceHistoryController {
 
         Pageable pageable = PageRequest.of(page, 5);
 
-        Page<Attendance> attendancePage = attendanceRepository.searchAttendance(
+        if (shift != null && shift.isBlank()) {
+            shift = null;
+        }
+
+        if (status != null && status.isBlank()) {
+            status = null;
+        }
+
+        String mappedStatus = null;
+
+        if ("Early Leave".equals(status)) {
+            mappedStatus = "EARLY_LEAVE";
+        } else if ("Late".equals(status)) {
+            mappedStatus = "LATE";
+        } else if ("Normal".equals(status)) {
+            mappedStatus = "NORMAL";
+        }
+
+        Page<Attendance> attendancePage = attendanceRepository.searchAttendance1(
                 fullName,
                 shift,
                 fromDate,
                 toDate,
-                status,
+                mappedStatus,
                 pageable
         );
 

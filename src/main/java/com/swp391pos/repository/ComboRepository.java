@@ -4,6 +4,7 @@ import com.swp391pos.entity.Combo;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,4 +28,7 @@ public interface ComboRepository extends JpaRepository<Combo, String> {
     long countByStatusCombo(Combo.Status statusCombo);
 
     List<Combo> findByStatusComboIn(List<String> statuses);
+
+    @Query("SELECT cd.combo FROM ComboDetail cd WHERE cd.product.productId = :productId")
+    List<Combo> findComboByProductId(@Param("productId") String productId);
 }

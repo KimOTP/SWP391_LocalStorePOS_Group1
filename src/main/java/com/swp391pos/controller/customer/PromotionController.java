@@ -9,15 +9,18 @@ import com.swp391pos.service.PromotionService;
 import com.swp391pos.service.PromotionDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.swp391pos.entity.Promotion.PromotionStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/promotion")
@@ -60,10 +63,10 @@ public class PromotionController {
     public String addPromotion(@ModelAttribute Promotion promotion, RedirectAttributes redirectAttributes) {
         try {
             promotionService.savePromotion(promotion);
-            redirectAttributes.addFlashAttribute("success", "Add promotion successfully!");
+            redirectAttributes.addFlashAttribute("notification", "Add promotion successfully!");
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Failed to add promotion.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to add promotion");
         }
         return "redirect:/promotion";
     }
@@ -72,10 +75,10 @@ public class PromotionController {
     public String updatePromotion(@ModelAttribute Promotion promotion, RedirectAttributes redirectAttributes) {
         try {
             promotionService.savePromotion(promotion);
-            redirectAttributes.addFlashAttribute("success", "Update promotion successfully!");
+            redirectAttributes.addFlashAttribute("notification", "Update promotion successfully!");
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Failed to update promotion.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update promotion");
         }
         return "redirect:/promotion";
     }
@@ -84,9 +87,9 @@ public class PromotionController {
     public String deletePromotion(@RequestParam Integer id, RedirectAttributes redirectAttributes) {
         try {
             promotionService.deletePromotion(id);
-            redirectAttributes.addFlashAttribute("success", "Deleted promotion successfully!");
+            redirectAttributes.addFlashAttribute("notification", "Deleted promotion successfully!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to delete promotion.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to delete promotion");
         }
         return "redirect:/promotion";
     }
@@ -100,9 +103,9 @@ public class PromotionController {
             PromotionStatus newStatus = PromotionStatus.valueOf(status);
             promotionService.updateStatus(id, newStatus);
             String msg = (newStatus == PromotionStatus.ACTIVE) ? "Activated promotion!" : "Inactivated promotion!";
-            redirectAttributes.addFlashAttribute("success", msg);
+            redirectAttributes.addFlashAttribute("notification", msg);
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to update status.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update status");
         }
         return "redirect:/promotion";
     }
@@ -136,40 +139,27 @@ public class PromotionController {
     @PostMapping("/detail/add")
     public String addPromotionDetail(
             @RequestParam Integer promotionId,
-            @RequestParam String productId, // Theo comment của bạn, productId là String
+            @RequestParam String productId,
             @RequestParam Integer minQuantity,
             @RequestParam BigDecimal discountValue,
             @RequestParam String discountType,
             RedirectAttributes redirectAttributes) {
         try {
-            // Tìm Promotion và Product tương ứng
-            Promotion promotion = promotionService.getPromotionById(promotionId);
-            Product product = productService.getProductById(productId);
-
-            // Tạo đối tượng Detail mới và set giá trị
-            PromotionDetail detail = new PromotionDetail();
-            detail.setPromotion(promotion);
-            detail.setProduct(product);
-            detail.setMinQuantity(minQuantity);
-            detail.setDiscountValue(discountValue);
-            detail.setDiscountType(PromotionDetail.DiscountType.valueOf(discountType));
-
-            // Lưu xuống DB
-            promotionDetailService.savePromotionDetail(detail);
-            redirectAttributes.addFlashAttribute("success", "Thêm sản phẩm khuyến mãi thành công!");
+            promotionDetailService.addPromotionDetail(promotionId, productId, minQuantity, discountValue, discountType);
+            redirectAttributes.addFlashAttribute("notification", "Successfully added a promotional product!");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Lỗi khi thêm sản phẩm khuyến mãi.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Error when adding promotional products");
         }
-
-        // Trở lại trang detail của chính promotion đó
         return "redirect:/promotion/detail?id=" + promotionId;
     }
 
     //API EDIT
     @PostMapping("/detail/update")
     public String updatePromotionDetail(
-            @RequestParam Long promoDetailId, // Bắt buộc phải có ID để update
+            @RequestParam Long promoDetailId,
             @RequestParam Integer promotionId,
             @RequestParam String productId,
             @RequestParam Integer minQuantity,
@@ -177,22 +167,13 @@ public class PromotionController {
             @RequestParam String discountType,
             RedirectAttributes redirectAttributes) {
         try {
-            Promotion promotion = promotionService.getPromotionById(promotionId);
-            Product product = productService.getProductById(productId);
-
-            PromotionDetail detail = new PromotionDetail();
-            detail.setPromoDetailId(promoDetailId); // <-- Set ID để Spring JPA hiểu là Cập nhật
-            detail.setPromotion(promotion);
-            detail.setProduct(product);
-            detail.setMinQuantity(minQuantity);
-            detail.setDiscountValue(discountValue);
-            detail.setDiscountType(PromotionDetail.DiscountType.valueOf(discountType));
-
-            promotionDetailService.savePromotionDetail(detail);
-            redirectAttributes.addFlashAttribute("success", "Cập nhật sản phẩm khuyến mãi thành công!");
+            promotionDetailService.updatePromotionDetail(promoDetailId, promotionId, productId, minQuantity, discountValue, discountType);
+            redirectAttributes.addFlashAttribute("notification", "Promotional product update successful!");
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("error", "Lỗi khi cập nhật sản phẩm khuyến mãi.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Error when updating promotional products");
         }
         return "redirect:/promotion/detail?id=" + promotionId;
     }
@@ -205,10 +186,22 @@ public class PromotionController {
             RedirectAttributes redirectAttributes) {
         try {
             promotionDetailService.deletePromotionDetail(detailId);
-            redirectAttributes.addFlashAttribute("success", "Xóa sản phẩm khỏi đợt khuyến mãi thành công!");
+            redirectAttributes.addFlashAttribute("notification", "Product successfully removed from promotion!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Lỗi khi xóa sản phẩm.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Error when deleting a product");
         }
         return "redirect:/promotion/detail?id=" + promotionId;
     }
+
+    @PostMapping("/promotion/{promotionId}/import-details")
+    @ResponseBody
+    public ResponseEntity<?> importDetails(@PathVariable int promotionId, @RequestParam("file")MultipartFile file) {
+        try {
+            promotionDetailService.importPromotionDetails(promotionId, file);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Import success"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success",false,"message", e.getMessage()));
+        }
+    }
+
 }

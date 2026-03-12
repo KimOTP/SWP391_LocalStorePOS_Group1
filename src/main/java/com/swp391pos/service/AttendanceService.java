@@ -93,52 +93,31 @@ public class AttendanceService {
             Pageable pageable
     ) {
 
-        LocalDate today = LocalDate.now();
-
-        Page<Attendance> page =
-                attendanceRepository.findByWorkDate(today, pageable);
-
-        List<Attendance> filtered = page.getContent();
-
-        if (fullName != null && !fullName.isBlank()) {
-            filtered = filtered.stream()
-                    .filter(a -> a.getEmployee()
-                            .getFullName()
-                            .toLowerCase()
-                            .contains(fullName.toLowerCase()))
-                    .toList();
+        if (fullName != null && fullName.isBlank()) {
+            fullName = null;
         }
 
-        if (shiftName != null && !shiftName.isBlank()) {
-            filtered = filtered.stream()
-                    .filter(a -> a.getShift()
-                            .getShiftName()
-                            .equalsIgnoreCase(shiftName))
-                    .toList();
+        if (shiftName != null && shiftName.isBlank()) {
+            shiftName = null;
         }
 
-        if (status != null && !status.isBlank()) {
+        String mappedStatus = null;
 
-            filtered = filtered.stream().filter(a -> {
-
-                boolean isLate = Boolean.TRUE.equals(a.getIsLate());
-                boolean isEarly = Boolean.TRUE.equals(a.getIsEarlyLeave());
-                boolean isExpired = Boolean.TRUE.equals(a.getAutoCheckout());
-
-                if (status.equals("Expired")) return isExpired;
-                if (status.equals("Late")) return isLate;
-                if (status.equals("Early Leave")) return isEarly;
-                if (status.equals("Normal"))
-                    return !isLate && !isEarly && !isExpired;
-
-                return true;
-            }).toList();
+        if ("Late".equals(status)) {
+            mappedStatus = "LATE";
+        } else if ("Early Leave".equals(status)) {
+            mappedStatus = "EARLY_LEAVE";
+        } else if ("Normal".equals(status)) {
+            mappedStatus = "NORMAL";
         }
 
-        return new org.springframework.data.domain.PageImpl<>(
-                filtered,
-                pageable,
-                filtered.size()
+        return attendanceRepository.searchAttendance(
+                fullName,
+                shiftName,
+                null,   // fromDate
+                null,   // toDate
+                mappedStatus,
+                pageable
         );
     }
 

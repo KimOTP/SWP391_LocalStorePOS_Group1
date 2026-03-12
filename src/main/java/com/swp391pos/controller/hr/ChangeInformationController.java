@@ -57,7 +57,7 @@ public class ChangeInformationController {
                 .orElse(null);
 
         if (account == null) {
-            redirectAttributes.addFlashAttribute("error", "Account not found!");
+            redirectAttributes.addFlashAttribute("errorMessage", "Account not found!");
             return "redirect:/hr/change_information";
         }
 
@@ -68,7 +68,7 @@ public class ChangeInformationController {
         if (existingUsername.isPresent() &&
                 !Objects.equals(existingUsername.get().getAccountId(), account.getAccountId())) {
 
-            redirectAttributes.addFlashAttribute("error", "Username already exists!");
+            redirectAttributes.addFlashAttribute("errorMessage", "Username already exists!");
             return "redirect:/hr/change_information";
         }
 
@@ -77,7 +77,7 @@ public class ChangeInformationController {
         if (existingEmail.isPresent() &&
                 !Objects.equals(existingEmail.get().getAccountId(), account.getAccountId())) {
 
-            redirectAttributes.addFlashAttribute("error", "Email already exists!");
+            redirectAttributes.addFlashAttribute("errorMessage", "Email already exists!");
             return "redirect:/hr/change_information";
         }
 
@@ -97,13 +97,13 @@ public class ChangeInformationController {
         }
 
         if (!hasChange) {
-            redirectAttributes.addFlashAttribute("error", "No changes detected!");
+            redirectAttributes.addFlashAttribute("errorMessage", "No changes detected!");
             return "redirect:/hr/change_information";
         }
 
         accountRepository.save(account);
 
-        redirectAttributes.addFlashAttribute("success", "Update successfully!");
+        redirectAttributes.addFlashAttribute("notification", "Update successfully!");
         return "redirect:/hr/change_information";
     }
 
@@ -124,34 +124,34 @@ public class ChangeInformationController {
                 .orElse(null);
 
         if (account == null) {
-            redirectAttributes.addFlashAttribute("errorPass", "Account not found!");
+            redirectAttributes.addFlashAttribute("errorMessage", "Account not found!");
             return "redirect:/hr/change_information";
         }
 
         if (!passwordEncoder.matches(oldPassword, account.getPasswordHash())) {
-            redirectAttributes.addFlashAttribute("errorPass", "Old password incorrect!");
+            redirectAttributes.addFlashAttribute("errorMessage", "Old password incorrect!");
             return "redirect:/hr/change_information";
         }
 
         if (!newPassword.equals(confirmPassword)) {
-            redirectAttributes.addFlashAttribute("errorPass", "Confirm password not match!");
+            redirectAttributes.addFlashAttribute("errorMessage", "Confirm password not match!");
             return "redirect:/hr/change_information";
         }
 
         if (passwordEncoder.matches(newPassword, account.getPasswordHash())) {
-            redirectAttributes.addFlashAttribute("errorPass", "New password must be different!");
+            redirectAttributes.addFlashAttribute("errorMessage", "New password must be different!");
             return "redirect:/hr/change_information";
         }
 
         if (newPassword.length() < 6) {
-            redirectAttributes.addFlashAttribute("errorPass", "Password must be at least 6 characters!");
+            redirectAttributes.addFlashAttribute("errorMessage", "Password must be at least 6 characters!");
             return "redirect:/hr/change_information";
         }
 
         account.setPasswordHash(passwordEncoder.encode(newPassword));
         accountRepository.save(account);
 
-        redirectAttributes.addFlashAttribute("successPass", "Password changed successfully!");
+        redirectAttributes.addFlashAttribute("notification", "Password changed successfully!");
         return "redirect:/hr/change_information";
     }
 }

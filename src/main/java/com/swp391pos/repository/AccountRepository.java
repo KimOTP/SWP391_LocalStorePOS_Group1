@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     Optional<Account> findByUsername(String username);
 
+    boolean existsByUsernameAndEmployee_EmployeeIdNot(String username, Integer employeeId);
+
     Optional<Account> findByEmployee_Email(String email);
 
     Optional<Account> findByEmployee_EmployeeId(Integer employeeId);

@@ -1,5 +1,8 @@
 package com.swp391pos.configuration.web;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -13,6 +16,7 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+
 
         String uri = request.getRequestURI();
         HttpSession session = request.getSession(false);
@@ -90,9 +94,9 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
         }
 
 
-        // 4. BƯỚC QUAN TRỌNG NHẤT: Xóa lỗi nếu truy cập hợp lệ (Manager luôn vào đây)
-        if (session != null && session.getAttribute("accessError") != null) {
-            session.removeAttribute("accessError");
+        // Trong filter, sau khi redirect xong thì xóa để không hiện lại khi F5
+        if (session != null && session.getAttribute("errorMessage") != null) {
+            session.removeAttribute("errorMessage");
         }
 
         filterChain.doFilter(request, response);
@@ -100,7 +104,7 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
 
     private void handleAccessDenied(HttpServletRequest request, HttpServletResponse response, String message) throws IOException {
         HttpSession session = request.getSession();
-        session.setAttribute("accessError", message);
+        session.setAttribute("errorMessage", message);  // thêm dòng này
         response.sendRedirect(request.getContextPath() + "/dashboard?authError=1");
     }
 }

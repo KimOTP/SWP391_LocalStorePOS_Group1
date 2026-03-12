@@ -43,17 +43,23 @@
 
                         <td>
                             <span class="view">${s.shiftName}</span>
-                            <input type="text" class="edit form-control d-none" value="${s.shiftName}">
+                            <input type="text"
+                                   class="edit shift-input d-none"
+                                   value="${s.shiftName}">
                         </td>
 
                         <td>
                             <span class="view">${s.startTime}</span>
-                            <input type="time" class="edit form-control d-none" value="${s.startTime}">
+                            <input type="time"
+                                   class="edit shift-input d-none"
+                                   value="${s.startTime}">
                         </td>
 
                         <td>
                             <span class="view">${s.endTime}</span>
-                            <input type="time" class="edit form-control d-none" value="${s.endTime}">
+                            <input type="time"
+                                   class="edit shift-input d-none"
+                                   value="${s.endTime}">
                         </td>
 
                         <td class="duration">

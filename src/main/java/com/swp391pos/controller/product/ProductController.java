@@ -99,10 +99,10 @@ public class ProductController {
         boolean success = productService.addProduct(product, imageFile, statusId, categoryId);
 
         if (success) {
-            redirectAttributes.addFlashAttribute("message", "Product added successfully!");
+            redirectAttributes.addFlashAttribute("notification", "Product added successfully!");
             return "redirect:/products/manage";
         } else {
-            redirectAttributes.addFlashAttribute("error", "Failed to add product.");
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to add product!");
             return "redirect:/products/add";
         }
     }
@@ -135,15 +135,18 @@ public class ProductController {
                                 @RequestParam("oldId") String oldId,
                                 @RequestParam("imageFile") MultipartFile imageFile,
                                 @RequestParam("statusId") Integer statusId,
-                                @RequestParam("categoryId") Integer categoryId) {
+                                @RequestParam("categoryId") Integer categoryId,
+                                RedirectAttributes redirectAttributes) {
 
         product.setProductId(oldId);
         boolean success = productService.updateProduct(oldId, product, imageFile, statusId, categoryId);
 
         if(success) {
+            redirectAttributes.addFlashAttribute("notification", "Updated product successfully!");
             return "redirect:/products/manage";
         } else {
-            return "redirect:/products/update/" + oldId + "?error";
+            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update product!");
+            return "redirect:/products/update/";
         }
     }
 

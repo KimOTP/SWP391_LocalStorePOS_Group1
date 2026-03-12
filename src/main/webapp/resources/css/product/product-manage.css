@@ -15,19 +15,21 @@
 /* --- 2. Thẻ thống kê (Stat Cards) --- */
 .stat-card {
     background: #fff !important;
-    border: 1.5px solid #e2e8f0 !important;
+    border: 1.5px solid var(--border) !important;
     border-radius: 12px !important;
     padding: 24px !important;
     height: 100% !important;
     transition: all 0.3s ease !important;
     display: flex !important;
     flex-direction: column !important;
+    transition: box-shadow 0.2s, border-color 0.2s, transform 0.2s;
     gap: 4px !important;
 }
 
 .stat-card:hover {
     transform: translateY(-2px) !important;
-    box-shadow: 0 7px 10px -3px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 8px 24px rgba(37,99,235,0.10);
+    border-color: #bfdbfe;
 }
 
 .stat-card-header {
@@ -350,6 +352,7 @@ tr:hover .product-img-table,
 
 /* --- 7. Status Badges --- */
 .status-badge {
+    width: max-content;
     padding: 6px 12px !important;
     border-radius: 999px !important;
     font-size: 0.75rem !important;
@@ -436,7 +439,7 @@ tr:hover .product-img-table,
 .product-table-card .table > tbody > tr:hover > td,
 .table-hover > tbody > tr:hover > td,
 .table > tbody > tr:hover > * {
-    background-color: rgba(248, 250, 252, 0.7) !important;
+    background-color: rgba(248, 250, 252, 1) !important;
     --bs-table-bg-state: transparent !important;
     --bs-table-accent-bg: transparent !important;
     transition: background-color 0.15s ease !important;

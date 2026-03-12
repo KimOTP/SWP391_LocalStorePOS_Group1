@@ -180,6 +180,17 @@ function initViewComboModal() {
             e.preventDefault();
             const comboId = this.getAttribute('data-id');
 
+            // 0. Đóng tất cả dropdown đang mở trước khi show modal
+            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                const toggle = menu.previousElementSibling;
+                if (toggle) bootstrap.Dropdown.getInstance(toggle)?.hide();
+                menu.classList.remove('show');
+            });
+            document.querySelectorAll('[data-bs-toggle="dropdown"].show').forEach(el => {
+                el.classList.remove('show');
+                el.setAttribute('aria-expanded', 'false');
+            });
+
             // 1. Hiển thị trạng thái loading trong khi chờ server
             modalBody.innerHTML = `
                 <div class="text-center py-5">
@@ -219,6 +230,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initStatusFilter();
     initTableSearch();
     initViewComboModal();
+    initTableDropdowns();
 
     const dataBridge = document.getElementById('combo-data-bridge');
     if (dataBridge && dataBridge.getAttribute('data-is-update') === 'true') {
@@ -228,3 +240,19 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (e) { console.error("Parse error", e); }
     }
 });
+
+// --- 7. Fix dropdown bị khuất bởi overflow của table ---
+function initTableDropdowns() {
+    // Với mỗi dropdown button trong bảng, tạo Bootstrap Dropdown với strategy 'fixed'
+    document.querySelectorAll('.product-table-card [data-bs-toggle="dropdown"]').forEach(btn => {
+        new bootstrap.Dropdown(btn, {
+            popperConfig: {
+                strategy: 'fixed',
+                modifiers: [
+                    { name: 'flip', options: { fallbackPlacements: ['top-end'] } },
+                    { name: 'preventOverflow', options: { boundary: 'viewport' } }
+                ]
+            }
+        });
+    });
+}

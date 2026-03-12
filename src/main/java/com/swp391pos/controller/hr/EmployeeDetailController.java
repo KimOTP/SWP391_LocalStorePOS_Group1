@@ -72,13 +72,12 @@ public class EmployeeDetailController {
             @RequestParam Boolean status,
             @RequestParam String username,
             @RequestParam(required = false) String password,
-            HttpSession session) {
+            HttpSession session,
+            Model model) {
 
-        // ===== LẤY ACCOUNT ĐANG LOGIN =====
         Account loggedInAccount =
                 (Account) session.getAttribute("loggedInAccount");
 
-        // ===== CHẶN SỬA CHÍNH MÌNH =====
         if (loggedInAccount != null &&
                 loggedInAccount.getEmployee() != null &&
                 loggedInAccount.getEmployee().getEmployeeId().equals(employeeId)) {
@@ -91,7 +90,37 @@ public class EmployeeDetailController {
             return "redirect:/hr/employee_list";
         }
 
-        // ===== UPDATE EMPLOYEE =====
+        Account account = accountRepository
+                .findByEmployee_EmployeeId(employeeId)
+                .orElse(null);
+
+        // ======================
+        // CHECK EMAIL TRÙNG
+        // ======================
+        if (employeeRepository.existsByEmailAndEmployeeIdNot(email, employeeId)) {
+
+            model.addAttribute("errorMessage", "Email already exists!");
+            model.addAttribute("employee", employee);
+            model.addAttribute("employeeAccount", account);
+
+            return "hr/manager/employee_detail";
+        }
+
+        // ======================
+        // CHECK USERNAME TRÙNG
+        // ======================
+        if (accountRepository.existsByUsernameAndEmployee_EmployeeIdNot(username, employeeId)) {
+
+            model.addAttribute("errorMessage", "Username already exists!");
+            model.addAttribute("employee", employee);
+            model.addAttribute("employeeAccount", account);
+
+            return "hr/manager/employee_detail";
+        }
+
+        // ======================
+        // UPDATE EMPLOYEE
+        // ======================
         employee.setFullName(fullName);
         employee.setEmail(email);
         employee.setRole(role);
@@ -99,16 +128,13 @@ public class EmployeeDetailController {
 
         employeeRepository.save(employee);
 
-        // ===== UPDATE ACCOUNT =====
-        Account account = accountRepository
-                .findByEmployee_EmployeeId(employeeId)
-                .orElse(null);
-
+        // ======================
+        // UPDATE ACCOUNT
+        // ======================
         if (account != null) {
 
             account.setUsername(username);
 
-            // CHỈ ĐỔI PASSWORD NẾU KHÔNG RỖNG
             if (password != null && !password.trim().isEmpty()) {
                 String encodedPassword = passwordEncoder.encode(password);
                 account.setPasswordHash(encodedPassword);

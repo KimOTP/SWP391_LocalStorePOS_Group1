@@ -50,39 +50,32 @@ function confirmDelete(url, itemName) {
         }
     })
 }
+
+// Đưa cấu hình Toast ra ngoài phạm vi toàn cục để các hàm khác cũng dùng được
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+});
+
 // Hệ thống TOAST thông báo (SWEETALERT2)
 document.addEventListener("DOMContentLoaded", function() {
-    // Cấu hình mặc định cho chiếc Toast
-    const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.addEventListener('mouseenter', Swal.stopTimer)
-            toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-    });
-
     // Tìm thẻ hidden chứa tin nhắn từ Server gửi xuống
     // Dùng dấu '?.' để tránh bị lỗi Javascript nếu trang nào đó không có thẻ này
     const successMsg = document.getElementById('serverSuccessMsg')?.value;
     const errorMsg = document.getElementById('serverErrorMsg')?.value;
-
     // Có chữ bên trong thì bật Toast lên
     if (successMsg && successMsg.trim() !== "") {
-        Toast.fire({
-            icon: 'success',
-            title: successMsg
-        });
-    }
-
+            Toast.fire({ icon: 'success', title: successMsg });
+        }
     if (errorMsg && errorMsg.trim() !== "") {
-        Toast.fire({
-            icon: 'error',
-            title: errorMsg
-        });
+            Toast.fire({ icon: 'error', title: errorMsg });
     }
 });
 
@@ -91,7 +84,7 @@ document.addEventListener("DOMContentLoaded", function() {
 const formatter = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' });
 
 function openDetailModal(id, name, phone, point, spending, lastDate) {
-    // 1. Điền thông tin TAB 1 & 2 (Dữ liệu có sẵn trên bảng)
+    // Điền thông tin TAB 1 & 2 (Dữ liệu có sẵn trên bảng)
     document.getElementById('detailCode').innerText = id;
     document.getElementById('detailName').innerText = name;
     document.getElementById('detailPhone').innerText = phone;
@@ -118,7 +111,7 @@ function openDetailModal(id, name, phone, point, spending, lastDate) {
                 document.getElementById('detailTotalOrder').innerText = "0";
             });
 
-    // 2. Load lịch sử TAB 3 (Gọi API)
+    //  Load lịch sử TAB 3 (Gọi API)
     const historyTableBody = document.querySelector('#history-info tbody');
         historyTableBody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">Loading history...</td></tr>';
 
@@ -141,7 +134,7 @@ function openDetailModal(id, name, phone, point, spending, lastDate) {
 
                         // Kiểm tra xem bản ghi này có gắn với Order nào không?
                         if (item.order) {
-                            // Order ID: Thêm tiền tố HD cho giống ảnh
+                            // Order ID
                             orderIdDisplay =  item.order.orderId;
 
                             // Date: Lấy ngày tạo của ORDER (item.order.createdAt)
@@ -245,7 +238,10 @@ function validatePromotionForm(form) {
 
     // So sánh ngày
     if (endDate < startDate) {
-        alert("The end date must be greater than or equal to the start date.!");
+        Toast.fire({
+                    icon: 'error',
+                    title: 'The end date must be greater than or equal to the start date!'
+                });
         return false; // Chặn không cho submit
     }
     return true; // Cho phép submit
@@ -262,4 +258,34 @@ function openEditDetailModal(detailId, productId, minQty, discountVal, discountT
         // Bật Modal lên
         var editModal = new bootstrap.Modal(document.getElementById('editDetailModal'));
         editModal.show();
+}
+
+async function uploadExcel(promotionId) {
+    const fileInput = document.getElementById('excelFile');
+    if (fileInput.files.length === 0) return;
+
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+
+    // Thay thế bằng biến chứa promotionId hiện tại
+    //const promotionId = ${promotion.promotionId};
+
+    try {
+        const response = await fetch('/promotion/' + promotionId + '/import-details', {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+        if (result.success) {
+            Swal.fire('Thành công', 'Import dữ liệu thành công!', 'success')
+            .then(() => location.reload());
+        } else {
+            Swal.fire('Lỗi', result.message, 'error');
+        }
+    } catch (error) {
+        Swal.fire('Lỗi', 'Không thể kết nối đến server', 'error');
+    } finally {
+        fileInput.value = ''; // Reset file input
     }
+}
+
