@@ -80,7 +80,7 @@
                     </div>
                     <div class="stat-card-icon stat-icon-alert"><i class="fa-solid fa-triangle-exclamation"></i></div>
                 </div>
-                <div class="stat-sub">Products under minimum threshold</div>
+                <div class="stat-sub">Products under min threshold</div>
             </div>
         </div>
     </div>

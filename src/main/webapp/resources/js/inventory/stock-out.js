@@ -143,7 +143,6 @@ function submitStockOut() {
                     });
                 });
 
-                // Gán dữ liệu vào các thẻ ẩn
                 const generalNote = document.getElementById('generalNote').value;
                 document.getElementById('formNote').value = generalNote;
                 document.getElementById('formItems').value = JSON.stringify(data);
@@ -177,7 +176,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-// Thêm đoạn code này vào cuối file stock-out.js của bạn
 document.addEventListener('DOMContentLoaded', function() {
     // 1. Lấy productId từ URL (ví dụ: ?productId=SP001)
     const urlParams = new URLSearchParams(window.location.search);
