@@ -50,7 +50,18 @@
                              onclick="toggleDropdown('currentShiftMenu')">
 
                             <span id="selectedCurrentShift">
-                                ${empty param.currentShiftId ? 'All' : param.currentShiftId}
+                                <c:choose>
+                                    <c:when test="${empty param.currentShiftId}">
+                                        All
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:forEach var="s" items="${shiftList}">
+                                            <c:if test="${s.shiftId == param.currentShiftId}">
+                                                ${s.shiftName}
+                                            </c:if>
+                                        </c:forEach>
+                                    </c:otherwise>
+                                </c:choose>
                             </span>
 
                             <span class="fa-solid fa-angle-down"></span>
@@ -92,7 +103,18 @@
                              onclick="toggleDropdown('requestedShiftMenu')">
 
                             <span id="selectedRequestedShift">
-                                ${empty param.requestedShiftId ? 'All' : param.requestedShiftId}
+                                <c:choose>
+                                    <c:when test="${empty param.requestedShiftId}">
+                                        All
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:forEach var="s" items="${shiftList}">
+                                            <c:if test="${s.shiftId == param.requestedShiftId}">
+                                                ${s.shiftName}
+                                            </c:if>
+                                        </c:forEach>
+                                    </c:otherwise>
+                                </c:choose>
                             </span>
 
                             <span class="fa-solid fa-angle-down"></span>

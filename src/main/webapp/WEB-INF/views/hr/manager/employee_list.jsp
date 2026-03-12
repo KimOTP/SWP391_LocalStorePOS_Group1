@@ -62,15 +62,15 @@
                         All Roles
                     </div>
 
-                    <div onclick="selectOption('CASHIER','Cashier','selectedRoleText','roleInput','roleMenu')">
+                    <div onclick="selectOption('CASHIER','CASHIER','selectedRoleText','roleInput','roleMenu')">
                         CASHIER
                     </div>
 
-                    <div onclick="selectOption('MANAGER','Manager','selectedRoleText','roleInput','roleMenu')">
+                    <div onclick="selectOption('MANAGER','MANAGER','selectedRoleText','roleInput','roleMenu')">
                         MANAGER
                     </div>
 
-                    <div onclick="selectOption('INVENTORY STAFF','Inventory Staff','selectedRoleText','roleInput','roleMenu')">
+                    <div onclick="selectOption('INVENTORY STAFF','INVENTORY STAFF','selectedRoleText','roleInput','roleMenu')">
                         INVENTORY STAFF
                     </div>
 
