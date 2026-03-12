@@ -1,163 +1,255 @@
-/* --- 1. Tổng thể nội dung --- */
+/* --- 1. Tổng thể nội dung & Logic Co Giãn --- */
 .main-content {
-    background-color: #f8fafc;
-    padding: 30px 40px;
-    margin-top: 70px;
+    background-color: #f8fafc !important;
+    padding: 30px 40px !important;
+    margin-top: 70px !important;
     margin-left: 80px;
-    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     will-change: margin-left;
 }
 
 #sidebar.expanded ~ .main-content {
-    margin-left: 260px;
+    margin-left: 260px !important;
 }
 
 /* --- 2. Thẻ thống kê (Stat Cards) --- */
 .stat-card {
-    position: relative;
-    background: #fff;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 24px;
-    height: 100%;
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    overflow: hidden;
-}
-
-.stat-icon {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    font-size: 1.5rem;
-    opacity: 0.2;
-    color: #64748b;
+    background: #fff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    height: 100% !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
 }
 
 .stat-card:hover {
-    transform: scale(1.03);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px) !important;
+    box-shadow: 0 7px 10px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.stat-card-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 14px !important;
+    margin-bottom: 10px !important;
+}
+
+.stat-card-info {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+}
+
+.stat-card-icon {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.15rem !important;
+}
+
+.stat-icon-total    { background: rgba(30,  41,  59,  0.08) !important; color: #1e293b !important; }
+.stat-icon-category { background: rgba(37,  99,  235, 0.10) !important; color: #2563eb !important; }
+
+.stat-title {
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: #94a3b8 !important;
 }
 
 .stat-value {
-    font-size: 1.75rem;
-    font-weight: 700;
-    margin-top: 8px;
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    margin-top: 2px !important;
+    line-height: 1.2 !important;
 }
 
-.text-total { color: #1e293b; }      /* Đen */
-.text-category { color: #2563eb; }   /* Xanh dương (Dùng cho tổng tiền) */
+.text-total    { color: #1e293b !important; }
+.text-category { color: #2563eb !important; }
 
-.stat-title {
-    font-size: 0.85rem;
-    color: #64748b;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.stat-sub {
+    font-size: 0.78rem !important;
+    color: #94a3b8 !important;
+    margin-top: 2px !important;
 }
 
-/* --- 3. Khung bao quanh danh sách --- */
-.product-list-container {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 24px;
-    margin-top: 24px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+/* --- 3. Filter Bar (Thanh tìm kiếm) --- */
+.filter-bar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    padding: 16px 20px !important;
+    flex-wrap: wrap !important;
+    background: #fff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
 }
 
-/* --- 4. Ô Tìm kiếm --- */
-.search-box {
-    position: relative;
-    display: flex;
-    align-items: center;
+.search-box-standalone {
+    position: relative !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 10px 0 10px !important;
+    height: 42px !important;
+    transition: border-color 0.2s ease !important;
 }
 
-.search-box .search-icon {
-    position: absolute;
-    left: 14px;
-    color: #94a3b8;
-    z-index: 5;
+.search-box-standalone:focus-within {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+    background: #fff !important;
 }
 
-.search-box .form-control {
-    padding-left: 40px !important;
-    height: 40px;
-    font-size: 0.85rem;
-    border-radius: 10px;
-    border: 1px solid #e2e8f0;
-    background-color: #f8fafc;
-    transition: all 0.2s;
+.search-box-standalone .search-icon {
+    color: #94a3b8 !important;
+    font-size: 0.85rem !important;
+    margin-right: 10px !important;
+    flex-shrink: 0 !important;
 }
 
-.search-box .form-control:focus {
-    background-color: #fff;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-}
-
-/* --- 5. Buttons --- */
-/* --- Nút Add Supplier (Đồng bộ với Add Product) --- */
-.btn-add {
-    background-color: #2563eb !important; /* Màu xanh Blue Slate đặc trưng */
-    color: #ffffff !important;
+.search-box-standalone .form-control {
     border: none !important;
-    height: 40px !important;
-    padding: 0 24px !important;
+    background: transparent !important;
+    padding: 0 !important;
+    height: 100% !important;
+    font-size: 0.85rem !important;
+    box-shadow: none !important;
+    color: #1e293b !important;
+}
+
+.search-box-standalone .form-control:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* --- 4. Button Add --- */
+.btn-add {
+    background-color: #2563eb !important;
+    color: #fff !important;
+    border: none !important;
+    height: 38px !important;
+    padding: 0 18px !important;
     font-size: 0.85rem !important;
     font-weight: 600 !important;
-    border-radius: 10px !important; /* Bo góc hiện đại */
+    border-radius: 8px !important;
     display: inline-flex !important;
     align-items: center !important;
-    justify-content: center !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    cursor: pointer;
+    transition: all 0.2s ease !important;
 }
 
-/* Hiệu ứng khi di chuột qua: Nổi lên và đổ bóng */
 .btn-add:hover {
     background-color: #1d4ed8 !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
 }
 
-/* Hiệu ứng khi nhấn giữ (Hold): Thu nhỏ nhẹ */
-.btn-add:active {
-    transform: scale(0.96) !important;
+/* --- 5. Bảng Dữ Liệu (Table Card) --- */
+.product-table-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
 }
 
-/* Tùy chỉnh Icon bên trong nút */
-.btn-add i {
-    font-size: 0.9rem !important;
-    transition: transform 0.2s ease;
+.table-responsive {
+    max-height: 600px !important;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
 }
 
-/* --- 6. Table Styling --- */
-.table thead th {
-    background-color: #f8fafc;
-    border-bottom: 2px solid #e2e8f0;
-    color: #64748b;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    padding: 16px;
+.table-responsive thead {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
 }
 
+.thead-row {
+    background-color: #f1f5f9 !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+}
+
+.th-cell {
+    padding: 14px 24px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #94a3b8 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    background-color: #f1f5f9 !important;
+    white-space: nowrap !important;
+}
+
+.td-cell {
+    padding: 14px 24px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    vertical-align: middle !important;
+}
+
+.table-hover > tbody > tr:hover > td {
+    background-color: rgba(248, 250, 252, 0.7) !important;
+    --bs-table-bg-state: transparent !important;
+    --bs-table-accent-bg: transparent !important;
+    transition: background-color 0.15s ease !important;
+}
+
+/* --- 6. Nổi bật ID & Price --- */
 .text-sku {
     color: #2563eb !important;
-    font-weight: 600;
-    font-size: 0.85rem;
+    font-weight: 600 !important;
+    font-family: 'Monaco', 'Consolas', monospace !important;
+    letter-spacing: 0.5px !important;
+    background: #eff6ff !important;
+    padding: 6px 12px !important;
+    border-radius: 6px !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
 }
 
-/* --- 7. Modal Custom --- */
+.price {
+    color: #059669 !important;
+}
+
+/* --- 7. Modal Custom (Giữ nguyên từ code cũ) --- */
 .modal-content {
-    border-radius: 12px;
+    border-radius: 12px !important;
 }
 .modal-header {
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid #f1f5f9 !important;
 }
 .modal-footer {
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid #f1f5f9 !important;
 }
+.modal-body .form-control {
+    border-radius: 8px !important;
+    border: 1px solid #e2e8f0 !important;
+    background-color: #f8fafc !important;
+}
+.modal-body .form-control:focus {
+    background-color: #fff !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+}
+
+/* Scrollbar */
+.table-responsive::-webkit-scrollbar { width: 6px; height: 6px; }
+.table-responsive::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+.table-responsive::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.table-responsive::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+.table-responsive table { margin-bottom: 0 !important; border-collapse: separate !important; border-spacing: 0 !important; }
