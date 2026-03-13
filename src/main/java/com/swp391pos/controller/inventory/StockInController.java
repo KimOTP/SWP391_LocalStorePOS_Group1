@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.swp391pos.dto.StockInItemDTO;
 
 import java.util.*;
 
@@ -22,8 +23,9 @@ public class StockInController {
     @Autowired private StockInService stockInService;
 
     @GetMapping("/add")
-    public String showRequestOrderPage() {
-        return "inventory/manager/request-order";
+    public String showRequestOrderPage(Model model) {
+        model.addAttribute("suppliers", stockInService.getAllSuppliers());
+        return "inventory/manager/stock-in-request"; // Tên file JSP mới của bạn
     }
 
     @GetMapping("/supplier-info")
@@ -33,11 +35,31 @@ public class StockInController {
         return (data != null) ? ResponseEntity.ok(data) : ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/products-by-supplier")
+    @GetMapping("/api/all-prioritized")
     @ResponseBody
-    public ResponseEntity<?> getProductsBySupplier(@RequestParam String name) {
-        List<Product> products = stockInService.getProductsBySupplier(name);
-        return products.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(products);
+    public List<Inventory> getPrioritizedApi() {
+        return stockInService.getPrioritizedInventory();
+    }
+
+    @PostMapping("/stock-in")
+    public String submitOrder(
+            @RequestParam Integer supplierId,
+            @RequestParam(required = false) String note,
+            @RequestParam String itemsJson,
+            HttpSession session, RedirectAttributes ra) {
+        try {
+            Account account = (Account) session.getAttribute("loggedInAccount");
+            ObjectMapper mapper = new ObjectMapper();
+            List<StockInItemDTO> items = mapper.readValue(itemsJson, new TypeReference<List<StockInItemDTO>>() {});
+            stockInService.createRequest(supplierId, items, account);
+
+            ra.addFlashAttribute("message", "Stock-in request created successfully!");
+            ra.addFlashAttribute("status", "success");
+        } catch (Exception e) {
+            ra.addFlashAttribute("message", "Error: " + e.getMessage());
+            ra.addFlashAttribute("status", "danger");
+        }
+        return "redirect:/inventory/dashboard"; // Quay về Dashboard sau khi tạo xong
     }
 
     @GetMapping("/product-info")
@@ -46,28 +68,6 @@ public class StockInController {
         Map<String, Object> data = stockInService.getProductDetails(sku);
         return (data != null) ? ResponseEntity.ok(data) : ResponseEntity.notFound().build();
     }
-
-    // Request Order for Manager
-    @PostMapping("/stock-in")
-    public String submitOrder(
-            @RequestParam String supplierName,
-            @RequestParam String itemsJson,
-            HttpSession session, RedirectAttributes ra) {
-        try {
-            Account account = (Account) session.getAttribute("loggedInAccount");
-            ObjectMapper mapper = new ObjectMapper();
-            List<Map<String, Object>> items = mapper.readValue(itemsJson, new TypeReference<>(){});
-            stockInService.createRequest(supplierName, items, account);
-
-            ra.addFlashAttribute("message", "Product Request submitted successfully!");
-            ra.addFlashAttribute("status", "success");
-        } catch (Exception e) {
-            ra.addFlashAttribute("message", "Error: " + e.getMessage());
-            ra.addFlashAttribute("status", "danger");
-        }
-        return "redirect:add";
-    }
-
     //Stock In Notification For Inventory Staff
     @GetMapping("/notifications")
     public String showNotifications(Model model) {

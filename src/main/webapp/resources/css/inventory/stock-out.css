@@ -1,148 +1,249 @@
-/* --- TỔNG THỂ --- */
+/* --- 1. Tổng thể nội dung & Logic Co Giãn --- */
 .main-content {
-    background-color: #f8fafc;
-    padding: 30px 40px;
-    margin-top: 70px;
+    background-color: #f8fafc !important;
+    padding: 30px 40px !important;
+    margin-top: 70px !important;
     margin-left: 80px;
-    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    will-change: margin-left;
 }
 
-/* --- INFO CARD --- */
-.info-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+#sidebar.expanded ~ .main-content {
+    margin-left: 260px !important;
 }
 
+/* --- 2. Thẻ Thông Tin (Info Card) --- */
 .info-label {
-    font-size: 0.75rem;
-    color: #64748b;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #94a3b8 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 6px !important;
     display: block;
-    margin-bottom: 4px;
 }
 
 .info-value {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: #1e293b;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    display: flex;
+    align-items: center;
 }
 
-/* --- TABLE & INPUTS --- */
-.table-section {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 24px;
-    margin-top: 24px;
+/* Input chung (cho Ghi chú và Search Modal) */
+.search-box-standalone {
+    position: relative !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 10px 0 10px !important;
+    height: 42px !important;
+    transition: border-color 0.2s ease !important;
 }
 
-.table thead th {
-    background-color: #f8fafc;
-    border-bottom: 2px solid #e2e8f0;
-    color: #64748b;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    padding: 16px;
+.search-box-standalone:focus-within {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+    background: #fff !important;
 }
 
-.text-sku {
-    color: #2563eb !important;
-    font-weight: 600;
-    font-size: 0.85rem;
+.search-box-standalone .search-icon {
+    color: #94a3b8 !important;
+    font-size: 0.85rem !important;
+    margin-right: 10px !important;
+    flex-shrink: 0 !important;
 }
 
-.input-actual {
-    width: 90px;
-    height: 38px;
-    border-radius: 8px;
-    border: 1px solid #cbd5e1;
-    text-align: center;
-    font-weight: 700;
-    color: #2563eb;
-    transition: all 0.2s;
+.search-box-standalone .form-control {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    height: 100% !important;
+    font-size: 0.85rem !important;
+    box-shadow: none !important;
+    color: #1e293b !important;
 }
 
-.input-actual:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-    outline: none;
+.search-box-standalone .form-control:focus {
+    outline: none !important;
+    box-shadow: none !important;
 }
 
-.stock-badge {
-    background: #e0f2fe;
-    color: #0369a1;
-    padding: 4px 12px;
-    border-radius: 6px;
-    font-weight: 700;
-    font-size: 0.85rem;
-}
-
-/* --- BUTTONS & BADGES --- */
-.status-badge {
-    padding: 6px 16px;
-    border-radius: 8px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    background: #fffbeb;
-    color: #d97706;
-    border: 1px solid #fef3c7;
-}
-
-.btn-confirm {
-    background-color: #2563eb;
+/* --- 3. Buttons --- */
+.btn-add {
+    background-color: #2563eb !important;
     color: #fff !important;
-    border: none;
-    padding: 10px 24px;
-    border-radius: 10px;
-    font-weight: 600;
-    transition: all 0.2s;
+    border: none !important;
+    height: 40px !important;
+    padding: 0 24px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    transition: all 0.2s ease !important;
 }
 
-.btn-confirm:hover {
-    background-color: #1d4ed8;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+.btn-add:hover {
+    background-color: #1d4ed8 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
+    color: #fff !important;
 }
 
 .btn-cancel {
-    background-color: #ffffff;
+    height: 40px !important;
+    background-color: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 0 24px !important;
     color: #64748b !important;
-    border: 1px solid #e2e8f0;
-    padding: 10px 24px;
-    border-radius: 10px;
-    font-weight: 600;
-}
-/* Trong file resources/css/inventory/stock-out.css */
-
-.min-vh-10 {
-    min-height: 80px;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    transition: all 0.2s ease !important;
 }
 
-/* Ô hiển thị ghi chú của từng dòng sản phẩm */
-.view-only-box {
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 6px 12px;
-    color: #475569;
-    min-width: 150px;
+.btn-cancel:hover {
+    color: #1e293b !important;
+    background-color: #f1f5f9 !important;
+    border-color: #cbd5e1 !important;
 }
 
-/* Badge số lượng xuất kho màu đỏ nổi bật */
-.bg-danger {
-    background-color: #dc2626 !important;
-    font-size: 0.85rem;
-    font-weight: 700;
+/* --- 4. Bảng Dữ Liệu (Table Card) --- */
+.product-table-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
 }
 
-.table thead th {
-    /* Đảm bảo tiêu đề bảng đồng bộ với các trang trước */
-    font-size: 0.7rem;
-    color: #64748b;
-    background-color: #f8fafc;
+.table-responsive {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
 }
+
+.thead-row {
+    background-color: #f1f5f9 !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+}
+
+.th-cell {
+    padding: 14px 20px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #94a3b8 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    background-color: #f1f5f9 !important;
+    white-space: nowrap !important;
+}
+
+.td-cell {
+    padding: 14px 20px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    vertical-align: middle !important;
+}
+
+.table-hover > tbody > tr:hover > td {
+    background-color: rgba(248, 250, 252, 0.7) !important;
+    --bs-table-bg-state: transparent !important;
+    --bs-table-accent-bg: transparent !important;
+    transition: background-color 0.15s ease !important;
+}
+
+/* --- 5. Thành phần trong Bảng --- */
+/* Nổi bật ID/SKU */
+.text-sku {
+    color: #2563eb !important;
+    font-weight: 600 !important;
+    font-family: 'Monaco', 'Consolas', monospace !important;
+    letter-spacing: 0.5px !important;
+    background: #eff6ff !important;
+    padding: 4px 10px !important;
+    border-radius: 6px !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+}
+
+/* Input số lượng nhập/xuất trong bảng */
+.input-actual {
+    width: 80px !important;
+    height: 36px !important;
+    border-radius: 8px !important;
+    border: 1px solid #cbd5e1 !important;
+    text-align: center !important;
+    font-weight: 700 !important;
+    color: #dc2626 !important; /* Đỏ vì là xuất kho */
+    background-color: #fff !important;
+    transition: all 0.2s ease !important;
+}
+
+.input-actual:focus {
+    border-color: #dc2626 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+    outline: none !important;
+}
+
+/* Nút xóa dòng trong bảng */
+.btn-delete-row {
+    color: #ef4444 !important;
+    background: #fef2f2 !important;
+    border: none !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-delete-row:hover {
+    background: #dc2626 !important;
+    color: #fff !important;
+}
+
+/* --- 6. Badges & Modals --- */
+.status-badge {
+    padding: 6px 12px !important;
+    border-radius: 999px !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+.status-pending {
+    background: #fef9c3 !important;
+    color: #ca8a04 !important;
+}
+
+.stock-badge {
+    background: #e0f2fe !important;
+    color: #0369a1 !important;
+    padding: 4px 10px !important;
+    border-radius: 6px !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+}
+
+.modal-content {
+    border-radius: 16px !important;
+}
+.modal-header {
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+/* Scrollbar mượt mà cho Table */
+.table-responsive::-webkit-scrollbar { width: 6px; height: 6px; }
+.table-responsive::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+.table-responsive::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.table-responsive::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
