@@ -39,4 +39,11 @@ public class InventoryService {
         inv.setMinThreshold(newMin);
         inventoryRepo.save(inv);
     }
+
+    @Transactional
+    public void createInventoryWithProduct(Product product) {
+        Inventory inventory = new Inventory();
+        inventory.setProduct(product);
+        inventoryRepo.save(inventory);
+    }
 }
