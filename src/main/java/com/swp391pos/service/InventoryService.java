@@ -6,6 +6,7 @@ import com.swp391pos.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,8 +43,16 @@ public class InventoryService {
 
     @Transactional
     public void createInventoryWithProduct(Product product) {
+        if (inventoryRepo.existsById(product.getProductId())) {
+            return;
+        }
         Inventory inventory = new Inventory();
         inventory.setProduct(product);
+        inventory.setProductId(product.getProductId());
+        inventory.setCurrentQuantity(0);
+        inventory.setUnitCost(BigDecimal.ZERO);
+        inventory.setMinThreshold(10);
+
         inventoryRepo.save(inventory);
     }
 }
