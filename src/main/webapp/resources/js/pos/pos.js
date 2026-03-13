@@ -133,51 +133,6 @@ function renderCart() {
 }
 
 /* ============================================================
-   PAY – submit cart as DRAFT order → redirect to /pos/payment
-   ============================================================ */
-async function goToPayment() {
-    if (cart.length === 0) { showToast('Cart is empty!', 'error'); return; }
-
-    const btn = document.querySelector('.btn-pay');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Processing...';
-
-    try {
-        const payload = {
-            items: cart.map(i => ({
-                productId : i.id,
-                productName: i.name,
-                price     : i.price,
-                quantity  : i.qty,
-                unit      : i.unit
-            })),
-            totalAmount: cart.reduce((s, i) => s + i.price * i.qty, 0)
-        };
-
-        const res = await fetch((window.contextPath || '') + '/pos/api/checkout', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-
-        if (!res.ok) throw new Error('Server error ' + res.status);
-
-        const data = await res.json();
-        if (data.success && data.orderId) {
-            // Redirect to payment page with orderId
-            window.location.href = (window.contextPath || '') + '/pos/payment?orderId=' + data.orderId;
-        } else {
-            throw new Error(data.message || 'Failed to create order');
-        }
-    } catch (err) {
-        console.error('Checkout error:', err);
-        showToast('Error: ' + err.message, 'error');
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-credit-card me-2"></i>PAY';
-    }
-}
-
-/* ============================================================
    PRODUCT GRID
    ============================================================ */
 function renderProductGrid(products) {
@@ -422,6 +377,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (priceDD && !priceDD.contains(e.target)) priceDD.classList.remove('active');
         const bankDD = document.getElementById('bankDropdown');
         if (bankDD && !bankDD.contains(e.target)) bankDD.classList.remove('active');
+    });
+
+    // F1 → focus search
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'F1') {
+            e.preventDefault();
+            document.getElementById('mainSearchBox')?.focus();
+        }
     });
 
     updatePreview();

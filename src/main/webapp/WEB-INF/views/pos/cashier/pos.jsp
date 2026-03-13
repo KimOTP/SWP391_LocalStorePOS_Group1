@@ -29,7 +29,7 @@
             </button>
         </c:if>
 
-        <input type="text" class="search-box" id="mainSearchBox" placeholder="Search products / SKU-PROD-# / SKU-COM-#...">
+        <input type="text" class="search-box" id="mainSearchBox" placeholder="Search products / SKU-PROD-# / SKU-COM-# / F1">
 
         <!-- Category Dropdown -->
         <div class="pos-dropdown" id="categoryDropdown">
