@@ -26,7 +26,6 @@ public class AuditService {
         session.setStaff(account.getEmployee());
         session.setAuditDate(LocalDateTime.now());
 
-        // Trạng thái 2: Pending Approval (Chờ duyệt)
         TransactionStatus status = statusRepo.findById(2).orElseThrow();
         session.setStatus(status);
 

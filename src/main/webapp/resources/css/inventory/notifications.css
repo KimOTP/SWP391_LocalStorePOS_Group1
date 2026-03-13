@@ -1,160 +1,324 @@
-/* --- 1. Tổng thể nội dung --- */
+/* --- 1. Tổng thể nội dung & Logic Co Giãn --- */
 .main-content {
-    background-color: #f8fafc;
-    padding: 30px 40px;
-    margin-top: 70px;
+    background-color: #f8fafc !important;
+    padding: 30px 20px !important;
+    margin-top: 70px !important;
     margin-left: 80px;
-    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
     will-change: margin-left;
 }
 
 #sidebar.expanded ~ .main-content {
-    margin-left: 260px;
+    margin-left: 260px !important;
 }
 
 /* --- 2. Thẻ thống kê (Stat Cards) --- */
 .stat-card {
-    position: relative;
-    background: #fff;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 24px;
-    height: 100%;
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    overflow: hidden;
-}
-
-.stat-icon {
-    position: absolute;
-    right: 20px;
-    top: 20px;
-    font-size: 1.5rem;
-    opacity: 0.2;
-    color: #64748b;
+    background: #fff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 24px !important;
+    height: 100% !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
 }
 
 .stat-card:hover {
-    transform: scale(1.03);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px) !important;
+    box-shadow: 0 7px 10px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.stat-card-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 14px !important;
+    margin-bottom: 10px !important;
+}
+
+.stat-card-info {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+}
+
+.stat-card-icon {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.15rem !important;
+}
+
+/* Tái sử dụng màu vàng (Pending) từ chuẩn */
+.stat-icon-pending  { background: rgba(234, 179, 8,  0.10) !important; color: #ca8a04 !important; }
+.text-pending       { color: #eab308 !important; }
+
+.stat-title {
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: #94a3b8 !important;
 }
 
 .stat-value {
-    font-size: 1.75rem;
-    font-weight: 700;
-    margin-top: 8px;
-    color: #eab308; /* Màu vàng (Cảnh báo/Chờ xử lý) */
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    margin-top: 2px !important;
+    line-height: 1.2 !important;
 }
 
-.stat-title {
-    font-size: 0.85rem;
-    color: #64748b;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+.stat-sub {
+    font-size: 0.78rem !important;
+    color: #94a3b8 !important;
+    margin-top: 2px !important;
 }
 
-/* --- 3. Khung bao quanh danh sách (Container) --- */
-.notification-container {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 24px;
-    margin-top: 24px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+/* --- 3. Filter Bar --- */
+.filter-bar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    padding: 16px 20px !important;
+    flex-wrap: wrap !important;
+    background: #fff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
 }
 
-/* --- 4. Table Styling --- */
-.table thead th {
-    background-color: #f8fafc;
-    border-bottom: 2px solid #e2e8f0;
-    color: #64748b;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    padding: 16px;
+.search-box-standalone {
+    position: relative !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 10px 0 10px !important;
+    height: 42px !important;
+    transition: border-color 0.2s ease !important;
 }
 
-.request-id {
-    color: #2563eb;
-    font-weight: 600;
-    font-size: 0.85rem;
-    background: #eff6ff;
-    padding: 4px 10px;
-    border-radius: 6px;
+.search-box-standalone:focus-within {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+    background: #fff !important;
 }
 
-/* --- 5. Nút Hành động (Action Link) --- */
-.action-link {
-    display: inline-flex;
-    align-items: center;
-    background-color: #2563eb;
-    color: #ffffff !important;
-    text-decoration: none;
-    padding: 8px 16px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    transition: all 0.2s;
+.search-box-standalone .search-icon {
+    color: #94a3b8 !important;
+    font-size: 0.85rem !important;
+    margin-right: 10px !important;
+    flex-shrink: 0 !important;
 }
 
-.action-link:hover {
-    background-color: #1d4ed8;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-    transform: translateY(-1px);
-}
-/* --- Phàn bổ sung cho Filter --- */
-.btn-filter {
-    height: 40px;
-    font-size: 0.85rem;
-    padding: 0 12px;
-    border-radius: 10px;
-    border: 1px solid #e2e8f0;
-    background-color: #ffffff;
-    color: #64748b;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: all 0.2s;
+.search-box-standalone .form-control {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    height: 100% !important;
+    font-size: 0.85rem !important;
+    box-shadow: none !important;
+    color: #1e293b !important;
 }
 
-.btn-filter:hover {
-    border-color: #cbd5e1;
-    background-color: #f8fafc;
+.search-box-standalone .form-control:focus {
+    outline: none !important;
+    box-shadow: none !important;
 }
 
-.search-box {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.search-box .search-icon {
-    position: absolute;
-    left: 14px;
-    color: #94a3b8;
-    z-index: 5;
-}
-
-.search-box .form-control {
-    padding-left: 40px !important;
-    height: 40px;
-    font-size: 0.85rem;
-    border-radius: 10px;
-    border: 1px solid #e2e8f0;
-    background-color: #f8fafc;
-}
-
-/* Tùy chỉnh input date để trông hiện đại hơn */
+/* Ẩn calendar icon mặc định của input date trên một số trình duyệt để dùng FontAwesome */
 input[type="date"]::-webkit-calendar-picker-indicator {
     cursor: pointer;
     opacity: 0.6;
 }
 
-.tiny-icon {
-    font-size: 0.7rem;
-    color: #94a3b8;
+.filter-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex-wrap: wrap !important;
+    margin-left: auto !important;
 }
+
+/* --- 4. Buttons --- */
+.btn-filter {
+    height: 38px !important;
+    background-color: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 0 20px !important;
+    color: #475569 !important;
+    font-size: 0.82rem !important;
+    font-weight: 500 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    transition: all 0.2s ease !important;
+    white-space: nowrap !important;
+    min-width: 150px !important;
+    justify-content: space-between !important;
+}
+
+.btn-filter:hover, .btn-filter.show, .btn-filter:focus {
+    border-color: #2563eb !important;
+    color: #2563eb !important;
+    background-color: #eff6ff !important;
+}
+
+.btn-filter-more {
+    height: 38px !important;
+    background-color: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 10px !important;
+    padding: 0 16px !important;
+    color: #64748b !important;
+    font-size: 0.82rem !important;
+    font-weight: 500 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: all 0.2s ease !important;
+    white-space: nowrap !important;
+}
+
+.btn-filter-more:hover {
+    color: #2563eb !important;
+    background-color: #eff6ff !important;
+    border-color: #2563eb !important;
+}
+
+.btn-add {
+    background-color: #2563eb !important;
+    color: #fff !important;
+    border: none !important;
+    height: 36px !important;
+    padding: 0 16px !important;
+    font-size: 0.82rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-add:hover {
+    background-color: #1d4ed8 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
+    color: #fff !important;
+}
+
+/* Dropdown Menu CSS (Từ chuẩn) */
+.filter-actions .dropdown-menu {
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+    padding: 6px !important;
+    min-width: 180px !important;
+}
+
+.filter-actions .dropdown-item {
+    border-radius: 8px !important;
+    font-size: 0.85rem !important;
+    color: #475569 !important;
+    padding: 8px 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    transition: all 0.15s ease !important;
+}
+
+.filter-actions .dropdown-item:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+}
+
+.filter-actions .dropdown-item input[type="checkbox"] {
+    width: 16px !important;
+    height: 16px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    flex-shrink: 0 !important;
+    accent-color: #2563eb !important;
+}
+
+/* --- 5. Bảng Dữ Liệu (Table Card) --- */
+.product-table-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+}
+
+.table-responsive {
+    max-height: 600px !important;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+.table-responsive thead {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 10 !important;
+}
+
+.thead-row {
+    background-color: #f1f5f9 !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+}
+
+.th-cell {
+    padding: 14px 24px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    color: #94a3b8 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    border-bottom: 2px solid #e2e8f0 !important;
+    background-color: #f1f5f9 !important;
+    white-space: nowrap !important;
+}
+
+.td-cell {
+    padding: 14px 24px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    vertical-align: middle !important;
+}
+
+/* Row hover */
+.table-hover > tbody > tr:hover > td {
+    background-color: rgba(248, 250, 252, 0.7) !important;
+    --bs-table-bg-state: transparent !important;
+    --bs-table-accent-bg: transparent !important;
+    transition: background-color 0.15s ease !important;
+}
+
+/* Nổi bật ID (Kế thừa từ text-sku chuẩn) */
+/* Nổi bật ID */
+.text-sku {
+    color: #2563eb !important;
+    font-weight: 600 !important;
+    font-family: 'Monaco', 'Consolas', monospace !important;
+    letter-spacing: 0.5px !important;
+    background: #eff6ff !important;
+    padding: 6px 12px !important;
+    border-radius: 6px !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+}
+
+/* Scrollbar */
+.table-responsive::-webkit-scrollbar { width: 6px; height: 6px; }
+.table-responsive::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+.table-responsive::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.table-responsive::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+.table-responsive table { margin-bottom: 0 !important; border-collapse: separate !important; border-spacing: 0 !important; }

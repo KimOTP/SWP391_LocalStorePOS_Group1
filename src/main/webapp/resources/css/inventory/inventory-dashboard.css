@@ -1,7 +1,7 @@
-/* --- 1. Tổng thể nội dung & Logic Co Giãn (Thống nhất với Product) --- */
+/* --- 1. Tổng thể nội dung & Logic Co Giãn --- */
 .main-content {
     background-color: #f8fafc !important;
-    padding: 30px 40px !important;
+    padding: 30px 20px !important;
     margin-top: 70px !important;
     margin-left: 80px;
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -12,9 +12,8 @@
     margin-left: 260px !important;
 }
 
-/* --- 2. Thẻ thống kê (Stat Cards) --- */
+/* --- 2. Thẻ thống kê (Stat Cards) - Đồng bộ Product --- */
 .stat-card {
-    position: relative !important;
     background: #fff !important;
     border: 1.5px solid #e2e8f0 !important;
     border-radius: 12px !important;
@@ -23,104 +22,124 @@
     transition: all 0.3s ease !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important;
-    overflow: hidden !important;
-}
-
-.stat-icon {
-    position: absolute !important;
-    right: 20px !important;
-    top: 20px !important;
-    font-size: 1.5rem !important;
-    opacity: 0.2 !important;
-    color: #64748b !important;
+    gap: 4px !important;
 }
 
 .stat-card:hover {
-    transform: translateY(-5px) !important;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 7px 10px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.stat-card-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 14px !important;
+    margin-bottom: 10px !important;
+}
+
+.stat-card-icon {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 10px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.15rem !important;
+}
+
+/* Màu sắc icon đồng bộ */
+.stat-icon-import  { background: rgba(37, 99, 235, 0.1) !important; color: #2563eb !important; }
+.stat-icon-export  { background: rgba(16, 185, 129, 0.1) !important; color: #10b981 !important; }
+.stat-icon-value   { background: rgba(30, 41, 59, 0.08) !important; color: #1e293b !important; }
+.stat-icon-alert   { background: rgba(220, 38, 38, 0.1) !important; color: #dc2626 !important; }
+
+.stat-title {
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: #94a3b8 !important;
 }
 
 .stat-value {
-    font-size: 1.75rem !important;
+    font-size: 1.5rem !important;
     font-weight: 700 !important;
-    margin-top: 8px !important;
+    line-height: 1.2 !important;
 }
 
-/* Biến thể màu sắc cho Dashboard Kho */
-.text-total { color: #1e293b !important; }      /* Tổng giá trị nhập/tồn */
-.text-category { color: #2563eb !important; }   /* Tổng giá trị hàng xuất */
-.text-outstock { color: #dc2626 !important; }   /* Cảnh báo tồn kho thấp */
+.text-total    { color: #2563eb !important; }
+.text-category { color: #10b981 !important; }
+.text-outstock { color: #dc2626 !important; }
 
-/* --- 3. Container chứa bảng danh sách --- */
-.inventory-list-container {
-    background: #ffffff !important;
+/* --- 3. Filter Bar & Search --- */
+.filter-bar {
+    margin-top: 30px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    padding: 16px 20px !important;
+    background: #fff !important;
     border: 1px solid #e2e8f0 !important;
-    border-radius: 16px !important;
-    padding: 24px !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
-    margin-top: 30px !important;
+    border-radius: 14px !important;
 }
 
-/* --- 4. Ô Tìm kiếm & Bộ lọc --- */
-.search-box {
+.search-box-standalone {
     position: relative !important;
+    width: 350px !important;
+    background: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 10px !important;
+    height: 42px !important;
+}
+
+.search-box-standalone input {
+    border: none !important;
+    background: transparent !important;
+    font-size: 0.85rem !important;
     width: 100% !important;
 }
 
-.search-box .search-icon {
-    position: absolute !important;
-    left: 15px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    color: #94a3b8 !important;
-    z-index: 10 !important;
-}
+.search-box-standalone input:focus { outline: none !important; box-shadow: none !important; }
 
-.search-box .form-control {
-    padding-left: 45px !important;
-    height: 42px !important;
+/* --- 4. Table Design --- */
+.inventory-table-card {
+    margin-top: 20px;
+    background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
-    border-radius: 10px !important;
-    background-color: #f8fafc !important;
-    font-size: 0.85rem !important;
+    border-radius: 16px !important;
+    overflow: hidden !important;
 }
 
-.btn-filter {
-    height: 42px !important;
-    background-color: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 10px !important;
-    padding: 0 15px !important;
-    color: #475569 !important;
-    font-size: 0.85rem !important;
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    transition: all 0.2s ease !important;
-}
-
-/* --- 5. Bảng & Trạng thái Tồn kho --- */
-.table thead th {
-    background-color: #f8fafc !important;
-    border-bottom: 2px solid #e2e8f0 !important;
-    color: #64748b !important;
-    font-size: 0.7rem !important;
+.th-cell {
+    padding: 14px 24px !important;
+    font-size: 0.72rem !important;
     font-weight: 700 !important;
+    color: #94a3b8 !important;
     text-transform: uppercase !important;
-    padding: 16px !important;
+    background-color: #f1f5f9 !important;
+}
+
+.td-cell {
+    padding: 14px 24px !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    vertical-align: middle !important;
 }
 
 .text-sku {
     color: #2563eb !important;
     font-weight: 600 !important;
-    font-size: 0.85rem !important;
+    font-family: 'Monaco', 'Consolas', monospace !important;
 }
 
-/* Status Badges Kho hàng */
+/* Status Badges */
 .status-badge {
     padding: 6px 12px !important;
-    border-radius: 8px !important;
+    border-radius: 999px !important;
     font-size: 0.75rem !important;
     font-weight: 600 !important;
     display: inline-flex !important;
@@ -135,21 +154,67 @@
     border-radius: 50% !important;
 }
 
-/* Trạng thái Enough (Đủ hàng) */
-.status-active { background: #ecfdf5 !important; color: #059669 !important; }
-.status-active::before { background: #10b981 !important; }
+.status-active { background: #dcfce7 !important; color: #16a34a !important; }
+.status-active::before { background: #16a34a !important; }
 
-/* Trạng thái Warning (Dưới mức tối thiểu) */
-.status-outstock { background: #fef2f2 !important; color: #dc2626 !important; }
+.status-outstock { background: #fee2e2 !important; color: #dc2626 !important; }
 .status-outstock::before { background: #dc2626 !important; }
-
-/* --- 6. Liên kết hành động (Action Links) --- */
-.action-link {
-    text-decoration: none !important;
+/* Custom Dropdown cho Filter (Thay thế Select mặc định) */
+.filter-dropdown .btn-filter {
+    width: 180px !important;
+    height: 42px !important;
+    background-color: #f1f5f9 !important; /* Màu nền xám nhạt đồng bộ search box */
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    color: #475569 !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 16px !important;
     transition: all 0.2s ease !important;
 }
 
-.action-link:hover {
-    color: #1d4ed8 !important;
-    text-decoration: underline !important;
+.filter-dropdown .btn-filter:hover,
+.filter-dropdown .btn-filter:focus {
+    background-color: #fff !important;
+    border-color: #2563eb !important;
+    color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+}
+
+.filter-dropdown .dropdown-menu {
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+    padding: 6px !important;
+    min-width: 180px !important;
+    margin-top: 8px !important;
+}
+
+.filter-dropdown .dropdown-item {
+    border-radius: 8px !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    color: #475569 !important;
+    padding: 10px 12px !important;
+    transition: all 0.15s ease !important;
+    cursor: pointer !important;
+}
+
+.filter-dropdown .dropdown-item:hover {
+    background-color: #eff6ff !important;
+    color: #2563eb !important;
+}
+
+.filter-dropdown .dropdown-item.active {
+    background-color: #2563eb !important;
+    color: #fff !important;
+}
+
+/* Icon nhỏ bên phải nút filter */
+.tiny-icon {
+    font-size: 0.7rem !important;
+    opacity: 0.7;
 }

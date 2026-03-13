@@ -1,5 +1,6 @@
 package com.swp391pos.service;
 
+import com.swp391pos.dto.StockInItemDTO;
 import com.swp391pos.entity.*;
 import com.swp391pos.repository.*;
 import jakarta.transaction.Transactional;
@@ -28,10 +29,6 @@ public class StockInService {
                 .orElse(null);
     }
 
-    public List<Product> getProductsBySupplier(String name) {
-        return productRepo.searchBySupplierName(name);
-    }
-
     public Map<String, Object> getProductDetails(String sku) {
         Product product = productRepo.findProductByProductId(sku);
         if (product == null) return null;
@@ -42,34 +39,47 @@ public class StockInService {
         response.put("unitCost", (inventory != null) ? inventory.getUnitCost() : BigDecimal.ZERO);
         return response;
     }
+    
+    public List<Inventory> getPrioritizedInventory() {
+        return inventoryRepo.findAll().stream()
+                .sorted((a, b) -> {
+                    boolean aLow = a.getCurrentQuantity() <= a.getMinThreshold();
+                    boolean bLow = b.getCurrentQuantity() <= b.getMinThreshold();
+                    if (aLow && !bLow) return -1;
+                    if (!aLow && bLow) return 1;
+                    return a.getProduct().getProductName().compareTo(b.getProduct().getProductName());
+                }).toList();
+    }
+
+    public List<Supplier> getAllSuppliers() {
+        return supplierRepo.findAll();
+    }
 
     @Transactional
-    public void createRequest(String supplierName, List<Map<String, Object>> items, Account requester) {
-        // 1. Lưu StockIn
+    public void createRequest(Integer supplierId, List<StockInItemDTO> items, Account requester) {
         StockIn si = new StockIn();
         si.setRequester(requester.getEmployee());
-        si.setSupplier(supplierRepo.findBySupplierName(supplierName).get());
-        si.setCreatedAt(java.time.LocalDateTime.now());
-        si.setStatus(transactionStatusRepo.findById(1).get());
+        si.setSupplier(supplierRepo.findById(supplierId).orElseThrow());
+        si.setCreatedAt(LocalDateTime.now());
+        si.setStatus(transactionStatusRepo.findById(1).get()); // Status 1: Pending Notification
         StockIn savedSi = stockInRepo.save(si);
-        //2. Lưu StockInDetail
-        for (Map<String, Object> item : items) {
+
+        for (StockInItemDTO item : items) {
             StockInDetail sid = new StockInDetail();
             sid.setStockIn(savedSi);
-            Product product = productRepo.findProductByProductId((String) item.get("sku"));
+            Product product = productRepo.findProductByProductId(item.getSku());
+            if (product == null) {
+                throw new RuntimeException("Product not found: " + item.getSku());
+            }
             sid.setProduct(product);
-
-            Object priceObj = item.get("price");
-            if (priceObj != null) {
-                sid.setUnitCost(new java.math.BigDecimal(priceObj.toString()));
+            if (item.getPrice() != null) {
+                sid.setUnitCost(item.getPrice());
             } else {
                 Inventory inv = inventoryRepo.findById(product.getProductId()).orElse(null);
-                sid.setUnitCost(inv != null ? inv.getUnitCost() : java.math.BigDecimal.ZERO);
+                sid.setUnitCost(inv != null ? inv.getUnitCost() : BigDecimal.ZERO);
             }
-
-            sid.setRequestedQuantity(Integer.parseInt(item.get("qty").toString()));
+            sid.setRequestedQuantity(item.getQty());
             sid.setReceivedQuantity(0);
-
             detailRepo.save(sid);
         }
     }

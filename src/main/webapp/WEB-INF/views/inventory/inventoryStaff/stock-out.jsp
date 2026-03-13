@@ -20,64 +20,74 @@
 <input type="hidden" id="serverStatus" value="${status}">
 
 <div class="main-content">
+
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0">Add Stock-out</h2>
-        <button class="btn-confirm" onclick="showProductSearchModal()">
+        <div>
+            <h2 class="fw-bold mb-0">Add Stock-out</h2>
+            <small class="text-muted">Create a new export transaction</small>
+        </div>
+        <button class="btn btn-add px-4 py-2 d-inline-flex align-items-center" onclick="showProductSearchModal()">
             <i class="fa-solid fa-plus me-2"></i>Add Product
         </button>
     </div>
 
-    <div class="info-card mb-4">
-        <div class="d-flex justify-content-between align-items-start mb-4">
-            <h5 class="fw-bold mb-0 text-secondary">Export Transaction</h5>
-            <span class="status-badge">
-                <i class="fa-solid fa-spinner fa-spin me-1"></i> In Progress
-            </span>
-        </div>
+    <div class="card shadow-sm border-0 mb-4" style="border-radius: 16px; background: #ffffff;">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                <h5 class="fw-bold mb-0 text-dark">
+                    <i class="fa-solid fa-file-export me-2" style="color: #2563eb;"></i>Export Transaction
+                </h5>
+                <span class="status-badge status-pending">
+                    <i class="fa-solid fa-spinner fa-spin me-1"></i> In Progress
+                </span>
+            </div>
 
-        <div class="row g-4">
-            <div class="col-md-3">
-                <label class="info-label">Staff in Charge</label>
-                <div class="info-value">
-                    <i class="fa-solid fa-user-tie me-1 text-muted"></i> ${loggedInAccount.employee.fullName}
+            <div class="row g-4 align-items-center">
+                <div class="col-md-3">
+                    <label class="info-label">Staff in Charge</label>
+                    <div class="info-value">
+                        <i class="fa-solid fa-user-tie me-2 text-primary"></i>${loggedInAccount.employee.fullName}
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <label class="info-label">Current Date</label>
-                <div class="info-value">
-                    <i class="fa-regular fa-calendar me-1 text-muted"></i>
-                    <jsp:useBean id="now" class="java.util.Date" />
-                    <fmt:formatDate value="${now}" pattern="dd/MM/yyyy" />
+                <div class="col-md-3">
+                    <label class="info-label">Current Date</label>
+                    <div class="info-value">
+                        <i class="fa-regular fa-calendar me-2 text-primary"></i>
+                        <jsp:useBean id="now" class="java.util.Date" />
+                        <fmt:formatDate value="${now}" pattern="dd/MM/yyyy" />
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-6">
-                <label class="info-label">General Reason/Note</label>
-                <input type="text" id="generalNote" class="form-control border-0 bg-light rounded-3"
-                       placeholder="Enter general reason for export..." style="font-size: 0.9rem;">
+                <div class="col-md-6">
+                    <label class="info-label">General Reason/Note</label>
+                    <div class="search-box-standalone w-100" style="background: #f8fafc;">
+                        <i class="fa-regular fa-note-sticky search-icon"></i>
+                        <input type="text" id="generalNote" class="form-control" placeholder="Enter general reason for export...">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="table-section shadow-sm">
+    <div class="product-table-card mb-4">
         <div class="table-responsive">
-            <table class="table table-hover align-middle" id="stockOutTable">
+            <table class="table table-hover align-middle mb-0" id="stockOutTable">
                 <thead>
-                <tr>
-                    <th style="width: 60px;" class="text-center">#</th>
-                    <th>SKU</th>
-                    <th>Product Name</th>
-                    <th>Unit</th>
-                    <th class="text-center">Current Stock</th>
-                    <th class="text-center">Export Qty</th>
-                    <th>Reason</th>
-                    <th class="text-center">Action</th>
+                <tr class="thead-row">
+                    <th class="th-cell text-center" style="width: 60px;">#</th>
+                    <th class="th-cell">SKU</th>
+                    <th class="th-cell">Product Name</th>
+                    <th class="th-cell">Unit</th>
+                    <th class="th-cell text-center">Current Stock</th>
+                    <th class="th-cell text-center">Export Qty</th>
+                    <th class="th-cell">Reason</th>
+                    <th class="th-cell text-center">Action</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr id="emptyRow">
-                    <td colspan="8" class="text-center py-5 text-muted small">
-                        <i class="fa-solid fa-box-open d-block mb-2 fs-3"></i>
-                        No products added. Click "Add Product" to start.
+                    <td colspan="8" class="text-center py-5 text-muted">
+                        <i class="fa-solid fa-box-open d-block mb-3" style="font-size: 2.5rem; color: #cbd5e1;"></i>
+                        <span class="fw-medium">No products added. Click "Add Product" to start.</span>
                     </td>
                 </tr>
                 </tbody>
@@ -85,39 +95,39 @@
         </div>
     </div>
 
-    <div class="d-flex justify-content-end gap-3 mt-4">
-        <button class="btn-cancel" onclick="location.reload()">
+    <div class="d-flex justify-content-end gap-3 mt-2 mb-5">
+        <button class="btn btn-cancel" onclick="location.reload()">
             <i class="fa-solid fa-rotate-left me-2"></i>Reset
         </button>
-        <button class="btn-confirm" onclick="submitStockOut()">
+        <button class="btn btn-add" onclick="submitStockOut()">
             <i class="fa-solid fa-check-to-slot me-2"></i>Confirm Export
         </button>
     </div>
 </div>
 
 <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px;">
-            <div class="modal-header border-0 pb-0">
-                <h5 class="fw-bold">Select Product to Export</h5>
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-light">
+                <h5 class="fw-bold mb-0">Select Product to Export</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body p-4">
                 <div class="mb-4">
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-0"><i class="fa-solid fa-magnifying-glass"></i></span>
-                        <input type="text" id="productSearchInput" class="form-control border-0 bg-light"
+                    <div class="search-box-standalone w-100">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="productSearchInput" class="form-control"
                                placeholder="Search product name or SKU..." onkeyup="liveSearch()">
                     </div>
                 </div>
-                <div class="table-responsive" style="max-height: 400px;">
-                    <table class="table table-hover align-middle" id="searchResultTable">
-                        <thead class="sticky-top bg-white">
-                        <tr>
-                            <th>Product Details</th>
-                            <th>SKU</th>
-                            <th class="text-center">In Stock</th>
-                            <th class="text-center">Action</th>
+                <div class="table-responsive product-table-card" style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-hover align-middle mb-0" id="searchResultTable">
+                        <thead class="sticky-top">
+                        <tr class="thead-row">
+                            <th class="th-cell">Product Details</th>
+                            <th class="th-cell">SKU</th>
+                            <th class="th-cell text-center">In Stock</th>
+                            <th class="th-cell text-center">Action</th>
                         </tr>
                         </thead>
                         <tbody></tbody>
