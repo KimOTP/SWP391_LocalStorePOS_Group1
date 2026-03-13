@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.util.Map;
 
 @Controller
@@ -23,7 +24,7 @@ public class ReceiptController {
     private PosReceiptService posReceiptService;
 
     /* --------------------------------------------------------
-       GET /pos/receipts/manage  →  render manage receipt page
+       GET /pos/receipts  →  render manage receipt page
        -------------------------------------------------------- */
     @GetMapping("")
     public String manageReceipt(Model model) {
@@ -39,6 +40,7 @@ public class ReceiptController {
 
     /* --------------------------------------------------------
        GET /pos/receipts/api/detail/{receiptNumber}  →  JSON
+       Trả về thông tin receipt + danh sách OrderItem của order đó
        -------------------------------------------------------- */
     @GetMapping("/api/detail/{receiptNumber}")
     @ResponseBody
@@ -48,7 +50,30 @@ public class ReceiptController {
         Map<String, Object> detail =
                 posReceiptService.getDetailByReceiptNumber(receiptNumber);
         if (detail == null) return ResponseEntity.notFound().build();
+
+        // Nếu service chưa tự load items, load thêm từ orderId
+        if (!detail.containsKey("items") || detail.get("items") == null) {
+            Object orderIdObj = detail.get("orderId");
+            if (orderIdObj != null) {
+                Long orderId = Long.valueOf(orderIdObj.toString());
+                detail.put("items", posReceiptService.getOrderItemsByOrderId(orderId));
+            }
+        }
+
         return ResponseEntity.ok(detail);
+    }
+
+    /* --------------------------------------------------------
+       GET /pos/receipts/api/print-template  →  JSON from session
+       -------------------------------------------------------- */
+    @GetMapping("/api/print-template")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getPrintTemplate(HttpSession session) {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> template =
+                (Map<String, Object>) session.getAttribute("SESSION_PRINT_TEMPLATE");
+        if (template == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(template);
     }
 
     /* --------------------------------------------------------
