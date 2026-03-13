@@ -18,7 +18,7 @@
 
 <div class="pos-container">
 
-    <!-- TOP BAR ROW 1: Buttons + Search + Category -->
+    <!-- TOP BAR: Buttons + Search + Category + Price Dropdown -->
     <div class="pos-top-bar">
         <c:if test="${sessionScope.account.employee.role == 'MANAGER'}">
             <button class="btn-outline" onclick="openPrintTemplate()">
@@ -29,20 +29,18 @@
             </button>
         </c:if>
 
-        <input type="text" class="search-box" placeholder="Search for products...">
+        <input type="text" class="search-box" id="mainSearchBox" placeholder="Search products / SKU-PROD-# / SKU-COM-#...">
 
+        <!-- Category Dropdown -->
         <div class="pos-dropdown" id="categoryDropdown">
             <div class="pos-dropdown-selected" onclick="toggleCategoryDropdown()">
                 <span id="selectedCategoryText">Select category</span>
                 <span class="pos-dropdown-arrow"></span>
             </div>
-
             <div class="pos-dropdown-menu" id="categoryMenu">
-                <div class="pos-dropdown-item"
-                     onclick="selectCategory('', 'Select category')">
-                    Select category
+                <div class="pos-dropdown-item" onclick="selectCategory('', 'Select category')">
+                    All categories
                 </div>
-
                 <c:forEach var="c" items="${categories}">
                     <div class="pos-dropdown-item"
                          onclick="selectCategory('${c.categoryId}', '${c.categoryName}')">
@@ -51,31 +49,21 @@
                 </c:forEach>
             </div>
         </div>
-    </div>
 
-    <!-- TOP BAR ROW 2: Price Range Slider -->
-    <div class="price-filter-bar">
-        <div class="price-filter-label">
-            <i class="fa-solid fa-tag"></i>
-            <span>Price range:</span>
-        </div>
-        <div class="price-slider-wrap">
-            <div class="price-range-track">
-                <div class="price-range-fill" id="rangeFill"></div>
-                <input type="range" class="range-input" id="priceMin"
-                       min="0" max="500000" step="5000" value="0">
-                <input type="range" class="range-input" id="priceMax"
-                       min="0" max="500000" step="5000" value="500000">
+        <!-- Price Range Dropdown -->
+        <div class="pos-dropdown price-dropdown" id="priceDropdown">
+            <div class="pos-dropdown-selected" onclick="togglePriceDropdown()">
+                <i class="fa-solid fa-tag" style="color:var(--sb-blue);font-size:0.8rem;"></i>
+                <span id="selectedPriceText">All prices</span>
+                <span class="pos-dropdown-arrow"></span>
+            </div>
+            <div class="pos-dropdown-menu price-dropdown-menu" id="priceMenu">
+                <div class="pos-dropdown-item" onclick="selectPriceRange(0, 0, 'All prices')">
+                    All prices
+                </div>
+                <!-- Options populated dynamically by JS -->
             </div>
         </div>
-        <div class="price-values">
-            <span class="price-val" id="labelMin">0đ</span>
-            <span class="price-sep">–</span>
-            <span class="price-val" id="labelMax">500,000đ</span>
-        </div>
-        <button class="btn-price-reset" id="btnPriceReset" onclick="resetPriceFilter()" style="display:none">
-            <i class="fa-solid fa-xmark"></i> Reset
-        </button>
     </div>
 
     <!-- MAIN CONTENT: products scroll, cart fixed height -->
@@ -93,6 +81,8 @@
                     <c:forEach items="${combos}" var="combo">
                         <div class="product-card combo-card"
                              data-price="${combo.totalPrice}"
+                             data-id="COMBO_${combo.comboId}"
+                             data-sku="SKU-COM-${combo.comboId}"
                              onclick="addToCart('COMBO_${combo.comboId}','${combo.comboName}','${combo.totalPrice}','combo')">
                             <div class="product-img">
                                 <img src="${combo.imageUrl}" alt="${combo.comboName}"
@@ -118,6 +108,8 @@
                 <c:forEach items="${products}" var="p">
                     <div class="product-card"
                          data-price="${p.price}"
+                         data-id="${p.productId}"
+                         data-sku="SKU-PROD-${p.productId}"
                          onclick="addToCart('${p.productId}','${p.productName}','${p.price}','${p.unit}')">
                         <div class="product-img">
                             <img src="${p.imageUrl}" alt="${p.productName}"
@@ -140,6 +132,7 @@
                 <div class="cart-title-wrap">
                     <i class="fa-solid fa-cart-shopping cart-icon"></i>
                     <h3>Shopping cart</h3>
+                    <span class="cart-count-badge" id="cartCountBadge" style="display:none">0</span>
                 </div>
                 <button class="btn-danger" onclick="clearCart()">
                     <i class="fa-solid fa-trash-can me-1"></i>Delete all
@@ -186,8 +179,7 @@
             </button>
         </div>
         <div class="pt-tabs">
-            <button class="pt-tab active" id="tab-invoice" onclick="switchTab('invoice')">Sales invoice</button>
-            <button class="pt-tab" id="tab-report" onclick="switchTab('report')">Report</button>
+            <button class="pt-tab active" id="tab-invoice">Sales invoice</button>
         </div>
         <div class="pt-body">
             <div class="pt-form">
@@ -195,21 +187,33 @@
                     <div class="pt-section-badge"><i class="fa-solid fa-file-invoice"></i> Setting sales invoice template</div>
                     <div class="pt-field-group">
                         <label class="pt-label">Paper size</label>
-                        <select class="pt-select" id="inv-paper-size" onchange="updatePreview()">
-                            <option value="58mm">58 mm (Thermal printer)</option>
-                            <option value="80mm">80 mm (Thermal printer)</option>
-                            <option value="A4">A4</option>
-                        </select>
-                        <i class="fa-solid fa-chevron-down pt-select-icon"></i>
+                        <div class="pt-dd" id="dd-paper-size">
+                            <div class="pt-dd-selected" onclick="togglePtDd('dd-paper-size')">
+                                <span class="pt-dd-label" id="dd-paper-size-label">58 mm (Thermal printer)</span>
+                                <span class="pt-dd-arrow"></span>
+                            </div>
+                            <div class="pt-dd-menu">
+                                <div class="pt-dd-item" onclick="selectPtDd('dd-paper-size','58mm','58 mm (Thermal printer)')">58 mm (Thermal printer)</div>
+                                <div class="pt-dd-item" onclick="selectPtDd('dd-paper-size','80mm','80 mm (Thermal printer)')">80 mm (Thermal printer)</div>
+                                <div class="pt-dd-item" onclick="selectPtDd('dd-paper-size','A4','A4')">A4</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="inv-paper-size" value="58mm">
                     </div>
                     <div class="pt-field-group">
                         <label class="pt-label">Font size</label>
-                        <select class="pt-select" id="inv-font-size" onchange="updatePreview()">
-                            <option value="10">Small – 10px</option>
-                            <option value="12" selected>Medium – 12px</option>
-                            <option value="14">Large – 14px</option>
-                        </select>
-                        <i class="fa-solid fa-chevron-down pt-select-icon"></i>
+                        <div class="pt-dd" id="dd-font-size">
+                            <div class="pt-dd-selected" onclick="togglePtDd('dd-font-size')">
+                                <span class="pt-dd-label" id="dd-font-size-label">Medium – 12px</span>
+                                <span class="pt-dd-arrow"></span>
+                            </div>
+                            <div class="pt-dd-menu">
+                                <div class="pt-dd-item" onclick="selectPtDd('dd-font-size','10','Small – 10px')">Small – 10px</div>
+                                <div class="pt-dd-item" onclick="selectPtDd('dd-font-size','12','Medium – 12px')">Medium – 12px</div>
+                                <div class="pt-dd-item" onclick="selectPtDd('dd-font-size','14','Large – 14px')">Large – 14px</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="inv-font-size" value="12">
                     </div>
                     <div class="pt-field-group">
                         <label class="pt-label">Invoice Title</label>
@@ -239,18 +243,6 @@
                         </div>
                     </div>
                 </div>
-                <div id="content-report" style="display:none">
-                    <div class="pt-section-badge"><i class="fa-solid fa-chart-bar"></i> Setting report template</div>
-                    <div class="pt-field-group">
-                        <label class="pt-label">Paper size</label>
-                        <select class="pt-select" id="rep-paper-size">
-                            <option value="58mm">58 mm (Thermal printer)</option>
-                            <option value="80mm">80 mm (Thermal printer)</option>
-                            <option value="A4">A4</option>
-                        </select>
-                        <i class="fa-solid fa-chevron-down pt-select-icon"></i>
-                    </div>
-                </div>
             </div>
             <div class="pt-preview">
                 <div class="pt-preview-label"><i class="fa-regular fa-eye"></i> Preview</div>
@@ -275,12 +267,6 @@
                         <div class="r-thanks" id="rp-thanks">Thank you for your purchase.</div>
                         <div class="r-barcode">||| |||||||| ||||| |||||||||</div>
                     </div>
-                    <div id="preview-report" class="receipt" style="display:none">
-                        <div class="r-title" style="margin-bottom:6px;">BÁO CÁO</div>
-                        <div class="r-date" id="rp-report-date"></div>
-                        <div class="r-dash">- - - - - - - - - - - - - -</div>
-                        <div style="font-size:9px;text-align:center;color:#94a3b8;margin-top:10px;">template: report</div>
-                    </div>
                 </div>
                 <button class="pt-apply-btn" onclick="applyTemplate()">
                     <i class="fa-solid fa-check me-1"></i> Apply
@@ -292,7 +278,7 @@
 
 <!-- MODAL: BANK CONFIG -->
 <div class="pt-overlay" id="bankConfigModal">
-    <div class="pt-modal" style="max-width:420px;">
+    <div class="pt-modal" style="max-width:440px;">
         <div class="pt-header">
             <div class="pt-header-title"><i class="fa-solid fa-building-columns"></i> Configure your bank account</div>
             <button class="pt-close" onclick="closeModal('bankConfigModal')"><i class="fa-solid fa-xmark"></i></button>
@@ -300,24 +286,38 @@
         <div class="pt-form" style="padding:20px 24px 24px;">
             <div class="pt-field-group">
                 <label class="pt-label">Choose a bank</label>
-                <select class="pt-select">
-                    <option value="">-- Choose a bank --</option>
-                    <option>Vietcombank</option><option>Techcombank</option>
-                    <option>MB Bank</option><option>VPBank</option><option>BIDV</option>
-                </select>
-                <i class="fa-solid fa-chevron-down pt-select-icon"></i>
+                <!-- Custom bank dropdown -->
+                <div class="bank-dropdown" id="bankDropdown">
+                    <div class="bank-dropdown-selected" onclick="toggleBankDropdown()">
+                        <div class="bank-selected-content" id="bankSelectedContent">
+                            <span class="bank-placeholder">-- Choose a bank --</span>
+                        </div>
+                        <span class="pos-dropdown-arrow"></span>
+                    </div>
+                    <div class="bank-dropdown-menu" id="bankDropdownMenu">
+                        <div class="bank-search-wrap">
+                            <input class="bank-search-input" id="bankSearchInput"
+                                   type="text" placeholder="Tìm kiếm ngân hàng..."
+                                   oninput="filterBanks(this.value)" onclick="event.stopPropagation()">
+                        </div>
+                        <div class="bank-list" id="bankList">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="selectedBankCode" value="">
             </div>
             <div class="pt-field-group">
                 <label class="pt-label">Account number</label>
-                <input class="pt-input" type="text" placeholder="Enter account number">
+                <input class="pt-input" type="text" id="bankAccountNumber" placeholder="Enter account number">
             </div>
             <div class="pt-field-group">
                 <label class="pt-label">Account name</label>
-                <input class="pt-input" type="text" placeholder="Enter account name">
+                <input class="pt-input" type="text" id="bankAccountName" placeholder="Enter account name">
             </div>
             <div class="pt-footer">
                 <button class="pt-btn-cancel" onclick="closeModal('bankConfigModal')">Cancel</button>
-                <button class="pt-btn-save"><i class="fa-solid fa-floppy-disk me-1"></i> Save</button>
+                <button class="pt-btn-save" onclick="saveBankConfig()"><i class="fa-solid fa-floppy-disk me-1"></i> Save</button>
             </div>
         </div>
     </div>

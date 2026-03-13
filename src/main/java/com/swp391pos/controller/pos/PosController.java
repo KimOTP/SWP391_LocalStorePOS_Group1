@@ -35,6 +35,7 @@ public class PosController {
     private final ObjectMapper       objectMapper;   // Spring Boot tự tạo bean này
 
     private static final String SESSION_PRINT_TEMPLATE  = "posPrintTemplate";
+    private static final String SESSION_BANK_CONFIG      = "posBankConfig";
 
     /**
      * Key session chứa JSON của order items để module khác đọc.
@@ -62,14 +63,36 @@ public class PosController {
      */
     private static final String SESSION_CART_ORDER_JSON = "posCurrentOrderJson";
 
+    /* ── Helper: Product.status là entity ProductStatus, check productStatusName = "Active" ── */
+    private boolean isActive(com.swp391pos.entity.ProductStatus st) {
+        if (st == null) return false;
+        return "Active".equals(st.getProductStatusName());
+    }
+
     /* ================================================================
        POS MAIN PAGE
        ================================================================ */
     @GetMapping("")
     public String showPOS(Model model, HttpSession session) {
-        model.addAttribute("products",   productService.getAllProducts());
+        // Filter only ACTIVE products
+        // Product.status là @ManyToOne ProductStatus entity (không phải enum).
+        // Product.status là entity ProductStatus có field productStatusName = "Active"
+        List<com.swp391pos.entity.Product> activeProducts = productService.getAllProducts().stream()
+                .filter(p -> {
+                    com.swp391pos.entity.ProductStatus st = p.getStatus();
+                    if (st == null) return false;
+                    return "Active".equals(st.getProductStatusName());
+                })
+                .collect(Collectors.toList());
+        model.addAttribute("products", activeProducts);
         model.addAttribute("categories", categoryService.getAllCategories());
-        model.addAttribute("combos",     comboService.getAllCombos());
+
+        // Combo.statusCombo là enum Combo.Status { DISCONTINUED, ACTIVE, PENDING_APPROVAL }
+        // Chỉ hiển thị combo có statusCombo == ACTIVE (null → ẩn)
+        List<com.swp391pos.entity.Combo> activeCombos = comboService.getAllCombos().stream()
+                .filter(c -> com.swp391pos.entity.Combo.Status.ACTIVE == c.getStatusCombo())
+                .collect(Collectors.toList());
+        model.addAttribute("combos", activeCombos);
 
         @SuppressWarnings("unchecked")
         Map<String, String> printTemplate = (Map<String, String>) session.getAttribute(SESSION_PRINT_TEMPLATE);
@@ -100,9 +123,12 @@ public class PosController {
         List<Product> products = categoryId != null && !categoryId.isEmpty()
                 ? productService.getAllProducts().stream()
                 .filter(p -> p.getCategory() != null &&
-                        String.valueOf(p.getCategory().getCategoryId()).equals(categoryId))
+                        String.valueOf(p.getCategory().getCategoryId()).equals(categoryId) &&
+                        isActive(p.getStatus()))
                 .collect(Collectors.toList())
-                : productService.getAllProducts();
+                : productService.getAllProducts().stream()
+                .filter(p -> isActive(p.getStatus()))
+                .collect(Collectors.toList());
 
         return toProductDtoList(products);
     }
@@ -111,7 +137,8 @@ public class PosController {
     @ResponseBody
     public List<Map<String, Object>> searchProducts(@RequestParam String query) {
         List<Product> products = productRepository.findAll().stream()
-                .filter(p -> p.getProductName().toLowerCase().contains(query.toLowerCase()))
+                .filter(p -> isActive(p.getStatus()) &&
+                        p.getProductName().toLowerCase().contains(query.toLowerCase()))
                 .collect(Collectors.toList());
         return toProductDtoList(products);
     }
@@ -124,6 +151,7 @@ public class PosController {
             m.put("price",    p.getPrice());
             m.put("imageUrl", p.getImageUrl());
             m.put("unit",     p.getUnit());
+            m.put("status",   p.getStatus() != null ? p.getStatus().toString() : "ACTIVE");
             return m;
         }).collect(Collectors.toList());
     }
@@ -312,6 +340,42 @@ public class PosController {
 
         Map<String, Object> resp = new HashMap<>();
         resp.put("success", true);
+        return ResponseEntity.ok(resp);
+    }
+
+    /* ================================================================
+       BANK CONFIG
+       POST /pos/api/bank-config
+       ================================================================ */
+    @PostMapping("/api/bank-config")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> saveBankConfig(
+            @RequestBody Map<String, String> settings,
+            HttpSession session) {
+
+        List<String> required = Arrays.asList("bankCode", "accountNumber", "accountName");
+        for (String k : required) {
+            if (!settings.containsKey(k) || settings.get(k).isBlank()) {
+                Map<String, Object> err = new HashMap<>();
+                err.put("success", false);
+                err.put("message", "Missing: " + k);
+                return ResponseEntity.badRequest().body(err);
+            }
+        }
+        session.setAttribute(SESSION_BANK_CONFIG, new HashMap<>(settings));
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("success", true);
+        return ResponseEntity.ok(resp);
+    }
+
+    @GetMapping("/api/bank-config")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getBankConfig(HttpSession session) {
+        @SuppressWarnings("unchecked")
+        Map<String, String> s = (Map<String, String>) session.getAttribute(SESSION_BANK_CONFIG);
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("success", s != null);
+        if (s != null) resp.put("settings", s);
         return ResponseEntity.ok(resp);
     }
 
