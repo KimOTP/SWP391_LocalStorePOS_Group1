@@ -50,7 +50,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
             :status IS NULL
             OR (:status = 'LATE' AND a.isLate = true)
             OR (:status = 'EARLY_LEAVE' AND a.isEarlyLeave = true)
-            OR (:status = 'NORMAL' AND a.isLate = false AND a.isEarlyLeave = false)
+            OR (:status = 'NORMAL' AND a.isLate = false AND a.isEarlyLeave = false AND a.checkInTime IS NOT NULL)
+            OR (:status = 'ABSENT' AND a.checkInTime IS NULL AND a.checkOutTime IS NULL)
         )
         AND a.workDate = CURRENT_DATE
     ORDER BY a.workDate DESC
@@ -73,7 +74,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
             :status IS NULL
             OR (:status = 'LATE' AND a.isLate = true)
             OR (:status = 'EARLY_LEAVE' AND a.isEarlyLeave = true)
-            OR (:status = 'NORMAL' AND a.isLate = false AND a.isEarlyLeave = false)
+            OR (:status = 'NORMAL' AND a.isLate = false AND a.isEarlyLeave = false AND a.checkInTime IS NOT NULL)
+            OR (:status = 'ABSENT' AND a.checkInTime IS NULL AND a.checkOutTime IS NULL)
         )
         AND (:fromDate IS NULL OR a.workDate >= :fromDate)
         AND (:toDate IS NULL OR a.workDate <= :toDate)

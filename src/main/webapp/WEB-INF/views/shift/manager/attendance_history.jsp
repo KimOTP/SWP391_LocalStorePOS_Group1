@@ -134,6 +134,7 @@
                 </div>
             </div>
 
+            <!--Shift-->
             <div class="col-md-2">
                 <div class="info-label">Shift</div>
 
@@ -185,6 +186,7 @@
                 </div>
             </div>
 
+            <!--Status-->
             <div class="col-md-2">
                 <div class="info-label">Status</div>
 
@@ -229,6 +231,12 @@
                             'Early Leave','Early Leave',
                             'selectedAttendanceStatus','attendanceStatusInput','attendanceStatusMenu')">
                             Early Leave
+                        </div>
+
+                        <div onclick="selectOption(
+                            'Absent','Absent',
+                            'selectedAttendanceStatus','attendanceStatusInput','attendanceStatusMenu')">
+                            Absent
                         </div>
 
                     </div>
@@ -277,6 +285,10 @@
 
                         <td>
                             <c:choose>
+
+                                <c:when test="${a.checkInTime == null and a.checkOutTime == null}">
+                                    <span class="status-absent">Absent</span>
+                                </c:when>
 
                                 <c:when test="${a.isLate == true and a.isEarlyLeave == true}">
                                     <span class="status-pending">Late, Early Leave</span>
