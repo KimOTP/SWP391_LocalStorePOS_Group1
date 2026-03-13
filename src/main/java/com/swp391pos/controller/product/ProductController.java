@@ -1,6 +1,5 @@
 package com.swp391pos.controller.product;
 
-import com.cloudinary.*;
 import com.swp391pos.entity.Product;
 import com.swp391pos.repository.CategoryRepository;
 import com.swp391pos.repository.ProductRepository;
@@ -138,15 +137,18 @@ public class ProductController {
                                 @RequestParam("categoryId") Integer categoryId,
                                 RedirectAttributes redirectAttributes) {
 
-        product.setProductId(oldId);
-        boolean success = productService.updateProduct(oldId, product, imageFile, statusId, categoryId);
-
-        if(success) {
+        try {
+            product.setProductId(oldId);
+            productService.updateProduct(oldId, product, imageFile, statusId, categoryId);
             redirectAttributes.addFlashAttribute("notification", "Updated product successfully!");
             return "redirect:/products/manage";
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update product!");
-            return "redirect:/products/update/";
+
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/products/update/" + oldId;
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Unexpected error occurred!");
+            return "redirect:/products/update/" + oldId;
         }
     }
 

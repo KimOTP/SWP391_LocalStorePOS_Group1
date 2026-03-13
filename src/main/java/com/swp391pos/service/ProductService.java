@@ -97,39 +97,53 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public boolean updateProduct(String oldId, Product product, MultipartFile imageFile, Integer statusId, Integer categoryId) {
-        try {
-            Product oldProduct = productRepository.findProductByProductId(oldId);
+    public boolean updateProduct(String oldId, Product product, MultipartFile imageFile,
+                                 Integer statusId, Integer categoryId) throws Exception {
 
-            if (imageFile != null && !imageFile.isEmpty()) {
-                // Upload ảnh mới lên Cloudinary
-                Map uploadResult = cloudinary.uploader().upload(imageFile.getBytes(),
-                        ObjectUtils.asMap("folder", "products"));
-                product.setImageUrl((String) uploadResult.get("url"));
-            } else {
-                // Nếu không chọn ảnh mới, giữ lại link ảnh cũ
-                product.setImageUrl(oldProduct.getImageUrl());
-            }
+        Product oldProduct = productRepository.findProductByProductId(oldId);
+        Inventory inventory = inventoryRepository.findByProductId(oldId);
 
-            if (product.getAttribute() == null || product.getAttribute().isEmpty()) {
-                product.setAttribute("ORIGIN");
-            }
-
-            Category cat = new Category();
-            cat.setCategoryId(categoryId);
-            product.setCategory(cat);
-
-            ProductStatus stat = new ProductStatus();
-            stat.setProductStatusId(statusId);
-            product.setStatus(stat);
-
-            productRepository.save(product);
-
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+        if (oldProduct == null) {
+            throw new RuntimeException("Product not found");
         }
+
+        // Upload image
+        if (imageFile != null && !imageFile.isEmpty()) {
+            Map uploadResult = cloudinary.uploader().upload(
+                    imageFile.getBytes(),
+                    ObjectUtils.asMap("folder", "products")
+            );
+            product.setImageUrl((String) uploadResult.get("url"));
+        } else {
+            product.setImageUrl(oldProduct.getImageUrl());
+        }
+
+        // Default attribute
+        if (product.getAttribute() == null || product.getAttribute().isEmpty()) {
+            product.setAttribute("ORIGIN");
+        }
+
+        // Set category
+        Category cat = new Category();
+        cat.setCategoryId(categoryId);
+        product.setCategory(cat);
+
+        // Set status
+        ProductStatus stat = new ProductStatus();
+        stat.setProductStatusId(statusId);
+
+        if (statusId == 1) { // ACTIVE
+            if (inventory == null || inventory.getCurrentQuantity() <= 0) {
+                throw new RuntimeException("Cannot change status to ACTIVE. " +
+                        "Product quantity must > 0");
+            }
+        }
+
+        product.setStatus(stat);
+
+        productRepository.save(product);
+
+        return true;
     }
 
     public boolean deleteProduct(String id) {

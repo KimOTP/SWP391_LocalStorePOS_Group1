@@ -90,7 +90,7 @@
                                 <div class="status-option-container">
                                     <%-- Lấy động từ danh sách ProductStatus truyền từ Controller --%>
                                     <c:forEach var="st" items="${statuses}" varStatus="loop">
-                                        <c:if test="${st.productStatusId != 3}">
+                                        <c:if test="${st.productStatusId != 3 && st.productStatusId != 1}">
                                             <div class="status-item">
                                                 <input type="radio" name="statusId" id="st-${st.productStatusId}"
                                                        value="${st.productStatusId}" ${loop.first ? 'checked' : ''}>

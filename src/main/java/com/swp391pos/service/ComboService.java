@@ -4,9 +4,11 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.swp391pos.entity.Combo;
 import com.swp391pos.entity.ComboDetail;
+import com.swp391pos.entity.Inventory;
 import com.swp391pos.entity.Product;
 import com.swp391pos.repository.ComboDetailRepository;
 import com.swp391pos.repository.ComboRepository;
+import com.swp391pos.repository.InventoryRepository;
 import com.swp391pos.repository.ProductRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.poi.ss.usermodel.*;
@@ -34,6 +36,8 @@ public class ComboService {
 
     @Autowired
     private Cloudinary cloudinary;
+    @Autowired
+    private InventoryRepository inventoryRepository;
 
     /**
      * Lưu Combo kèm theo danh sách sản phẩm chi tiết (Giống logic addProduct)
@@ -83,8 +87,7 @@ public class ComboService {
 
     @Transactional
     public boolean updateCombo(Combo combo, List<String> productIds, List<Integer> quantities,
-                               MultipartFile imageFile, String existingImageUrl) {
-        try {
+                               MultipartFile imageFile, String existingImageUrl) throws Exception{
             // 1. Xử lý hình ảnh
             if (imageFile != null && !imageFile.isEmpty()) {
                 Map uploadResult = cloudinary.uploader().upload(imageFile.getBytes(),
@@ -95,11 +98,26 @@ public class ComboService {
                 combo.setImageUrl(existingImageUrl);
             }
 
+        if (combo.getStatusCombo() == Combo.Status.ACTIVE) {
+            for (int i = 0; i < productIds.size(); i++) {
+                String productId = productIds.get(i);
+                int quantity = quantities.get(i);
+
+              Inventory inv = inventoryRepository.findById(productId)
+                      .orElseThrow(() -> new RuntimeException("Inventory not found"));
+
+                if (inv.getCurrentQuantity() < quantity) {
+                    Product product = productRepository.findProductByProductId(productId);
+                    throw new RuntimeException(
+                            "Quantity of " + product.getProductName() + " not enough!"
+                    );
+                }
+            }
+        }
             // 2. Lưu thông tin Combo (Master)
             Combo savedCombo = comboRepository.save(combo);
 
             // 3. Xóa toàn bộ chi tiết sản phẩm cũ của Combo này
-            // Bạn cần viết phương thức này trong ComboDetailRepository
             comboDetailRepository.deleteByCombo(savedCombo);
 
             // 4. Lưu lại danh sách sản phẩm mới
@@ -116,9 +134,6 @@ public class ComboService {
                 }
             }
             return true;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to update combo: " + e.getMessage());
-        }
     }
 
     public List<Combo> getCombosByStatuses(List<String> statuses) {
