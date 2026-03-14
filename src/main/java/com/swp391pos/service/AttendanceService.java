@@ -109,6 +109,8 @@ public class AttendanceService {
             mappedStatus = "EARLY_LEAVE";
         } else if ("Normal".equals(status)) {
             mappedStatus = "NORMAL";
+        } else if ("Absent".equals(status)) {
+            mappedStatus = "ABSENT";
         }
 
         return attendanceRepository.searchAttendance(

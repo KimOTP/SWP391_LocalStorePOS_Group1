@@ -19,104 +19,113 @@
 
 <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0">Supplier Management</h2>
+        <div>
+            <h2 class="fw-bold mb-0">Supplier Management</h2>
+            <small class="text-muted">Manage your supply chain partners</small>
+        </div>
+        <div class="d-flex gap-2">
+            <button class="btn btn-add px-4 py-2 d-inline-flex align-items-center" onclick="prepareAddModal()" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                <i class="fa-solid fa-plus me-2"></i>Add Supplier
+            </button>
+        </div>
     </div>
 
-    <div class="row g-4 mb-4">
+    <div class="row g-4">
         <div class="col-md-3">
             <div class="stat-card">
-                <i class="fa-solid fa-truck-field stat-icon"></i>
-                <div class="stat-title">Total Suppliers</div>
-                <div class="stat-value text-total">${suppliers.size()}</div>
-                <div class="small text-muted mt-2">Active partners</div>
+                <div class="stat-card-header">
+                    <div class="stat-card-info">
+                        <div class="stat-title">Total Suppliers</div>
+                        <div class="stat-value text-total">${suppliers.size()}</div>
+                    </div>
+                    <div class="stat-card-icon stat-icon-total">
+                        <i class="fa-solid fa-truck-field"></i>
+                    </div>
+                </div>
+                <div class="stat-sub">Active partners</div>
             </div>
         </div>
+
         <div class="col-md-4">
             <div class="stat-card">
-                <i class="fa-solid fa-wallet stat-icon"></i>
-                <div class="stat-title">Total Order Value</div>
-                <div class="stat-value text-category">
-                    <c:set var="grandTotal" value="0" />
-                    <c:forEach var="s" items="${suppliers}"><c:set var="grandTotal" value="${grandTotal + s.totalValue}" /></c:forEach>
-                    <fmt:formatNumber value="${grandTotal}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
+                <div class="stat-card-header">
+                    <div class="stat-card-info">
+                        <div class="stat-title">Total Order Value</div>
+                        <div class="stat-value text-category">
+                            <c:set var="grandTotal" value="0" />
+                            <c:forEach var="s" items="${suppliers}">
+                                <c:set var="grandTotal" value="${grandTotal + s.totalValue}" />
+                            </c:forEach>
+                            <fmt:formatNumber value="${grandTotal}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
+                        </div>
+                    </div>
+                    <div class="stat-card-icon stat-icon-category">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
                 </div>
-                <div class="small text-muted mt-2">Combined across all suppliers</div>
+                <div class="stat-sub">Combined across all suppliers</div>
             </div>
         </div>
     </div>
 
-    <div class="card shadow-sm border-0">
-        <div class="card-body p-4 product-list-container">
+    <div class="filter-bar mt-4 mb-3">
+        <div class="search-box-standalone" style="width: 350px;">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by name, ID or email...">
+        </div>
+    </div>
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h5 class="fw-bold mb-0">Suppliers List</h5>
-                    <small class="text-muted">Manage your supply chain partners.</small>
-                </div>
-                <button class="btn btn-add px-4" onclick="prepareAddModal()">
-                    <i class="fa-solid fa-plus me-2"></i>Add Supplier
-                </button>
-            </div>
-
-            <div class="row g-2 mb-4 align-items-center">
-                <div class="col-md-4">
-                    <div class="search-box">
-                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                        <input type="text" id="searchInput" class="form-control" placeholder="Search suppliers...">
-                    </div>
-                </div>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead>
+    <div class="product-table-card">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                <tr class="thead-row">
+                    <th class="th-cell" style="width: 100px;">ID</th>
+                    <th class="th-cell">Supplier Name</th>
+                    <th class="th-cell">Address</th>
+                    <th class="th-cell">Email</th>
+                    <th class="th-cell">Order Value</th>
+                    <th class="th-cell text-end">Action</th>
+                </tr>
+                </thead>
+                <tbody class="supplier-table-body">
+                <c:forEach var="s" items="${suppliers}">
                     <tr>
-                        <th>ID</th>
-                        <th>Supplier Name</th>
-                        <th>Address</th>
-                        <th>Email</th>
-                        <th>Order Value</th>
-                        <th class="text-end">Action</th>
+                        <td class="td-cell"><span class="text-sku">#${s.supplierId}</span></td>
+                        <td class="td-cell fw-bold text-dark">${s.supplierName}</td>
+                        <td class="td-cell text-muted">${s.address}</td>
+                        <td class="td-cell">${s.email}</td>
+                        <td class="td-cell fw-bold price">
+                            <fmt:formatNumber value="${s.totalValue}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
+                        </td>
+                        <td class="td-cell text-end">
+                            <div class="dropdown">
+                                <button class="btn btn-light btn-sm rounded-circle shadow-none" type="button" data-bs-toggle="dropdown" style="width: 32px; height: 32px;">
+                                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-2" style="border-radius: 12px; min-width: 160px;">
+                                    <li class="px-2 pb-1 text-muted small fw-bold">Action</li>
+                                    <li>
+                                        <button class="dropdown-item py-2" data-bs-toggle="modal" data-bs-target="#editSupplierModal"
+                                                data-id="${s.supplierId}" data-name="${s.supplierName}"
+                                                data-address="${s.address}" data-email="${s.email}"
+                                                onclick="openEditModal(this)">
+                                            <i class="fa-regular fa-pen-to-square me-2 text-warning" style="width: 18px;"></i> Edit
+                                        </button>
+                                    </li>
+                                    <li><hr class="dropdown-divider mx-2"></li>
+                                    <li>
+                                        <button class="dropdown-item py-2 text-danger" onclick="confirmDelete(${s.supplierId}, '${s.supplierName}')">
+                                            <i class="fa-regular fa-trash-can me-2" style="width: 18px;"></i> Delete
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
                     </tr>
-                    </thead>
-                    <tbody class="supplier-table-body">
-                    <c:forEach var="s" items="${suppliers}">
-                        <tr>
-                            <td class="text-sku">#${s.supplierId}</td>
-                            <td class="fw-bold">${s.supplierName}</td>
-                            <td class="text-muted">${s.address}</td>
-                            <td>${s.email}</td>
-                            <td class="fw-bold text-dark">
-                                <fmt:formatNumber value="${s.totalValue}" type="currency" currencySymbol="đ" maxFractionDigits="0"/>
-                            </td>
-                            <td class="text-end">
-                                <div class="dropdown">
-                                    <button class="btn btn-light btn-sm rounded-circle shadow-none" type="button" data-bs-toggle="dropdown">
-                                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-2" style="border-radius: 12px;">
-                                        <li>
-                                            <button class="dropdown-item py-2"
-                                                    data-id="${s.supplierId}" data-name="${s.supplierName}"
-                                                    data-address="${s.address}" data-email="${s.email}"
-                                                    onclick="openEditModal(this)">
-                                                <i class="fa-regular fa-pen-to-square me-2 text-warning"></i> Edit
-                                            </button>
-                                        </li>
-                                        <li><hr class="dropdown-divider"></li>
-                                        <li>
-                                            <button class="dropdown-item py-2 text-danger" onclick="confirmDelete(${s.supplierId}, '${s.supplierName}')">
-                                                <i class="fa-regular fa-trash-can me-2"></i> Delete
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    </c:forEach>
-                    </tbody>
-                </table>
-            </div>
+                </c:forEach>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -125,13 +134,27 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
             <form id="addSupplierForm" action="/suppliers/add" method="post">
-                <div class="modal-header bg-light"><h5 class="fw-bold mb-0">Add New Supplier</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body p-4">
-                    <div class="mb-3"><label class="form-label small fw-bold text-muted">SUPPLIER NAME</label><input type="text" name="supplierName" class="form-control" required></div>
-                    <div class="mb-3"><label class="form-label small fw-bold text-muted">ADDRESS</label><input type="text" name="contactName" class="form-control"></div>
-                    <div class="mb-3"><label class="form-label small fw-bold text-muted">EMAIL</label><input type="email" name="email" class="form-control"></div>
+                <div class="modal-header bg-light">
+                    <h5 class="fw-bold mb-0">Add New Supplier</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-footer border-0"><button type="submit" class="btn btn-add px-4">Create Supplier</button></div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">SUPPLIER NAME</label>
+                        <input type="text" name="supplierName" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">ADDRESS</label>
+                        <input type="text" name="contactName" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">EMAIL</label>
+                        <input type="email" name="email" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="submit" class="btn btn-add px-4">Create Supplier</button>
+                </div>
             </form>
         </div>
     </div>
@@ -141,14 +164,28 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow">
             <form action="/suppliers/update" method="post">
-                <div class="modal-header bg-light"><h5 class="fw-bold mb-0">Update Information</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-header bg-light">
+                    <h5 class="fw-bold mb-0">Update Information</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
                 <div class="modal-body p-4">
                     <input type="hidden" name="supplierId" id="editSupplierId">
-                    <div class="mb-3"><label class="form-label small fw-bold text-muted">SUPPLIER NAME</label><input type="text" name="supplierName" id="editSupplierName" class="form-control" required></div>
-                    <div class="mb-3"><label class="form-label small fw-bold text-muted">ADDRESS</label><input type="text" name="contactName" id="editAddress" class="form-control"></div>
-                    <div class="mb-3"><label class="form-label small fw-bold text-muted">EMAIL</label><input type="email" name="email" id="editEmail" class="form-control"></div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">SUPPLIER NAME</label>
+                        <input type="text" name="supplierName" id="editSupplierName" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">ADDRESS</label>
+                        <input type="text" name="contactName" id="editAddress" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-bold text-muted">EMAIL</label>
+                        <input type="email" name="email" id="editEmail" class="form-control">
+                    </div>
                 </div>
-                <div class="modal-footer border-0"><button type="submit" class="btn btn-add px-4">Save Changes</button></div>
+                <div class="modal-footer border-0">
+                    <button type="submit" class="btn btn-add px-4">Save Changes</button>
+                </div>
             </form>
         </div>
     </div>

@@ -18,4 +18,13 @@ public interface InventoryRepository extends JpaRepository<Inventory, String> {
     // Tìm kiếm theo tên sản phẩm hoặc SKU
     @Query("SELECT i FROM Inventory i WHERE i.product.productName LIKE %:keyword% OR i.product.productId LIKE %:keyword%")
     List<Inventory> searchInventory(@Param("keyword") String keyword);
+
+    @Query("SELECT i FROM Inventory i ORDER BY " +
+            "CASE WHEN i.currentQuantity <= i.minThreshold THEN 0 ELSE 1 END ASC, " +
+            "i.product.productName ASC")
+    List<Inventory> findAllPrioritized();
+
+    // Lấy nhanh danh sách hàng đang báo động
+    @Query("SELECT i FROM Inventory i WHERE i.currentQuantity < i.minThreshold")
+    List<Inventory> findAllLowStock();
 }

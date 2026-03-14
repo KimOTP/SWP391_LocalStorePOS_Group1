@@ -19,10 +19,11 @@ public class ApprovalService {
     @Autowired private AuditSessionRepository auditRepo;
     @Autowired private InventoryRepository inventoryRepo;
     @Autowired private TransactionStatusRepository statusRepo;
+    @Autowired private EmployeeRepository employeeRepository;
+    @Autowired private EmailService emailService;
 
     @Transactional
     public void processApproval(String type, Integer id, boolean isApproved, Account approverAccount) {
-        // 1. Xác định trạng thái: 4 (Approved) hoặc 3 (Rejected)
         TransactionStatus newStatus = statusRepo.findById(isApproved ? 4 : 3)
                 .orElseThrow(() -> new RuntimeException("Status not found"));
         Employee approver = approverAccount.getEmployee();
@@ -119,5 +120,20 @@ public class ApprovalService {
 
         queue.sort((a, b) -> ((LocalDateTime) b.get("time")).compareTo((LocalDateTime) a.get("time")));
         return queue;
+    }
+
+    private void triggerLowStockEmail(Inventory inv) {
+        List<String> managers = employeeRepository.findAllManagerEmails();
+
+        String subject = "[LocalStorePOS] CRITICAL: Low Stock Alert - " + inv.getProduct().getProductName();
+        String content = "<div style='font-family: Arial; border-top: 4px solid #dc2626; padding: 20px; background: #fff1f2;'>" +
+                "<h2 style='color: #991b1b;'>Inventory Alert</h2>" +
+                "<p>Product: <b>" + inv.getProduct().getProductName() + "</b> (SKU: " + inv.getProductId() + ")</p>" +
+                "<p>Current Stock: <span style='color: #dc2626; font-weight: bold;'>" + inv.getCurrentQuantity() + "</span></p>" +
+                "<p>Minimum Threshold: " + inv.getMinThreshold() + "</p>" +
+                "<p>Please initiate a <b>Stock-in Request</b> immediately.</p>" +
+                "</div>";
+
+        emailService.sendEmailToManagers(managers, subject, content);
     }
 }

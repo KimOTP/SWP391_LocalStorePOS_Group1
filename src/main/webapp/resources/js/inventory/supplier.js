@@ -2,7 +2,11 @@ document.addEventListener('DOMContentLoaded', () => initLiveSearch());
 
 function prepareAddModal() {
     document.getElementById('addSupplierForm').reset();
-    new bootstrap.Modal(document.getElementById('addSupplierModal')).show();
+
+    // Sử dụng getOrCreateInstance để ngăn việc tạo ra nhiều modal xếp chồng gây kẹt nền xám
+    const modalElement = document.getElementById('addSupplierModal');
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    modal.show();
 }
 
 function openEditModal(btn) {
@@ -18,7 +22,10 @@ function openEditModal(btn) {
     document.getElementById('editAddress').value = address;
     document.getElementById('editEmail').value = email;
 
-    new bootstrap.Modal(document.getElementById('editSupplierModal')).show();
+    // Sử dụng getOrCreateInstance để sửa lỗi kẹt nền xám
+    const modalElement = document.getElementById('editSupplierModal');
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    modal.show();
 }
 
 function initLiveSearch() {
@@ -32,8 +39,25 @@ function initLiveSearch() {
     });
 }
 
+// Nâng cấp hàm Delete sử dụng SweetAlert2 cho đồng bộ UI
 function confirmDelete(id, name) {
-    if (confirm(`Delete supplier: ${name} (#${id})?`)) {
-        window.location.href = `/suppliers/delete/${id}`;
-    }
+    Swal.fire({
+        title: 'Delete Supplier?',
+        html: `Bạn có chắc chắn muốn xóa nhà cung cấp <b>${name}</b> (#${id})?<br>Hành động này không thể hoàn tác!`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626', // Màu đỏ (Danger)
+        cancelButtonColor: '#94a3b8', // Màu xám (Muted)
+        confirmButtonText: '<i class="fa-solid fa-trash-can me-2"></i>Yes, delete it',
+        cancelButtonText: 'Cancel',
+        customClass: {
+            confirmButton: 'btn btn-danger px-4 py-2 rounded-3 fw-bold',
+            cancelButton: 'btn btn-secondary px-4 py-2 rounded-3 fw-bold ms-2'
+        },
+        buttonsStyling: false // Tắt style mặc định để dùng class của Bootstrap
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = `/suppliers/delete/${id}`;
+        }
+    });
 }
