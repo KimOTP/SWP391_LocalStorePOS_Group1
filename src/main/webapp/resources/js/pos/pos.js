@@ -314,6 +314,56 @@ function showToast(msg, type) {
 }
 
 /* ============================================================
+   CHECKOUT / GO TO PAYMENT
+   ============================================================ */
+async function goToPayment() {
+    if (cart.length === 0) {
+        showToast('The shopping cart is empty!', 'error');
+        return;
+    }
+
+    const btn = document.querySelector('.btn-pay');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i>Processing...';
+    }
+
+    const totalAmount = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+
+    const payload = {
+        items: cart.map(i => ({
+            productId  : i.id,
+            productName: i.name,
+            price      : i.price,
+            quantity   : i.qty,
+            unit       : i.unit || ''
+        })),
+        totalAmount: totalAmount
+    };
+
+    try {
+        const res  = await fetch((window.contextPath || '') + '/pos/api/checkout', {
+            method : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body   : JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            window.location.href = (window.contextPath || '') + '/pos/payment?orderId=' + data.orderId;
+        } else {
+            throw new Error(data.message || 'Checkout failed');
+        }
+    } catch (err) {
+        showToast('Error: ' + err.message, 'error');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fa-solid fa-credit-card me-2"></i>PAY';
+        }
+    }
+}
+
+/* ============================================================
    EVENT LISTENERS
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {

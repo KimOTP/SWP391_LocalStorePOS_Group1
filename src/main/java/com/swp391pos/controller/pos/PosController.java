@@ -198,9 +198,17 @@ public class PosController {
                 OrderItem oi = new OrderItem();
                 oi.setOrder(saved);
 
-                Object pid = item.get("productId");
-                Product product = productRepository.findProductByProductId(String.valueOf(pid));
-                if (product != null) oi.setProduct(product);
+                Object pid    = item.get("productId");
+                String pidStr = String.valueOf(pid);
+
+                if (pidStr.startsWith("COMBO_")) {
+                    String comboId = pidStr.replace("COMBO_", "");
+                    Combo combo = comboService.getComboById(comboId);
+                    oi.setCombo(combo);
+                } else {
+                    Product product = productRepository.findProductByProductId(pidStr);
+                    oi.setProduct(product);
+                }
 
                 int        qty       = ((Number) item.getOrDefault("quantity", 1)).intValue();
                 BigDecimal unitPrice = BigDecimal.valueOf(
