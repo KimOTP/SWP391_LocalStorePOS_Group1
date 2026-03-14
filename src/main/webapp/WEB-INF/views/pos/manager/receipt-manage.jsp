@@ -243,7 +243,7 @@
 <div class="modal-overlay" id="detailModal" onclick="closeModalOnBg(event)">
     <div class="modal-box">
 
-        <!-- Header: title + receipt number subtitle -->
+        <!-- Header: white bg, title + subtitle -->
         <div class="modal-header">
             <div class="modal-header-text">
                 <h2 class="modal-title">Invoice details</h2>
@@ -254,100 +254,106 @@
             </button>
         </div>
 
+        <!-- Body: grey bg, individual white cards -->
         <div class="modal-body">
 
-            <!-- Receipt info + Customer info -->
-            <div class="modal-info-row">
-                <div class="info-section">
-                    <div class="info-section-title">Receipt information</div>
-                    <div class="info-row">
-                        <span class="info-key">Invoice code:</span>
-                        <span class="info-val" id="detailCode">—</span>
+            <!-- Card 1: Receipt info + Customer info -->
+            <div class="modal-card">
+                <div class="modal-info-row">
+                    <div class="info-section">
+                        <div class="info-section-title">Receipt information</div>
+                        <div class="info-row">
+                            <span class="info-key">Invoice code:</span>
+                            <span class="info-val" id="detailCode">—</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-key">Creation date:</span>
+                            <span class="info-val" id="detailDate">—</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-key">State:</span>
+                            <span class="info-val" id="detailStatus">—</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-key">Cashier:</span>
+                            <span class="info-val" id="detailCashier">—</span>
+                        </div>
                     </div>
-                    <div class="info-row">
-                        <span class="info-key">Creation date:</span>
-                        <span class="info-val" id="detailDate">—</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-key">State:</span>
-                        <span class="info-val" id="detailStatus">—</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-key">Cashier:</span>
-                        <span class="info-val" id="detailCashier">—</span>
+                    <div class="info-divider"></div>
+                    <div class="info-section">
+                        <div class="info-section-title">Customer information</div>
+                        <div class="info-row">
+                            <span class="info-key">Customer:</span>
+                            <span class="info-val" id="detailCustomer">—</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-key">Payment method:</span>
+                            <span class="info-val" id="detailPayment">—</span>
+                        </div>
                     </div>
                 </div>
-                <div class="info-divider"></div>
-                <div class="info-section">
-                    <div class="info-section-title">Customer information</div>
-                    <div class="info-row">
-                        <span class="info-key">Customer:</span>
-                        <span class="info-val" id="detailCustomer">—</span>
+            </div>
+
+            <!-- Card 2: Order details table -->
+            <div class="modal-card">
+                <div class="modal-section-label">Order details</div>
+                <div class="detail-table-wrap">
+                    <table class="detail-table">
+                        <colgroup>
+                            <col><col><col><col><col>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>Product name</th>
+                                <th>Unit of measurement</th>
+                                <th>Unit price</th>
+                                <th>Total amount</th>
+                                <th>Product quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detailItems">
+                            <tr>
+                                <td colspan="5" style="text-align:center;color:#94a3b8;padding:20px;white-space:normal">No items</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Card 3: Payment summary -->
+            <div class="modal-card">
+                <div class="payment-summary-section">
+                    <div class="payment-summary-label">Payment summary</div>
+                    <div class="payment-summary-row">
+                        <span>Total amount of goods:</span>
+                        <span id="detailSubtotal">—</span>
                     </div>
-                    <div class="info-row">
-                        <span class="info-key">Payment method:</span>
-                        <span class="info-val" id="detailPayment">—</span>
+                    <div class="payment-summary-row">
+                        <span>Total discount of goods:</span>
+                        <span id="detailDiscount">—</span>
                     </div>
                 </div>
             </div>
 
-            <div class="modal-divider"></div>
-
-            <!-- Order details table -->
-            <div class="modal-section-label">Order details</div>
-            <div class="detail-table-wrap">
-                <table class="detail-table">
-                    <thead>
-                        <tr>
-                            <th>Product name</th>
-                            <th>Unit of measurement</th>
-                            <th>Unit price</th>
-                            <th>Total amount</th>
-                            <th>Product quantity</th>
-                        </tr>
-                    </thead>
-                    <tbody id="detailItems">
-                        <tr>
-                            <td colspan="5" style="text-align:center;color:#94a3b8;padding:20px;">No items</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="modal-divider"></div>
-
-            <!-- Payment summary -->
-            <div class="payment-summary-section">
-                <div class="payment-summary-label">Payment summary</div>
-                <div class="payment-summary-row">
-                    <span>Total amount of goods:</span>
-                    <span id="detailSubtotal">—</span>
-                </div>
-                <div class="payment-summary-row">
-                    <span>Total discount of goods:</span>
-                    <span id="detailDiscount">—</span>
+            <!-- Card 4: Total amount -->
+            <div class="modal-card">
+                <div class="total-amount-section">
+                    <div class="total-amount-label">Total amount</div>
+                    <div class="total-amount-value" id="detailTotal">—</div>
                 </div>
             </div>
 
-            <div class="modal-divider"></div>
-
-            <!-- Total amount – big highlighted -->
-            <div class="total-amount-section">
-                <div class="total-amount-label">Total amount</div>
-                <div class="total-amount-value" id="detailTotal">—</div>
-            </div>
-
-            <div class="modal-divider"></div>
-
-            <!-- Customer payment + Change as 2-column row -->
-            <div class="payment-footer-grid">
-                <div class="payment-footer-col">
-                    <div class="payment-footer-label">Customer payment</div>
-                    <div class="payment-footer-val" id="detailPaid">—</div>
-                </div>
-                <div class="payment-footer-col right">
-                    <div class="payment-footer-label">Change</div>
-                    <div class="payment-footer-val" id="detailChange">—</div>
+            <!-- Card 5: Customer payment + Change -->
+            <div class="modal-card">
+                <div class="payment-footer-grid">
+                    <div class="payment-footer-col">
+                        <div class="payment-footer-label">Customer payment</div>
+                        <div class="payment-footer-val" id="detailPaid">—</div>
+                    </div>
+                    <div class="payment-footer-col right">
+                        <div class="payment-footer-label">Change</div>
+                        <div class="payment-footer-val" id="detailChange">—</div>
+                    </div>
                 </div>
             </div>
 
