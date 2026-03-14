@@ -20,7 +20,6 @@ import java.util.Map;
 @RequestMapping("/audit")
 public class AuditController {
     @Autowired private AuditService auditService;
-    @Autowired private ProductService productService; // Giả định service lấy product
 
     @GetMapping("/add")
     public String showAuditPage(Model model) {
