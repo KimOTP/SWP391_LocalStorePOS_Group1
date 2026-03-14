@@ -68,33 +68,6 @@
 
         <div class="stat-card">
             <div class="stat-body">
-                <div class="stat-label">Pending</div>
-                <div class="stat-value">${pending}</div>
-                <div class="stat-desc">Invoice awaiting confirmation</div>
-            </div>
-            <div class="stat-icon orange"><i class="fa-regular fa-clock"></i></div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-body">
-                <div class="stat-label">Completed bill</div>
-                <div class="stat-value">${completed}</div>
-                <div class="stat-desc">The invoice has been paid.</div>
-            </div>
-            <div class="stat-icon teal"><i class="fa-solid fa-circle-check"></i></div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-body">
-                <div class="stat-label">Cancelled</div>
-                <div class="stat-value">${cancelled}</div>
-                <div class="stat-desc">The invoice has been canceled.</div>
-            </div>
-            <div class="stat-icon red"><i class="fa-solid fa-circle-xmark"></i></div>
-        </div>
-
-        <div class="stat-card">
-            <div class="stat-body">
                 <div class="stat-label">Today</div>
                 <div class="stat-value">${today}</div>
                 <div class="stat-desc">Total number of invoices today</div>
@@ -108,10 +81,6 @@
          FILTER SECTION
          ====================================================== -->
     <div class="filter-section">
-        <div class="filter-title">
-            <i class="fa-solid fa-filter"></i>
-            Filter
-        </div>
         <div class="filter-controls">
             <div class="search-wrap">
                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -160,10 +129,6 @@
         <table class="receipt-table">
             <thead>
                 <tr>
-                    <th class="td-check">
-                        <input type="checkbox" class="row-checkbox" id="checkAll"
-                               onchange="toggleAll(this)">
-                    </th>
                     <th>Invoice code</th>
                     <th>Creation date</th>
                     <th>Customer</th>
@@ -183,10 +148,6 @@
                     data-payment="${r.paymentMethod}"
                     data-customer="${r.customerName}"
                     data-cashier="${r.cashierName}">
-
-                    <td class="td-check">
-                        <input type="checkbox" class="row-checkbox">
-                    </td>
 
                     <%-- Invoice code --%>
                     <td><span class="invoice-code">${r.receiptNumber}</span></td>
@@ -261,7 +222,7 @@
                 <%-- Empty state --%>
                 <c:if test="${empty receipts}">
                 <tr>
-                    <td colspan="8"
+                    <td colspan="7"
                         style="text-align:center; color:#94a3b8; padding:40px 16px;">
                         <i class="fa-regular fa-file-lines"
                            style="font-size:2rem; display:block; margin-bottom:8px;"></i>
@@ -282,99 +243,117 @@
 <div class="modal-overlay" id="detailModal" onclick="closeModalOnBg(event)">
     <div class="modal-box">
 
+        <!-- Header: white bg, title + subtitle -->
         <div class="modal-header">
-            <h2 class="modal-title" id="modalTitle">Invoice details</h2>
+            <div class="modal-header-text">
+                <h2 class="modal-title">Invoice details</h2>
+                <span class="modal-subtitle" id="modalTitle"></span>
+            </div>
             <button class="modal-close" onclick="closeModal()">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
 
+        <!-- Body: grey bg, individual white cards -->
         <div class="modal-body">
 
-            <!-- Receipt info + Customer info -->
-            <div class="modal-grid">
-
-                <div class="info-card">
-                    <div class="info-card-title">Receipt information</div>
-                    <div class="info-row">
-                        <span class="info-key">Invoice code:</span>
-                        <span class="info-val" id="detailCode">—</span>
+            <!-- Card 1: Receipt info + Customer info -->
+            <div class="modal-card">
+                <div class="modal-info-row">
+                    <div class="info-section">
+                        <div class="info-section-title">Receipt information</div>
+                        <div class="info-row">
+                            <span class="info-key">Invoice code:</span>
+                            <span class="info-val" id="detailCode">—</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-key">Creation date:</span>
+                            <span class="info-val" id="detailDate">—</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-key">State:</span>
+                            <span class="info-val" id="detailStatus">—</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-key">Cashier:</span>
+                            <span class="info-val" id="detailCashier">—</span>
+                        </div>
                     </div>
-                    <div class="info-row">
-                        <span class="info-key">Creation date:</span>
-                        <span class="info-val" id="detailDate">—</span>
+                    <div class="info-divider"></div>
+                    <div class="info-section">
+                        <div class="info-section-title">Customer information</div>
+                        <div class="info-row">
+                            <span class="info-key">Customer:</span>
+                            <span class="info-val" id="detailCustomer">—</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-key">Payment method:</span>
+                            <span class="info-val" id="detailPayment">—</span>
+                        </div>
                     </div>
-                    <div class="info-row">
-                        <span class="info-key">State:</span>
-                        <span class="info-val status-paid" id="detailStatus">—</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-key">Cashier:</span>
-                        <span class="info-val" id="detailCashier">—</span>
-                    </div>
-                </div>
-
-                <div class="info-card">
-                    <div class="info-card-title">Customer information</div>
-                    <div class="info-row">
-                        <span class="info-key">Customer:</span>
-                        <span class="info-val" id="detailCustomer">—</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-key">Payment method:</span>
-                        <span class="info-val" id="detailPayment">—</span>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Order details table -->
-            <p class="modal-section-title">Order details</p>
-            <div class="detail-table-wrap">
-            <table class="detail-table">
-                <thead>
-                    <tr>
-                        <th>Product name</th>
-                        <th>Unit of measurement</th>
-                        <th>Unit price</th>
-                        <th>Total amount</th>
-                        <th>Product quantity</th>
-                    </tr>
-                </thead>
-                <tbody id="detailItems">
-                    <tr>
-                        <td colspan="5"
-                            style="text-align:center; color:#94a3b8; padding:16px;">
-                            No items
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            </div>
-
-            <!-- Payment summary -->
-            <div class="summary-box">
-                <div class="summary-box-title">Payment summary</div>
-                <div class="summary-row">
-                    <span>Total amount of goods:</span>
-                    <span id="detailSubtotal">—</span>
-                </div>
-                <div class="summary-row">
-                    <span>Total discount of goods:</span>
-                    <span id="detailDiscount">—</span>
                 </div>
             </div>
 
-            <!-- Total amount -->
-            <div class="total-box">
-                <div class="total-box-title">Total amount</div>
-                <div class="summary-row">
-                    <span>Customer payment:</span>
-                    <span id="detailPaid">—</span>
+            <!-- Card 2: Order details table -->
+            <div class="modal-card">
+                <div class="modal-section-label">Order details</div>
+                <div class="detail-table-wrap">
+                    <table class="detail-table">
+                        <colgroup>
+                            <col><col><col><col><col>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>Product name</th>
+                                <th>Unit of measurement</th>
+                                <th>Unit price</th>
+                                <th>Total amount</th>
+                                <th>Product quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detailItems">
+                            <tr>
+                                <td colspan="5" style="text-align:center;color:#94a3b8;padding:20px;white-space:normal">No items</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="summary-row">
-                    <span>Change:</span>
-                    <span id="detailChange">—</span>
+            </div>
+
+            <!-- Card 3: Payment summary -->
+            <div class="modal-card">
+                <div class="payment-summary-section">
+                    <div class="payment-summary-label">Payment summary</div>
+                    <div class="payment-summary-row">
+                        <span>Total amount of goods:</span>
+                        <span id="detailSubtotal">—</span>
+                    </div>
+                    <div class="payment-summary-row">
+                        <span>Total discount of goods:</span>
+                        <span id="detailDiscount">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 4: Total amount -->
+            <div class="modal-card">
+                <div class="total-amount-section">
+                    <div class="total-amount-label">Total amount</div>
+                    <div class="total-amount-value" id="detailTotal">—</div>
+                </div>
+            </div>
+
+            <!-- Card 5: Customer payment + Change -->
+            <div class="modal-card">
+                <div class="payment-footer-grid">
+                    <div class="payment-footer-col">
+                        <div class="payment-footer-label">Customer payment</div>
+                        <div class="payment-footer-val" id="detailPaid">—</div>
+                    </div>
+                    <div class="payment-footer-col right">
+                        <div class="payment-footer-label">Change</div>
+                        <div class="payment-footer-val" id="detailChange">—</div>
+                    </div>
                 </div>
             </div>
 

@@ -43,6 +43,12 @@ public class Payment {
     @Column(name = "amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal amount;
 
+    @Column(name = "amountPaid", nullable = false, precision = 15, scale = 2)
+    private BigDecimal amountPaid;
+
+    @Column(name = "changeAmount", nullable = false, precision = 15, scale = 2)
+    private BigDecimal changeAmount;
+
     @Column(name = "createdAt", updatable = false)
     private LocalDateTime createdAt;
 
