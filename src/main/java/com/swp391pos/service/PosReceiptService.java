@@ -175,10 +175,21 @@ public class PosReceiptService {
         List<Map<String, Object>> result = new ArrayList<>();
         orderItemRepository.findByOrder_OrderId(orderId).forEach(item -> {
             Map<String, Object> map = new HashMap<>();
-            map.put("productName", item.getProduct() != null
-                    ? item.getProduct().getProductName() : "—");
-            map.put("unit", item.getProduct() != null
-                    ? item.getProduct().getUnit() : "—");
+
+            if (item.getProduct() != null) {
+                // San pham don le
+                map.put("productName", item.getProduct().getProductName());
+                map.put("unit",        item.getProduct().getUnit() != null
+                        ? item.getProduct().getUnit() : "—");
+            } else if (item.getCombo() != null) {
+                // Combo
+                map.put("productName", item.getCombo().getComboName());
+                map.put("unit",        "Combo");
+            } else {
+                map.put("productName", "—");
+                map.put("unit",        "—");
+            }
+
             map.put("unitPrice",   item.getUnitPrice());
             map.put("quantity",    item.getQuantity());
             map.put("totalAmount", item.getSubtotal());

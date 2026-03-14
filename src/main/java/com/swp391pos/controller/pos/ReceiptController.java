@@ -3,6 +3,8 @@ package com.swp391pos.controller.pos;
 import com.swp391pos.entity.PosReceipt;
 import com.swp391pos.enums.OrderStatusName;
 import com.swp391pos.service.PosReceiptService;
+import com.swp391pos.service.PaymentService;
+import com.swp391pos.entity.Payment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.util.Map;
+import java.util.List;
 
 @Controller
 @RequestMapping("/pos/receipts")
@@ -22,6 +25,9 @@ public class ReceiptController {
 
     @Autowired
     private PosReceiptService posReceiptService;
+
+    @Autowired
+    private PaymentService paymentService;
 
     /* --------------------------------------------------------
        GET /pos/receipts  →  render manage receipt page
@@ -57,6 +63,23 @@ public class ReceiptController {
             if (orderIdObj != null) {
                 Long orderId = Long.valueOf(orderIdObj.toString());
                 detail.put("items", posReceiptService.getOrderItemsByOrderId(orderId));
+            }
+        }
+
+        // Load payment info (amountPaid, changeAmount) từ bảng Payment
+        Object orderIdObj2 = detail.get("orderId");
+        if (orderIdObj2 != null) {
+            Long orderId = Long.valueOf(orderIdObj2.toString());
+            List<Payment> payments = paymentService.findByOrderId(orderId);
+            if (!payments.isEmpty()) {
+                // Lấy payment PAID đầu tiên, fallback về payment mới nhất
+                Payment p = payments.stream()
+                        .filter(pay -> com.swp391pos.enums.PaymentStatus.PAID
+                                .equals(pay.getPaymentStatus()))
+                        .findFirst()
+                        .orElse(payments.get(payments.size() - 1));
+                detail.put("customerPayment", p.getAmountPaid());
+                detail.put("change",          p.getChangeAmount());
             }
         }
 

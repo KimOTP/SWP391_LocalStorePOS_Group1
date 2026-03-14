@@ -71,9 +71,9 @@ function populateModal(data) {
     const discount = data.discount  != null ? Number(data.discount)  : 0;
     document.getElementById('detailTotal').textContent = formatCurrency(subtotal - discount);
 
-    document.getElementById('detailPaid').textContent   = data.customerPayment != null
+    document.getElementById('detailPaid').textContent   = (data.customerPayment != null && data.customerPayment !== '')
         ? formatCurrency(data.customerPayment) : '—';
-    document.getElementById('detailChange').textContent = data.change != null
+    document.getElementById('detailChange').textContent = (data.change != null && data.change !== '')
         ? formatCurrency(data.change) : '—';
 
     // Status with dynamic colour
