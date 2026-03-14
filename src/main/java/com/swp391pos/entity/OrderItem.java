@@ -24,13 +24,21 @@ public class OrderItem {
     private Order order;
 
     // FK -> Product(product_id)
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(
             name = "productId",
-            nullable = false,
+            nullable = true,
             foreignKey = @ForeignKey(name = "FK_OrderItem_Product")
     )
     private Product product;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(
+            name = "comboId",
+            nullable = true,
+            foreignKey = @ForeignKey(name = "FK_OrderItem_Combo")
+    )
+    private Combo combo;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
@@ -43,9 +51,13 @@ public class OrderItem {
 
     @PrePersist
     @PreUpdate
-    private void validateQuantity() {
+    private void validate() {
         if (quantity == null || quantity <= 0) {
             throw new IllegalArgumentException("Quantity must be greater than 0");
+        }
+        // Phải có 1 trong 2, không được null cả 2
+        if (product == null && combo == null) {
+            throw new IllegalArgumentException("OrderItem must have either product or combo");
         }
     }
 }
