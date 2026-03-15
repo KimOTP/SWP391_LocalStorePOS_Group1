@@ -58,6 +58,16 @@ function onPayMethodChange(radio) {
     currentMethod = radio.value;
     const cashSection = document.getElementById('cashSection');
     cashSection.style.display = currentMethod === 'cash' ? '' : 'none';
+
+    // Reset QR status badge nếu chuyển phương thức
+    stopQrPolling();
+    const badge = document.getElementById('qrStatusBadge');
+    if (badge) badge.style.display = 'none';
+
+    // Reset nút Pay
+    const btn = document.querySelector('.pay-btn-pay');
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Pay'; }
+
     updateQR();
 }
 
@@ -118,10 +128,10 @@ function lookupCustomer(phone) {
                 document.getElementById('customerId').value            = c.customerId || '';
 
                 loyaltyAvail = parseInt(c.currentPoint || 0);
-                document.getElementById('loyaltyPoints').value         = loyaltyAvail + ' pts';
-                document.getElementById('loyaltyAvail').textContent    = 'Available: ' + loyaltyAvail + ' pts';
+                document.getElementById('loyaltyPoints') && (document.getElementById('loyaltyPoints').value = loyaltyAvail + ' pts');
                 document.getElementById('usePoints').max               = loyaltyAvail;
 
+                populateCustomerPoints();
                 setCustState('found');
             } else {
                 currentCustomer = null;
@@ -144,9 +154,14 @@ function clearCustomer() {
     currentCustomer = null;
     document.getElementById('customerPhone').value = '';
     document.getElementById('customerId').value    = '';
-    document.getElementById('customerName').value  = '';
-    document.getElementById('loyaltyPoints').value = '';
-    document.getElementById('usePoints').value     = '';
+    const nameEl = document.getElementById('customerName');
+    if (nameEl) nameEl.value = '';
+    const useEl = document.getElementById('usePoints');
+    if (useEl) { useEl.value = ''; useEl.disabled = false; }
+    const availEl = document.getElementById('loyaltyAvail');
+    if (availEl) availEl.textContent = '= 0đ';
+    const warnEl = document.getElementById('custPointWarn');
+    if (warnEl) warnEl.style.display = 'none';
     loyaltyAvail = 0;
     loyaltyUsed  = 0;
     updateTotals();
@@ -191,14 +206,14 @@ async function saveNewCustomer() {
 
             document.getElementById('custFoundName').textContent   = c.fullName   || '–';
             document.getElementById('custFoundPhone').textContent  = c.phoneNumber || phone;
-            document.getElementById('custFoundPoints').textContent = c.currentPoint ?? 0;
             document.getElementById('custAvatar').textContent      = (c.fullName || 'K').charAt(0).toUpperCase();
             document.getElementById('customerName').value          = c.fullName   || '';
             document.getElementById('customerId').value            = c.customerId || '';
 
             loyaltyAvail = 0;
-            document.getElementById('loyaltyPoints').value      = '0 pts';
-            document.getElementById('loyaltyAvail').textContent = 'Available: 0 pts';
+            loyaltyUsed  = 0;
+            populateCustomerPoints();
+            updateTotals();
 
             setCustState('found');
             showToast('Customer added successfully!', 'success');
@@ -214,10 +229,100 @@ async function saveNewCustomer() {
 }
 
 /* ── Loyalty points ── */
+/* ── Point config helpers ── */
+function getPointConfig() {
+    return window.pointConfig || {
+        earningRate: 10000, redemptionValue: 1000,
+        maxRedeemPercent: 30, minPointToRedeem: 100
+    };
+}
+
+// Tính số điểm tối đa được phép dùng trong đơn này
+function calcMaxRedeemPoints() {
+    const cfg    = getPointConfig();
+    const net    = Math.max(0, grandTotal - discountAmt);           // trước khi trừ điểm
+    const maxVND = net * (cfg.maxRedeemPercent / 100);              // VNĐ tối đa được trừ
+    const maxByPercent = Math.floor(maxVND / cfg.redemptionValue);  // quy ra điểm
+    return Math.min(loyaltyAvail, maxByPercent);                    // không vượt số điểm có
+}
+
+// Render phần thông tin điểm khi tìm thấy khách hàng
+function populateCustomerPoints() {
+    const cfg      = getPointConfig();
+    const maxPts   = calcMaxRedeemPoints();
+    const canRedeem = loyaltyAvail >= cfg.minPointToRedeem;
+
+    // Badge điểm trên found-card
+    const foundPtsEl = document.getElementById('custFoundPoints');
+    if (foundPtsEl) foundPtsEl.textContent = loyaltyAvail.toLocaleString('vi-VN');
+
+    // Summary panel
+    const pointDisplayEl   = document.getElementById('custPointDisplay');
+    const maxRedeemEl      = document.getElementById('custMaxRedeemDisplay');
+    const configHintEl     = document.getElementById('custPointConfigHint');
+    const usePointsEl      = document.getElementById('usePoints');
+
+    if (pointDisplayEl) {
+        pointDisplayEl.textContent = loyaltyAvail.toLocaleString('vi-VN') + ' pts';
+    }
+
+    if (maxRedeemEl) {
+        if (!canRedeem) {
+            maxRedeemEl.textContent = '0 pts (min ' + cfg.minPointToRedeem + ' pts required)';
+            maxRedeemEl.style.color = '#94a3b8';
+        } else {
+            maxRedeemEl.textContent = maxPts.toLocaleString('vi-VN') + ' pts = ' + formatVND(maxPts * cfg.redemptionValue);
+            maxRedeemEl.style.color = '#2563eb';
+        }
+    }
+
+    if (configHintEl) {
+        configHintEl.innerHTML =
+            '<i class="fa-solid fa-circle-info"></i> ' +
+            '1 pt = <strong>' + formatVND(cfg.redemptionValue) + '</strong>' +
+            ' &nbsp;·&nbsp; Max <strong>' + cfg.maxRedeemPercent + '%</strong> of bill' +
+            ' &nbsp;·&nbsp; Min <strong>' + cfg.minPointToRedeem + ' pts</strong> to redeem';
+    }
+
+    if (usePointsEl) {
+        usePointsEl.max = maxPts;
+        usePointsEl.disabled = !canRedeem;
+        if (!canRedeem) {
+            usePointsEl.value       = '';
+            usePointsEl.placeholder = 'Need ' + cfg.minPointToRedeem + '+ pts';
+        } else {
+            usePointsEl.placeholder = '0 – ' + maxPts;
+        }
+    }
+}
+
 function applyLoyaltyPoints(val) {
-    const pts = Math.min(parseInt(val) || 0, loyaltyAvail);
-    // Assume 1 point = 1 VND (adjust ratio per business logic)
-    loyaltyUsed = pts;
+    const cfg    = getPointConfig();
+    const maxPts = calcMaxRedeemPoints();
+    let   pts    = Math.max(0, Math.min(parseInt(val) || 0, maxPts));
+
+    // Clamp input
+    const usePointsEl = document.getElementById('usePoints');
+    if (usePointsEl && pts !== (parseInt(val) || 0)) usePointsEl.value = pts;
+
+    const vnd = pts * cfg.redemptionValue;
+    loyaltyUsed = vnd;
+
+    // Cập nhật label "= Xđ"
+    const availEl = document.getElementById('loyaltyAvail');
+    if (availEl) availEl.textContent = pts > 0 ? '= ' + formatVND(vnd) : '= 0đ';
+
+    // Cảnh báo nếu nhập quá max
+    const warnEl = document.getElementById('custPointWarn');
+    if (warnEl) {
+        if ((parseInt(val) || 0) > maxPts && maxPts > 0) {
+            warnEl.style.display = '';
+            warnEl.textContent   = 'Max redeemable: ' + maxPts.toLocaleString('vi-VN') + ' pts';
+        } else {
+            warnEl.style.display = 'none';
+        }
+    }
+
     updateTotals();
 }
 
@@ -267,6 +372,7 @@ function updateQR() {
 /* ── Cancel order ── */
 async function cancelOrder() {
     if (!confirm('Cancel this order?')) return;
+    stopQrPolling();
     try {
         await fetch((window.contextPath || '') + '/pos/api/order/' + window.orderId + '/cancel', {
             method: 'POST',
@@ -278,38 +384,33 @@ async function cancelOrder() {
 
 /* ── Confirm payment ── */
 async function confirmPayment() {
-    const btn = document.querySelector('.pay-btn-pay');
+    const method = currentMethod;
+
+    if (method === 'bank') {
+        await confirmBankingPayment();
+    } else {
+        await confirmCashPayment();
+    }
+}
+
+/* ── CASH payment ── */
+async function confirmCashPayment() {
+    const btn  = document.querySelector('.pay-btn-pay');
     btn.disabled = true;
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Processing...';
 
-    const method    = currentMethod;
-    const paid      = parseVND(document.getElementById('customerPaid')?.value || '0');
-    const note      = document.getElementById('orderNote')?.value || '';
-    const custPhone = document.getElementById('customerPhone')?.value || '';
-    const custName  = document.getElementById('customerName')?.value  || '';
-    const usePoints = parseInt(document.getElementById('usePoints')?.value || '0');
-    const net       = Math.max(0, grandTotal - discountAmt - loyaltyUsed);
-    const change = method === 'cash' ? Math.max(0, paid - net) : 0;
+    const paid   = parseVND(document.getElementById('customerPaid')?.value || '0');
+    const net    = Math.max(0, grandTotal - discountAmt - loyaltyUsed);
+    const change = Math.max(0, paid - net);
 
-    if (method === 'cash' && paid < net) {
+    if (paid < net) {
         showToast('Số tiền khách đưa chưa đủ!', 'error');
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Pay';
         return;
     }
 
-    const payload = {
-        orderId        : window.orderId,
-        paymentMethod  : method,
-        customerPaid   : paid,
-        discount       : discountAmt,
-        loyaltyUsed    : usePoints,
-        totalPaid      : net,
-        changeAmount  : change,
-        note           : note,
-        customerPhone  : custPhone,
-        customerName   : custName,
-    };
+    const payload = buildPayload('CASH', paid, net, change);
 
     try {
         const res  = await fetch((window.contextPath || '') + '/pos/payment/confirm', {
@@ -318,13 +419,9 @@ async function confirmPayment() {
             body   : JSON.stringify(payload)
         });
         const data = await res.json();
-
         if (data.success) {
             showToast('Payment successful!', 'success');
-            // Optionally trigger print
-            setTimeout(() => {
-                window.location.href = (window.contextPath || '') + '/pos';
-            }, 1200);
+            setTimeout(() => { window.location.href = (window.contextPath || '') + '/pos'; }, 1200);
         } else {
             throw new Error(data.message || 'Payment failed');
         }
@@ -333,6 +430,159 @@ async function confirmPayment() {
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Pay';
     }
+}
+
+/* ── BANKING / QR payment ── */
+let qrPollingTimer = null;
+let qrSessionId    = null;   // paymentSessionId từ /pos/payment/qr
+
+async function confirmBankingPayment() {
+    const net  = Math.max(0, grandTotal - discountAmt - loyaltyUsed);
+    const btn  = document.querySelector('.pay-btn-pay');
+    const bank = window.bankSettings || {};
+
+    if (!bank.accNumber) {
+        showToast('Please configure bank account first', 'error');
+        return;
+    }
+
+    btn.disabled  = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Waiting for payment...';
+    showQrStatus('waiting');
+
+    // ── Bước 1: Tạo Payment session (PENDING) ──────────────────────
+    try {
+        const qrRes  = await fetch((window.contextPath || '') + '/pos/payment/qr', {
+            method : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body   : JSON.stringify({ orderId: parseInt(window.orderId), amount: net })
+        });
+        const qrData = await qrRes.json();
+        qrSessionId  = qrData.paymentSessionId || null;
+    } catch(e) {
+        showToast('Cannot create payment session: ' + e.message, 'error');
+        btn.disabled  = false;
+        btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Pay';
+        showQrStatus('timeout');
+        return;
+    }
+
+    if (!qrSessionId) {
+        showToast('No payment session returned from server', 'error');
+        btn.disabled  = false;
+        btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Pay';
+        showQrStatus('timeout');
+        return;
+    }
+
+    // ── Bước 2: Poll /pos/payment/status mỗi 3 giây ───────────────
+    let attempts       = 0;
+    const MAX_ATTEMPTS = 60; // 3 phút
+
+    qrPollingTimer = setInterval(async () => {
+        attempts++;
+        try {
+            const statusRes  = await fetch(
+                (window.contextPath || '') + '/pos/payment/status?paymentSessionId='
+                + encodeURIComponent(qrSessionId)
+            );
+            const statusText = await statusRes.text();
+            const status     = statusText.trim().replace(/\"/g, '');
+
+            if (status === 'PAID') {
+                // ── Bước 3: Gọi confirm 1 lần duy nhất ──────────────
+                stopQrPolling();
+                const payload  = buildPayload('BANKING', net, net, 0);
+                const confRes  = await fetch((window.contextPath || '') + '/pos/payment/confirm', {
+                    method : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body   : JSON.stringify(payload)
+                });
+                const confData = await confRes.json();
+                if (confData.success) {
+                    showQrStatus('success');
+                    showToast('Banking payment confirmed!', 'success');
+                    setTimeout(() => { window.location.href = (window.contextPath || '') + '/pos'; }, 1500);
+                } else {
+                    throw new Error(confData.message || 'Confirm failed');
+                }
+                return;
+            }
+
+            if (status === 'CANCELLED' || status === 'FAILED' || status === 'EXPIRED') {
+                stopQrPolling();
+                showQrStatus('timeout');
+                btn.disabled  = false;
+                btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Pay';
+                showToast('Payment ' + status.toLowerCase() + ' — please try again', 'error');
+                return;
+            }
+        } catch(e) {
+            stopQrPolling();
+            showQrStatus('timeout');
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Confirm paid';
+            showToast('Error: ' + e.message + ' — click "Confirm paid" manually', 'error');
+        }
+
+        if (attempts >= MAX_ATTEMPTS) {
+            stopQrPolling();
+            showQrStatus('timeout');
+            btn.disabled  = false;
+            btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Confirm paid';
+            showToast('Timeout — click "Confirm paid" after transfer completes', 'error');
+        }
+    }, 3000);
+}
+
+function stopQrPolling() {
+    if (qrPollingTimer) { clearInterval(qrPollingTimer); qrPollingTimer = null; }
+    qrSessionId = null;
+}
+
+/* ── QR status badge ── */
+function showQrStatus(state) {
+    let el = document.getElementById('qrStatusBadge');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'qrStatusBadge';
+        el.style.cssText = [
+            'margin-top:10px','text-align:center','font-size:0.8rem','font-weight:600',
+            'padding:7px 12px','border-radius:8px','transition:all 0.2s'
+        ].join(';');
+        const qrBody = document.querySelector('.qr-body');
+        if (qrBody) qrBody.appendChild(el);
+    }
+    const styles = {
+        waiting : { bg:'#eff6ff', color:'#2563eb', border:'#bfdbfe', icon:'fa-clock',   text:'Waiting for transfer...' },
+        success : { bg:'#f0fdf4', color:'#16a34a', border:'#86efac', icon:'fa-check',   text:'Payment received!' },
+        timeout : { bg:'#fff7ed', color:'#ea580c', border:'#fed7aa', icon:'fa-triangle-exclamation', text:'Timed out — confirm manually' }
+    };
+    const s = styles[state] || styles.waiting;
+    el.style.background   = s.bg;
+    el.style.color        = s.color;
+    el.style.border       = '1.5px solid ' + s.border;
+    el.innerHTML = `<i class="fa-solid ${s.icon} me-1"></i>${s.text}`;
+    el.style.display = '';
+}
+
+/* ── Build payload helper ── */
+function buildPayload(method, customerPaid, totalPaid, changeAmount) {
+    const pts       = parseInt(document.getElementById('usePoints')?.value || '0');
+    const pointsVND = pts * (getPointConfig().redemptionValue || 1000);
+    return {
+        orderId       : window.orderId,
+        paymentMethod : method,                      // 'CASH' hoặc 'BANKING'
+        customerPaid  : customerPaid,
+        discount      : discountAmt,
+        loyaltyUsed   : pointsVND,
+        totalPaid     : totalPaid,
+        changeAmount  : changeAmount,
+        note          : document.getElementById('orderNote')?.value || '',
+        customerPhone : document.getElementById('customerPhone')?.value || '',
+        customerName  : document.getElementById('customerName')?.value  || '',
+        customerId    : document.getElementById('customerId')?.value    || ''
+    };
 }
 
 /* ── Toast ── */

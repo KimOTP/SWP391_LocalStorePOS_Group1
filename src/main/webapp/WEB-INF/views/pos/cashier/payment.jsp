@@ -220,10 +220,24 @@
                                readonly placeholder="–">
                     </div>
 
-                    <div class="pay-field-group">
-                        <label class="pay-label">Loyalty points:</label>
-                        <input type="text" class="pay-input pay-input-readonly" id="loyaltyPoints"
-                               readonly placeholder="0 pts">
+                    <%-- Thông tin điểm + quy đổi --%>
+                    <div class="cust-point-summary">
+                        <div class="cust-point-summary-row">
+                            <span class="cust-point-summary-label">
+                                <i class="fa-solid fa-star"></i> Available points
+                            </span>
+                            <span class="cust-point-summary-val" id="custPointDisplay">0 pts</span>
+                        </div>
+                        <div class="cust-point-summary-row">
+                            <span class="cust-point-summary-label">
+                                <i class="fa-solid fa-arrow-right-arrow-left"></i> Max redeemable
+                            </span>
+                            <span class="cust-point-summary-val text-blue" id="custMaxRedeemDisplay">0 pts</span>
+                        </div>
+                        <div class="cust-point-summary-divider"></div>
+                        <div class="cust-point-config-hint" id="custPointConfigHint">
+                            <%-- filled by JS --%>
+                        </div>
                     </div>
 
                     <div class="pay-field-group">
@@ -232,8 +246,9 @@
                             <input type="number" class="pay-input" id="usePoints"
                                    placeholder="0" min="0"
                                    oninput="applyLoyaltyPoints(this.value)">
-                            <span class="pay-loyalty-avail" id="loyaltyAvail">Available: 0 pts</span>
+                            <span class="pay-loyalty-avail" id="loyaltyAvail">= 0đ</span>
                         </div>
+                        <div class="cust-point-warn" id="custPointWarn" style="display:none"></div>
                     </div>
                 </div>
 
@@ -384,6 +399,14 @@
         bankName   : '${sessionScope.posBankConfig.bankName}',
         accNumber  : '${sessionScope.posBankConfig.accountNumber}',
         accName    : '${sessionScope.posBankConfig.accountName}'
+    };
+
+    // Point configuration from SystemSetting
+    window.pointConfig = {
+        earningRate     : parseFloat('${pointConfig["POINT_EARNING_RATE"]}')    || 10000, // X VNĐ = 1 điểm
+        redemptionValue : parseFloat('${pointConfig["POINT_REDEMPTION_VALUE"]}') || 1000,  // 1 điểm = X VNĐ
+        maxRedeemPercent: parseFloat('${pointConfig["MAX_REDEEM_PERCENT"]}')    || 30,    // tối đa X% hoá đơn
+        minPointToRedeem: parseFloat('${pointConfig["MIN_POINT_TO_REDEEM"]}')   || 100    // tối thiểu X điểm
     };
 </script>
 <script src="${pageContext.request.contextPath}/resources/js/pos/payment.js"></script>

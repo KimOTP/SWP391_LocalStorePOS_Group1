@@ -526,6 +526,7 @@ body {
     align-items: center;
     margin-top: 8px;
     padding-top: 8px;
+    padding-bottom: 8px;
     border-top: 1px solid #f1f5f9;
     font-size: 0.83rem;
     font-weight: 600;
@@ -763,3 +764,75 @@ body {
 .cust-save-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
 .req { color: #ef4444; }
+
+/* ============================================================
+   CUSTOMER POINT SUMMARY PANEL
+   ============================================================ */
+.cust-point-summary {
+    background: #f8fafc;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 14px;
+}
+
+.cust-point-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 0;
+    font-size: 0.8rem;
+}
+
+.cust-point-summary-label {
+    color: #64748b;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.cust-point-summary-label i {
+    font-size: 0.72rem;
+    color: #94a3b8;
+}
+
+.cust-point-summary-val {
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.82rem;
+}
+.cust-point-summary-val.text-blue { color: var(--sb-blue); }
+
+.cust-point-summary-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 7px 0;
+}
+
+.cust-point-config-hint {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    line-height: 1.6;
+}
+.cust-point-config-hint i { font-size: 0.68rem; }
+.cust-point-config-hint strong { color: #475569; }
+
+.cust-point-warn {
+    margin-top: 5px;
+    font-size: 0.75rem;
+    color: #dc2626;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.cust-point-warn::before {
+    content: '\f071';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 0.68rem;
+}
