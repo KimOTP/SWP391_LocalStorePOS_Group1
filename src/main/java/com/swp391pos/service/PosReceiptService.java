@@ -4,6 +4,7 @@ import com.swp391pos.entity.PosReceipt;
 import com.swp391pos.enums.OrderStatusName;
 import com.swp391pos.enums.PaymentMethod;
 import com.swp391pos.repository.PosReceiptRepository;
+import com.swp391pos.repository.OrderItemRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,9 @@ public class PosReceiptService {
 
     @Autowired
     private PosReceiptRepository posReceiptRepository;
+
+    @Autowired
+    private OrderItemRepository orderItemRepository;
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final DateTimeFormatter DATETIME_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -153,11 +158,44 @@ public class PosReceiptService {
             detail.put("customerPayment", null);
             detail.put("change",          null);
 
-            // Order items – only available if you add @OneToMany on Order
-            detail.put("items", List.of());
+            // Order items – load từ OrderItem theo orderId
+            detail.put("orderId", order.getOrderId());
+            detail.put("items", getOrderItemsByOrderId(order.getOrderId()));
         }
 
         return detail;
+    }
+
+    /* ----------------------------------------------------------------
+       Order items by orderId – dùng cho detail modal
+       ---------------------------------------------------------------- */
+
+    public List<Map<String, Object>> getOrderItemsByOrderId(Long orderId) {
+        if (orderId == null) return List.of();
+        List<Map<String, Object>> result = new ArrayList<>();
+        orderItemRepository.findByOrder_OrderId(orderId).forEach(item -> {
+            Map<String, Object> map = new HashMap<>();
+
+            if (item.getProduct() != null) {
+                // San pham don le
+                map.put("productName", item.getProduct().getProductName());
+                map.put("unit",        item.getProduct().getUnit() != null
+                        ? item.getProduct().getUnit() : "—");
+            } else if (item.getCombo() != null) {
+                // Combo
+                map.put("productName", item.getCombo().getComboName());
+                map.put("unit",        "Combo");
+            } else {
+                map.put("productName", "—");
+                map.put("unit",        "—");
+            }
+
+            map.put("unitPrice",   item.getUnitPrice());
+            map.put("quantity",    item.getQuantity());
+            map.put("totalAmount", item.getSubtotal());
+            result.add(map);
+        });
+        return result;
     }
 
     /* ----------------------------------------------------------------

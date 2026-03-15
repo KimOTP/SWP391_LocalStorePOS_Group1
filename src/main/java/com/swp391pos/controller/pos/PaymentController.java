@@ -54,13 +54,15 @@ public class PaymentController {
 
         List<OrderItem> items = orderItemService.findByOrder(order);
 
-        List<PaymentDTO.OrderItemDTO> cartItems = items.stream().map(oi -> {
-            PaymentDTO.OrderItemDTO dto = new PaymentDTO.OrderItemDTO();
-            dto.setOrderId(order.getOrderId());
-            dto.setProductId(oi.getProduct().getProductId());
-            dto.setQuantity(oi.getQuantity());
-            return dto;
-        }).collect(Collectors.toList());
+        List<PaymentDTO.OrderItemDTO> cartItems = items.stream()
+                .filter(oi -> oi.getProduct() != null) // chỉ lấy product, bỏ qua combo
+                .map(oi -> {
+                    PaymentDTO.OrderItemDTO dto = new PaymentDTO.OrderItemDTO();
+                    dto.setOrderId(order.getOrderId());
+                    dto.setProductId(oi.getProduct().getProductId());
+                    dto.setQuantity(oi.getQuantity());
+                    return dto;
+                }).collect(Collectors.toList());
 
         PaymentDTO.PaymentSummary summary = posService.calculatePromotion(cartItems);
         Map<String, String> pointConfig = systemSettingService.getAllSettings();
@@ -89,6 +91,8 @@ public class PaymentController {
             Long   orderId       = Long.parseLong(String.valueOf(body.get("orderId")));
             String paymentMethod = String.valueOf(body.getOrDefault("paymentMethod", "CASH"));
             double totalPaid     = ((Number) body.getOrDefault("totalPaid", 0)).doubleValue();
+            double customerPaid  = ((Number) body.getOrDefault("customerPaid", totalPaid)).doubleValue();
+            double changeAmount  = ((Number) body.getOrDefault("changeAmount", 0)).doubleValue();
 
             Order order = orderService.findById(orderId);
 
@@ -110,6 +114,8 @@ public class PaymentController {
             payment.setPaymentMethod(PaymentMethod.valueOf(paymentMethod.toUpperCase()));
             payment.setPaymentStatus(PaymentStatus.PAID);
             payment.setAmount(BigDecimal.valueOf(totalPaid));
+            payment.setAmountPaid(BigDecimal.valueOf(customerPaid));
+            payment.setChangeAmount(BigDecimal.valueOf(changeAmount));
             payment.setPaidAt(LocalDateTime.now());
             paymentService.save(payment);
 
