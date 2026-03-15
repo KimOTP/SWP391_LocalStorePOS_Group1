@@ -145,9 +145,11 @@ public class ProductController {
 
         } catch (RuntimeException e) {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            e.printStackTrace();
             return "redirect:/products/update/" + oldId;
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Unexpected error occurred!");
+            e.printStackTrace();
             return "redirect:/products/update/" + oldId;
         }
     }

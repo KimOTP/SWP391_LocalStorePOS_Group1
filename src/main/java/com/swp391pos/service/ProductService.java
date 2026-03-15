@@ -10,6 +10,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -30,6 +31,9 @@ public class ProductService {
 
     @Autowired
     private InventoryRepository inventoryRepository;
+
+    @Autowired
+    private InventoryService inventoryService;
 
     @Autowired
     private Cloudinary cloudinary;
@@ -69,6 +73,7 @@ public class ProductService {
             product.setStatus(stat);
 
             productRepository.save(product);
+            inventoryService.createInventoryWithProduct(product);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,6 +102,7 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    @Transactional
     public boolean updateProduct(String oldId, Product product, MultipartFile imageFile,
                                  Integer statusId, Integer categoryId) throws Exception {
 
@@ -142,6 +148,9 @@ public class ProductService {
         product.setStatus(stat);
 
         productRepository.save(product);
+        if(inventory == null){
+            inventoryService.createInventoryWithProduct(product);
+        }
 
         return true;
     }
