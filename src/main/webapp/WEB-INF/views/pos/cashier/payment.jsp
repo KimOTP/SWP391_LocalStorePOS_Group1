@@ -175,37 +175,106 @@
                 <!-- Customer info -->
                 <div class="pay-section-label">Customer information</div>
 
+                <!-- Phone input -->
                 <div class="pay-field-group">
                     <label class="pay-label">Customer's phone number:</label>
                     <div class="pay-input-icon-wrap">
-                        <i class="fa-solid fa-magnifying-glass pay-input-icon"></i>
+                        <i class="fa-solid fa-magnifying-glass pay-input-icon" id="phoneIcon"></i>
                         <input type="text" class="pay-input pay-input-search" id="customerPhone"
-                               placeholder="0925558666"
+                               placeholder="0925558666" maxlength="10"
                                oninput="lookupCustomer(this.value)">
+                        <!-- Spinner while looking up -->
+                        <span class="phone-spinner" id="phoneSpinner" style="display:none">
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+                        </span>
                     </div>
                 </div>
 
-                <div class="pay-field-group">
-                    <label class="pay-label">Customer information:</label>
-                    <input type="text" class="pay-input" id="customerName"
-                           placeholder="Nguyễn Văn A">
+                <%-- ── STATE A: chưa nhập / đang gõ ── --%>
+                <div id="custStateIdle" class="cust-state">
+                    <p class="cust-hint"><i class="fa-solid fa-circle-info"></i> Enter phone number to look up customer</p>
                 </div>
 
-                <div class="pay-field-group">
-                    <label class="pay-label">Loyalty point:</label>
-                    <input type="text" class="pay-input pay-input-readonly" id="loyaltyPoints"
-                           readonly placeholder="Loyalty point">
-                </div>
+                <%-- ── STATE B: đã tìm thấy khách hàng ── --%>
+                <div id="custStateFound" class="cust-state" style="display:none">
+                    <div class="cust-found-card">
+                        <div class="cust-found-avatar" id="custAvatar">K</div>
+                        <div class="cust-found-info">
+                            <div class="cust-found-name" id="custFoundName">–</div>
+                            <div class="cust-found-meta">
+                                <span id="custFoundPhone">–</span>
+                                <span class="cust-point-badge">
+                                    <i class="fa-solid fa-star"></i>
+                                    <span id="custFoundPoints">0</span> pts
+                                </span>
+                            </div>
+                        </div>
+                        <button class="cust-clear-btn" onclick="clearCustomer()" title="Remove customer">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
 
-                <div class="pay-field-group">
-                    <label class="pay-label">Use loyalty points:</label>
-                    <div class="pay-loyalty-row">
-                        <input type="number" class="pay-input" id="usePoints"
-                               placeholder="0" min="0"
-                               oninput="applyLoyaltyPoints(this.value)">
-                        <span class="pay-loyalty-avail" id="loyaltyAvail">Available: 0 pts</span>
+                    <div class="pay-field-group" style="margin-top:10px">
+                        <label class="pay-label">Customer name:</label>
+                        <input type="text" class="pay-input pay-input-readonly" id="customerName"
+                               readonly placeholder="–">
+                    </div>
+
+                    <div class="pay-field-group">
+                        <label class="pay-label">Loyalty points:</label>
+                        <input type="text" class="pay-input pay-input-readonly" id="loyaltyPoints"
+                               readonly placeholder="0 pts">
+                    </div>
+
+                    <div class="pay-field-group">
+                        <label class="pay-label">Use loyalty points:</label>
+                        <div class="pay-loyalty-row">
+                            <input type="number" class="pay-input" id="usePoints"
+                                   placeholder="0" min="0"
+                                   oninput="applyLoyaltyPoints(this.value)">
+                            <span class="pay-loyalty-avail" id="loyaltyAvail">Available: 0 pts</span>
+                        </div>
                     </div>
                 </div>
+
+                <%-- ── STATE C: không tìm thấy → hiện nút Add ── --%>
+                <div id="custStateNotFound" class="cust-state" style="display:none">
+                    <div class="cust-not-found-box">
+                        <i class="fa-solid fa-user-slash cust-nf-icon"></i>
+                        <p class="cust-nf-msg">No customer found with this phone number.</p>
+                        <button class="cust-add-btn" onclick="openAddCustomer()">
+                            <i class="fa-solid fa-user-plus"></i> Add new customer
+                        </button>
+                    </div>
+                </div>
+
+                <%-- ── INLINE ADD FORM (hidden by default) ── --%>
+                <div id="custAddForm" class="cust-state cust-add-form-wrap" style="display:none">
+                    <div class="cust-add-form-header">
+                        <i class="fa-solid fa-user-plus"></i> New customer
+                    </div>
+                    <div class="pay-field-group">
+                        <label class="pay-label">Full name <span class="req">*</span></label>
+                        <input type="text" class="pay-input" id="newCustName"
+                               placeholder="Nguyen Van A">
+                    </div>
+                    <div class="pay-field-group">
+                        <label class="pay-label">Phone number</label>
+                        <input type="text" class="pay-input pay-input-readonly" id="newCustPhone"
+                               readonly>
+                    </div>
+                    <div class="cust-add-form-actions">
+                        <button class="cust-cancel-add-btn" onclick="cancelAddCustomer()">
+                            <i class="fa-solid fa-xmark"></i> Cancel
+                        </button>
+                        <button class="cust-save-btn" onclick="saveNewCustomer()">
+                            <i class="fa-solid fa-floppy-disk"></i> Save
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hidden field giữ customerId để gửi lên server -->
+                <input type="hidden" id="customerId" value="">
 
                 <div class="pay-field-group">
                     <label class="pay-label">Note:</label>

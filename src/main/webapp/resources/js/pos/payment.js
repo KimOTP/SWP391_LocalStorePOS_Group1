@@ -61,24 +61,156 @@ function onPayMethodChange(radio) {
     updateQR();
 }
 
-/* ── Customer lookup (stub – wire to your API) ── */
+/* ── Customer lookup state machine ── */
+// States: 'idle' | 'found' | 'notfound' | 'adding'
+let currentCustomer = null;
+
+function setCustState(state) {
+    ['custStateIdle','custStateFound','custStateNotFound','custAddForm'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+    const map = {
+        idle     : 'custStateIdle',
+        found    : 'custStateFound',
+        notfound : 'custStateNotFound',
+        adding   : 'custAddForm'
+    };
+    const target = document.getElementById(map[state]);
+    if (target) target.style.display = '';
+}
+
 let lookupTimer;
 function lookupCustomer(phone) {
     clearTimeout(lookupTimer);
-    if (phone.length < 9) return;
+    const spinner  = document.getElementById('phoneSpinner');
+    const phoneIcon = document.getElementById('phoneIcon');
+
+    // Reset nếu xoá hết số
+    if (!phone || phone.length < 10) {
+        currentCustomer = null;
+        loyaltyAvail = 0;
+        loyaltyUsed  = 0;
+        updateTotals();
+        setCustState('idle');
+        return;
+    }
+
+    // Show spinner
+    if (spinner)   spinner.style.display   = '';
+    if (phoneIcon) phoneIcon.style.display = 'none';
+
     lookupTimer = setTimeout(async () => {
         try {
             const res  = await fetch((window.contextPath || '') + '/pos/api/customer?phone=' + encodeURIComponent(phone));
-            if (!res.ok) return;
             const data = await res.json();
-            if (data.success && data.customer) {
-                document.getElementById('customerName').value  = data.customer.name || '';
-                loyaltyAvail = parseInt(data.customer.loyaltyPoints || 0);
-                document.getElementById('loyaltyPoints').value = loyaltyAvail + ' pts';
-                document.getElementById('loyaltyAvail').textContent = 'Available: ' + loyaltyAvail + ' pts';
+
+            if (data.found && data.customer) {
+                const c = data.customer;
+                currentCustomer = c;
+
+                // Điền thông tin vào state FOUND
+                document.getElementById('custFoundName').textContent   = c.fullName   || '–';
+                document.getElementById('custFoundPhone').textContent  = c.phoneNumber || phone;
+                document.getElementById('custFoundPoints').textContent = c.currentPoint ?? 0;
+                document.getElementById('custAvatar').textContent      = (c.fullName || 'K').charAt(0).toUpperCase();
+                document.getElementById('customerName').value          = c.fullName   || '';
+                document.getElementById('customerId').value            = c.customerId || '';
+
+                loyaltyAvail = parseInt(c.currentPoint || 0);
+                document.getElementById('loyaltyPoints').value         = loyaltyAvail + ' pts';
+                document.getElementById('loyaltyAvail').textContent    = 'Available: ' + loyaltyAvail + ' pts';
+                document.getElementById('usePoints').max               = loyaltyAvail;
+
+                setCustState('found');
+            } else {
+                currentCustomer = null;
+                document.getElementById('customerId').value = '';
+                loyaltyAvail = 0;
+                loyaltyUsed  = 0;
+                updateTotals();
+                setCustState('notfound');
             }
-        } catch(_) {}
+        } catch(_) {
+            setCustState('idle');
+        } finally {
+            if (spinner)   spinner.style.display   = 'none';
+            if (phoneIcon) phoneIcon.style.display = '';
+        }
     }, 500);
+}
+
+function clearCustomer() {
+    currentCustomer = null;
+    document.getElementById('customerPhone').value = '';
+    document.getElementById('customerId').value    = '';
+    document.getElementById('customerName').value  = '';
+    document.getElementById('loyaltyPoints').value = '';
+    document.getElementById('usePoints').value     = '';
+    loyaltyAvail = 0;
+    loyaltyUsed  = 0;
+    updateTotals();
+    setCustState('idle');
+}
+
+function openAddCustomer() {
+    const phone = document.getElementById('customerPhone').value.trim();
+    document.getElementById('newCustPhone').value = phone;
+    document.getElementById('newCustName').value  = '';
+    setCustState('adding');
+}
+
+function cancelAddCustomer() {
+    setCustState('notfound');
+}
+
+async function saveNewCustomer() {
+    const phone    = document.getElementById('newCustPhone').value.trim();
+    const fullName = document.getElementById('newCustName').value.trim();
+
+    if (!fullName) {
+        showToast('Please enter customer name', 'error');
+        return;
+    }
+
+    const saveBtn = document.querySelector('.cust-save-btn');
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+    try {
+        const res  = await fetch((window.contextPath || '') + '/pos/api/customer/quick-add', {
+            method : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body   : JSON.stringify({ phone, fullName })
+        });
+        const data = await res.json();
+
+        if (data.success && data.customer) {
+            const c = data.customer;
+            currentCustomer = c;
+
+            document.getElementById('custFoundName').textContent   = c.fullName   || '–';
+            document.getElementById('custFoundPhone').textContent  = c.phoneNumber || phone;
+            document.getElementById('custFoundPoints').textContent = c.currentPoint ?? 0;
+            document.getElementById('custAvatar').textContent      = (c.fullName || 'K').charAt(0).toUpperCase();
+            document.getElementById('customerName').value          = c.fullName   || '';
+            document.getElementById('customerId').value            = c.customerId || '';
+
+            loyaltyAvail = 0;
+            document.getElementById('loyaltyPoints').value      = '0 pts';
+            document.getElementById('loyaltyAvail').textContent = 'Available: 0 pts';
+
+            setCustState('found');
+            showToast('Customer added successfully!', 'success');
+        } else {
+            showToast(data.message || 'Failed to add customer', 'error');
+        }
+    } catch(e) {
+        showToast('Error: ' + e.message, 'error');
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
+    }
 }
 
 /* ── Loyalty points ── */
@@ -252,6 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
     startClock();
     updateTotals();
     loadOrderItems();
+    setCustState('idle');
 
     // Show QR if bank method is pre-selected
     onPayMethodChange(document.querySelector('input[name="payMethod"]:checked'));
