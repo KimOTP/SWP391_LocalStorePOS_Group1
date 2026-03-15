@@ -110,13 +110,13 @@
 
                 <%-- Date range --%>
                 <div class="d-flex align-items-center gap-2">
-                    <div class="search-box-standalone" style="width:auto;">
+                    <div class="search-box-standalone search-box-date">
                         <span class="search-icon" style="font-size:0.75rem;white-space:nowrap;">From</span>
                         <input type="date" name="fromDate" value="${fromDate}"
                                class="form-control" style="min-width:130px;"
                                onchange="filterForm.submit()">
                     </div>
-                    <div class="search-box-standalone" style="width:auto;">
+                    <div class="search-box-standalone search-box-date">
                         <span class="search-icon" style="font-size:0.75rem;white-space:nowrap;">To</span>
                         <input type="date" name="toDate" value="${toDate}"
                                class="form-control" style="min-width:130px;"
@@ -163,7 +163,7 @@
                             <div class="dropdown">
                                 <button class="btn btn-light btn-sm rounded-circle shadow-none"
                                         type="button" data-bs-toggle="dropdown"
-                                        data-bs-boundary="viewport" aria-expanded="false"
+                                        data-bs-boundary="document" aria-expanded="false"
                                         style="width:32px;height:32px;">
                                     <i class="fa-solid fa-ellipsis-vertical"></i>
                                 </button>

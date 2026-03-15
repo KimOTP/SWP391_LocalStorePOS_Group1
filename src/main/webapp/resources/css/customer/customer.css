@@ -393,3 +393,11 @@ body {
     color: #2563eb !important;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
+
+ /* --- 12. Promotion Filter data box ------------------------- */
+.search-box-date {
+     width: 200px !important;
+ }
+.dropdown-menu {
+    position: fixed !important;  /* Thoát khỏi stacking context của table */
+}

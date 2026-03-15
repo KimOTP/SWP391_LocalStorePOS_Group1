@@ -277,13 +277,13 @@ async function uploadExcel(promotionId) {
         });
         const result = await response.json();
         if (result.success) {
-            Swal.fire('Thành công', 'Import dữ liệu thành công!', 'success')
+            Swal.fire('Success', 'Import success!', 'success')
             .then(() => location.reload());
         } else {
-            Swal.fire('Lỗi', result.message, 'error');
+            Swal.fire('Error', result.message, 'error');
         }
     } catch (error) {
-        Swal.fire('Lỗi', 'Không thể kết nối đến server', 'error');
+        Swal.fire('Error', 'Cannot connect to server', 'error');
     } finally {
         fileInput.value = ''; // Reset file input
     }
