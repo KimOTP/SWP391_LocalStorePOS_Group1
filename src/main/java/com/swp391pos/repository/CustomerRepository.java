@@ -27,4 +27,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
                                     @Param("minPoint") Integer minPoint,
                                     @Param("status") Integer status,
                                     @Param("startDate") LocalDateTime startDate);
+    Customer findByCustomerId(long customerId);
 }

@@ -123,7 +123,7 @@ public class CustomerController {
     @GetMapping("/{id}/history")
     @ResponseBody
     public List<PointHistory> getCustomerHistory(@PathVariable Long id) {
-        Customer customer = customerService.findById(id).orElse(null);
+        Customer customer = customerService.findById(id);
         if (customer != null) {
             return customer.getPointHistories();
         }
@@ -135,7 +135,7 @@ public class CustomerController {
     @ResponseBody
     public Integer getCustomerOrderCount(@PathVariable Long id) {
         // Tìm khách hàng
-        Customer customer = customerService.findById(id).orElse(null);
+        Customer customer = customerService.findById(id);
 
         // Nếu có khách hàng và danh sách đơn không null -> Trả về kích thước list (số đơn)
         if (customer != null && customer.getOrders() != null) {
