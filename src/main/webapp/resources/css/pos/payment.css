@@ -88,11 +88,11 @@ body {
 }
 
 /* ============================================================
-   GRID – 3 columns
+   GRID – 3 columns  (Order Details chiếm rộng hơn)
    ============================================================ */
 .pay-grid {
     display: grid;
-    grid-template-columns: 1.1fr 1.2fr 1fr;
+    grid-template-columns: 1.6fr 1.2fr 1fr;
     gap: 18px;
     align-items: start;
 }
@@ -133,7 +133,6 @@ body {
    COL 1: ORDER TABLE
    ============================================================ */
 .order-items-area {
-    max-height: 280px;
     overflow-y: auto;
     padding-bottom: 0;
 }
@@ -445,4 +444,96 @@ body {
     .pay-grid { grid-template-columns: 1fr; }
     .pay-card-qr { max-width: 100%; }
     .pay-container { padding-left: 16px; padding-right: 16px; }
+}
+/* ============================================================
+   PROMOTION / DISCOUNT SECTION
+   ============================================================ */
+.promo-section {
+    margin-top: 12px;
+    border-top: 1.5px dashed #e2e8f0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.promo-section-header {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #f97316;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.promo-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.promo-row td {
+    padding: 5px 4px;
+    vertical-align: middle;
+}
+
+.promo-product {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.promo-product-name {
+    font-size: 0.82rem;
+    color: #475569;
+}
+
+.promo-badge {
+    display: inline-block;
+    border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 2px 9px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* Badge % — màu cam */
+.promo-badge--percent {
+    background: #fff7ed;
+    color: #ea580c;
+    border: 1px solid #fed7aa;
+}
+
+/* Badge tiền cố định — màu xanh lá */
+.promo-badge--amount {
+    background: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+}
+
+.promo-discount {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #ef4444;
+    white-space: nowrap;
+    min-width: 80px;
+}
+
+.promo-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #f1f5f9;
+    font-size: 0.83rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.promo-total-val {
+    color: #ef4444;
+    font-size: 0.9rem;
 }

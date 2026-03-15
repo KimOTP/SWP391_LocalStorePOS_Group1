@@ -12,7 +12,7 @@ function parseVND(str) {
 
 /* ── State ── */
 let grandTotal    = parseFloat(window.totalAmount || 0);
-let discountAmt   = 0;
+let discountAmt   = parseFloat(window.summaryData?.totalDiscount || 0);
 let loyaltyUsed   = 0;
 let loyaltyAvail  = 0;   // will be populated from customer lookup
 let currentMethod = 'cash';
