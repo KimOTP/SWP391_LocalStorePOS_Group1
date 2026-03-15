@@ -157,6 +157,7 @@ async function confirmPayment() {
     const custName  = document.getElementById('customerName')?.value  || '';
     const usePoints = parseInt(document.getElementById('usePoints')?.value || '0');
     const net       = Math.max(0, grandTotal - discountAmt - loyaltyUsed);
+    const change = method === 'cash' ? Math.max(0, paid - net) : 0;
 
     if (method === 'cash' && paid < net) {
         showToast('Số tiền khách đưa chưa đủ!', 'error');
@@ -172,6 +173,7 @@ async function confirmPayment() {
         discount       : discountAmt,
         loyaltyUsed    : usePoints,
         totalPaid      : net,
+        changeAmount  : change,
         note           : note,
         customerPhone  : custPhone,
         customerName   : custName,

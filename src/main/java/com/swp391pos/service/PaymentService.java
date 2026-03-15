@@ -19,6 +19,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -41,8 +42,6 @@ public class PaymentService {
     // -------------------------------------------------------------------------
     // CRUD cơ bản
     // -------------------------------------------------------------------------
-
-    // [FIX #2] Bỏ readOnly = true trên write operation
     @Transactional
     public Payment save(Payment payment) {
         return paymentRepository.save(payment);
@@ -58,13 +57,17 @@ public class PaymentService {
         return paymentRepository.findByOrder(order);
     }
 
+    @Transactional(readOnly = true)
+    public List<Payment> findByOrderId(Long orderId) {
+        return paymentRepository.findByOrder_OrderId(orderId);
+    }
+
     // -------------------------------------------------------------------------
     // createQR
     // -------------------------------------------------------------------------
 
     @Transactional
     public PaymentResponse createQR(PaymentRequest request) {
-        // [FIX #4] findById trả về Order entity, ép đúng kiểu
         Order order = orderRepository.findById(request.getOrderId())
                 .orElseThrow(() -> new RuntimeException("Order not found: " + request.getOrderId()));
 
@@ -73,9 +76,11 @@ public class PaymentService {
 
         Payment payment = new Payment();
         payment.setPaymentSessionId(paymentSessionId);
-        payment.setOrder(order);                          // [FIX #4] setOrder() nhận Order object, không phải Long
+        payment.setOrder(order);
         payment.setGatewayOrderCode(gatewayOrderCode);
         payment.setAmount(request.getAmount());
+        payment.setAmountPaid(BigDecimal.ZERO);
+        payment.setChangeAmount(BigDecimal.ZERO);
         payment.setPaymentMethod(PaymentMethod.BANKING);
         payment.setPaymentStatus(PaymentStatus.PENDING);
 
@@ -107,12 +112,10 @@ public class PaymentService {
             throw new IllegalStateException("Payment session has expired: " + paymentSessionId);
         }
 
-        // [FIX #3] getPaymentStatus() không nhận argument -> phải dùng setPaymentStatus()
         payment.setPaymentStatus(PaymentStatus.PAID);
         payment.setPaymentMethod(PaymentMethod.CASH);
         payment.setPaidAt(LocalDateTime.now());
 
-        // [FIX #5] payment.getOrder() trả về Order entity, không cần findById nữa
         // vì @ManyToOne đã load sẵn (hoặc lazy load khi access)
         Order order = payment.getOrder();
         order.setPaidAt(LocalDateTime.now());
@@ -138,13 +141,13 @@ public class PaymentService {
 
         payment.setTransactionId(payload.getTransactionId());
 
-        // [FIX #5] Dùng payment.getOrder() thay vì orderRepo.findById(payment.getOrderId())
         // Payment.order là @ManyToOne -> dùng thẳng, không cần query lại
         Order order = payment.getOrder();
 
         if (PaymentStatus.PAID.name().equals(payload.getStatus())) {
             payment.setPaymentStatus(PaymentStatus.PAID);
             payment.setPaidAt(LocalDateTime.now());
+            payment.setAmountPaid(payment.getAmount());
             if (order != null) {
                 order.setPaidAt(LocalDateTime.now());
                 orderRepository.save(order);
@@ -223,8 +226,8 @@ public class PaymentService {
 
             if (PaymentStatus.PAID.equals(gatewayStatus)) {
                 payment.setPaidAt(LocalDateTime.now());
+                payment.setAmountPaid(payment.getAmount());
 
-                // [FIX #5] Dùng payment.getOrder() thay vì query lại
                 Order order = payment.getOrder();
                 if (order != null) {
                     order.setPaidAt(LocalDateTime.now());

@@ -22,5 +22,6 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     //Dung cho scheduled job expire PENDING payments
     List<Payment> findByPaymentStatusAndExpiredAtBefore(PaymentStatus paymentStatus, LocalDateTime cutoff);
 
-
+    // Lấy tất cả Payment theo orderId – dùng cho receipt detail API.
+    List<Payment> findByOrder_OrderId(Long orderId);
 }

@@ -11,6 +11,9 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     // Lấy tất cả OrderItem của một Order.
     List<OrderItem> findByOrder(Order order);
 
+    // Lấy tất cả OrderItem theo orderId – dùng cho receipt detail API.
+    List<OrderItem> findByOrder_OrderId(Long orderId);
+
     /**
      * Xóa tất cả OrderItem của một Order.
      * Dùng khi cần xóa thủ công trước khi xóa Order

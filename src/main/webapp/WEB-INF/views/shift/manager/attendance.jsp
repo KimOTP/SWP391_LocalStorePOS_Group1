@@ -140,6 +140,12 @@
                                 Early Leave
                             </div>
 
+                            <div onclick="selectOption(
+                                'Absent','Absent',
+                                'selectedAttendanceStatus','attendanceStatusInput','attendanceStatusMenu')">
+                                Absent
+                            </div>
+
                         </div>
 
                     </div>
@@ -217,6 +223,10 @@
 
                     <td>
                         <c:choose>
+
+                            <c:when test="${a.checkInTime == null and a.checkOutTime == null}">
+                                <span class="status-absent">Absent</span>
+                            </c:when>
 
                             <c:when test="${a.isLate and a.isEarlyLeave}">
                                 <span class="status-pending">Late, Early Leave</span>

@@ -70,6 +70,9 @@
 
                         <td>
                             <c:choose>
+                                <c:when test="${att.checkInTime == null and att.checkOutTime == null}">
+                                    <span class="status-absent">Absent</span>
+                                </c:when>
                                 <c:when test="${att.isLate and att.isEarlyLeave}">
                                     <span class="status-pending">Late, Early Leave</span>
                                 </c:when>
