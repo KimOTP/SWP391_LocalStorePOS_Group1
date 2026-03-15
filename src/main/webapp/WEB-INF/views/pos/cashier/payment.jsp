@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html>
@@ -55,6 +56,60 @@
                         <%-- Order items được load từ session JSON bởi JS bên dưới --%>
                     </tbody>
                 </table>
+
+                <%-- ── DISCOUNT SECTION (from summary) ── --%>
+                <c:if test="${not empty summary and not empty summary.items}">
+                    <%-- Kiểm tra có ít nhất 1 item có discount --%>
+                    <c:set var="hasAnyDiscount" value="false"/>
+                    <c:forEach var="item" items="${summary.items}">
+                        <c:if test="${item.discountAmount != null and item.discountAmount.doubleValue() > 0}">
+                            <c:set var="hasAnyDiscount" value="true"/>
+                        </c:if>
+                    </c:forEach>
+
+                    <c:if test="${hasAnyDiscount}">
+                    <div class="promo-section" id="promoSection">
+                        <div class="promo-section-header">
+                            <i class="fa-solid fa-tag"></i> Promotions applied
+                        </div>
+                        <table class="promo-table">
+                            <tbody>
+                                <c:forEach var="item" items="${summary.items}">
+                                    <c:if test="${item.discountAmount != null and item.discountAmount.doubleValue() > 0}">
+                                        <tr class="promo-row">
+                                            <td class="promo-product">
+                                                <span class="promo-product-name"><c:out value="${item.productName}"/></span>
+                                                <c:if test="${not empty item.promotionNote}">
+                                                    <%-- Phân loại badge: % màu cam, tiền cố định màu xanh lá --%>
+                                                    <c:choose>
+                                                        <c:when test="${fn:contains(item.promotionNote, '%')}">
+                                                            <span class="promo-badge promo-badge--percent"><c:out value="${item.promotionNote}"/></span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="promo-badge promo-badge--amount"><c:out value="${item.promotionNote}"/></span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </c:if>
+                                            </td>
+                                            <td class="promo-discount text-end">
+                                                −<fmt:formatNumber value="${item.discountAmount}" maxFractionDigits="0"/>đ
+                                            </td>
+                                        </tr>
+                                    </c:if>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                        <c:if test="${summary.totalDiscount != null and summary.totalDiscount.doubleValue() > 0}">
+                            <div class="promo-total-row">
+                                <span>Total promotion discount:</span>
+                                <span class="promo-total-val">
+                                    −<fmt:formatNumber value="${summary.totalDiscount}" maxFractionDigits="0"/>đ
+                                </span>
+                            </div>
+                        </c:if>
+                    </div>
+                    </c:if>
+                </c:if>
             </div>
 
             <!-- Totals -->
@@ -120,37 +175,121 @@
                 <!-- Customer info -->
                 <div class="pay-section-label">Customer information</div>
 
+                <!-- Phone input -->
                 <div class="pay-field-group">
                     <label class="pay-label">Customer's phone number:</label>
                     <div class="pay-input-icon-wrap">
-                        <i class="fa-solid fa-magnifying-glass pay-input-icon"></i>
+                        <i class="fa-solid fa-magnifying-glass pay-input-icon" id="phoneIcon"></i>
                         <input type="text" class="pay-input pay-input-search" id="customerPhone"
-                               placeholder="0925558666"
+                               placeholder="0925558666" maxlength="10"
                                oninput="lookupCustomer(this.value)">
+                        <!-- Spinner while looking up -->
+                        <span class="phone-spinner" id="phoneSpinner" style="display:none">
+                            <i class="fa-solid fa-spinner fa-spin"></i>
+                        </span>
                     </div>
                 </div>
 
-                <div class="pay-field-group">
-                    <label class="pay-label">Customer information:</label>
-                    <input type="text" class="pay-input" id="customerName"
-                           placeholder="Nguyễn Văn A">
+                <%-- ── STATE A: chưa nhập / đang gõ ── --%>
+                <div id="custStateIdle" class="cust-state">
+                    <p class="cust-hint"><i class="fa-solid fa-circle-info"></i> Enter phone number to look up customer</p>
                 </div>
 
-                <div class="pay-field-group">
-                    <label class="pay-label">Loyalty point:</label>
-                    <input type="text" class="pay-input pay-input-readonly" id="loyaltyPoints"
-                           readonly placeholder="Loyalty point">
-                </div>
+                <%-- ── STATE B: đã tìm thấy khách hàng ── --%>
+                <div id="custStateFound" class="cust-state" style="display:none">
+                    <div class="cust-found-card">
+                        <div class="cust-found-avatar" id="custAvatar">K</div>
+                        <div class="cust-found-info">
+                            <div class="cust-found-name" id="custFoundName">–</div>
+                            <div class="cust-found-meta">
+                                <span id="custFoundPhone">–</span>
+                                <span class="cust-point-badge">
+                                    <i class="fa-solid fa-star"></i>
+                                    <span id="custFoundPoints">0</span> pts
+                                </span>
+                            </div>
+                        </div>
+                        <button class="cust-clear-btn" onclick="clearCustomer()" title="Remove customer">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
 
-                <div class="pay-field-group">
-                    <label class="pay-label">Use loyalty points:</label>
-                    <div class="pay-loyalty-row">
-                        <input type="number" class="pay-input" id="usePoints"
-                               placeholder="0" min="0"
-                               oninput="applyLoyaltyPoints(this.value)">
-                        <span class="pay-loyalty-avail" id="loyaltyAvail">Available: 0 pts</span>
+                    <div class="pay-field-group" style="margin-top:10px">
+                        <label class="pay-label">Customer name:</label>
+                        <input type="text" class="pay-input pay-input-readonly" id="customerName"
+                               readonly placeholder="–">
+                    </div>
+
+                    <%-- Thông tin điểm + quy đổi --%>
+                    <div class="cust-point-summary">
+                        <div class="cust-point-summary-row">
+                            <span class="cust-point-summary-label">
+                                <i class="fa-solid fa-star"></i> Available points
+                            </span>
+                            <span class="cust-point-summary-val" id="custPointDisplay">0 pts</span>
+                        </div>
+                        <div class="cust-point-summary-row">
+                            <span class="cust-point-summary-label">
+                                <i class="fa-solid fa-arrow-right-arrow-left"></i> Max redeemable
+                            </span>
+                            <span class="cust-point-summary-val text-blue" id="custMaxRedeemDisplay">0 pts</span>
+                        </div>
+                        <div class="cust-point-summary-divider"></div>
+                        <div class="cust-point-config-hint" id="custPointConfigHint">
+                            <%-- filled by JS --%>
+                        </div>
+                    </div>
+
+                    <div class="pay-field-group">
+                        <label class="pay-label">Use loyalty points:</label>
+                        <div class="pay-loyalty-row">
+                            <input type="number" class="pay-input" id="usePoints"
+                                   placeholder="0" min="0"
+                                   oninput="applyLoyaltyPoints(this.value)">
+                            <span class="pay-loyalty-avail" id="loyaltyAvail">= 0đ</span>
+                        </div>
+                        <div class="cust-point-warn" id="custPointWarn" style="display:none"></div>
                     </div>
                 </div>
+
+                <%-- ── STATE C: không tìm thấy → hiện nút Add ── --%>
+                <div id="custStateNotFound" class="cust-state" style="display:none">
+                    <div class="cust-not-found-box">
+                        <i class="fa-solid fa-user-slash cust-nf-icon"></i>
+                        <p class="cust-nf-msg">No customer found with this phone number.</p>
+                        <button class="cust-add-btn" onclick="openAddCustomer()">
+                            <i class="fa-solid fa-user-plus"></i> Add new customer
+                        </button>
+                    </div>
+                </div>
+
+                <%-- ── INLINE ADD FORM (hidden by default) ── --%>
+                <div id="custAddForm" class="cust-state cust-add-form-wrap" style="display:none">
+                    <div class="cust-add-form-header">
+                        <i class="fa-solid fa-user-plus"></i> New customer
+                    </div>
+                    <div class="pay-field-group">
+                        <label class="pay-label">Full name <span class="req">*</span></label>
+                        <input type="text" class="pay-input" id="newCustName"
+                               placeholder="Nguyen Van A">
+                    </div>
+                    <div class="pay-field-group">
+                        <label class="pay-label">Phone number</label>
+                        <input type="text" class="pay-input pay-input-readonly" id="newCustPhone"
+                               readonly>
+                    </div>
+                    <div class="cust-add-form-actions">
+                        <button class="cust-cancel-add-btn" onclick="cancelAddCustomer()">
+                            <i class="fa-solid fa-xmark"></i> Cancel
+                        </button>
+                        <button class="cust-save-btn" onclick="saveNewCustomer()">
+                            <i class="fa-solid fa-floppy-disk"></i> Save
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hidden field giữ customerId để gửi lên server -->
+                <input type="hidden" id="customerId" value="">
 
                 <div class="pay-field-group">
                     <label class="pay-label">Note:</label>
@@ -237,11 +376,37 @@
     window.totalAmount  = parseFloat('${order.totalAmount}') || 0;
     window.contextPath  = '${pageContext.request.contextPath}';
 
+    // Summary data from server (promotions)
+    window.summaryData = {
+        totalDiscount : parseFloat('${summary.totalDiscount}') || 0,
+        items : [
+            <c:forEach var="item" items="${summary.items}" varStatus="loop">
+            {
+                productId    : '${item.productId}',
+                productName  : '${item.productName}',
+                quantity     : ${item.quantity},
+                originalPrice: parseFloat('${item.originalPrice}') || 0,
+                discountAmount: parseFloat('${item.discountAmount}') || 0,
+                finalLineTotal: parseFloat('${item.finalLineTotal}') || 0,
+                promotionNote: '${item.promotionNote}'
+            }<c:if test="${!loop.last}">,</c:if>
+            </c:forEach>
+        ]
+    };
+
     // Bank settings from session (set in print template config)
     window.bankSettings = {
         bankName   : '${sessionScope.posBankConfig.bankName}',
         accNumber  : '${sessionScope.posBankConfig.accountNumber}',
         accName    : '${sessionScope.posBankConfig.accountName}'
+    };
+
+    // Point configuration from SystemSetting
+    window.pointConfig = {
+        earningRate     : parseFloat('${pointConfig["POINT_EARNING_RATE"]}')    || 10000, // X VNĐ = 1 điểm
+        redemptionValue : parseFloat('${pointConfig["POINT_REDEMPTION_VALUE"]}') || 1000,  // 1 điểm = X VNĐ
+        maxRedeemPercent: parseFloat('${pointConfig["MAX_REDEEM_PERCENT"]}')    || 30,    // tối đa X% hoá đơn
+        minPointToRedeem: parseFloat('${pointConfig["MIN_POINT_TO_REDEEM"]}')   || 100    // tối thiểu X điểm
     };
 </script>
 <script src="${pageContext.request.contextPath}/resources/js/pos/payment.js"></script>

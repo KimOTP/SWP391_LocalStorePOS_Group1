@@ -8,8 +8,11 @@ import org.springframework.data.repository.query.Param;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
+
+    Optional<Customer> findByPhoneNumber(String phoneNumber);
 
     @Query("SELECT SUM(c.currentPoint) From Customer c")
     Long sumTotalPoints();

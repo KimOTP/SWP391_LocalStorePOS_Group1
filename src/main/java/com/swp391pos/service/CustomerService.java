@@ -91,6 +91,21 @@ public class CustomerService {
         customerRepository.save(customer);
     }
 
+    public Optional<Customer> findByPhoneNumber(String phone) {
+        return customerRepository.findByPhoneNumber(phone);
+    }
+
+    public Customer saveQuick(String phoneNumber, String fullName) {
+        Customer c = new Customer();
+        c.setPhoneNumber(phoneNumber);
+        c.setFullName(fullName);
+        c.setCurrentPoint(0);
+        c.setTotalSpending(BigDecimal.ZERO);
+        c.setStatus(1);
+        c.setCreatedAt(LocalDateTime.now());
+        return customerRepository.save(c);
+    }
+
     public void deleteById(Long id) {
         customerRepository.deleteById(id);
     }
