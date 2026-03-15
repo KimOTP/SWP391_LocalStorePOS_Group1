@@ -570,18 +570,24 @@ function showQrStatus(state) {
 function buildPayload(method, customerPaid, totalPaid, changeAmount) {
     const pts       = parseInt(document.getElementById('usePoints')?.value || '0');
     const pointsVND = pts * (getPointConfig().redemptionValue || 1000);
+
+    // Xử lý ID khách hàng: Nếu rỗng thì trả về null để Backend không bị lỗi
+        const rawCustomerId = document.getElementById('customerId')?.value;
+        const customerIdStr = rawCustomerId ? rawCustomerId.trim() : null;
+
     return {
         orderId       : window.orderId,
         paymentMethod : method,                      // 'CASH' hoặc 'BANKING'
         customerPaid  : customerPaid,
         discount      : discountAmt,
         loyaltyUsed   : pointsVND,
+        pointsUsed    : pts, // thêm để backend xử li diem cua khach
         totalPaid     : totalPaid,
         changeAmount  : changeAmount,
         note          : document.getElementById('orderNote')?.value || '',
         customerPhone : document.getElementById('customerPhone')?.value || '',
         customerName  : document.getElementById('customerName')?.value  || '',
-        customerId    : document.getElementById('customerId')?.value    || ''
+        customerId    : customerIdStr // Gửi null nếu không có khách
     };
 }
 
