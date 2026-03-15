@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -51,7 +52,9 @@ public class PosService {
             PromotionDetail appliedPromo = activePromos.stream()
                     .filter(p -> p.getProduct().getProductId().equals(product.getProductId())
                             && itemDto.getQuantity() >= p.getMinQuantity())
-                    .findFirst().orElse(null);
+                    // Ưu tiên rule có minQuantity cao nhất (mua nhiều → giảm nhiều hơn)
+                    .max(Comparator.comparingInt(PromotionDetail::getMinQuantity))
+                    .orElse(null);
 
             if (appliedPromo != null) {
                 if (appliedPromo.getDiscountType() == PromotionDetail.DiscountType.AMOUNT) {

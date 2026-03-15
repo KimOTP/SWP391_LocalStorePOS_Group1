@@ -27,4 +27,6 @@ public interface PromotionDetailRepository extends JpaRepository<PromotionDetail
             "AND :today >= pd.promotion.startDate " +
             "AND :today <= pd.promotion.endDate")
     List<PromotionDetail> findAllActivePromotionsForPos(@Param("today") LocalDate today);
+
+    List<PromotionDetail> findByPromotion_PromotionId(Integer promotionId);
 }

@@ -13,9 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class PromotionDetailService {
@@ -47,7 +52,22 @@ public class PromotionDetailService {
         promotionDetailRepository.save(detail);
     }
 
+    private boolean isDuplicatePair(Integer promotionId, String productId, Integer minQuantity, Long excludeDetailId) {
+        return promotionDetailRepository
+                .findByPromotion_PromotionId(promotionId)
+                .stream()
+                .anyMatch(d -> (excludeDetailId == null || !d.getPromoDetailId().equals(excludeDetailId))
+                        && d.getProduct().getProductId().equals(productId)
+                        && d.getMinQuantity().equals(minQuantity));
+    }
+
     public void addPromotionDetail(Integer promotionId, String productId, Integer minQuantity, BigDecimal discountValue, String discountTypeStr) {
+        // Add — không có record nào cần exclude nên truyền null
+        if (isDuplicatePair(promotionId, productId, minQuantity, null)) {
+            throw new IllegalArgumentException("This product with minQuantity="
+                    + minQuantity + " already exists in this promotion.");
+        }
+
         Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new RuntimeException("Cannot find promotion"));
         Product product = productRepository.findProductByProductId(productId);
         PromotionDetail.DiscountType discountType = PromotionDetail.DiscountType.valueOf(discountTypeStr);
@@ -65,6 +85,12 @@ public class PromotionDetailService {
     }
 
     public void updatePromotionDetail(Long promoDetailId, Integer promotionId, String productId, Integer minQuantity, BigDecimal discountValue, String discountTypeStr) {
+        // Update — exclude chính record đang sửa
+        if (isDuplicatePair(promotionId, productId, minQuantity, promoDetailId)) {
+            throw new IllegalArgumentException("This product with minQuantity="
+                    + minQuantity + " already exists in this promotion.");
+        }
+
         Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new RuntimeException("Cannot find promotion"));
         Product product = productRepository.findProductByProductId(productId);
         PromotionDetail.DiscountType discountType = PromotionDetail.DiscountType.valueOf(discountTypeStr);
@@ -98,11 +124,55 @@ public class PromotionDetailService {
         promotionDetailRepository.deleteById(promoDetailId);
     }
 
+
+    //Gen File excel mẫu cho uesr tải xuống
+    public byte[] generateExcelTemplate() throws IOException {
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Template");
+
+            // Tạo dòng Header (Dòng 0)
+            Row headerRow = sheet.createRow(0);
+
+            // Định dạng chữ đậm cho Header
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font font = workbook.createFont();
+            font.setBold(true);
+            headerStyle.setFont(font);
+
+            // Tạo các cột
+            String[] headers = {"ProductId", "DiscountValue", "DiscountType (AMOUNT/PERCENT)", "MinQuantity"};
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+                sheet.autoSizeColumn(i); // Tự động căn chỉnh độ rộng cột
+            }
+
+            // Ghi ra mảng byte để gửi về client
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            workbook.write(outputStream);
+            return outputStream.toByteArray();
+        }
+    }
+    //Xử lí File excel admin up lên
     public void importPromotionDetails(int promotionId, MultipartFile file) throws Exception {
+
         Promotion promotion = promotionRepository.findById(promotionId);
         if (promotion == null) {
             throw new RuntimeException("Cannot find promotion");
         }
+
+        // Lấy các cặp đã có trong DB
+        Set<String> existingPairs = promotionDetailRepository
+                .findByPromotion_PromotionId(promotionId)
+                .stream()
+                .map(d -> d.getProduct().getProductId() + "_" + d.getMinQuantity())
+                .collect(Collectors.toSet());
+
+        // Set check trùng trong file
+        Set<String> seenInFile = new HashSet<>();
+
+
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
             //Khoi tao list
@@ -124,13 +194,30 @@ public class PromotionDetailService {
                 } else if (productIdCell.getCellType() == CellType.NUMERIC) {
                     productId = String.valueOf(productIdCell.getNumericCellValue());
                 }
+
                 //Lấy product
                 Product product = productRepository.findProductByProductId(productId);
                 //check exist ?
-                if(product==null) continue;
+                if(product == null) {
+                    throw new RuntimeException("Cannot find product " + productId + " in line " + (i + 1));
+                }
                 BigDecimal disCountValue = BigDecimal.valueOf(row.getCell(1).getNumericCellValue());
-                String discountType = row.getCell(2).getStringCellValue();
+                String discountType = row.getCell(2).getStringCellValue().trim().toUpperCase();
                 int minQuantity = (int)row.getCell(3).getNumericCellValue();
+
+                // Thêm check trùng cặp
+                String pairKey = productId + "_" + minQuantity;
+                // Check trùng trong file
+                if (seenInFile.contains(pairKey)) {
+                    throw new RuntimeException("Duplicate product " + productId
+                            + " with minQuantity=" + minQuantity + " at row " + (i + 1) + " in the file.");
+                }
+                seenInFile.add(pairKey);
+                //Check trùng với DB
+                if (existingPairs.contains(pairKey)) {
+                    throw new RuntimeException("Product " + productId
+                            + " with minQuantity=" + minQuantity + " already exists in this promotion.");
+                }
 
                 //Validate detail promotion
                 PromotionDetail.DiscountType typeEnum = PromotionDetail.DiscountType.valueOf(discountType);

@@ -9,6 +9,8 @@ import com.swp391pos.service.PromotionService;
 import com.swp391pos.service.PromotionDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -192,8 +194,22 @@ public class PromotionController {
         }
         return "redirect:/promotion/detail?id=" + promotionId;
     }
-
-    @PostMapping("/promotion/{promotionId}/import-details")
+    // User tải file excel mẫu xuống
+    @GetMapping("/template")
+    public ResponseEntity<byte[]> downloadTemplate() {
+        try {
+            byte[] excelBytes = promotionDetailService.generateExcelTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+            headers.setContentDispositionFormData("attachment", "Promotion_Template.xlsx");
+            return ResponseEntity.ok().headers(headers).body(excelBytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    //Up file excel lên
+    @PostMapping("/{promotionId}/import-details")
     @ResponseBody
     public ResponseEntity<?> importDetails(@PathVariable int promotionId, @RequestParam("file")MultipartFile file) {
         try {
