@@ -10,104 +10,128 @@
     <title>Stock-In Details | LocalStorePOS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="<c:url value='/resources/css/inventory/stock-in.css'/>">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="<c:url value='/resources/css/inventory/stock-in-request.css'/>">
+    <style>
+        /* CSS Badge Trạng thái chuẩn hệ thống */
+        .status-badge { padding: 6px 16px !important; border-radius: 8px !important; font-size: 0.75rem !important; font-weight: 700 !important; display: inline-flex !important; align-items: center !important; }
+        .badge-pending { background: #fef9c3 !important; color: #ca8a04 !important; border: 1px solid #fef08a !important; }
+        .badge-completed { background: #dcfce7 !important; color: #16a34a !important; border: 1px solid #bbf7d0 !important; }
+        .badge-rejected { background: #fee2e2 !important; color: #dc2626 !important; border: 1px solid #fecaca !important; }
+        .badge-input-pending { background: #e0f2fe !important; color: #0284c7 !important; border: 1px solid #bae6fd !important; }
+    </style>
 </head>
 <body>
 <jsp:include page="../../layer/header.jsp" />
 <jsp:include page="../../layer/sidebar.jsp" />
 
+<input type="hidden" id="serverMessage" value="${message}">
+<input type="hidden" id="serverStatus" value="${status}">
+
 <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0">Stock-In Details</h2>
-        <button class="btn btn-light border fw-bold" onclick="window.history.back()">
+        <div>
+            <h2 class="fw-bold mb-0">Stock-In Details</h2>
+            <small class="text-muted">Review finalized inventory quantities</small>
+        </div>
+        <button class="btn btn-cancel px-4 d-inline-flex align-items-center text-decoration-none" onclick="window.history.back()">
             <i class="fa-solid fa-arrow-left me-2"></i>Back to Reports
         </button>
     </div>
 
-    <div class="info-card mb-4">
-        <div class="d-flex justify-content-between align-items-start mb-4">
-            <h5 class="fw-bold mb-0">Request ID: <span class="text-primary">RI_${stockIn.stockInId}</span></h5>
+    <div class="card shadow-sm border-0 mb-4" style="border-radius: 16px; background: #ffffff;">
+        <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                <h5 class="fw-bold mb-0 text-dark">
+                    <i class="fa-solid fa-file-invoice me-2" style="color: #2563eb;"></i>Request ID: <span class="text-primary ms-1">SI_${stockIn.stockInId}</span>
+                </h5>
 
-            <c:choose>
-                <c:when test="${stockIn.status.transactionStatusId == 1}">
-                    <span class="status-badge status-discontinued">Input Pending</span>
-                </c:when>
-                <c:when test="${stockIn.status.transactionStatusId == 2}">
-                    <span class="status-badge status-pending">Pending Approval</span>
-                </c:when>
-                <c:when test="${stockIn.status.transactionStatusId == 3}">
-                    <span class="status-badge status-outstock">Rejected</span>
-                </c:when>
-                <c:when test="${stockIn.status.transactionStatusId == 4}">
-                    <span class="status-badge status-active">Completed</span>
-                </c:when>
-            </c:choose>
-        </div>
+                <c:choose>
+                    <c:when test="${stockIn.status.transactionStatusId == 1}">
+                        <span class="status-badge badge-input-pending"><i class="fa-solid fa-pen-to-square me-2"></i>Input Pending</span>
+                    </c:when>
+                    <c:when test="${stockIn.status.transactionStatusId == 2}">
+                        <span class="status-badge badge-pending"><i class="fa-solid fa-spinner fa-spin me-2"></i>Pending Approval</span>
+                    </c:when>
+                    <c:when test="${stockIn.status.transactionStatusId == 3}">
+                        <span class="status-badge badge-rejected"><i class="fa-solid fa-xmark me-2"></i>Rejected</span>
+                    </c:when>
+                    <c:when test="${stockIn.status.transactionStatusId == 4}">
+                        <span class="status-badge badge-completed"><i class="fa-solid fa-check-double me-2"></i>Completed</span>
+                    </c:when>
+                </c:choose>
+            </div>
 
-        <div class="row g-4">
-            <div class="col-md-3">
-                <label class="info-label">Requested by</label>
-                <div class="info-value">
-                    <i class="fa-regular fa-user-circle me-1 text-muted"></i> ${stockIn.requester.fullName}
+            <div class="row g-4 align-items-end">
+                <div class="col-md-3">
+                    <label class="info-label">Requested by</label>
+                    <div class="info-value p-2 px-3 bg-light rounded-3 border text-dark fw-bold" style="height: 42px;">
+                        <i class="fa-solid fa-user me-2 text-muted"></i>${stockIn.requester.fullName}
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <label class="info-label">Inbound Time</label>
-                <div class="info-value">
-                    <i class="fa-regular fa-calendar-check me-1 text-muted"></i>
-                    <fmt:parseDate value="${stockIn.receivedAt}" pattern="yyyy-MM-dd'T'HH:mm" var="pDate" />
-                    <fmt:formatDate value="${pDate}" pattern="dd/MM/yyyy HH:mm" />
+                <div class="col-md-3">
+                    <label class="info-label">Request Date</label>
+                    <div class="info-value p-2 px-3 bg-light rounded-3 border text-muted" style="height: 42px;">
+                        <i class="fa-regular fa-calendar me-2"></i>
+                        <fmt:parseDate value="${stockIn.createdAt}" pattern="yyyy-MM-dd'T'HH:mm" var="cDate" />
+                        <fmt:formatDate value="${cDate}" pattern="dd/MM/yyyy" />
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <label class="info-label">Request Date</label>
-                <div class="info-value">
-                    <i class="fa-regular fa-calendar me-1 text-muted"></i>
-                    <fmt:parseDate value="${stockIn.createdAt}" pattern="yyyy-MM-dd'T'HH:mm" var="cDate" />
-                    <fmt:formatDate value="${cDate}" pattern="dd/MM/yyyy" />
+                <div class="col-md-3">
+                    <label class="info-label">Inbound Time</label>
+                    <div class="info-value p-2 px-3 bg-light rounded-3 border text-muted" style="height: 42px;">
+                        <i class="fa-regular fa-clock me-2"></i>
+                        <fmt:parseDate value="${stockIn.receivedAt}" pattern="yyyy-MM-dd'T'HH:mm" var="pDate" />
+                        <fmt:formatDate value="${pDate}" pattern="dd/MM/yyyy HH:mm" />
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <label class="info-label">Staff in Charge</label>
-                <div class="info-value text-primary">
-                    <i class="fa-solid fa-user-tie me-1"></i> ${stockIn.staff.fullName}
+                <div class="col-md-3">
+                    <label class="info-label">Staff in Charge</label>
+                    <div class="info-value p-2 px-3 bg-primary-subtle text-primary border border-primary-subtle rounded-3 fw-bold" style="height: 42px;">
+                        <i class="fa-solid fa-user-tie me-2"></i>${stockIn.staff.fullName}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="table-section shadow-sm border-0">
-        <div class="mb-4">
-            <h5 class="fw-bold mb-0">Received Items</h5>
-            <small class="text-muted">Finalized inventory quantities for this request.</small>
-        </div>
+    <div class="d-flex justify-content-between align-items-center mb-3 mt-2">
+        <h5 class="fw-bold mb-0 text-dark">Received Items</h5>
+    </div>
 
+    <div class="product-table-card mb-5">
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
+            <table class="table table-hover align-middle mb-0">
                 <thead>
-                <tr>
-                    <th style="width: 60px;" class="text-center">#</th>
-                    <th>SKU</th>
-                    <th>Product Name</th>
-                    <th>Unit</th>
-                    <th class="text-center">Expected Qty</th>
-                    <th class="text-center">Actual Received</th>
+                <tr class="thead-row">
+                    <th class="th-cell text-center" style="width: 60px;">#</th>
+                    <th class="th-cell" style="width: 140px;">SKU</th>
+                    <th class="th-cell">Product Information</th>
+                    <th class="th-cell text-center" style="width: 120px;">Unit</th>
+                    <th class="th-cell text-center" style="width: 160px;">Expected Qty</th>
+                    <th class="th-cell text-center" style="width: 160px;">Actual Received</th>
                 </tr>
                 </thead>
                 <tbody>
                 <c:forEach items="${stockIn.details}" var="d" varStatus="s">
-                    <tr>
-                        <td class="text-center text-muted small">${s.index + 1}</td>
-                        <td class="text-sku">#${d.product.productId}</td>
-                        <td>
+                    <tr class="${d.receivedQuantity != d.requestedQuantity ? 'table-warning' : ''}">
+                        <td class="td-cell text-center text-muted fw-bold">${s.index + 1}</td>
+                        <td class="td-cell align-middle text-center">
+                            <div class="d-flex align-items-center justify-content-center h-100">
+                                <span class="text-sku">#${d.product.productId}</span>
+                            </div>
+                        </td>
+                        <td class="td-cell align-middle">
                             <div class="fw-bold text-dark">${d.product.productName}</div>
                         </td>
-                        <td><span class="badge border text-dark fw-normal px-3">${d.product.unit}</span></td>
-                        <td class="text-center">
-                            <span class="expected-badge">${d.requestedQuantity}</span>
+                        <td class="td-cell text-center align-middle">
+                            <span class="badge border text-dark fw-normal px-3 py-2" style="background: #fff;">${d.product.unit}</span>
                         </td>
-                        <td class="text-center">
-                                <span class="fw-bold fs-6 ${d.receivedQuantity != d.requestedQuantity ? 'text-danger' : 'text-primary'}">
+                        <td class="td-cell text-center align-middle">
+                            <span class="badge bg-light text-secondary border px-3 py-2 fw-bold fs-6">${d.requestedQuantity}</span>
+                        </td>
+                        <td class="td-cell text-center align-middle">
+                                <span class="badge ${d.receivedQuantity != d.requestedQuantity ? 'bg-danger' : 'bg-success'} px-3 py-2 fw-bold fs-6 text-white shadow-sm">
                                         ${d.receivedQuantity}
                                 </span>
                         </td>
@@ -120,5 +144,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="<c:url value='/resources/js/inventory/stock-in-detail.js'/>"></script>
 </body>
 </html>
