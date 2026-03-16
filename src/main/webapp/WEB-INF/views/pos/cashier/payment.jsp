@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/pos/payment.css">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -275,7 +277,8 @@
                     </div>
                     <div class="pay-field-group">
                         <label class="pay-label">Phone number</label>
-                        <input type="text" class="pay-input pay-input-readonly" id="newCustPhone" readonly>
+                        <input type="text" class="pay-input pay-input-readonly" id="newCustPhone"
+                               readonly>
                     </div>
                     <div class="cust-add-form-actions">
                         <button class="cust-cancel-add-btn" onclick="cancelAddCustomer()">

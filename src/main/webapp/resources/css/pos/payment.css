@@ -914,3 +914,55 @@ body {
     font-weight: 900;
     font-size: 0.68rem;
 }
+
+/* ============================================================
+   SWEETALERT2 — payment page overrides
+   ============================================================ */
+.swal-pay-popup {
+    border-radius: 16px !important;
+    font-family: var(--sb-font) !important;
+    padding: 28px 24px 24px !important;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15) !important;
+}
+
+.swal2-title {
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+}
+
+.swal2-html-container {
+    font-size: 0.875rem !important;
+    color: #64748b !important;
+}
+
+.swal2-icon.swal2-warning {
+    border-color: #f59e0b !important;
+    color: #f59e0b !important;
+    width: 52px !important;
+    height: 52px !important;
+    margin: 0 auto 14px !important;
+}
+
+.swal2-actions {
+    gap: 10px !important;
+    margin-top: 20px !important;
+}
+
+.swal-pay-confirm,
+.swal-pay-back {
+    height: 40px !important;
+    padding: 0 20px !important;
+    border-radius: 9px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    font-family: var(--sb-font) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    border: none !important;
+    transition: all 0.2s !important;
+}
+
+.swal-pay-confirm:hover { opacity: 0.88 !important; transform: translateY(-1px) !important; }
+.swal-pay-back:hover    { opacity: 0.88 !important; }

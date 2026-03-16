@@ -340,7 +340,26 @@ function updateQR() {
 
 /* ── Cancel order ── */
 async function cancelOrder() {
-    if (!confirm('Cancel this order?')) return;
+    const result = await Swal.fire({
+        title: 'Cancel this order?',
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="fa-solid fa-xmark me-1"></i> Yes, cancel it',
+        cancelButtonText: 'Go back',
+        reverseButtons: true,
+        focusCancel: true,
+        customClass: {
+            popup:         'swal-pay-popup',
+            confirmButton: 'swal-pay-confirm',
+            cancelButton:  'swal-pay-back'
+        }
+    });
+
+    if (!result.isConfirmed) return;
+
     stopQrPolling();
     try {
         await fetch((window.contextPath || '') + '/pos/api/order/' + window.orderId + '/cancel', {
