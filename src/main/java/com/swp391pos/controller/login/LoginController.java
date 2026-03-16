@@ -54,24 +54,28 @@ public class LoginController {
         //Check Account
         if (account == null) {
             model.addAttribute("error", "Account does not exist.");
+            model.addAttribute("username", username);
             return "auth/login";
         }
 
         //Check password
         if (!passwordEncoder.matches(password, account.getPasswordHash())) {
             model.addAttribute("error", "Wrong password");
+            model.addAttribute("username", username);
             return "auth/login";
         }
 
         //Check employee information
         if (account.getEmployee() == null) {
             model.addAttribute("error", "Account has no employee info");
+            model.addAttribute("username", username);
             return "auth/login";
         }
 
         //Check Status
         if (Boolean.FALSE.equals(account.getEmployee().getStatus())) {
             model.addAttribute("error", "Your account has been deactivated.");
+            model.addAttribute("username", username);
             return "auth/login";
         }
 

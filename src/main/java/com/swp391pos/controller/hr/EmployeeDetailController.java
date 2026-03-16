@@ -136,6 +136,15 @@ public class EmployeeDetailController {
             account.setUsername(username);
 
             if (password != null && !password.trim().isEmpty()) {
+
+                if (password.length() < 6) {
+                    model.addAttribute("errorMessage", "Password must be at least 6 characters!");
+                    model.addAttribute("employee", employee);
+                    model.addAttribute("employeeAccount", account);
+
+                    return "hr/manager/employee_detail";
+                }
+
                 String encodedPassword = passwordEncoder.encode(password);
                 account.setPasswordHash(encodedPassword);
             }

@@ -39,7 +39,17 @@ public class AccountService {
             return "Email already exists!";
         }
 
-        // 4. Tạo Employee
+        //4. Check password length
+        if (password.length() < 6) {
+            return "Password must be at least 6 characters!";
+        }
+
+        //5. Check username length
+        if (fullName.length() > 100) {
+            return "Full name must not exceed 100 characters!";
+        }
+
+        // 6. Tạo Employee
         Employee employee = new Employee();
         employee.setFullName(fullName);
         employee.setEmail(email);
@@ -48,7 +58,7 @@ public class AccountService {
 
         employeeRepository.save(employee);
 
-        // 5. Tạo Account
+        // 7. Tạo Account
         Account account = new Account();
         account.setEmployee(employee);
         account.setUsername(username);
