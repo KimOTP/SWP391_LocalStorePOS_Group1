@@ -14,6 +14,8 @@ import vn.payos.model.v2.paymentRequests.CreatePaymentLinkResponse;
 import vn.payos.model.v2.paymentRequests.PaymentLink;
 import vn.payos.model.v2.paymentRequests.PaymentLinkStatus;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -35,23 +37,25 @@ public class PayOSGateway implements PaymentGateway {
     }
 
     /**
-     * Kiểm tra PayOS có available không bằng cách gọi API lấy thông tin 1 orderCode giả.
-     * Nếu PayOS trả về lỗi network/503/maintenance → false.
-     * Nếu trả về 404 (order not found) → server vẫn hoạt động → true.
+     * Kiểm tra PayOS có available không bằng cách ping HTTPS endpoint của PayOS.
+     * Chỉ trả về false khi không kết nối được (network error, timeout).
+     * Không gọi PayOS API thật để tránh false negative do "order not found".
      */
     @Override
     public boolean isAvailable() {
         try {
-            payOS.paymentRequests().get(1L); // orderCode 1 chắc chắn không tồn tại
+            URL url = new URL("https://api-merchant.payos.vn");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(3000);
+            conn.setReadTimeout(3000);
+            conn.setRequestMethod("HEAD");
+            int code = conn.getResponseCode();
+            conn.disconnect();
+            // Bất kỳ HTTP response nào (kể cả 4xx) đều nghĩa là server đang hoạt động
+            log.debug("[PayOS] isAvailable ping -> HTTP {}", code);
             return true;
         } catch (Exception e) {
-            String msg = e.getMessage() != null ? e.getMessage().toLowerCase() : "";
-            // 404 = server hoạt động, chỉ không tìm thấy order → OK
-            if (msg.contains("not found") || msg.contains("404") || msg.contains("payment link not found")) {
-                return true;
-            }
-            // Maintenance, network error, 503 → false
-            log.warn("[PayOS] isAvailable check failed: {}", e.getMessage());
+            log.warn("[PayOS] isAvailable ping failed: {}", e.getMessage());
             return false;
         }
     }
@@ -72,9 +76,7 @@ public class PayOSGateway implements PaymentGateway {
 
             CreatePaymentLinkResponse data = payOS.paymentRequests().create(paymentData);
 
-            // getQrCode() trả về chuỗi EMV QR raw (00020101...)
-            // Dùng Google Chart API để render thành ảnh PNG
-            String emvQrRaw = data.getQrCode();
+            String emvQrRaw   = data.getQrCode();
             String qrImageUrl = buildQrImageUrl(emvQrRaw);
 
             PaymentResponse response = new PaymentResponse();
@@ -96,10 +98,6 @@ public class PayOSGateway implements PaymentGateway {
         }
     }
 
-    /**
-     * Build URL ảnh QR từ chuỗi EMV raw dùng qrserver.com API.
-     * https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=<encoded>
-     */
     private String buildQrImageUrl(String emvQrRaw) {
         try {
             String encoded = URLEncoder.encode(emvQrRaw, StandardCharsets.UTF_8);

@@ -33,11 +33,11 @@ public class PaymentService {
 
     private static final int FALLBACK_THRESHOLD_SECONDS = 30;
 
-    // [FIX #1] Gộp lại thành 1 bộ field duy nhất, đặt tên thống nhất
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
     private final PaymentGateway paymentGateway;
     private final PosReceiptRepository posReceiptRepository;
+
 
     // -------------------------------------------------------------------------
     // CRUD cơ bản
@@ -124,7 +124,11 @@ public class PaymentService {
 
         paymentRepository.save(payment);
         orderRepository.save(order);
+
+
     }
+
+
 
     // -------------------------------------------------------------------------
     // handleWebhook
