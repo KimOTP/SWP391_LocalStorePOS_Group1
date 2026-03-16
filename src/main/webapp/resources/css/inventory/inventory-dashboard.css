@@ -1,7 +1,7 @@
 /* --- 1. Tổng thể nội dung & Logic Co Giãn --- */
 .main-content {
     background-color: #f8fafc !important;
-    padding: 30px 20px !important;
+    padding: 30px 40px !important;
     margin-top: 70px !important;
     margin-left: 80px;
     transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -12,7 +12,7 @@
     margin-left: 260px !important;
 }
 
-/* --- 2. Thẻ thống kê (Stat Cards) - Đồng bộ Product --- */
+/* --- 2. Thẻ thống kê (Stat Cards) --- */
 .stat-card {
     background: #fff !important;
     border: 1.5px solid #e2e8f0 !important;
@@ -48,7 +48,6 @@
     font-size: 1.15rem !important;
 }
 
-/* Màu sắc icon đồng bộ */
 .stat-icon-import  { background: rgba(37, 99, 235, 0.1) !important; color: #2563eb !important; }
 .stat-icon-export  { background: rgba(16, 185, 129, 0.1) !important; color: #10b981 !important; }
 .stat-icon-value   { background: rgba(30, 41, 59, 0.08) !important; color: #1e293b !important; }
@@ -63,7 +62,7 @@
 }
 
 .stat-value {
-    font-size: 1.5rem !important;
+    font-size: 1.4rem !important;
     font-weight: 700 !important;
     line-height: 1.2 !important;
 }
@@ -93,8 +92,15 @@
     border-radius: 12px !important;
     display: flex !important;
     align-items: center !important;
-    padding: 0 10px !important;
+    padding: 0 16px !important;
     height: 42px !important;
+    transition: all 0.2s ease !important;
+}
+
+.search-box-standalone:focus-within {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
+    background: #fff !important;
 }
 
 .search-box-standalone input {
@@ -102,46 +108,89 @@
     background: transparent !important;
     font-size: 0.85rem !important;
     width: 100% !important;
+    outline: none !important;
 }
 
-.search-box-standalone input:focus { outline: none !important; box-shadow: none !important; }
+.filter-dropdown .btn-filter {
+    width: 180px !important;
+    height: 42px !important;
+    background-color: #f1f5f9 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    color: #475569 !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 16px !important;
+}
 
-/* --- 4. Table Design --- */
+.filter-dropdown .btn-filter:hover {
+    background-color: #fff !important;
+    border-color: #2563eb !important;
+    color: #2563eb !important;
+}
+
+.filter-dropdown .dropdown-menu { border-radius: 12px !important; border: 1px solid #e2e8f0 !important; }
+.filter-dropdown .dropdown-item { padding: 10px 16px !important; font-size: 0.85rem !important; }
+.filter-dropdown .dropdown-item:hover { background-color: #eff6ff !important; color: #2563eb !important; }
+
+/* --- 4. Table Design Đồng Bộ --- */
 .inventory-table-card {
     margin-top: 20px;
     background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
     border-radius: 16px !important;
     overflow: hidden !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
 }
 
+.thead-row { background-color: #f1f5f9 !important; border-bottom: 2px solid #e2e8f0 !important; }
+
 .th-cell {
-    padding: 14px 24px !important;
+    padding: 14px 20px !important;
     font-size: 0.72rem !important;
     font-weight: 700 !important;
     color: #94a3b8 !important;
     text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
     background-color: #f1f5f9 !important;
+    white-space: nowrap !important;
 }
 
 .td-cell {
-    padding: 14px 24px !important;
+    padding: 14px 20px !important;
     border-bottom: 1px solid #f1f5f9 !important;
     vertical-align: middle !important;
 }
 
+.table-hover > tbody > tr:hover > td {
+    background-color: rgba(248, 250, 252, 0.7) !important;
+}
+
+/* Fix cứng Text SKU */
 .text-sku {
     color: #2563eb !important;
     font-weight: 600 !important;
     font-family: 'Monaco', 'Consolas', monospace !important;
+    letter-spacing: 0.5px !important;
+    background: #eff6ff !important;
+    padding: 4px 10px !important;
+    border-radius: 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1.5 !important;
+    margin: 0 !important;
 }
 
 /* Status Badges */
 .status-badge {
-    padding: 6px 12px !important;
-    border-radius: 999px !important;
+    padding: 6px 16px !important;
+    border-radius: 8px !important;
     font-size: 0.75rem !important;
-    font-weight: 600 !important;
+    font-weight: 700 !important;
     display: inline-flex !important;
     align-items: center !important;
     gap: 8px !important;
@@ -154,67 +203,8 @@
     border-radius: 50% !important;
 }
 
-.status-active { background: #dcfce7 !important; color: #16a34a !important; }
+.status-active { background: #dcfce7 !important; color: #16a34a !important; border: 1px solid #bbf7d0 !important; }
 .status-active::before { background: #16a34a !important; }
 
-.status-outstock { background: #fee2e2 !important; color: #dc2626 !important; }
+.status-outstock { background: #fee2e2 !important; color: #dc2626 !important; border: 1px solid #fecaca !important; }
 .status-outstock::before { background: #dc2626 !important; }
-/* Custom Dropdown cho Filter (Thay thế Select mặc định) */
-.filter-dropdown .btn-filter {
-    width: 180px !important;
-    height: 42px !important;
-    background-color: #f1f5f9 !important; /* Màu nền xám nhạt đồng bộ search box */
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 12px !important;
-    color: #475569 !important;
-    font-size: 0.85rem !important;
-    font-weight: 500 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    padding: 0 16px !important;
-    transition: all 0.2s ease !important;
-}
-
-.filter-dropdown .btn-filter:hover,
-.filter-dropdown .btn-filter:focus {
-    background-color: #fff !important;
-    border-color: #2563eb !important;
-    color: #2563eb !important;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08) !important;
-}
-
-.filter-dropdown .dropdown-menu {
-    border-radius: 12px !important;
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
-    padding: 6px !important;
-    min-width: 180px !important;
-    margin-top: 8px !important;
-}
-
-.filter-dropdown .dropdown-item {
-    border-radius: 8px !important;
-    font-size: 0.85rem !important;
-    font-weight: 500 !important;
-    color: #475569 !important;
-    padding: 10px 12px !important;
-    transition: all 0.15s ease !important;
-    cursor: pointer !important;
-}
-
-.filter-dropdown .dropdown-item:hover {
-    background-color: #eff6ff !important;
-    color: #2563eb !important;
-}
-
-.filter-dropdown .dropdown-item.active {
-    background-color: #2563eb !important;
-    color: #fff !important;
-}
-
-/* Icon nhỏ bên phải nút filter */
-.tiny-icon {
-    font-size: 0.7rem !important;
-    opacity: 0.7;
-}
