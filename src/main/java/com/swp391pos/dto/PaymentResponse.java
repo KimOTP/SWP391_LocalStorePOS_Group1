@@ -5,9 +5,7 @@ import lombok.Data;
 @Data
 public class PaymentResponse {
     private String qrCodeUrl;
+    private String checkoutUrl;      // URL trang PayOS có QR VietQR đẹp
     private String paymentSessionId;
-
-    //Them gatewayOrderCode de debug/trace de dang hon
     private String gatewayOrderCode;
-
 }
