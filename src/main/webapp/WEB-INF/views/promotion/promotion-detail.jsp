@@ -36,10 +36,7 @@
             <small class="text-muted">View and manage products in this promotion</small>
         </div>
         <div class="d-flex gap-2">
-            <input type="file" id="excelFile" accept=".xlsx" style="display:none;"
-                   onchange="uploadExcel(${promotion.promotionId})">
-            <button type="button" class="btn-success-outline"
-                    onclick="document.getElementById('excelFile').click()">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#importExcelModal">
                 <i class="fa-solid fa-file-excel"></i> Import Excel
             </button>
             <button class="btn-add" data-bs-toggle="modal" data-bs-target="#addDetailModal">
@@ -292,6 +289,38 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="importExcelModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold fs-4">Import dữ liệu từ Excel</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body pt-4 pb-2">
+                <div class="mb-4">
+                    <a href="/promotion/template" class="btn btn-outline-success w-100 rounded-3 py-2 fw-medium">
+                        <i class="fa-solid fa-download me-2"></i> Tải xuống file mẫu
+                    </a>
+                </div>
+
+                <hr class="text-muted opacity-25">
+
+                <div class="mb-3">
+                    <label class="form-label fw-medium">Chọn file Excel (.xlsx, .xls):</label>
+                    <input class="form-control" type="file" id="excelFile" accept=".xlsx, .xls">
+                </div>
+            </div>
+
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-secondary rounded-3 px-4" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary rounded-3 px-4" id="btnConfirmImport" onclick="uploadExcel(${promotion.promotionId})">Xác nhận Import</button>
+            </div>
         </div>
     </div>
 </div>

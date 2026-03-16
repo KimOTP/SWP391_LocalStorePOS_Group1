@@ -21,6 +21,7 @@ public class StockInService {
     @Autowired private SupplierRepository supplierRepo;
     @Autowired private InventoryRepository inventoryRepo;
     @Autowired private ProductRepository productRepo;;
+    @Autowired private EmailService emailService;
 
     // Request Order Process
     public Map<String, String> getSupplierEmail(String name) {
@@ -59,10 +60,18 @@ public class StockInService {
     public void createRequest(Integer supplierId, List<StockInItemDTO> items, Account requester) {
         StockIn si = new StockIn();
         si.setRequester(requester.getEmployee());
-        si.setSupplier(supplierRepo.findById(supplierId).orElseThrow());
+        Supplier supplier = supplierRepo.findById(supplierId).orElseThrow();
+        si.setSupplier(supplier);
         si.setCreatedAt(LocalDateTime.now());
         si.setStatus(transactionStatusRepo.findById(1).get()); // Status 1: Pending Notification
         StockIn savedSi = stockInRepo.save(si);
+        StringBuilder orderDetails = new StringBuilder();
+        orderDetails.append("<table style='width: 100%; border-collapse: collapse; text-align: left;'>")
+                .append("<tr>")
+                .append("<th style='border-bottom: 1px solid #ddd; padding: 8px;'>SKU</th>")
+                .append("<th style='border-bottom: 1px solid #ddd; padding: 8px;'>Product Name</th>")
+                .append("<th style='border-bottom: 1px solid #ddd; padding: 8px;'>Qty Requested</th>")
+                .append("</tr>");
 
         for (StockInItemDTO item : items) {
             StockInDetail sid = new StockInDetail();
@@ -81,6 +90,20 @@ public class StockInService {
             sid.setRequestedQuantity(item.getQty());
             sid.setReceivedQuantity(0);
             detailRepo.save(sid);
+            orderDetails.append("<tr>")
+                    .append("<td style='padding: 8px; border-bottom: 1px solid #eee;'>").append(product.getProductId()).append("</td>")
+                    .append("<td style='padding: 8px; border-bottom: 1px solid #eee;'>").append(product.getProductName()).append("</td>")
+                    .append("<td style='padding: 8px; border-bottom: 1px solid #eee; font-weight: bold;'>").append(item.getQty()).append("</td>")
+                    .append("</tr>");
+        }
+        orderDetails.append("</table>");
+        if (supplier.getEmail() != null && !supplier.getEmail().isEmpty()) {
+            emailService.notifySupplierForRestock(
+                    supplier.getEmail(),
+                    supplier.getSupplierName(),
+                    "PO-" + savedSi.getStockInId(),
+                    orderDetails.toString()
+            );
         }
     }
 
@@ -108,6 +131,13 @@ public class StockInService {
             detail.setReceivedQuantity(Integer.parseInt(data.get("actualQty").toString()));
             detailRepo.save(detail);
         }
+        String staffName = staffAccount.getEmployee().getFullName();
+        emailService.notifyNewAction(
+                "Stock-In Approval",
+                "STK-",
+                si.getStockInId(),
+                staffName
+        );
     }
 
     //stock-in detail

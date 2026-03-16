@@ -10,34 +10,70 @@ import java.nio.charset.StandardCharsets;
 import java.util.HexFormat;
 
 /**
- * [FIX] PayOSVerifier phai duoc goi trong PaymentWebhookController
- * truoc khi xu ly bat ky payload nao.
- * Webhook chua verify chu ky = lo hong bao mat nghiem trong.
+ * Verify HMAC-SHA256 signature từ PayOS webhook.
+ *
+ * PayOS tạo signature bằng cách sort các field trong data theo alphabet,
+ * nối thành chuỗi key=value&key=value rồi HMAC-SHA256 với checksumKey.
+ *
+ * Các field PayOS dùng để tạo signature (theo tài liệu chính thức):
+ * amount, canceledAt, cancellationReason, code, createdAt, description,
+ * expiredAt, id, orderCode, paymentLinkId, status, transactions
+ *
+ * Tuy nhiên với webhook event (payment success), PayOS dùng các field:
+ * amount, code, desc, orderCode, reference (sorted alphabetically)
  */
 @Component
 public class PayOSVerifier {
 
-    @Value("${payos.checksum-key:placeholder}")
+    @Value("${payos.checksum-key}")
     private String checksumKey;
 
     /**
-     * Verify chu ky HMAC-SHA256 cua webhook payload tu PayOS.
-     * @return true neu chu ky hop le, false neu bi giả mạo
+     * Verify webhook signature từ PayOS.
+     * PayOS ký trên toàn bộ data object, sort key alphabetically.
      */
     public boolean verify(WebhookPayload payload) {
-        if (payload.getSignature() == null) return false;
-
+        if (payload == null || payload.getSignature() == null || payload.getData() == null) {
+            return false;
+        }
         try {
-            // Tao chuoi data theo dung format PayOS yeu cau
-            String data = "amount=" + payload.getAmount()
-                    + "&code=" + payload.getStatus()
-                    + "&id=" + payload.getGatewayOrderCode()
-                    + "&orderCode=" + payload.getGatewayOrderCode();
-
-            String computed = hmacSHA256(data, checksumKey);
+            String dataString = buildDataString(payload);
+            String computed   = hmacSHA256(dataString, checksumKey);
             return computed.equalsIgnoreCase(payload.getSignature());
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    /**
+     * Build chuỗi data theo đúng format PayOS yêu cầu:
+     * Sort theo alphabet, nối key=value&key=value
+     * (chỉ include các field có giá trị non-null)
+     */
+    private String buildDataString(WebhookPayload payload) {
+        WebhookPayload.WebhookData d = payload.getData();
+
+        // PayOS sort theo alphabet: accountNumber, amount, description, orderCode, reference, transactionDateTime
+        StringBuilder sb = new StringBuilder();
+
+        appendIfNotNull(sb, "accountNumber",  d.getAccountNumber());
+        appendIfNotNull(sb, "amount",          d.getAmount() != null ? d.getAmount().toPlainString() : null);
+        appendIfNotNull(sb, "description",     d.getDescription());
+        appendIfNotNull(sb, "orderCode",       d.getOrderCode() != null ? String.valueOf(d.getOrderCode()) : null);
+        appendIfNotNull(sb, "reference",       d.getReference());
+        appendIfNotNull(sb, "transactionDateTime", d.getTransactionDateTime());
+
+        // Xoá dấu & cuối nếu có
+        String result = sb.toString();
+        if (result.endsWith("&")) {
+            result = result.substring(0, result.length() - 1);
+        }
+        return result;
+    }
+
+    private void appendIfNotNull(StringBuilder sb, String key, String value) {
+        if (value != null && !value.isEmpty()) {
+            sb.append(key).append("=").append(value).append("&");
         }
     }
 

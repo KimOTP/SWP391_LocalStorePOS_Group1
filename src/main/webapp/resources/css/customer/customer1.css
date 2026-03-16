@@ -73,6 +73,9 @@ background-color: #1d4ed8 !important;
     transform: translateY(-1px) !important;
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
 }
+.search-box-date {
+    width: 160px !important;
+}
 
 
 /* --- 3. Container chứa Bảng (Bo góc, viền mỏng) --- */

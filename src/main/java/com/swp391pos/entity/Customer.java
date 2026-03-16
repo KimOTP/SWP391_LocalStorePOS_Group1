@@ -51,7 +51,8 @@ public class Customer {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // (Tùy chọn) Giúp tránh lỗi Lazy Loading khi convert JSON
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"}) // Giúp tránh lỗi Lazy Loading khi convert JSON
+    @OrderBy("createdAt DESC") // Nhằm ưu tiên mới thì ở trên cùng transaction history
     private List<PointHistory> pointHistories;
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)

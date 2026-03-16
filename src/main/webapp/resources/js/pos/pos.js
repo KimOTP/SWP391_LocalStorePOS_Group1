@@ -219,13 +219,25 @@ function selectPriceRange(min, max, label) {
 }
 
 function applyPriceFilter() {
+    applyFilters();
+}
+
+/* Master filter: combines search query + price range */
+function applyFilters() {
+    const box = document.getElementById('mainSearchBox') || document.querySelector('.search-box');
+    const q   = (box ? box.value.trim().toLowerCase() : '');
+
     document.querySelectorAll('#productGrid .product-card, #comboGrid .product-card').forEach(card => {
-        const price = parseFloat(card.dataset.price) || 0;
-        if (priceMax === 0) {
-            card.classList.remove('hidden');
-        } else {
-            card.classList.toggle('hidden', price < priceMin || price > priceMax);
-        }
+        // --- search match ---
+        const name = (card.querySelector('.product-name')?.textContent || '').toLowerCase();
+        const sku  = (card.dataset.sku  || '').toLowerCase();
+        const searchOk = !q || name.includes(q) || sku.includes(q);
+
+        // --- price match ---
+        const price   = parseFloat(card.dataset.price) || 0;
+        const priceOk = (priceMax === 0) || (price >= priceMin && price <= priceMax);
+
+        card.style.display = (searchOk && priceOk) ? '' : 'none';
     });
 }
 
@@ -379,39 +391,9 @@ document.addEventListener('DOMContentLoaded', () => {
         loadProducts(e.target.value || null);
     });
 
-    // Search – name + productId SKU + comboId SKU
+    // Search – tên sản phẩm / tên combo / SKU-PROD-... / SKU-COM-...
     (document.getElementById('mainSearchBox') || document.querySelector('.search-box'))
-        ?.addEventListener('input', async e => {
-        const q = e.target.value.trim().toLowerCase();
-        if (!q) {
-            // Show all visible cards (respecting price filter)
-            document.querySelectorAll('#productGrid .product-card, #comboGrid .product-card').forEach(c => {
-                c.classList.remove('search-hidden');
-            });
-            applyPriceFilter();
-            return;
-        }
-
-        // First try local DOM search (includes SKU match)
-        let anyLocal = false;
-        document.querySelectorAll('#productGrid .product-card, #comboGrid .product-card').forEach(card => {
-            const name = (card.querySelector('.product-name')?.textContent || '').toLowerCase();
-            const sku  = (card.dataset.sku || '').toLowerCase();
-            const matches = name.includes(q) || sku.includes(q);
-            card.classList.toggle('search-hidden', !matches);
-            if (matches) anyLocal = true;
-        });
-
-        // If looks like an exact SKU search we're done
-        if (q.startsWith('sku-')) { applyPriceFilter(); return; }
-
-        // Also fetch from API for full-text search
-        try {
-            const res = await fetch((window.contextPath || '') + '/pos/api/search?query=' + encodeURIComponent(q));
-            renderProductGrid(await res.json());
-        } catch(err) { console.error('Search error:', err); }
-    });
-
+        ?.addEventListener('input', () => applyFilters());
     // Close modal on overlay click
     document.querySelectorAll('.pt-overlay').forEach(overlay => {
         overlay.addEventListener('click', e => {

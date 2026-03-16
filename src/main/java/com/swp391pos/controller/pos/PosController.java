@@ -32,6 +32,7 @@ public class PosController {
     private final ComboService       comboService;
     private final InventoryService   inventoryService;
     private final EmployeeService    employeeService;
+    private final CustomerService    customerService;
     private final ObjectMapper       objectMapper;   // Spring Boot tự tạo bean này
 
     private static final String SESSION_PRINT_TEMPLATE  = "posPrintTemplate";
@@ -396,5 +397,68 @@ public class PosController {
         resp.put("success", s != null);
         if (s != null) resp.put("settings", s);
         return ResponseEntity.ok(resp);
+    }
+
+    /* ================================================================
+       CUSTOMER LOOKUP BY PHONE
+       GET /pos/api/customer?phone=0xxxxxxxxx
+       ================================================================ */
+    @GetMapping("/api/customer")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> lookupCustomer(@RequestParam String phone) {
+        Map<String, Object> resp = new HashMap<>();
+        customerService.findByPhoneNumber(phone).ifPresentOrElse(
+                c -> {
+                    resp.put("found", true);
+                    Map<String, Object> info = new HashMap<>();
+                    info.put("customerId",    c.getCustomerId());
+                    info.put("fullName",      c.getFullName());
+                    info.put("phoneNumber",   c.getPhoneNumber());
+                    info.put("currentPoint",  c.getCurrentPoint());
+                    info.put("totalSpending", c.getTotalSpending());
+                    resp.put("customer", info);
+                },
+                () -> resp.put("found", false)
+        );
+        return ResponseEntity.ok(resp);
+    }
+
+    /* ================================================================
+       QUICK-ADD CUSTOMER FROM POS
+       POST /pos/api/customer/quick-add
+       Body: { phone, fullName }
+       ================================================================ */
+    @PostMapping("/api/customer/quick-add")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> quickAddCustomer(@RequestBody Map<String, String> body) {
+        Map<String, Object> resp = new HashMap<>();
+        try {
+            String phone    = body.getOrDefault("phone", "").trim();
+            String fullName = body.getOrDefault("fullName", "").trim();
+            if (phone.isEmpty() || fullName.isEmpty()) {
+                resp.put("success", false);
+                resp.put("message", "Phone and name are required");
+                return ResponseEntity.badRequest().body(resp);
+            }
+            // Check duplicate
+            if (customerService.findByPhoneNumber(phone).isPresent()) {
+                resp.put("success", false);
+                resp.put("message", "Phone number already exists");
+                return ResponseEntity.badRequest().body(resp);
+            }
+            Customer saved = customerService.saveQuick(phone, fullName);
+            resp.put("success", true);
+            Map<String, Object> info = new HashMap<>();
+            info.put("customerId",   saved.getCustomerId());
+            info.put("fullName",     saved.getFullName());
+            info.put("phoneNumber",  saved.getPhoneNumber());
+            info.put("currentPoint", saved.getCurrentPoint());
+            resp.put("customer", info);
+            return ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            resp.put("success", false);
+            resp.put("message", e.getMessage());
+            return ResponseEntity.status(500).body(resp);
+        }
     }
 }
