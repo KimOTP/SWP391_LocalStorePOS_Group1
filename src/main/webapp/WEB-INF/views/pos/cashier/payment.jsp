@@ -346,10 +346,7 @@
 
                 <!-- STATE: ready — PayOS checkout iframe -->
                 <div id="qrStateReady" class="qr-state" style="display:none">
-                    <div class="qr-amount-badge">
-                        <span class="qr-amount-label">Amount</span>
-                        <span class="qr-amount-val" id="qrAmount">0đ</span>
-                    </div>
+                    <span id="qrAmount" style="display:none">0đ</span>
                     <div class="qr-iframe-wrap">
                         <iframe id="qrIframe"
                                 src=""
@@ -360,7 +357,6 @@
                         </iframe>
                     </div>
                     <div id="qrStatusBadge" class="qr-status-badge" style="display:none"></div>
-                    <p class="qr-hint">Open your banking app · Scan · Confirm</p>
                 </div>
 
             </div>
