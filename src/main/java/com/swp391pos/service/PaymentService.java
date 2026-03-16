@@ -3,12 +3,16 @@ package com.swp391pos.service;
 import com.swp391pos.dto.PaymentRequest;
 import com.swp391pos.dto.PaymentResponse;
 import com.swp391pos.dto.WebhookPayload;
+import com.swp391pos.entity.Inventory;
 import com.swp391pos.entity.Order;
+import com.swp391pos.entity.OrderItem;
 import com.swp391pos.entity.Payment;
 import com.swp391pos.entity.PosReceipt;
 import com.swp391pos.enums.PaymentMethod;
 import com.swp391pos.enums.PaymentStatus;
 import com.swp391pos.gateway.PaymentGateway;
+import com.swp391pos.repository.InventoryRepository;
+import com.swp391pos.repository.OrderItemRepository;
 import com.swp391pos.repository.OrderRepository;
 import com.swp391pos.repository.PaymentRepository;
 import com.swp391pos.repository.PosReceiptRepository;
@@ -33,11 +37,14 @@ public class PaymentService {
 
     private static final int FALLBACK_THRESHOLD_SECONDS = 30;
 
+    // [FIX #1] Gộp lại thành 1 bộ field duy nhất, đặt tên thống nhất
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
     private final PaymentGateway paymentGateway;
     private final PosReceiptRepository posReceiptRepository;
-
+    private final OrderItemRepository orderItemRepository;
+    private final InventoryRepository inventoryRepository;
+    private final ProductService productService;
 
     // -------------------------------------------------------------------------
     // CRUD cơ bản
@@ -124,8 +131,7 @@ public class PaymentService {
 
         paymentRepository.save(payment);
         orderRepository.save(order);
-
-
+        deductStockAfterPayment(order.getOrderId());
     }
 
 
@@ -155,6 +161,7 @@ public class PaymentService {
             if (order != null) {
                 order.setPaidAt(LocalDateTime.now());
                 orderRepository.save(order);
+                deductStockAfterPayment(order.getOrderId());
 
                 // Tạo PosReceipt cho thanh toán online (QR/Banking)
                 boolean receiptExists = posReceiptRepository
@@ -236,6 +243,7 @@ public class PaymentService {
                 if (order != null) {
                     order.setPaidAt(LocalDateTime.now());
                     orderRepository.save(order);
+                    deductStockAfterPayment(order.getOrderId());
                 }
             }
 
@@ -293,5 +301,31 @@ public class PaymentService {
         // Format: orderId (tối đa 7 chữ số) + 6 chữ số random → tổng 13 chữ số
         int random = (int)(Math.random() * 900000) + 100000; // 100000–999999
         return String.valueOf(orderId * 1_000_000L + random);
+    }
+
+    // -------------------------------------------------------------------------
+    // deductStockAfterPayment — trừ tồn kho sau khi thanh toán thành công
+    // -------------------------------------------------------------------------
+
+    @Transactional
+    public void deductStockAfterPayment(Long orderId) {
+        List<OrderItem> items = orderItemRepository.findByOrder_OrderId(orderId);
+        for (OrderItem item : items) {
+            if (item.getProduct() == null) continue;
+
+            String productId = item.getProduct().getProductId();
+            Inventory inventory = inventoryRepository.findByProductId(productId);
+            if (inventory == null) {
+                log.warn("[Stock] Inventory not found for productId={}", productId);
+                continue;
+            }
+
+            int newQty = Math.max(0, inventory.getCurrentQuantity() - item.getQuantity());
+            inventory.setCurrentQuantity(newQty);
+            inventoryRepository.save(inventory);
+
+            productService.updateStockAndSyncStatus(productId, newQty);
+            log.info("[Stock] Product {} deducted by {}, new qty={}", productId, item.getQuantity(), newQty);
+        }
     }
 }
