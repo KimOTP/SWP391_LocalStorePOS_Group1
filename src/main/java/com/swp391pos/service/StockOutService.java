@@ -43,15 +43,14 @@ public class StockOutService {
 
             detail.setCostAtExport(i.getUnitCost());
             detailRepo.save(detail);
-            String staffName = account.getEmployee().getFullName();
-
-            emailService.notifyNewAction(
-                    "Stock-Out Request", // Loại action
-                    "OUT-",              // Tiền tố mã phiếu xuất
-                    savedSo.getStockOutId(),     // Thay getId() bằng getStockOutId() nếu Entity của bạn đặt tên như vậy
-                    staffName            // Tên nhân viên tạo phiếu
-            );
         }
+        String staffName = account.getEmployee().getFullName();
+        emailService.notifyNewAction(
+                "Stock-Out Request",
+                "SO-",
+                savedSo.getStockOutId(),
+                staffName
+        );
     }
 
     @Transactional(readOnly = true)
