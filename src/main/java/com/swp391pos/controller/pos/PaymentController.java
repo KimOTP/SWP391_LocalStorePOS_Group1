@@ -3,7 +3,11 @@ package com.swp391pos.controller.pos;
 import com.swp391pos.dto.PaymentDTO;
 import com.swp391pos.dto.PaymentRequest;
 import com.swp391pos.dto.PaymentResponse;
-import com.swp391pos.entity.*;
+import com.swp391pos.entity.Order;
+import com.swp391pos.entity.OrderItem;
+import com.swp391pos.entity.OrderStatus;
+import com.swp391pos.entity.Payment;
+import com.swp391pos.entity.PosReceipt;
 import com.swp391pos.enums.OrderStatusName;
 import com.swp391pos.enums.PaymentMethod;
 import com.swp391pos.enums.PaymentStatus;
@@ -17,7 +21,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller
@@ -34,7 +41,7 @@ public class PaymentController {
     private final OrderStatusService orderStatusService;
     private final PosReceiptService posReceiptService;
     private final SystemSettingService systemSettingService;
-    private final CustomerService customerService;
+    private final com.swp391pos.gateway.PaymentGateway paymentGateway;
 
     /* ================================================================
        PAYMENT PAGE
@@ -83,39 +90,39 @@ public class PaymentController {
         Map<String, Object> resp = new HashMap<>();
         try {
             Long   orderId       = Long.parseLong(String.valueOf(body.get("orderId")));
-            String paymentMethod = String.valueOf(body.getOrDefault("paymentMethod", "CASH"));
-            double totalPaid     = ((Number) body.getOrDefault("totalPaid", 0)).doubleValue();
-            double customerPaid  = ((Number) body.getOrDefault("customerPaid", totalPaid)).doubleValue();
-            double changeAmount  = ((Number) body.getOrDefault("changeAmount", 0)).doubleValue();
+            String paymentMethod = String.valueOf(body.getOrDefault("paymentMethod", "CASH")).toUpperCase();
+            // Normalise: frontend gửi 'BANKING' hoặc 'CASH'
+            if (!paymentMethod.equals("BANKING")) paymentMethod = "CASH";
+
+            double totalPaid    = ((Number) body.getOrDefault("totalPaid",    0)).doubleValue();
+            double customerPaid = ((Number) body.getOrDefault("customerPaid", totalPaid)).doubleValue();
+            double changeAmount = ((Number) body.getOrDefault("changeAmount", 0)).doubleValue();
 
             Order order = orderService.findById(orderId);
+
+            // Idempotency: nếu đã PAID rồi thì trả thành công luôn (tránh double-confirm khi poll)
+            if (order.getOrderStatus() != null
+                    && "PAID".equals(order.getOrderStatus().getOrderStatusName().name())) {
+                resp.put("success", true);
+                resp.put("orderId", orderId);
+                return ResponseEntity.ok(resp);
+            }
 
             OrderStatus completed = orderStatusService.findByOrderStatusName(
                     OrderStatusName.valueOf("PAID"));
             order.setOrderStatus(completed);
             order.setPaidAt(LocalDateTime.now());
 
-            // Map enums.PaymentMethod → Order.PaymentMethod để report đọc được
-            PaymentMethod orderPayMethod = paymentMethod.equalsIgnoreCase("BANKING")
+            PaymentMethod orderPayMethod = paymentMethod.equals("BANKING")
                     ? PaymentMethod.BANKING
                     : PaymentMethod.CASH;
             order.setPaymentMethod(orderPayMethod);
-
-            // Xử lý an toàn chuỗi rỗng của customerId
-            Object rawCustId = body.get("customerId");
-            Long customerId = null;
-            if (rawCustId != null && !String.valueOf(rawCustId).trim().isEmpty()) {
-                customerId = Long.valueOf(String.valueOf(rawCustId).trim());
-                Customer cus = customerService.findById(customerId);
-                order.setCustomer(cus);
-            }
-
             orderService.save(order);
 
             Payment payment = new Payment();
             payment.setOrder(order);
             payment.setPaymentSessionId(UUID.randomUUID().toString());
-            payment.setPaymentMethod(PaymentMethod.valueOf(paymentMethod.toUpperCase()));
+            payment.setPaymentMethod(orderPayMethod);
             payment.setPaymentStatus(PaymentStatus.PAID);
             payment.setAmount(BigDecimal.valueOf(totalPaid));
             payment.setAmountPaid(BigDecimal.valueOf(customerPaid));
@@ -130,15 +137,6 @@ public class PaymentController {
             receipt.setPrintedAt(LocalDateTime.now());
             receipt.setPrintedBy(order.getEmployee()); // cashier = người tạo order
             posReceiptService.save(receipt);
-
-
-
-            // Lấy pointsUsed
-            Object rawPts = body.get("pointsUsed");
-            Integer pointsUsed = (rawPts != null && !String.valueOf(rawPts).trim().isEmpty())
-                    ? Integer.valueOf(String.valueOf(rawPts).trim()) : 0;
-            //Call service
-            customerService.updateCustomerAfterPayment(orderId, customerId, totalPaid, pointsUsed);
 
             session.removeAttribute(SESSION_CART_ORDER_JSON);
 
@@ -187,5 +185,48 @@ public class PaymentController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(status.name());
+    }
+
+    /* ================================================================
+       CHECK GATEWAY AVAILABILITY
+       GET /pos/payment/gateway-status
+       ================================================================ */
+    @GetMapping("/gateway-status")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> gatewayStatus() {
+        Map<String, Object> resp = new HashMap<>();
+        try {
+            boolean available = paymentGateway.isAvailable();
+            resp.put("available", available);
+            resp.put("message", available ? "PayOS is operational" : "PayOS is currently unavailable");
+        } catch (Exception e) {
+            resp.put("available", false);
+            resp.put("message", "Gateway check failed: " + e.getMessage());
+        }
+        return ResponseEntity.ok(resp);
+    }
+
+    /* ================================================================
+       PAYOS RETURN URL — khách được redirect về sau khi thanh toán
+       GET /pos/payment/banking-return?orderCode=xxx&status=PAID&...
+       ================================================================ */
+    @GetMapping("/banking-return")
+    public String bankingReturn(@RequestParam(required = false) String orderCode,
+                                @RequestParam(required = false) String status,
+                                Model model) {
+        model.addAttribute("orderCode", orderCode);
+        model.addAttribute("payosStatus", status);
+        // Redirect về POS, polling JS sẽ tự detect PAID qua /status endpoint
+        return "redirect:/pos";
+    }
+
+    /* ================================================================
+       PAYOS CANCEL URL — khách bấm huỷ trên trang PayOS
+       GET /pos/payment/banking-cancel?orderCode=xxx
+       ================================================================ */
+    @GetMapping("/banking-cancel")
+    public String bankingCancel(@RequestParam(required = false) String orderCode) {
+        // Chỉ redirect về POS; payment vẫn PENDING/CANCELLED trong DB
+        return "redirect:/pos";
     }
 }

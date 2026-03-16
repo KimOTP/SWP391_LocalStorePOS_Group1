@@ -17,21 +17,6 @@ let loyaltyUsed   = 0;
 let loyaltyAvail  = 0;   // will be populated from customer lookup
 let currentMethod = 'cash';
 
-/* ── Live clock ── */
-function startClock() {
-    const el = document.getElementById('liveClock');
-    function tick() {
-        const now = new Date();
-        const days = ['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'];
-        el.innerHTML =
-            now.toLocaleTimeString('vi-VN') + '<br>' +
-            days[now.getDay()] + ', ' +
-            now.toLocaleDateString('vi-VN');
-    }
-    tick();
-    setInterval(tick, 1000);
-}
-
 /* ── Totals ── */
 function updateTotals() {
     const net = Math.max(0, grandTotal - discountAmt - loyaltyUsed);
@@ -326,47 +311,31 @@ function applyLoyaltyPoints(val) {
     updateTotals();
 }
 
-/* ── QR Code (VietQR) ── */
+/* ── QR state machine ── */
+function setQrState(state) {
+    ['qrStateIdle','qrStateLoading','qrStateReady'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+    const target = document.getElementById('qrState' + state.charAt(0).toUpperCase() + state.slice(1));
+    if (target) target.style.display = '';
+}
+
 function updateQR() {
     if (currentMethod !== 'bank') {
-        document.getElementById('qrPlaceholder').style.display = 'flex';
-        document.getElementById('qrImg').style.display = 'none';
+        setQrState('idle');
         return;
     }
-    const bank    = window.bankSettings || {};
-    const accNum  = bank.accNumber || '';
-    const accName = bank.accName   || '';
-    const bankId  = bank.bankName  || 'MB';
-    const amount  = Math.max(0, grandTotal - discountAmt - loyaltyUsed);
-
-    document.getElementById('qrAccNumber').textContent = accNum  || '–';
-    document.getElementById('qrAccName').textContent   = accName || '–';
-    document.getElementById('qrBankLabel').textContent = bankId;
-
-    if (!accNum) {
-        document.getElementById('qrPlaceholder').style.display = 'flex';
-        document.getElementById('qrImg').style.display = 'none';
-        return;
-    }
-
-    // VietQR API
-    const qrUrl = 'https://img.vietqr.io/image/' +
-        encodeURIComponent(bankId) + '-' +
-        encodeURIComponent(accNum) + '-compact2.png' +
-        '?amount=' + amount +
-        '&addInfo=' + encodeURIComponent('Thanh toan don hang ' + (window.orderId || '')) +
-        '&accountName=' + encodeURIComponent(accName);
-
-    const img = document.getElementById('qrImg');
-    img.onload = () => {
-        document.getElementById('qrPlaceholder').style.display = 'none';
-        img.style.display = 'block';
-    };
-    img.onerror = () => {
-        document.getElementById('qrPlaceholder').style.display = 'flex';
-        img.style.display = 'none';
-    };
-    img.src = qrUrl;
+    // Chỉ hiện idle khi chưa bấm Pay
+    // Loading/Ready được set bởi confirmBankingPayment
+    const bank = window.bankSettings || {};
+    const el = document.getElementById('qrAccNumber');
+    if (el) el.textContent = bank.accNumber || '–';
+    const nameEl = document.getElementById('qrAccName');
+    if (nameEl) nameEl.textContent = bank.accName || '–';
+    const bankEl = document.getElementById('qrBankLabel');
+    if (bankEl) bankEl.textContent = bank.bankName || '–';
+    setQrState('idle');
 }
 
 /* ── Cancel order ── */
@@ -448,9 +417,11 @@ async function confirmBankingPayment() {
 
     btn.disabled  = true;
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-1"></i> Waiting for payment...';
-    showQrStatus('waiting');
 
-    // ── Bước 1: Tạo Payment session (PENDING) ──────────────────────
+    // Chuyển sang loading state ngay lập tức
+    setQrState('loading');
+
+    // ── Bước 1: Tạo Payment session (PENDING) + lấy QR thật từ PayOS ──
     try {
         const qrRes  = await fetch((window.contextPath || '') + '/pos/payment/qr', {
             method : 'POST',
@@ -459,6 +430,14 @@ async function confirmBankingPayment() {
         });
         const qrData = await qrRes.json();
         qrSessionId  = qrData.paymentSessionId || null;
+
+        // Dùng checkoutUrl để nhúng trang PayOS vào iframe
+        const embedUrl = qrData.checkoutUrl || null;
+        if (embedUrl) {
+            showPayOSQr(embedUrl);
+        } else if (qrData.qrCodeUrl) {
+            showPayOSQr(qrData.qrCodeUrl);
+        }
     } catch(e) {
         showToast('Cannot create payment session: ' + e.message, 'error');
         btn.disabled  = false;
@@ -538,31 +517,49 @@ async function confirmBankingPayment() {
 function stopQrPolling() {
     if (qrPollingTimer) { clearInterval(qrPollingTimer); qrPollingTimer = null; }
     qrSessionId = null;
+    const iframe = document.getElementById('qrIframe');
+    if (iframe) iframe.src = '';
+}
+
+/* ── Show PayOS checkout in iframe ── */
+function showPayOSQr(url) {
+    // Update amount badge
+    const net   = Math.max(0, grandTotal - discountAmt - loyaltyUsed);
+    const amtEl = document.getElementById('qrAmount');
+    if (amtEl) amtEl.textContent = formatVND(net);
+
+    // Switch to ready state
+    setQrState('ready');
+
+    // Load iframe
+    const iframe = document.getElementById('qrIframe');
+    if (iframe) iframe.src = url;
+
+    // Show waiting status badge
+    showQrStatus('waiting');
 }
 
 /* ── QR status badge ── */
 function showQrStatus(state) {
-    let el = document.getElementById('qrStatusBadge');
-    if (!el) {
-        el = document.createElement('div');
-        el.id = 'qrStatusBadge';
-        el.style.cssText = [
-            'margin-top:10px','text-align:center','font-size:0.8rem','font-weight:600',
-            'padding:7px 12px','border-radius:8px','transition:all 0.2s'
-        ].join(';');
-        const qrBody = document.querySelector('.qr-body');
-        if (qrBody) qrBody.appendChild(el);
-    }
+    const el = document.getElementById('qrStatusBadge');
+    if (!el) return;
+
     const styles = {
-        waiting : { bg:'#eff6ff', color:'#2563eb', border:'#bfdbfe', icon:'fa-clock',   text:'Waiting for transfer...' },
-        success : { bg:'#f0fdf4', color:'#16a34a', border:'#86efac', icon:'fa-check',   text:'Payment received!' },
-        timeout : { bg:'#fff7ed', color:'#ea580c', border:'#fed7aa', icon:'fa-triangle-exclamation', text:'Timed out — confirm manually' }
+        waiting : { bg:'#eff6ff', color:'#2563eb', border:'#bfdbfe', icon:'fa-circle-notch fa-spin', text:'Waiting for transfer...' },
+        success : { bg:'#f0fdf4', color:'#16a34a', border:'#86efac', icon:'fa-circle-check',          text:'Payment received!' },
+        timeout : { bg:'#fff7ed', color:'#ea580c', border:'#fed7aa', icon:'fa-triangle-exclamation',  text:'Timed out — confirm manually' }
     };
     const s = styles[state] || styles.waiting;
-    el.style.background   = s.bg;
-    el.style.color        = s.color;
-    el.style.border       = '1.5px solid ' + s.border;
-    el.innerHTML = `<i class="fa-solid ${s.icon} me-1"></i>${s.text}`;
+    el.style.cssText = [
+        'background:' + s.bg,
+        'color:' + s.color,
+        'border:1.5px solid ' + s.border,
+        'width:100%','text-align:center',
+        'font-size:0.8rem','font-weight:600',
+        'padding:8px 12px','border-radius:8px',
+        'transition:all 0.2s'
+    ].join(';');
+    el.innerHTML = '<i class="fa-solid ' + s.icon + ' me-1"></i>' + s.text;
     el.style.display = '';
 }
 
@@ -570,24 +567,18 @@ function showQrStatus(state) {
 function buildPayload(method, customerPaid, totalPaid, changeAmount) {
     const pts       = parseInt(document.getElementById('usePoints')?.value || '0');
     const pointsVND = pts * (getPointConfig().redemptionValue || 1000);
-
-    // Xử lý ID khách hàng: Nếu rỗng thì trả về null để Backend không bị lỗi
-        const rawCustomerId = document.getElementById('customerId')?.value;
-        const customerIdStr = rawCustomerId ? rawCustomerId.trim() : null;
-
     return {
         orderId       : window.orderId,
         paymentMethod : method,                      // 'CASH' hoặc 'BANKING'
         customerPaid  : customerPaid,
         discount      : discountAmt,
         loyaltyUsed   : pointsVND,
-        pointsUsed    : pts, // thêm để backend xử li diem cua khach
         totalPaid     : totalPaid,
         changeAmount  : changeAmount,
         note          : document.getElementById('orderNote')?.value || '',
         customerPhone : document.getElementById('customerPhone')?.value || '',
         customerName  : document.getElementById('customerName')?.value  || '',
-        customerId    : customerIdStr // Gửi null nếu không có khách
+        customerId    : document.getElementById('customerId')?.value    || ''
     };
 }
 
@@ -637,11 +628,63 @@ async function loadOrderItems() {
 
 /* ── INIT ── */
 document.addEventListener('DOMContentLoaded', () => {
-    startClock();
     updateTotals();
     loadOrderItems();
     setCustState('idle');
 
     // Show QR if bank method is pre-selected
     onPayMethodChange(document.querySelector('input[name="payMethod"]:checked'));
+
+    // Kiểm tra PayOS gateway có available không
+    checkGatewayStatus();
 });
+
+/* ── Check PayOS gateway availability ── */
+async function checkGatewayStatus() {
+    const bankRadio   = document.querySelector('input[name="payMethod"][value="bank"]');
+    const bankLabel   = document.getElementById('lbl-bank');
+    if (!bankRadio || !bankLabel) return;
+
+    try {
+        const res  = await fetch((window.contextPath || '') + '/pos/payment/gateway-status');
+        const data = await res.json();
+
+        if (!data.available) {
+            // Lock radio banking
+            bankRadio.disabled = true;
+            bankLabel.style.opacity    = '0.45';
+            bankLabel.style.cursor     = 'not-allowed';
+            bankLabel.title            = 'PayOS is currently unavailable';
+
+            // Thêm badge "Maintenance"
+            const badge = document.createElement('span');
+            badge.textContent = '⚠ Maintenance';
+            badge.style.cssText = [
+                'margin-left:auto','font-size:0.7rem','font-weight:700',
+                'color:#dc2626','background:#fee2e2','border:1px solid #fca5a5',
+                'border-radius:20px','padding:2px 8px'
+            ].join(';');
+            badge.id = 'gatewayBadge';
+            bankLabel.appendChild(badge);
+
+            // Nếu đang chọn bank → switch về cash
+            if (currentMethod === 'bank') {
+                const cashRadio = document.querySelector('input[name="payMethod"][value="cash"]');
+                if (cashRadio) {
+                    cashRadio.checked = true;
+                    onPayMethodChange(cashRadio);
+                }
+            }
+        } else {
+            // Đảm bảo radio không bị lock từ lần check trước
+            bankRadio.disabled      = false;
+            bankLabel.style.opacity = '';
+            bankLabel.style.cursor  = '';
+            bankLabel.title         = '';
+            const badge = document.getElementById('gatewayBadge');
+            if (badge) badge.remove();
+        }
+    } catch(_) {
+        // Nếu không gọi được API check → không lock, để user tự thử
+    }
+}
