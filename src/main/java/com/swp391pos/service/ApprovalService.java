@@ -21,6 +21,7 @@ public class ApprovalService {
     @Autowired private TransactionStatusRepository statusRepo;
     @Autowired private EmployeeRepository employeeRepository;
     @Autowired private EmailService emailService;
+    @Autowired private ProductService productService;
 
     @Transactional
     public void processApproval(String type, Integer id, boolean isApproved, Account approverAccount) {
@@ -40,6 +41,7 @@ public class ApprovalService {
                     if (inv != null) {
                         inv.setCurrentQuantity(inv.getCurrentQuantity() + d.getReceivedQuantity());
                         inventoryRepo.save(inv);
+                        productService.updateStockAndSyncStatus(inv.getProduct().getProductId(), inv.getCurrentQuantity());
                     }
                 }
             }
