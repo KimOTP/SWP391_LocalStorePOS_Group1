@@ -44,40 +44,53 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    public boolean addProduct(Product product, MultipartFile imageFile, Integer statusId, Integer categoryId) {
-        try {
-            // 1. Tự động tạo mã SKU
-            String generatedSku = generateSku();
-            product.setProductId(generatedSku);
+    @Transactional(rollbackFor = Exception.class) // Đảm bảo rollback nếu có lỗi bất kỳ
+    public void addProduct(Product product, MultipartFile imageFile, Integer statusId, Integer categoryId) {
+        // 1. Xử lý logic Attribute mặc định
+        if (product.getAttribute() == null || product.getAttribute().trim().isEmpty()) {
+            product.setAttribute("ORIGIN");
+        }
 
-            // 2. Xử lý Upload ảnh lên Cloudinary
+        // 2. Kiểm tra trùng lặp
+        boolean isDuplicate = productRepository.existsByProductNameAndCategory_CategoryIdAndAttribute(
+                product.getProductName(),
+                categoryId,
+                product.getAttribute()
+        );
+
+        if (isDuplicate) {
+            throw new RuntimeException("Product already exists!");
+        }
+
+        try {
+            // 3. Tự động tạo mã SKU
+            product.setProductId(generateSku());
+
+            // 4. Xử lý Upload ảnh
             if (imageFile != null && !imageFile.isEmpty()) {
                 Map uploadResult = cloudinary.uploader().upload(imageFile.getBytes(),
                         ObjectUtils.asMap("folder", "products"));
-                String imageUrl = (String) uploadResult.get("url");
-                product.setImageUrl(imageUrl);
+                product.setImageUrl((String) uploadResult.get("url"));
             }
 
-            if (product.getAttribute() == null && product.getAttribute().isEmpty()) {
-                product.setAttribute("ORIGIN");
-            }
-
-            // 3. Thiết lập Category từ ID
+            // 5. Thiết lập Category & Status
             Category cat = new Category();
             cat.setCategoryId(categoryId);
             product.setCategory(cat);
 
-            // 4. Thiết lập Status từ ID
             ProductStatus stat = new ProductStatus();
             stat.setProductStatusId(statusId);
             product.setStatus(stat);
 
-            productRepository.save(product);
-            inventoryService.createInventoryWithProduct(product);
-            return true;
+            // 6. Lưu dữ liệu
+            Product savedProduct = productRepository.save(product);
+            inventoryService.createInventoryWithProduct(savedProduct);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload image!");
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            // Ném các lỗi runtime khác để Controller bắt
+            throw new RuntimeException("Failed to add product!");
         }
     }
 
@@ -148,9 +161,7 @@ public class ProductService {
         product.setStatus(stat);
 
         productRepository.save(product);
-        if(inventory == null){
-            inventoryService.createInventoryWithProduct(product);
-        }
+
 
         return true;
     }

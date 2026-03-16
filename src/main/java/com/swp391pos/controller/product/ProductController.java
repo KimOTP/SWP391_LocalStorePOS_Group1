@@ -94,14 +94,22 @@ public class ProductController {
                              @RequestParam("statusId") Integer statusId,
                              @RequestParam("categoryId") Integer categoryId,
                              RedirectAttributes redirectAttributes) {
-
-        boolean success = productService.addProduct(product, imageFile, statusId, categoryId);
-
-        if (success) {
+        try {
+            // Gọi hàm void, nếu có lỗi nó sẽ nhảy xuống block catch
+            productService.addProduct(product, imageFile, statusId, categoryId);
             redirectAttributes.addFlashAttribute("notification", "Product added successfully!");
             return "redirect:/products/manage";
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to add product!");
+
+        } catch (RuntimeException e) {
+            // Bắt lỗi nghiệp vụ (trùng lặp, lỗi upload...)
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/products/add";
+
+        } catch (Exception e) {
+            // Bắt các lỗi không xác định khác
+            redirectAttributes.addFlashAttribute("errorMessage", "An unexpected error occurred: " + e.getMessage());
+            e.printStackTrace();
             return "redirect:/products/add";
         }
     }

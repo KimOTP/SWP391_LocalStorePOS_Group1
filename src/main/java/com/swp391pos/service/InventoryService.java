@@ -48,7 +48,7 @@ public class InventoryService {
         }
         Inventory inventory = new Inventory();
         inventory.setProduct(product);
-        inventory.setProductId(product.getProductId());
+
         inventory.setCurrentQuantity(0);
         inventory.setUnitCost(BigDecimal.ZERO);
         inventory.setMinThreshold(10);
