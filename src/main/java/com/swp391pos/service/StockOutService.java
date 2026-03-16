@@ -19,6 +19,7 @@ public class StockOutService {
     @Autowired private ProductRepository productRepo;
     @Autowired private TransactionStatusRepository statusRepo;
     @Autowired private InventoryRepository inventoryRepo;
+    @Autowired private EmailService emailService;
 
     @Transactional
     public void createStockOut(String generalNote, List<Map<String, Object>> items, Account account) {
@@ -42,6 +43,14 @@ public class StockOutService {
 
             detail.setCostAtExport(i.getUnitCost());
             detailRepo.save(detail);
+            String staffName = account.getEmployee().getFullName();
+
+            emailService.notifyNewAction(
+                    "Stock-Out Request", // Loại action
+                    "OUT-",              // Tiền tố mã phiếu xuất
+                    savedSo.getStockOutId(),     // Thay getId() bằng getStockOutId() nếu Entity của bạn đặt tên như vậy
+                    staffName            // Tên nhân viên tạo phiếu
+            );
         }
     }
 

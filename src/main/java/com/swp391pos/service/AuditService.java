@@ -19,6 +19,7 @@ public class AuditService {
     @Autowired private InventoryRepository inventoryRepo;
     @Autowired private TransactionStatusRepository statusRepo;
     @Autowired private ProductRepository productRepo;
+    @Autowired private EmailService emailService;
 
     @Transactional
     public void saveAuditSession(List<Map<String, Object>> items, Account account) {
@@ -46,6 +47,14 @@ public class AuditService {
             detail.setUnitCostAtAudit(inv.getUnitCost());
 
             auditDetailRepo.save(detail);
+            String staffName = account.getEmployee().getFullName(); // Thay bằng getter thực tế của bạn nếu khác
+
+            emailService.notifyNewAction(
+                    "Inventory Audit",
+                    "AUD-",
+                    savedSession.getAuditId(),
+                    staffName
+            );
         }
     }
 
