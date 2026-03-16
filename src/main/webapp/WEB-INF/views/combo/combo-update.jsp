@@ -89,11 +89,18 @@
                         </div>
 
                         <%-- Cột 2: Pricing & Status --%>
+                        <c:set var="originTotalPrice" value="0" />
+
+                        <c:forEach var="detail" items="${combo.comboDetails}">
+                            <c:set var="subTotal" value="${detail.product.price * detail.quantity}" />
+                            <c:set var="originTotalPrice" value="${originTotalPrice + subTotal}" />
+                        </c:forEach>
+
                         <div class="col-md-4 border-end">
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Original Total Price</label>
                                 <div class="input-group-custom bg-light">
-                                    <input type="number" id="originalPrice" name="originalPrice" class="form-control input-custom" value="0" readonly>
+                                    <input type="number" id="originalPrice" name="originalPrice" class="form-control input-custom" value="${originTotalPrice}" readonly>
                                     <span class="currency-suffix">đ</span>
                                 </div>
                             </div>
