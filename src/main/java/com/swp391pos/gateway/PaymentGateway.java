@@ -7,6 +7,12 @@ import com.swp391pos.enums.PaymentStatus;
 public interface PaymentGateway {
 
     /**
+     * Kiểm tra gateway có đang hoạt động không.
+     * Gọi trước khi cho phép chọn phương thức thanh toán banking.
+     */
+    boolean isAvailable();
+
+    /**
      * Tao QR payment, tra ve QR URL va session info.
      */
     PaymentResponse createQR(PaymentRequest request);

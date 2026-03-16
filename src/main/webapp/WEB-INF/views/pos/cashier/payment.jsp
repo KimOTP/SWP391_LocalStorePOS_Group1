@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/pos/payment.css">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -33,7 +35,7 @@
                 </span>
             </div>
         </div>
-        <div class="pay-page-date" id="liveClock"></div>
+
     </div>
 
     <!-- MAIN GRID: 3 columns -->
@@ -317,52 +319,50 @@
             </div>
             <div class="pay-card-body qr-body">
 
-                <!-- QR image area -->
-                <div class="qr-logo-wrap">
-                    <img src="${pageContext.request.contextPath}/resources/img/vietqr-logo.png"
-                         alt="VietQR"
-                         class="qr-brand-logo"
-                         onerror="this.style.display='none'">
-                </div>
-
-                <div class="qr-img-wrap" id="qrImgWrap">
-                    <!-- QR will be rendered here or show placeholder -->
-                    <div class="qr-placeholder" id="qrPlaceholder">
-                        <i class="fa-solid fa-qrcode"></i>
-                        <span>Select bank account<br>to show QR</span>
-                    </div>
-                    <img id="qrImg" src="" alt="QR Code" class="qr-img" style="display:none">
-                </div>
-
-                <div class="qr-bank-logos">
-                    <img src="https://napas247.vn/favicon.ico" alt="Napas" class="qr-bank-chip" onerror="this.style.display='none'">
-                    <span class="qr-bank-chip-text">napas 24/7</span>
-                    <span class="qr-divider">|</span>
-                    <span class="qr-bank-name" id="qrBankName">
-                        <i class="fa-solid fa-building-columns me-1"></i>
-                        <span id="qrBankLabel">MB</span>
-                    </span>
-                </div>
-
-                <div class="qr-info-box" id="qrInfoBox">
-                    <div class="qr-info-row">
-                        <span>Amount:</span>
-                        <strong id="qrAmount">0đ</strong>
-                    </div>
-                    <div class="qr-info-row">
-                        <span>Account number:</span>
-                        <strong id="qrAccNumber">–</strong>
-                    </div>
-                    <div class="qr-info-row">
-                        <span>Account name:</span>
-                        <strong id="qrAccName">–</strong>
+                <!-- STATE: idle -->
+                <div id="qrStateIdle" class="qr-state">
+                    <div class="qr-idle-wrap">
+                        <div class="qr-idle-icon">
+                            <i class="fa-solid fa-credit-card"></i>
+                        </div>
+                        <p class="qr-idle-title">Banking payment</p>
+                        <p class="qr-idle-desc">Select <strong>Payment via banking</strong><br>then press <strong>Pay</strong> to generate QR</p>
                     </div>
                 </div>
 
-                <p class="qr-hint">
-                    Scan the QR code using your bank's app.<br>
-                    Check the information and confirm.
-                </p>
+                <!-- STATE: loading -->
+                <div id="qrStateLoading" class="qr-state" style="display:none">
+                    <div class="qr-loading-wrap">
+                        <div class="qr-loading-ring">
+                            <svg viewBox="0 0 44 44" class="qr-spinner-svg">
+                                <circle cx="22" cy="22" r="18" fill="none" stroke-width="3"/>
+                            </svg>
+                            <i class="fa-solid fa-qrcode qr-loading-icon"></i>
+                        </div>
+                        <p class="qr-loading-title">Generating QR code...</p>
+                        <p class="qr-loading-desc">Connecting to PayOS</p>
+                    </div>
+                </div>
+
+                <!-- STATE: ready — PayOS checkout iframe -->
+                <div id="qrStateReady" class="qr-state" style="display:none">
+                    <div class="qr-amount-badge">
+                        <span class="qr-amount-label">Amount</span>
+                        <span class="qr-amount-val" id="qrAmount">0đ</span>
+                    </div>
+                    <div class="qr-iframe-wrap">
+                        <iframe id="qrIframe"
+                                src=""
+                                frameborder="0"
+                                scrolling="no"
+                                allowtransparency="true"
+                                class="qr-iframe">
+                        </iframe>
+                    </div>
+                    <div id="qrStatusBadge" class="qr-status-badge" style="display:none"></div>
+                    <p class="qr-hint">Open your banking app · Scan · Confirm</p>
+                </div>
+
             </div>
         </div>
 
@@ -371,43 +371,49 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Data injected from controller
-    window.orderId      = '${order.orderId}';
-    window.totalAmount  = parseFloat('${order.totalAmount}') || 0;
-    window.contextPath  = '${pageContext.request.contextPath}';
+window.PAGE_DATA = {
+    orderId     : '${order.orderId}',
+    totalAmount : parseFloat('${order.totalAmount}') || 0,
+    contextPath : '${pageContext.request.contextPath}',
 
-    // Summary data from server (promotions)
-    window.summaryData = {
+    summary : {
         totalDiscount : parseFloat('${summary.totalDiscount}') || 0,
         items : [
             <c:forEach var="item" items="${summary.items}" varStatus="loop">
             {
-                productId    : '${item.productId}',
-                productName  : '${item.productName}',
-                quantity     : ${item.quantity},
-                originalPrice: parseFloat('${item.originalPrice}') || 0,
+                productId     : '${item.productId}',
+                productName   : '${item.productName}',
+                quantity      : ${item.quantity},
+                originalPrice : parseFloat('${item.originalPrice}')  || 0,
                 discountAmount: parseFloat('${item.discountAmount}') || 0,
                 finalLineTotal: parseFloat('${item.finalLineTotal}') || 0,
-                promotionNote: '${item.promotionNote}'
+                promotionNote : '${item.promotionNote}'
             }<c:if test="${!loop.last}">,</c:if>
             </c:forEach>
         ]
-    };
+    },
 
-    // Bank settings from session (set in print template config)
-    window.bankSettings = {
-        bankName   : '${sessionScope.posBankConfig.bankName}',
-        accNumber  : '${sessionScope.posBankConfig.accountNumber}',
-        accName    : '${sessionScope.posBankConfig.accountName}'
-    };
+    bank : {
+        bankName  : '${sessionScope.posBankConfig.bankName}',
+        accNumber : '${sessionScope.posBankConfig.accountNumber}',
+        accName   : '${sessionScope.posBankConfig.accountName}'
+    },
 
-    // Point configuration from SystemSetting
-    window.pointConfig = {
-        earningRate     : parseFloat('${pointConfig["POINT_EARNING_RATE"]}')    || 10000, // X VNĐ = 1 điểm
-        redemptionValue : parseFloat('${pointConfig["POINT_REDEMPTION_VALUE"]}') || 1000,  // 1 điểm = X VNĐ
-        maxRedeemPercent: parseFloat('${pointConfig["MAX_REDEEM_PERCENT"]}')    || 30,    // tối đa X% hoá đơn
-        minPointToRedeem: parseFloat('${pointConfig["MIN_POINT_TO_REDEEM"]}')   || 100    // tối thiểu X điểm
-    };
+    pointConfig : {
+        earningRate     : parseFloat('${pointConfig["POINT_EARNING_RATE"]}')     || 10000,
+        redemptionValue : parseFloat('${pointConfig["POINT_REDEMPTION_VALUE"]}') || 1000,
+        maxRedeemPercent: parseFloat('${pointConfig["MAX_REDEEM_PERCENT"]}')     || 30,
+        minPointToRedeem: parseFloat('${pointConfig["MIN_POINT_TO_REDEEM"]}')    || 100
+    }
+};
+
+// Backward-compat aliases (payment.js vẫn đọc các window.xxx cũ)
+window.orderId      = PAGE_DATA.orderId;
+window.totalAmount  = PAGE_DATA.totalAmount;
+window.contextPath  = PAGE_DATA.contextPath;
+window.summaryData  = PAGE_DATA.summary;
+window.bankSettings = PAGE_DATA.bank;
+window.pointConfig  = PAGE_DATA.pointConfig;
 </script>
 <script src="${pageContext.request.contextPath}/resources/js/pos/payment.js"></script>
 

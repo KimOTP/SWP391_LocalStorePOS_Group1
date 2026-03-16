@@ -72,7 +72,7 @@ public class PaymentService {
                 .orElseThrow(() -> new RuntimeException("Order not found: " + request.getOrderId()));
 
         String paymentSessionId = UUID.randomUUID().toString();
-        String gatewayOrderCode = generateGatewayCode();
+        String gatewayOrderCode = generateGatewayCode(order.getOrderId());
 
         Payment payment = new Payment();
         payment.setPaymentSessionId(paymentSessionId);
@@ -284,7 +284,10 @@ public class PaymentService {
     // Helpers
     // -------------------------------------------------------------------------
 
-    private String generateGatewayCode() {
-        return String.valueOf(System.currentTimeMillis() % 1_000_000_000_000L);
+    private String generateGatewayCode(Long orderId) {
+        // PayOS yêu cầu orderCode là số nguyên dương, unique, max 13 chữ số
+        // Format: orderId (tối đa 7 chữ số) + 6 chữ số random → tổng 13 chữ số
+        int random = (int)(Math.random() * 900000) + 100000; // 100000–999999
+        return String.valueOf(orderId * 1_000_000L + random);
     }
 }
