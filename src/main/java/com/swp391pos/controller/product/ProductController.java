@@ -1,6 +1,5 @@
 package com.swp391pos.controller.product;
 
-import com.cloudinary.*;
 import com.swp391pos.entity.Product;
 import com.swp391pos.repository.CategoryRepository;
 import com.swp391pos.repository.ProductRepository;
@@ -95,14 +94,22 @@ public class ProductController {
                              @RequestParam("statusId") Integer statusId,
                              @RequestParam("categoryId") Integer categoryId,
                              RedirectAttributes redirectAttributes) {
-
-        boolean success = productService.addProduct(product, imageFile, statusId, categoryId);
-
-        if (success) {
+        try {
+            // Gọi hàm void, nếu có lỗi nó sẽ nhảy xuống block catch
+            productService.addProduct(product, imageFile, statusId, categoryId);
             redirectAttributes.addFlashAttribute("notification", "Product added successfully!");
             return "redirect:/products/manage";
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to add product!");
+
+        } catch (RuntimeException e) {
+            // Bắt lỗi nghiệp vụ (trùng lặp, lỗi upload...)
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/products/add";
+
+        } catch (Exception e) {
+            // Bắt các lỗi không xác định khác
+            redirectAttributes.addFlashAttribute("errorMessage", "An unexpected error occurred: " + e.getMessage());
+            e.printStackTrace();
             return "redirect:/products/add";
         }
     }
@@ -138,15 +145,20 @@ public class ProductController {
                                 @RequestParam("categoryId") Integer categoryId,
                                 RedirectAttributes redirectAttributes) {
 
-        product.setProductId(oldId);
-        boolean success = productService.updateProduct(oldId, product, imageFile, statusId, categoryId);
-
-        if(success) {
+        try {
+            product.setProductId(oldId);
+            productService.updateProduct(oldId, product, imageFile, statusId, categoryId);
             redirectAttributes.addFlashAttribute("notification", "Updated product successfully!");
             return "redirect:/products/manage";
-        } else {
-            redirectAttributes.addFlashAttribute("errorMessage", "Failed to update product!");
-            return "redirect:/products/update/";
+
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            e.printStackTrace();
+            return "redirect:/products/update/" + oldId;
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Unexpected error occurred!");
+            e.printStackTrace();
+            return "redirect:/products/update/" + oldId;
         }
     }
 

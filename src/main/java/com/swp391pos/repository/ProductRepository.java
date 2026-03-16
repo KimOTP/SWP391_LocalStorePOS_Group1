@@ -48,4 +48,8 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     List<Product> searchBySupplierName(@Param("supplierName") String supplierName);
 
     List<Product> findByProductNameContainingIgnoreCase(String productName);
+
+        // Tìm sản phẩm dựa trên tên, ID danh mục và thuộc tính
+        boolean existsByProductNameAndCategory_CategoryIdAndAttribute(String name, Integer categoryId, String attribute);
+
 }

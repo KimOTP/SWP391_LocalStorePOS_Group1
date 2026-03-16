@@ -222,6 +222,34 @@ function initViewComboModal() {
         });
     });
 }
+// --- 4. Xử lý Xác nhận xóa bằng Popup (SweetAlert2) ---
+function initDeleteConfirmation() {
+    const deleteButtons = document.querySelectorAll('.btn-delete-combo');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault(); // Chặn link mặc định
+            const deleteUrl = this.getAttribute('data-url');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you really want to delete this combo? This action cannot be undone!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                borderRadius: '15px'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = deleteUrl;
+                }
+            });
+        });
+    });
+}
 
 // --- 6. Khởi tạo ---
 document.addEventListener('DOMContentLoaded', function() {
@@ -231,6 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initTableSearch();
     initViewComboModal();
     initTableDropdowns();
+    initDeleteConfirmation();
 
     const dataBridge = document.getElementById('combo-data-bridge');
     if (dataBridge && dataBridge.getAttribute('data-is-update') === 'true') {

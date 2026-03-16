@@ -92,10 +92,14 @@ public class ComboController {
             comboService.updateCombo(combo, productIds, quantities, imageFile, existingImageUrl);
             redirectAttributes.addFlashAttribute("notification", "Combo update successfully!");
             return "redirect:/combos/manage";
+        } catch(RuntimeException e){
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+            e.printStackTrace();
+            return "redirect:/combos/update/" + combo.getComboId();
         } catch (Exception e) {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("errorMessage", "Failed to update combo!");
-            return "redirect:/combos/update/";
+            return "redirect:/combos/update/"  + combo.getComboId();
         }
     }
 
