@@ -244,7 +244,6 @@ public class ProductService {
     public void updateStockAndSyncStatus(String productId, int newQuantity) {
         Inventory inventory = inventoryRepository.findById(productId).get();
         List<Combo> listCombo = null;
-        inventory.setCurrentQuantity(newQuantity);
 
         // Tự động set OUT_OF_STOCK, không cho phép override
         if (newQuantity <= 0) {
