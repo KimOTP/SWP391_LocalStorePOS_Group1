@@ -25,7 +25,7 @@
             <small class="text-muted">Stock monitoring and alerts</small>
         </div>
         <div class="d-flex gap-2">
-            <a href="<c:url value='/stockIn/notifications'/>" class="btn btn-outline-primary px-4 py-2 border-2 fw-bold">
+            <a href="<c:url value='/stockIn/notifications'/>" class="btn btn-outline-primary px-4 py-2 border-2 fw-bold" style="border-radius: 10px;">
                 <i class="fa-solid fa-bell me-2"></i>Notifications
             </a>
         </div>
@@ -37,11 +37,11 @@
                 <div class="stat-card-header">
                     <div class="stat-card-info">
                         <div class="stat-title">Total Stock-In</div>
-                        <div class="stat-value text-total"><fmt:formatNumber value="${stats.totalReceipt}" pattern="#,### đ"/></div>
+                        <div class="stat-value text-total"><fmt:formatNumber value="${stats.totalReceipt}" pattern="#,### VND"/></div>
                     </div>
                     <div class="stat-card-icon stat-icon-import"><i class="fa-solid fa-file-import"></i></div>
                 </div>
-                <div class="stat-sub">Total value of stock-in product</div>
+                <div class="stat-sub text-muted small">Total value of stock-in product</div>
             </div>
         </div>
 
@@ -50,11 +50,11 @@
                 <div class="stat-card-header">
                     <div class="stat-card-info">
                         <div class="stat-title">Total Stock-Out</div>
-                        <div class="stat-value text-category"><fmt:formatNumber value="${stats.totalStockOut}" pattern="#,### đ"/></div>
+                        <div class="stat-value text-category"><fmt:formatNumber value="${stats.totalStockOut}" pattern="#,### VND"/></div>
                     </div>
                     <div class="stat-card-icon stat-icon-export"><i class="fa-solid fa-file-export"></i></div>
                 </div>
-                <div class="stat-sub">Total value of stock-out product</div>
+                <div class="stat-sub text-muted small">Total value of stock-out product</div>
             </div>
         </div>
 
@@ -63,11 +63,11 @@
                 <div class="stat-card-header">
                     <div class="stat-card-info">
                         <div class="stat-title">Inventory Value</div>
-                        <div class="stat-value"><fmt:formatNumber value="${stats.inventoryValue}" pattern="#,### đ"/></div>
+                        <div class="stat-value"><fmt:formatNumber value="${stats.inventoryValue}" pattern="#,### VND"/></div>
                     </div>
                     <div class="stat-card-icon stat-icon-value"><i class="fa-solid fa-warehouse"></i></div>
                 </div>
-                <div class="stat-sub">Products value remaining</div>
+                <div class="stat-sub text-muted small">Products value remaining</div>
             </div>
         </div>
 
@@ -80,7 +80,7 @@
                     </div>
                     <div class="stat-card-icon stat-icon-alert"><i class="fa-solid fa-triangle-exclamation"></i></div>
                 </div>
-                <div class="stat-sub">Products under min threshold</div>
+                <div class="stat-sub text-muted small">Products under min threshold</div>
             </div>
         </div>
     </div>
@@ -91,7 +91,7 @@
             <input type="text" id="inventorySearch" placeholder="Search product by name or SKU...">
         </div>
         <div class="dropdown filter-dropdown">
-            <button class="btn btn-filter" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="statusFilterValue" value="">
+            <button class="btn btn-filter" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="statusFilterValue">
                 <span>All Status</span>
                 <i class="fa-solid fa-chevron-down tiny-icon"></i>
             </button>
@@ -100,67 +100,69 @@
                 <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateFilter('Enough', 'Enough')">Enough</a></li>
                 <li><a class="dropdown-item" href="javascript:void(0)" onclick="updateFilter('Warning', 'Warning')">Warning</a></li>
             </ul>
-            <input type="hidden" id="statusFilterValue" value="">
         </div>
     </div>
 
-    <div class="inventory-table-card">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead>
+    <div class="inventory-table-card mb-5">
+        <div class="table-responsive" style="overflow-y: visible;"> <table class="table table-hover align-middle mb-0">
+            <thead>
+            <tr class="thead-row">
+                <th class="th-cell text-center" style="width: 120px;">SKU</th>
+                <th class="th-cell">Product Name</th>
+                <th class="th-cell text-center" style="width: 140px;">In Stock</th>
+                <th class="th-cell text-center" style="width: 140px;">Min Stock</th>
+                <th class="th-cell text-end" style="width: 180px;">Total Value</th>
+                <th class="th-cell text-center" style="width: 140px;">Status</th>
+                <th class="th-cell text-center" style="width: 80px;">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach items="${inventoryList}" var="i">
+                <c:set var="isLow" value="${i.currentQuantity <= i.minThreshold}" />
                 <tr>
-                    <th class="th-cell">SKU</th>
-                    <th class="th-cell">Product Name</th>
-                    <th class="th-cell">In Stock</th>
-                    <th class="th-cell">Min Stock</th>
-                    <th class="th-cell">Total Value</th>
-                    <th class="th-cell">Status</th>
-                    <th class="th-cell text-end">Actions</th>
+                    <td class="td-cell align-middle text-center">
+                        <div class="d-flex align-items-center justify-content-center h-100">
+                            <span class="text-sku">#${i.product.productId}</span>
+                        </div>
+                    </td>
+                    <td class="td-cell align-middle fw-bold text-dark">${i.product.productName}</td>
+                    <td class="td-cell align-middle text-center fw-bold text-primary fs-6">${i.currentQuantity}</td>
+                    <td class="td-cell align-middle text-center">
+                            <span class="badge border text-dark px-3 py-2 fw-normal bg-light" style="font-size: 0.85rem;">
+                                    ${i.minThreshold}
+                            </span>
+                    </td>
+                    <td class="td-cell align-middle text-end fw-bold text-success">
+                        <fmt:formatNumber value="${i.currentQuantity * i.product.price}" pattern="#,##0 VND"/>
+                    </td>
+                    <td class="td-cell align-middle text-center">
+                            <span class="status-badge ${isLow ? 'status-outstock' : 'status-active'}">
+                                    ${isLow ? 'Warning' : 'Enough'}
+                            </span>
+                    </td>
+                    <td class="td-cell align-middle text-center">
+                        <div class="dropdown">
+                            <button class="btn btn-light btn-sm rounded-circle shadow-sm border" type="button" data-bs-toggle="dropdown" style="width: 34px; height: 34px;">
+                                <i class="fa-solid fa-ellipsis-vertical text-secondary"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-2" style="border-radius: 12px;">
+                                <li>
+                                    <a class="dropdown-item py-2 fw-medium" href="<c:url value='/stockOut/add?productId=${i.product.productId}'/>">
+                                        <i class="fa-solid fa-file-export me-2 text-primary" style="width: 18px;"></i>Stock-out
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2 fw-medium" href="javascript:void(0)" onclick="editMinStock('${i.product.productId}', '${i.product.productName.replace('\'', '\\\'')}', ${i.minThreshold})">
+                                        <i class="fa-solid fa-pen-to-square me-2 text-warning" style="width: 18px;"></i>Edit Min
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
                 </tr>
-                </thead>
-                <tbody>
-                <c:forEach items="${inventoryList}" var="i">
-                    <c:set var="isLow" value="${i.currentQuantity <= i.minThreshold}" />
-                    <tr>
-                        <td class="td-cell text-sku small">${i.product.productId}</td>
-                        <td class="td-cell fw-bold">${i.product.productName}</td>
-                        <td class="td-cell fw-bold text-primary">${i.currentQuantity}</td>
-                        <td class="td-cell">
-                                <span class="badge border text-dark rounded-pill px-3 fw-normal bg-light">
-                                        ${i.minThreshold}
-                                </span>
-                        </td>
-                        <td class="td-cell fw-bold text-success">
-                            <fmt:formatNumber value="${i.currentQuantity * i.product.price}" pattern="#,### đ"/>
-                        </td>
-                        <td class="td-cell">
-                                <span class="status-badge ${isLow ? 'status-outstock' : 'status-active'}">
-                                        ${isLow ? 'Warning' : 'Enough'}
-                                </span>
-                        </td>
-                        <td class="td-cell text-end">
-                            <div class="dropdown">
-                                <button class="btn btn-light btn-sm rounded-circle shadow-none" type="button" data-bs-toggle="dropdown">
-                                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-2" style="border-radius: 12px;">
-                                    <li>
-                                        <a class="dropdown-item py-2" href="<c:url value='/stockOut/add?productId=${i.product.productId}'/>">
-                                            <i class="fa-solid fa-file-export me-2 text-primary" style="width: 18px;"></i>Stock-out
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item py-2" href="javascript:void(0)" onclick="editMinStock('${i.product.productId}', ${i.minThreshold})">
-                                            <i class="fa-solid fa-pen-to-square me-2 text-warning" style="width: 18px;"></i>Edit Min
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                </c:forEach>
-                </tbody>
-            </table>
+            </c:forEach>
+            </tbody>
+        </table>
         </div>
     </div>
 </div>
