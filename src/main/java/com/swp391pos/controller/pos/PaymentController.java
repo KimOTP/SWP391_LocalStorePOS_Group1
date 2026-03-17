@@ -97,6 +97,8 @@ public class PaymentController {
             double totalPaid    = ((Number) body.getOrDefault("totalPaid",    0)).doubleValue();
             double customerPaid = ((Number) body.getOrDefault("customerPaid", totalPaid)).doubleValue();
             double changeAmount = ((Number) body.getOrDefault("changeAmount", 0)).doubleValue();
+            double discountAmt  = ((Number) body.getOrDefault("discount",    0)).doubleValue();
+            double loyaltyUsed  = ((Number) body.getOrDefault("loyaltyUsed", 0)).doubleValue();
 
             Order order = orderService.findById(orderId);
 
@@ -115,6 +117,10 @@ public class PaymentController {
                     OrderStatusName.valueOf("PAID"));
             order.setOrderStatus(completed);
             order.setPaidAt(LocalDateTime.now());
+
+            // Cập nhật giá trị cuối cùng sau giảm giá
+            order.setDiscountAmount(BigDecimal.valueOf(discountAmt + loyaltyUsed));
+            order.setTotalAmount(BigDecimal.valueOf(totalPaid));
 
             PaymentMethod orderPayMethod = paymentMethod.equals("BANKING")
                     ? PaymentMethod.BANKING
