@@ -108,6 +108,9 @@ public class PaymentController {
                 return ResponseEntity.ok(resp);
             }
 
+            // Ghi nhận thanh toán và trừ kho nếu chưa từng đóng tiền
+            boolean isFirstPaymentForOrder = order.getPaidAt() == null;
+
             OrderStatus completed = orderStatusService.findByOrderStatusName(
                     OrderStatusName.valueOf("PAID"));
             order.setOrderStatus(completed);
@@ -129,6 +132,10 @@ public class PaymentController {
             payment.setChangeAmount(BigDecimal.valueOf(changeAmount));
             payment.setPaidAt(LocalDateTime.now());
             paymentService.save(payment);
+
+            if (isFirstPaymentForOrder) {
+                paymentService.deductStockAfterPayment(orderId);
+            }
 
             // Tạo PosReceipt sau khi thanh toán thành công
             PosReceipt receipt = new PosReceipt();
