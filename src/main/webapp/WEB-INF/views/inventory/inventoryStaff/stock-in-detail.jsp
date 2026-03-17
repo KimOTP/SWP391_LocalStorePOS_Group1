@@ -63,13 +63,13 @@
             </div>
 
             <div class="row g-4 align-items-end">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label class="info-label">Requested by</label>
                     <div class="info-value p-2 px-3 bg-light rounded-3 border text-dark fw-bold" style="height: 42px;">
                         <i class="fa-solid fa-user me-2 text-muted"></i>${stockIn.requester.fullName}
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label class="info-label">Request Date</label>
                     <div class="info-value p-2 px-3 bg-light rounded-3 border text-muted" style="height: 42px;">
                         <i class="fa-regular fa-calendar me-2"></i>
@@ -77,7 +77,7 @@
                         <fmt:formatDate value="${cDate}" pattern="dd/MM/yyyy" />
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <label class="info-label">Inbound Time</label>
                     <div class="info-value p-2 px-3 bg-light rounded-3 border text-muted" style="height: 42px;">
                         <i class="fa-regular fa-clock me-2"></i>
@@ -85,10 +85,26 @@
                         <fmt:formatDate value="${pDate}" pattern="dd/MM/yyyy HH:mm" />
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <label class="info-label">Staff in Charge</label>
+
+                <div class="col-md-4">
+                    <label class="info-label">Staff in Charge (Receiver)</label>
                     <div class="info-value p-2 px-3 bg-primary-subtle text-primary border border-primary-subtle rounded-3 fw-bold" style="height: 42px;">
                         <i class="fa-solid fa-user-tie me-2"></i>${stockIn.staff.fullName}
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label class="info-label">Approver</label>
+                    <div class="info-value p-2 px-3 bg-success-subtle text-success border border-success-subtle rounded-3 fw-bold" style="height: 42px;">
+                        <i class="fa-solid fa-user-check me-2"></i>
+                        <c:choose>
+                            <c:when test="${not empty stockIn.approver}">
+                                ${stockIn.approver.fullName}
+                            </c:when>
+                            <c:otherwise>
+                                <span class="text-muted fw-normal">Waiting for approval...</span>
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                 </div>
             </div>

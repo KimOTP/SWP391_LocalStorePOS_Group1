@@ -44,10 +44,10 @@ public class StockOutController {
 
             stockOutService.createStockOut(generalNote, items, account);
 
-            ra.addFlashAttribute("message", "Stock-out request created!");
+            ra.addFlashAttribute("notification", "Stock-out request created!");
             ra.addFlashAttribute("status", "success");
         } catch (Exception e) {
-            ra.addFlashAttribute("message", "Error: " + e.getMessage());
+            ra.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
             ra.addFlashAttribute("status", "danger");
         }
         return "redirect:/stockOut/add";
