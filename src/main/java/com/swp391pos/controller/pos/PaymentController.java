@@ -154,7 +154,7 @@ public class PaymentController {
         } catch (Exception ex) {
             ex.printStackTrace();
             resp.put("success", false);
-            resp.put("message", ex.getMessage());
+            resp.put("errorMessage", ex.getMessage());
             return ResponseEntity.status(500).body(resp);
         }
     }
@@ -208,7 +208,7 @@ public class PaymentController {
             resp.put("message", available ? "PayOS is operational" : "PayOS is currently unavailable");
         } catch (Exception e) {
             resp.put("available", false);
-            resp.put("message", "Gateway check failed: " + e.getMessage());
+            resp.put("errorMessage", "Gateway check failed: " + e.getMessage());
         }
         return ResponseEntity.ok(resp);
     }

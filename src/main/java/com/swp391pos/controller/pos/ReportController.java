@@ -182,7 +182,7 @@ public class ReportController {
     private Map<String, Object> errorResponse(String message) {
         Map<String, Object> r = new HashMap<>();
         r.put("success", false);
-        r.put("message", message);
+        r.put("errorMessage", message);
         return r;
     }
 }

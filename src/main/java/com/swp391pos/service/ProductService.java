@@ -16,9 +16,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class ProductService {
+
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ProductService.class);
 
     @Autowired
     private ProductRepository productRepository;
@@ -242,7 +245,13 @@ public class ProductService {
     }
 
     public void updateStockAndSyncStatus(String productId, int newQuantity) {
-        Inventory inventory = inventoryRepository.findById(productId).get();
+        Optional<Inventory> inventoryOpt = inventoryRepository.findById(productId);
+        if (inventoryOpt.isEmpty()) {
+            log.warn("[Stock] Sync failed: Inventory not found for productId={}", productId);
+            return;
+        }
+
+        Inventory inventory = inventoryOpt.get();
         List<Combo> listCombo = null;
 
         if (newQuantity <= 0) {

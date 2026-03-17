@@ -49,7 +49,10 @@ function viewDetail(receiptNumber) {
             return res.json();
         })
         .then(data => populateModal(data))
-        .catch(() => populateModalFromRow(receiptNumber));
+        .catch(() => {
+            Toast.fire({ icon: 'info', title: 'Loading data from local table...' });
+            populateModalFromRow(receiptNumber);
+        });
 
     document.getElementById('detailModal').classList.add('open');
 }
