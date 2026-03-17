@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Map;
 
@@ -28,12 +29,15 @@ public class InventoryController {
     @ResponseBody
     public ResponseEntity<String> updateMin(
             @RequestParam String productId,
-            @RequestParam(name = "minThreshold") Integer min
+            @RequestParam(name = "minThreshold") Integer min,
+            RedirectAttributes ra
     ) {
         try {
             inventoryService.updateMinThreshold(productId, min);
+            ra.addFlashAttribute("notification", "Min threshold updated!");
             return ResponseEntity.ok("Success");
         } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
             return ResponseEntity.status(500).body("Error: " + e.getMessage());
         }
     }

@@ -3,6 +3,8 @@ package com.swp391pos.repository;
 import com.swp391pos.entity.Supplier;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -19,4 +21,7 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
     List<Supplier> findBySupplierNameContainingIgnoreCase(String name);
 
     String getSupplierBySupplierId(Integer supplierId);
+
+    @Query("SELECT COUNT(si) > 0 FROM StockIn si WHERE si.supplier.supplierId = :supplierId")
+    boolean existsStockInBySupplierId(@Param("supplierId") Integer supplierId);
 }
