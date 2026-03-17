@@ -27,7 +27,7 @@
 
             <!-- Username -->
             <label>Username</label>
-            <input type="text" name="username" placeholder="Enter your username">
+            <input type="text" name="username" value="${username}" placeholder="Enter your username">
 
             <!-- Password -->
             <label>Password</label>

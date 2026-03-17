@@ -50,6 +50,12 @@ public class ChangeInformationController {
                                     HttpSession session,
                                     RedirectAttributes redirectAttributes) {
 
+        // ❌ Full name quá 100 ký tự
+        if (fullName.length() > 100) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Full name must not exceed 100 characters!");
+            return "redirect:/hr/change_information";
+        }
+
         Account sessionAccount = (Account) session.getAttribute("account");
 
         Account account = accountRepository
