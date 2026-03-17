@@ -53,4 +53,8 @@ public class SupplierService {
     public List<Supplier> getAllSuppliers() {
         return supplierRepository.findAll();
     }
+
+    public boolean supplierExistStockIn(Integer supplierId) {
+        return supplierRepository.existsStockInBySupplierId(supplierId);
+    }
 }

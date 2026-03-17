@@ -46,6 +46,10 @@ public class SupplierController {
     @GetMapping("/delete/{id}")
     public String removeSupplier(@PathVariable Integer id, RedirectAttributes ra) {
         try {
+            if(supplierService.supplierExistStockIn(id)){
+                ra.addFlashAttribute("errorMessage", "Cannot delete supplier because supplier already exists Stock In Request");
+                return "redirect:/suppliers";
+            }
             supplierService.deleteSupplier(id);
             ra.addFlashAttribute("notification", "Supplier has been successfully deleted!");
         }catch (Exception e) {
