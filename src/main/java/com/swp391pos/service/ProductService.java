@@ -259,7 +259,6 @@ public class ProductService {
                 inventory.getProduct().getStatus().setProductStatusId(1);
             }
         }
-        inventoryRepository.save(inventory);
         if (listCombo != null) {
             for (Combo combo : listCombo) {
                 comboRepository.save(combo);
