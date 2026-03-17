@@ -3,11 +3,7 @@ package com.swp391pos.controller.pos;
 import com.swp391pos.dto.PaymentDTO;
 import com.swp391pos.dto.PaymentRequest;
 import com.swp391pos.dto.PaymentResponse;
-import com.swp391pos.entity.Order;
-import com.swp391pos.entity.OrderItem;
-import com.swp391pos.entity.OrderStatus;
-import com.swp391pos.entity.Payment;
-import com.swp391pos.entity.PosReceipt;
+import com.swp391pos.entity.*;
 import com.swp391pos.enums.OrderStatusName;
 import com.swp391pos.enums.PaymentMethod;
 import com.swp391pos.enums.PaymentStatus;
@@ -42,6 +38,7 @@ public class PaymentController {
     private final PosReceiptService posReceiptService;
     private final SystemSettingService systemSettingService;
     private final com.swp391pos.gateway.PaymentGateway paymentGateway;
+    private final CustomerService customerService;
 
     /* ================================================================
        PAYMENT PAGE
@@ -126,6 +123,16 @@ public class PaymentController {
                     ? PaymentMethod.BANKING
                     : PaymentMethod.CASH;
             order.setPaymentMethod(orderPayMethod);
+
+            // Xử lý an toàn chuỗi rỗng của customerId
+            Object rawCustId = body.get("customerId");
+            Long customerId = null;
+            if (rawCustId != null && !String.valueOf(rawCustId).trim().isEmpty()) {
+                customerId = Long.valueOf(String.valueOf(rawCustId).trim());
+                Customer cus = customerService.findById(customerId);
+                order.setCustomer(cus);
+            }
+
             orderService.save(order);
 
             Payment payment = new Payment();
@@ -150,6 +157,13 @@ public class PaymentController {
             receipt.setPrintedAt(LocalDateTime.now());
             receipt.setPrintedBy(order.getEmployee()); // cashier = người tạo order
             posReceiptService.save(receipt);
+
+            // Lấy pointsUsed
+            Object rawPts = body.get("pointsUsed");
+            Integer pointsUsed = (rawPts != null && !String.valueOf(rawPts).trim().isEmpty())
+                    ? Integer.valueOf(String.valueOf(rawPts).trim()) : 0;
+            //Call service
+            customerService.updateCustomerAfterPayment(orderId, customerId, totalPaid, pointsUsed);
 
             session.removeAttribute(SESSION_CART_ORDER_JSON);
 
