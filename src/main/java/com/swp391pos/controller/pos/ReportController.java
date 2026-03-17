@@ -33,7 +33,7 @@ public class ReportController {
         Map<String, Object> report = reportService.getDailyReport(today);
 
         // Summary cards
-        model.addAttribute("totalRevenue",        report.get("totalRevenue"));
+        model.addAttribute("totalSales",           report.get("totalRevenue"));
         model.addAttribute("totalOrders",         report.get("totalOrders"));
         model.addAttribute("averageValuePerUnit", report.get("averageValuePerUnit"));
         model.addAttribute("bestSellingProduct",  report.get("bestSellingProduct"));
@@ -182,7 +182,7 @@ public class ReportController {
     private Map<String, Object> errorResponse(String message) {
         Map<String, Object> r = new HashMap<>();
         r.put("success", false);
-        r.put("message", message);
+        r.put("errorMessage", message);
         return r;
     }
 }

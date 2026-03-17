@@ -7,6 +7,8 @@ import com.swp391pos.entity.*;
 import com.swp391pos.enums.OrderStatusName;
 import com.swp391pos.enums.PaymentMethod;
 import com.swp391pos.enums.PaymentStatus;
+import com.swp391pos.repository.OrderPromotionRepository;
+import com.swp391pos.repository.PromotionRepository;
 import com.swp391pos.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,8 @@ public class PaymentController {
     private final SystemSettingService systemSettingService;
     private final com.swp391pos.gateway.PaymentGateway paymentGateway;
     private final CustomerService customerService;
+    private final OrderPromotionRepository orderPromotionRepository;
+    private final PromotionRepository promotionRepository;
 
     /* ================================================================
        PAYMENT PAGE
@@ -94,6 +98,8 @@ public class PaymentController {
             double totalPaid    = ((Number) body.getOrDefault("totalPaid",    0)).doubleValue();
             double customerPaid = ((Number) body.getOrDefault("customerPaid", totalPaid)).doubleValue();
             double changeAmount = ((Number) body.getOrDefault("changeAmount", 0)).doubleValue();
+            double discountAmt  = ((Number) body.getOrDefault("discount",    0)).doubleValue();
+            double loyaltyUsed  = ((Number) body.getOrDefault("loyaltyUsed", 0)).doubleValue();
 
             Order order = orderService.findById(orderId);
 
@@ -112,6 +118,10 @@ public class PaymentController {
                     OrderStatusName.valueOf("PAID"));
             order.setOrderStatus(completed);
             order.setPaidAt(LocalDateTime.now());
+
+            // Cập nhật giá trị cuối cùng sau giảm giá
+            order.setDiscountAmount(BigDecimal.valueOf(discountAmt + loyaltyUsed));
+            order.setTotalAmount(BigDecimal.valueOf(totalPaid));
 
             PaymentMethod orderPayMethod = paymentMethod.equals("BANKING")
                     ? PaymentMethod.BANKING
@@ -142,6 +152,37 @@ public class PaymentController {
 
             if (isFirstPaymentForOrder) {
                 paymentService.deductStockAfterPayment(orderId);
+
+                // Record applied promotions to OrderPromotion table
+                try {
+                    List<OrderItem> currentItems = orderItemService.findByOrder(order);
+                    List<PaymentDTO.OrderItemDTO> cartItems = currentItems.stream()
+                            .filter(oi -> oi.getProduct() != null)
+                            .map(oi -> {
+                                PaymentDTO.OrderItemDTO dto = new PaymentDTO.OrderItemDTO();
+                                dto.setOrderId(order.getOrderId());
+                                dto.setProductId(oi.getProduct().getProductId());
+                                dto.setQuantity(oi.getQuantity());
+                                return dto;
+                            }).collect(Collectors.toList());
+
+                    PaymentDTO.PaymentSummary summary = posService.calculatePromotion(cartItems);
+                    if (summary.getItems() != null) {
+                        for (PaymentDTO.PaymentItem pi : summary.getItems()) {
+                            if (pi.getPromotionId() != null && pi.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
+                                promotionRepository.findById(pi.getPromotionId()).ifPresent(promo -> {
+                                    OrderPromotion op = new OrderPromotion();
+                                    op.setOrder(order);
+                                    op.setPromotion(promo);
+                                    op.setDiscountAmount(pi.getDiscountAmount());
+                                    orderPromotionRepository.save(op);
+                                });
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error saving promotions: " + e.getMessage());
+                }
             }
 
             // Tạo PosReceipt sau khi thanh toán thành công
@@ -168,7 +209,7 @@ public class PaymentController {
         } catch (Exception ex) {
             ex.printStackTrace();
             resp.put("success", false);
-            resp.put("message", ex.getMessage());
+            resp.put("errorMessage", ex.getMessage());
             return ResponseEntity.status(500).body(resp);
         }
     }
@@ -222,7 +263,7 @@ public class PaymentController {
             resp.put("message", available ? "PayOS is operational" : "PayOS is currently unavailable");
         } catch (Exception e) {
             resp.put("available", false);
-            resp.put("message", "Gateway check failed: " + e.getMessage());
+            resp.put("errorMessage", "Gateway check failed: " + e.getMessage());
         }
         return ResponseEntity.ok(resp);
     }

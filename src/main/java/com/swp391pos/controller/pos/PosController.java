@@ -266,7 +266,7 @@ public class PosController {
         } catch (Exception ex) {
             ex.printStackTrace();
             resp.put("success", false);
-            resp.put("message", ex.getMessage());
+            resp.put("errorMessage", ex.getMessage());
             return ResponseEntity.status(500).body(resp);
         }
     }
@@ -321,7 +321,7 @@ public class PosController {
             return ResponseEntity.ok(resp);
         } catch (Exception ex) {
             resp.put("success", false);
-            resp.put("message", ex.getMessage());
+            resp.put("errorMessage", ex.getMessage());
             return ResponseEntity.status(500).body(resp);
         }
     }
@@ -341,7 +341,7 @@ public class PosController {
             if (!settings.containsKey(k) || settings.get(k).isBlank()) {
                 Map<String, Object> err = new HashMap<>();
                 err.put("success", false);
-                err.put("message", "Missing: " + k);
+                err.put("errorMessage", "Missing: " + k);
                 return ResponseEntity.badRequest().body(err);
             }
         }
@@ -367,7 +367,7 @@ public class PosController {
             if (!settings.containsKey(k) || settings.get(k).isBlank()) {
                 Map<String, Object> err = new HashMap<>();
                 err.put("success", false);
-                err.put("message", "Missing: " + k);
+                err.put("errorMessage", "Missing: " + k);
                 return ResponseEntity.badRequest().body(err);
             }
         }
@@ -437,13 +437,13 @@ public class PosController {
             String fullName = body.getOrDefault("fullName", "").trim();
             if (phone.isEmpty() || fullName.isEmpty()) {
                 resp.put("success", false);
-                resp.put("message", "Phone and name are required");
+                resp.put("errorMessage", "Phone and name are required");
                 return ResponseEntity.badRequest().body(resp);
             }
             // Check duplicate
             if (customerService.findByPhoneNumber(phone).isPresent()) {
                 resp.put("success", false);
-                resp.put("message", "Phone number already exists");
+                resp.put("errorMessage", "Phone number already exists");
                 return ResponseEntity.badRequest().body(resp);
             }
             Customer saved = customerService.saveQuick(phone, fullName);
@@ -457,7 +457,7 @@ public class PosController {
             return ResponseEntity.ok(resp);
         } catch (Exception e) {
             resp.put("success", false);
-            resp.put("message", e.getMessage());
+            resp.put("errorMessage", e.getMessage());
             return ResponseEntity.status(500).body(resp);
         }
     }

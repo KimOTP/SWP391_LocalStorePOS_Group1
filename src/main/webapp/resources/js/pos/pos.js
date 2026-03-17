@@ -147,7 +147,7 @@ function renderProductGrid(products) {
         const card = document.createElement('div');
         card.className = 'product-card';
         card.dataset.price = p.price;
-        card.dataset.sku = 'SKU-PROD-' + p.id;
+        card.dataset.sku = p.id; // p.id already contains SKU-PROD-
         card.setAttribute('onclick', 'addToCart(\'' + p.id + '\',\'' + escapeAttr(p.name) + '\',' + p.price + ',\'' + escapeAttr(p.unit || '') + '\')');
         card.innerHTML =
             '<div class="product-img">' +
@@ -180,26 +180,21 @@ let priceMin = 0;
 let priceMax = 0; // 0 means no upper limit
 
 function initPriceDropdown() {
-    // Gather all prices from product and combo cards
-    const allPrices = Array.from(document.querySelectorAll('.product-card, .combo-card'))
-        .map(c => parseFloat(c.dataset.price) || 0)
-        .filter(p => p > 0);
-
-    const rawMax = allPrices.length ? Math.max(...allPrices) : 500000;
-    // Round up to nearest 100
-    const maxPrice = Math.ceil(rawMax / 100) * 100;
-
     const menu = document.getElementById('priceMenu');
     if (!menu) return;
 
-    // Build ranges: 50,000 each
-    const step = 50000;
-    let html = '<div class="pos-dropdown-item" onclick="selectPriceRange(0,0,\'All prices\')">All prices</div>';
-    for (let lo = 0; lo < maxPrice; lo += step) {
-        const hi = Math.min(lo + step, maxPrice);
-        const label = parseFloat(lo).toLocaleString('vi-VN') + 'đ – ' + parseFloat(hi).toLocaleString('vi-VN') + 'đ';
-        html += '<div class="pos-dropdown-item" onclick="selectPriceRange(' + lo + ',' + hi + ',\'' + label + '\')">' + label + '</div>';
-    }
+    const ranges = [
+        { min: 0, max: 0, label: 'All prices' },
+        { min: 50000, max: 0, label: '> 50.000đ' },
+        { min: 100000, max: 0, label: '> 100.000đ' },
+        { min: 250000, max: 0, label: '> 250.000đ' },
+        { min: 500000, max: 0, label: '> 500.000đ' }
+    ];
+
+    let html = '';
+    ranges.forEach(r => {
+        html += `<div class="pos-dropdown-item" onclick="selectPriceRange(${r.min}, ${r.max}, '${r.label}')">${r.label}</div>`;
+    });
     menu.innerHTML = html;
 }
 
@@ -227,15 +222,22 @@ function applyFilters() {
     const box = document.getElementById('mainSearchBox') || document.querySelector('.search-box');
     const q   = (box ? box.value.trim().toLowerCase() : '');
 
-    document.querySelectorAll('#productGrid .product-card, #comboGrid .product-card').forEach(card => {
+    document.querySelectorAll('.product-card, .combo-card').forEach(card => {
         // --- search match ---
         const name = (card.querySelector('.product-name')?.textContent || '').toLowerCase();
-        const sku  = (card.dataset.sku  || '').toLowerCase();
+        const sku  = (card.dataset.sku || '').toLowerCase();
         const searchOk = !q || name.includes(q) || sku.includes(q);
 
         // --- price match ---
         const price   = parseFloat(card.dataset.price) || 0;
-        const priceOk = (priceMax === 0) || (price >= priceMin && price <= priceMax);
+        let priceOk = true;
+        if (priceMin > 0 || priceMax > 0) {
+            if (priceMax > 0) {
+                priceOk = (price >= priceMin && price <= priceMax);
+            } else {
+                priceOk = (price >= priceMin);
+            }
+        }
 
         card.style.display = (searchOk && priceOk) ? '' : 'none';
     });
@@ -298,7 +300,7 @@ function applyTemplate() {
     }).catch(() => {});
 
     closePrintTemplate();
-    showToast('Template saved!', 'success');
+    Toast.fire({ icon: 'success', title: 'Template saved!' });
 }
 
 /* ============================================================
@@ -307,30 +309,13 @@ function applyTemplate() {
 function openBankConfig() { document.getElementById('bankConfigModal').style.display = 'flex'; }
 function closeModal(id)   { document.getElementById(id).style.display = 'none'; }
 
-/* ============================================================
-   TOAST
-   ============================================================ */
-function showToast(msg, type) {
-    const t = document.createElement('div');
-    t.textContent = msg;
-    t.style.cssText = [
-        'position:fixed','bottom:24px','right:24px',
-        'padding:10px 20px','border-radius:8px',
-        'font-family:Inter,sans-serif','font-size:.85rem','font-weight:600',
-        'color:#fff','z-index:9999','box-shadow:0 4px 14px rgba(0,0,0,.15)',
-        'background:' + (type === 'success' ? '#10b981' : '#ef4444'),
-        'transition:opacity .3s'
-    ].join(';');
-    document.body.appendChild(t);
-    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 2700);
-}
 
 /* ============================================================
    CHECKOUT / GO TO PAYMENT
    ============================================================ */
 async function goToPayment() {
     if (cart.length === 0) {
-        showToast('The shopping cart is empty!', 'error');
+        Toast.fire({ icon: 'error', title: 'The shopping cart is empty!' });
         return;
     }
 
@@ -364,10 +349,10 @@ async function goToPayment() {
         if (data.success) {
             window.location.href = (window.contextPath || '') + '/pos/payment?orderId=' + data.orderId;
         } else {
-            throw new Error(data.message || 'Checkout failed');
+            throw new Error(data.errorMessage || 'Checkout failed');
         }
     } catch (err) {
-        showToast('Error: ' + err.message, 'error');
+        Toast.fire({ icon: 'error', title: err.message });
         if (btn) {
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-credit-card me-2"></i>PAY';
@@ -416,6 +401,33 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'F1') {
             e.preventDefault();
             document.getElementById('mainSearchBox')?.focus();
+        }
+    });
+
+    // Enter in search box → add to cart if matching SKU
+    document.getElementById('mainSearchBox')?.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const q = this.value.trim().toUpperCase();
+            if (!q) return;
+
+            // Find item with exact match on data-sku OR data-id (case-insensitive)
+            const cards = document.querySelectorAll('.product-card, .combo-card');
+            let match = null;
+
+            for (let card of cards) {
+                const sku = (card.dataset.sku || '').toUpperCase();
+                const id  = (card.dataset.id  || '').toUpperCase();
+                if (sku === q || id === q) {
+                    match = card;
+                    break;
+                }
+            }
+
+            if (match) {
+                match.click();
+                this.value = '';
+                applyFilters();
+            }
         }
     });
 
@@ -522,9 +534,9 @@ function saveBankConfig() {
     const accountNum  = document.getElementById('bankAccountNumber')?.value?.trim();
     const accountName = document.getElementById('bankAccountName')?.value?.trim();
 
-    if (!bankCode) { showToast('Please choose a bank!', 'error'); return; }
-    if (!accountNum) { showToast('Please enter account number!', 'error'); return; }
-    if (!accountName) { showToast('Please enter account name!', 'error'); return; }
+    if (!bankCode) { Toast.fire({ icon: 'error', title: 'Please choose a bank!' }); return; }
+    if (!accountNum) { Toast.fire({ icon: 'error', title: 'Please enter account number!' }); return; }
+    if (!accountName) { Toast.fire({ icon: 'error', title: 'Please enter account name!' }); return; }
 
     const payload = { bankCode, bankName: selectedBank?.name, accountNumber: accountNum, accountName };
 
@@ -537,7 +549,7 @@ function saveBankConfig() {
     try { localStorage.setItem('posBankConfig', JSON.stringify(payload)); } catch(_) {}
 
     closeModal('bankConfigModal');
-    showToast('Bank configuration saved!', 'success');
+    Toast.fire({ icon: 'success', title: 'Bank configuration saved!' });
 }
 
 /* ============================================================
