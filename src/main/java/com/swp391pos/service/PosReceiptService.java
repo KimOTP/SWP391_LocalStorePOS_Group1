@@ -1,10 +1,12 @@
 package com.swp391pos.service;
 
 import com.swp391pos.entity.PosReceipt;
+import com.swp391pos.entity.OrderPromotion;
 import com.swp391pos.enums.OrderStatusName;
 import com.swp391pos.enums.PaymentMethod;
 import com.swp391pos.repository.PosReceiptRepository;
 import com.swp391pos.repository.OrderItemRepository;
+import com.swp391pos.repository.OrderPromotionRepository;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class PosReceiptService {
@@ -29,6 +32,9 @@ public class PosReceiptService {
 
     @Autowired
     private OrderItemRepository orderItemRepository;
+
+    @Autowired
+    private OrderPromotionRepository orderPromotionRepository;
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final DateTimeFormatter DATETIME_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -139,6 +145,14 @@ public class PosReceiptService {
             // Customer (nullable – walk-in guest allowed)
             detail.put("customerName", order.getCustomer() != null
                     ? order.getCustomer().getFullName() : "Guest");
+
+            // Promotions
+            List<OrderPromotion> orderPromos = orderPromotionRepository.findByOrder_OrderId(order.getOrderId());
+            String promotionNames = orderPromos.stream()
+                    .map(op -> op.getPromotion().getPromoName())
+                    .distinct()
+                    .collect(Collectors.joining(", "));
+            detail.put("promotionNames", promotionNames.isEmpty() ? "—" : promotionNames);
 
             // Cashier from Order.employee
             detail.put("cashierName", order.getEmployee() != null

@@ -7,6 +7,8 @@ import com.swp391pos.entity.*;
 import com.swp391pos.enums.OrderStatusName;
 import com.swp391pos.enums.PaymentMethod;
 import com.swp391pos.enums.PaymentStatus;
+import com.swp391pos.repository.OrderPromotionRepository;
+import com.swp391pos.repository.PromotionRepository;
 import com.swp391pos.service.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,8 @@ public class PaymentController {
     private final SystemSettingService systemSettingService;
     private final com.swp391pos.gateway.PaymentGateway paymentGateway;
     private final CustomerService customerService;
+    private final OrderPromotionRepository orderPromotionRepository;
+    private final PromotionRepository promotionRepository;
 
     /* ================================================================
        PAYMENT PAGE
@@ -148,6 +152,37 @@ public class PaymentController {
 
             if (isFirstPaymentForOrder) {
                 paymentService.deductStockAfterPayment(orderId);
+
+                // Record applied promotions to OrderPromotion table
+                try {
+                    List<OrderItem> currentItems = orderItemService.findByOrder(order);
+                    List<PaymentDTO.OrderItemDTO> cartItems = currentItems.stream()
+                            .filter(oi -> oi.getProduct() != null)
+                            .map(oi -> {
+                                PaymentDTO.OrderItemDTO dto = new PaymentDTO.OrderItemDTO();
+                                dto.setOrderId(order.getOrderId());
+                                dto.setProductId(oi.getProduct().getProductId());
+                                dto.setQuantity(oi.getQuantity());
+                                return dto;
+                            }).collect(Collectors.toList());
+
+                    PaymentDTO.PaymentSummary summary = posService.calculatePromotion(cartItems);
+                    if (summary.getItems() != null) {
+                        for (PaymentDTO.PaymentItem pi : summary.getItems()) {
+                            if (pi.getPromotionId() != null && pi.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
+                                promotionRepository.findById(pi.getPromotionId()).ifPresent(promo -> {
+                                    OrderPromotion op = new OrderPromotion();
+                                    op.setOrder(order);
+                                    op.setPromotion(promo);
+                                    op.setDiscountAmount(pi.getDiscountAmount());
+                                    orderPromotionRepository.save(op);
+                                });
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    System.err.println("Error saving promotions: " + e.getMessage());
+                }
             }
 
             // Tạo PosReceipt sau khi thanh toán thành công

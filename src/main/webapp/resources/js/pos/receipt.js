@@ -68,6 +68,7 @@ function populateModal(data) {
     document.getElementById('detailPayment').textContent  = resolvePaymentLabel(data.paymentMethod);
     document.getElementById('detailSubtotal').textContent = formatCurrency(data.subtotal);
     document.getElementById('detailDiscount').textContent = formatCurrency(data.discount);
+    document.getElementById('detailPromotion').textContent = data.promotionNames || '—';
 
     // Big total = subtotal - discount
     const subtotal = data.subtotal  != null ? Number(data.subtotal)  : 0;
@@ -379,7 +380,7 @@ function formatCurrency(val) {
 
 function resolvePaymentLabel(method) {
     if (!method) return '—';
-    const map = { CASH: 'Cashing', BANKING: 'Banking', QR: 'QR' };
+    const map = { CASH: 'Cashing', BANKING: 'Banking' };
     return map[method.toUpperCase()] || method;
 }
 
