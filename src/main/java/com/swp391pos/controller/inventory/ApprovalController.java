@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
@@ -28,9 +29,14 @@ public class ApprovalController {
 
     @PostMapping("/approval/action")
     public String handleAction(@RequestParam String type, @RequestParam Integer id,
-                               @RequestParam boolean approve, HttpSession session) {
+                               @RequestParam boolean approve, HttpSession session, RedirectAttributes ra) {
         Account acc = (Account) session.getAttribute("loggedInAccount");
+        try {
         approvalService.processApproval(type, id, approve, acc);
+        ra.addFlashAttribute("notification", "Product status updated successfully!");
+        }catch(Exception e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/inventory/approval/queue";
     }
     @GetMapping("/log/show")
