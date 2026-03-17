@@ -34,7 +34,7 @@ public class NotificationController {
 
         List<Notification> notifications =
                 notificationRepository
-                        .findTop10ByReceiver_EmployeeIdOrderByCreatedAtDesc(empId);
+                        .findByReceiver_EmployeeIdOrderByCreatedAtDesc(empId);
 
         LocalDate today = LocalDate.now();
 

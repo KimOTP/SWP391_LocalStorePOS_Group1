@@ -1,4 +1,9 @@
 /* ===== 1. MAIN LAYOUT (Giống product-manage) ===== */
+/* NGĂN LÒI RA NGOÀI */
+.row {
+    overflow: hidden;
+}
+
 .main-content {
     background-color: #f8fafc !important;
     padding: 30px 40px !important;
@@ -61,6 +66,10 @@
     display: flex;
     align-items: center;
     transition: all 0.2s ease;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .info-box:hover {
@@ -264,14 +273,18 @@
 .manage-card {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
+
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 16px;
-    padding: 18px 20px;
+    padding: 16px;
+
     text-decoration: none;
     transition: all 0.2s ease;
-    cursor: pointer;
+
+    height: 100%;              /* ⭐ QUAN TRỌNG */
+    min-height: 80px;          /* ⭐ đều nhau */
 }
 
 .manage-card:hover {
@@ -295,9 +308,13 @@
 
 .manage-card-label {
     flex: 1;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     color: #334155;
+
+    white-space: nowrap;       /* không xuống dòng */
+    overflow: hidden;
+    text-overflow: ellipsis;   /* ... */
 }
 
 .manage-card-arrow {
