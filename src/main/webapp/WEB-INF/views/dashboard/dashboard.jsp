@@ -47,8 +47,10 @@
                         <span class="stat-label">Today's Orders</span>
                         <i class="fa-solid fa-cart-shopping text-primary"></i>
                     </div>
-                    <h2 class="stat-value">5</h2>
-                    <span class="stat-sub">Completed: 4 | Pending: 1</span>
+                    <h2 class="stat-value">${ordersToday}</h2>
+                    <span class="stat-sub">
+                        All Orders
+                    </span>
                 </div>
             </div>
         </div>
@@ -72,7 +74,7 @@
         <%-- 1. CHUNG CHO TẤT CẢ ROLE (Hoặc cụ thể từng role) --%>
         <c:if test="${sessionScope.role == 'MANAGER' || sessionScope.role == 'CASHIER'}">
             <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                
                 <a href="<c:url value='/pos' />" class="app-card">
                     <div class="app-icon-wrapper bg-pos">
                         <i class="fa-solid fa-cash-register"></i>
@@ -87,7 +89,7 @@
         <%-- 2. DÀNH RIÊNG CHO MANAGER (Hiển thị tất cả các dịch vụ quản lý & HR) --%>
         <c:if test="${sessionScope.role == 'MANAGER'}">
             <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                
                 <a href="<c:url value='/products/manage' />" class="app-card">
                     <div class="app-icon-wrapper bg-product">
                         <i class="fa-solid fa-boxes-stacked"></i>
@@ -98,7 +100,7 @@
             </div>
 
             <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                
                 <a href="/customer" class="app-card">
                     <div class="app-icon-wrapper bg-customer">
                         <i class="fa-solid fa-user-group"></i>
@@ -109,7 +111,7 @@
             </div>
 
             <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                
                 <a href="/promotion" class="app-card">
                     <div class="app-icon-wrapper bg-warning text-white">
                         <i class="fa-solid fa-tags"></i>
@@ -119,19 +121,9 @@
                 </a>
             </div>
 
-            <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
-                <a href="/inventory/dashboard" class="app-card">
-                    <div class="app-icon-wrapper bg-inventory">
-                        <i class="fa-solid fa-warehouse"></i>
-                    </div>
-                    <div class="app-title">Inventory</div>
-                    <div class="app-desc">Stock Control</div>
-                </a>
-            </div>
 
             <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                
                 <a href="/suppliers" class="app-card">
                     <div class="app-icon-wrapper bg-secondary text-white">
                         <i class="fa-solid fa-truck-field"></i>
@@ -142,7 +134,7 @@
             </div>
 
             <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                
                 <a href="/inventory/approval/queue" class="app-card">
                     <div class="app-icon-wrapper bg-danger text-white">
                         <i class="fa-solid fa-clipboard-check"></i>
@@ -153,7 +145,7 @@
             </div>
 
             <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                
                 <a href="/hr/manager_profile" class="app-card">
                     <div class="app-icon-wrapper bg-dark text-white">
                         <i class="fa-solid fa-user-gear"></i>
@@ -164,7 +156,7 @@
             </div>
 
             <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                
                 <a href="/hr/employee_list" class="app-card">
                     <div class="app-icon-wrapper bg-primary text-white">
                         <i class="fa-solid fa-address-book"></i>
@@ -174,7 +166,7 @@
                 </a>
             </div>
             <div class="app-wrapper">
-            <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+            
             <a href="/shift/shift_change_req" class="app-card">
                 <div class="app-icon-wrapper bg-warning text-white">
                     <i class="fa-solid fa-calendar-day"></i>
@@ -185,7 +177,7 @@
         </div>
 
         <div class="app-wrapper">
-            <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+            
             <a href="/shift/attendance" class="app-card">
                 <div class="app-icon-wrapper bg-success text-white">
                     <i class="fa-solid fa-user-clock"></i>
@@ -195,7 +187,7 @@
             </a>
         </div>
             <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                
                 <a href="/reports" class="app-card">
                     <div class="app-icon-wrapper bg-report">
                         <i class="fa-solid fa-chart-pie"></i>
@@ -209,7 +201,7 @@
         <%-- 3. DÀNH CHO MANAGER VÀ INVENTORY STAFF (Dựa trên ảnh path code của bạn) --%>
         <c:if test="${sessionScope.role == 'MANAGER' || sessionScope.role == 'INVENTORY STAFF'}">
             <div class="app-wrapper">
-                        <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                        
                         <a href="/inventory/dashboard" class="app-card">
                             <div class="app-icon-wrapper bg-inventory">
                                 <i class="fa-solid fa-warehouse"></i>
@@ -219,7 +211,7 @@
                         </a>
                     </div>
             <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                
                 <a href="/stockIn/add" class="app-card">
                     <div class="app-icon-wrapper bg-info text-white">
                         <i class="fa-solid fa-file-invoice"></i>
@@ -230,7 +222,7 @@
             </div>
 
             <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                
                 <a href="/stockIn/notifications" class="app-card">
                     <div class="app-icon-wrapper bg-info text-white">
                         <i class="fa-solid fa-bell"></i>
@@ -241,7 +233,7 @@
             </div>
 
             <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                
                 <a href="/stockOut/add" class="app-card">
                     <div class="app-icon-wrapper bg-success text-white">
                         <i class="fa-solid fa-truck-ramp-box"></i>
@@ -252,7 +244,7 @@
             </div>
 
             <div class="app-wrapper">
-                <i class="fa-regular fa-star star-btn" onclick="toggleFavorite(this)"></i>
+                
                 <a href="/audit/add" class="app-card">
                     <div class="app-icon-wrapper bg-primary text-white">
                         <i class="fa-solid fa-magnifying-glass-chart"></i>
