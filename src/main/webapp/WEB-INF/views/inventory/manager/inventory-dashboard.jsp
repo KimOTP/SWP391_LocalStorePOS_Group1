@@ -118,7 +118,7 @@
             </thead>
             <tbody>
             <c:forEach items="${inventoryList}" var="i">
-                <c:set var="isLow" value="${i.currentQuantity <= i.minThreshold}" />
+                <c:set var="isLow" value="${i.currentQuantity < i.minThreshold}" />
                 <tr>
                     <td class="td-cell align-middle text-center">
                         <div class="d-flex align-items-center justify-content-center h-100">
