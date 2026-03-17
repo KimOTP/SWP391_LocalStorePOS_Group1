@@ -244,8 +244,14 @@ public class ReportService {
         Map<String, Integer> salesCount = new HashMap<>();
         itemsByOrderId.values().forEach(items ->
                 items.forEach(item -> {
+                    String name = null;
                     if (item.getProduct() != null) {
-                        String name = item.getProduct().getProductName();
+                        name = item.getProduct().getProductName();
+                    } else if (item.getCombo() != null) {
+                        name = item.getCombo().getComboName();
+                    }
+
+                    if (name != null) {
                         salesCount.merge(name, item.getQuantity(), Integer::sum);
                     }
                 })
