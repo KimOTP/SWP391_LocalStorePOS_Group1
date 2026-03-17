@@ -93,6 +93,7 @@
             <div class="info-label">Title</div>
             <div class="info-box">
                 <input type="text"
+                       value="${title}"
                        name="title"
                        class="info-input"
                        placeholder="Enter note title">
@@ -102,6 +103,7 @@
             <div class="info-label">Content</div>
             <div class="info-box">
                 <input type="text"
+                       value="${content}"
                        name="content"
                        class="info-input"
                        placeholder="Enter your note">
