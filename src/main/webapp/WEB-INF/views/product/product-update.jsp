@@ -32,8 +32,9 @@
                         <div class="col-md-4 border-end">
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Product Code (SKU)</label>
-                                <input type="text" name="oldId" class="form-control input-custom"
-                                       value="${product.productId}" readonly>
+                                <input type="text" name="productName" class="form-control input-custom"
+                                       value="${product.productName}" placeholder="Enter name..."
+                                       required minlength="1" maxlength="64">
                             </div>
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Product Name</label>
@@ -89,7 +90,8 @@
                                 <label class="form-label text-muted fw-bold small">Selling Price</label>
                                 <div class="input-group-custom">
                                     <input type="number" name="price" class="form-control input-custom"
-                                           value="${product.price}" placeholder="0">
+                                           value="${product.price}" placeholder="0"
+                                           required min="0">
                                     <span class="currency-suffix">đ</span>
                                 </div>
                             </div>
@@ -100,7 +102,9 @@
                                         <c:if test="${st.productStatusId != 3}">
                                         <div class="status-item">
                                             <input type="radio" name="statusId" id="st-${st.productStatusId}"
-                                                   value="${st.productStatusId}" ${st.productStatusId == product.status.productStatusId ? 'checked' : ''}>
+                                                   value="${st.productStatusId}"
+                                                   required
+                                                   ${st.productStatusId == product.status.productStatusId ? 'checked' : ''}>
                                             <label for="st-${st.productStatusId}">${st.productStatusName}</label>
                                         </div>
                                         </c:if>
@@ -148,5 +152,36 @@
     </div>
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
  <script src="<c:url value='/resources/js/product/product-app.js' />"></script>
+ <script>
+     document.querySelector('form').addEventListener('submit', function(e) {
+         let isValid = true;
+
+         // Xóa lỗi cũ
+         document.querySelectorAll('.error-msg').forEach(el => el.remove());
+
+         // Validate Category
+         const categoryId = document.getElementById('selectedCategoryId').value;
+         if (!categoryId) {
+             showError('selectedCategoryId', 'Please select a category.');
+             isValid = false;
+         }
+
+         // Validate Unit
+         const unit = document.getElementById('selectedUnit').value;
+         if (!unit) {
+             showError('selectedUnit', 'Please select a unit.');
+             isValid = false;
+         }
+
+         if (!isValid) e.preventDefault();
+     });
+
+     function showError(elementId, message) {
+         const el = document.createElement('div');
+         el.className = 'text-danger small mt-1 error-msg';
+         el.innerText = message;
+         document.getElementById(elementId).closest('.mb-4, .mb-0').appendChild(el);
+     }
+ </script>
 </body>
 </html>
