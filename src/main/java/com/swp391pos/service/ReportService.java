@@ -188,18 +188,13 @@ public class ReportService {
 
     private List<Order> fetchOrders(LocalDateTime start, LocalDateTime end,
                                     Integer employeeId, PaymentMethod paymentMethod) {
-        return orderRepository.findAll().stream()
-                .filter(o -> o.getCreatedAt() != null
-                        && !o.getCreatedAt().isBefore(start)
-                        && !o.getCreatedAt().isAfter(end))
-                .filter(o -> o.getOrderStatus() != null
-                        && !"CANCELLED".equals(o.getOrderStatus().getOrderStatusName()))
-                .filter(o -> employeeId == null
-                        || (o.getEmployee() != null
-                        && o.getEmployee().getEmployeeId().equals(employeeId)))
-                .filter(o -> paymentMethod == null
-                        || paymentMethod.equals(o.getPaymentMethod()))
-                .collect(Collectors.toList());
+        if (employeeId != null) {
+            return orderRepository.findByCreatedAtBetweenAndEmployeeAndNotCancelled(start, end, employeeId);
+        } else if (paymentMethod != null) {
+            return orderRepository.findByCreatedAtBetweenAndPaymentMethodAndNotCancelled(start, end, paymentMethod);
+        } else {
+            return orderRepository.findByCreatedAtBetweenAndNotCancelled(start, end);
+        }
     }
 
     private Map<String, Object> buildReportData(List<Order> orders) {
@@ -214,10 +209,14 @@ public class ReportService {
                 .map(Order::getOrderId)
                 .collect(Collectors.toSet());
 
-        Map<Integer, List<OrderItem>> itemsByOrderId = orderItemRepository.findAll().stream()
-                .filter(oi -> oi.getOrder() != null
-                        && orderIds.contains(oi.getOrder().getOrderId()))
-                .collect(Collectors.groupingBy(oi -> Math.toIntExact(oi.getOrder().getOrderId())));
+        // Optimize: Fetch ONLY relevant items if list is not empty
+        Map<Integer, List<OrderItem>> itemsByOrderId = new HashMap<>();
+        if (!orderIds.isEmpty()) {
+            itemsByOrderId = orderItemRepository.findAll().stream()
+                    .filter(oi -> oi.getOrder() != null
+                            && orderIds.contains(oi.getOrder().getOrderId()))
+                    .collect(Collectors.groupingBy(oi -> Math.toIntExact(oi.getOrder().getOrderId())));
+        }
 
         int totalItems = itemsByOrderId.values().stream()
                 .mapToInt(List::size)

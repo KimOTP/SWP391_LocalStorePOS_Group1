@@ -164,12 +164,10 @@ function doPost(url, params) {
 
 // ── Update summary cards ─────────────────────────────────────
 function updateSummary(d) {
-    setEl('totalRevenue',        fmtVND(d.totalRevenue));
+    setEl('totalSales',           fmtVND(d.totalRevenue));
     setEl('totalOrders',         d.totalOrders != null ? d.totalOrders : 0);
     setEl('averageValuePerUnit', fmtVND(d.averageValuePerUnit));
     setEl('bestSellingProduct',  d.bestSellingProduct || 'N/A');
-    var b = document.getElementById('orderCountBadge');
-    if (b) b.textContent = (d.totalOrders != null ? d.totalOrders : 0) + ' orders';
 }
 
 // ── Update order table ───────────────────────────────────────

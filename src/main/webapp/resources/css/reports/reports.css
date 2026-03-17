@@ -7,14 +7,19 @@
 :root {
     --sb-collapsed:  80px;
     --sb-expanded:   260px;
-    --sb-blue:       #2563eb;
+    --sb-blue:       #0ea5e9; /* Vibrant sky blue */
+    --sb-blue-dark:  #0284c7;
+    --sb-blue-light: #e0f2fe;
     --sb-text:       #64748b;
-    --sb-font:       'Inter', 'Segoe UI', Roboto, sans-serif;
+    --sb-font:       'Outfit', 'Inter', 'Segoe UI', Roboto, sans-serif;
     --transition:    0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --border:        #e2e8f0;
-    --radius:        12px;
-    --shadow-sm:     0 1px 3px rgba(0,0,0,0.07);
+    --radius:        16px;
+    --shadow-sm:     0 1px 3px rgba(0,0,0,0.05);
+    --shadow-md:     0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+    --shadow-lg:     0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
     --header-h:      70px;
+    --primary-gradient: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -68,34 +73,52 @@ body {
 .rpt-btn {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
+    gap: 8px;
+    padding: 10px 20px;
     background: #fff;
     border: 1.5px solid var(--border);
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 0.82rem;
+    font-size: 0.875rem;
     font-weight: 600;
     color: #334155;
     font-family: var(--sb-font);
     white-space: nowrap;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     line-height: 1.5;
+    box-shadow: var(--shadow-sm);
 }
 .rpt-btn:hover {
     border-color: var(--sb-blue);
     color: var(--sb-blue);
-    background: #eff6ff;
+    background: var(--sb-blue-light);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.rpt-btn-primary {
+    background: var(--primary-gradient);
+    color: #fff;
+    border: none;
+}
+.rpt-btn-primary:hover {
+    color: #fff;
+    background: var(--primary-gradient);
+    filter: brightness(1.1);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 .rpt-btn-ghost {
     background: transparent;
     color: var(--sb-text);
+    box-shadow: none;
 }
 .rpt-btn-ghost:hover {
     background: #f1f5f9;
     border-color: #cbd5e1;
     color: #334155;
+    transform: none;
+    box-shadow: none;
 }
 
 /* ── Export Excel button (btn-outline-success) ─────────── */
@@ -142,16 +165,17 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 16px;
+    padding: 12px 20px;
+    background: linear-gradient(to right, #ffffff, #f8fafc);
 }
 
 .rpt-filter-bar-label {
-    font-size: 0.83rem;
-    font-weight: 600;
-    color: #334155;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #1e293b;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
 }
 .rpt-filter-bar-label i { color: var(--sb-blue); }
 
@@ -251,18 +275,18 @@ body {
 .rpt-date-bar {
     background: #fff;
     border: 1.5px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     text-align: center;
-    padding: 9px 16px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #334155;
-    margin-bottom: 20px;
+    padding: 12px 20px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 24px;
     box-shadow: var(--shadow-sm);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
 }
 .rpt-date-bar::before {
     content: "\F1F0";           /* bi-calendar-range */
@@ -284,7 +308,7 @@ body {
 .rpt-card {
     background: #fff;
     border: 1.5px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: 12px;
     padding: 16px 18px 14px;
     box-shadow: var(--shadow-sm);
     transition: box-shadow 0.2s, border-color 0.2s;
@@ -400,7 +424,11 @@ body {
 }
 
 .rpt-table tbody tr:last-child td { border-bottom: none; }
-.rpt-table tbody tr:hover          { background: #f8fafc; }
+.rpt-table tbody tr:hover {
+    background: #f0f9ff;
+    box-shadow: inset 0 0 0 1px var(--sb-blue);
+    cursor: pointer;
+}
 
 /* Status badge */
 .rpt-status-badge {
