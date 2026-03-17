@@ -33,17 +33,26 @@ public class SystemSettingService {
 
     //  Cập nhật point config
     public void updateSetting(String key, String value, Employee updater) {
+        try {
+            if (key.equals("POINT_EARNING_RATE") || key.equals("POINT_REDEMPTION_VALUE") || key.equals("MIN_POINT_TO_REDEEM")) {
+                if (Double.parseDouble(value) < 0) {
+                    throw new IllegalArgumentException(key + " must >= 0");
+                }
+            } else if (key.equals("MAX_REDEEM_PERCENT")) {
+                double percent = Double.parseDouble(value);
+                if (percent < 0 || percent > 100) {
+                    throw new IllegalArgumentException(key + " must from 0 to 100");
+                }
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(key + " must is valid digits");
+        }
+
         SystemSetting setting = settingRepository.findById(key).orElse(null);
         if (setting != null) {
             setting.setSettingValue(value);
             setting.setUpdatedAt(LocalDateTime.now());
-
-            // XỬ LÝ UPDATE BY
-            // Tạm thời lấy Employee ID = 2 (Admin/Manager) như trong SQL mẫu của bạn
-            // Sau này bạn thay bằng: employeeRepository.findById(sessionUserId)...
-            //Employee updater = employeeRepository.findById(2).orElse(null);
             setting.setUpdatedBy(updater);
-
             settingRepository.save(setting);
         }
     }
