@@ -212,26 +212,27 @@ public class ReportService {
         // Optimize: Fetch ONLY relevant items if list is not empty
         Map<Integer, List<OrderItem>> itemsByOrderId = new HashMap<>();
         if (!orderIds.isEmpty()) {
-            itemsByOrderId = orderItemRepository.findAll().stream()
-                    .filter(oi -> oi.getOrder() != null
-                            && orderIds.contains(oi.getOrder().getOrderId()))
+            itemsByOrderId = orderItemRepository.findByOrder_OrderIdIn(orderIds).stream()
+                    .filter(oi -> oi.getOrder() != null)
                     .collect(Collectors.groupingBy(oi -> Math.toIntExact(oi.getOrder().getOrderId())));
         }
 
-        int totalItems = itemsByOrderId.values().stream()
-                .mapToInt(List::size)
+        // Sum of quantities SOLD for a more accurate "Avg. Value / Unit"
+        int totalQuantitySold = itemsByOrderId.values().stream()
+                .flatMap(List::stream)
+                .mapToInt(OrderItem::getQuantity)
                 .sum();
 
         BigDecimal avgPerUnit = BigDecimal.ZERO;
-        if (totalItems > 0) {
-            avgPerUnit = totalRevenue.divide(BigDecimal.valueOf(totalItems), 0, RoundingMode.HALF_UP);
+        if (totalQuantitySold > 0) {
+            avgPerUnit = totalRevenue.divide(BigDecimal.valueOf(totalQuantitySold), 0, RoundingMode.HALF_UP);
         }
 
         String bestSelling = getBestSellingProduct(itemsByOrderId);
 
         report.put("totalRevenue",        totalRevenue);
         report.put("totalOrders",         orders.size());
-        report.put("totalItems",          totalItems);
+        report.put("totalItems",          totalQuantitySold); // Update key to reflect quantity if needed
         report.put("averageValuePerUnit", avgPerUnit);
         report.put("bestSellingProduct",  bestSelling);
         report.put("orders",              orders);

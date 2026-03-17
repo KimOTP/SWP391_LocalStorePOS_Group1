@@ -300,13 +300,22 @@ function toggleDatePicker(e) {
 function applyDateFilter() {
     const from = document.getElementById('dateFrom').value;
     const to   = document.getElementById('dateTo').value;
-    if (from || to) {
-        const fromLabel = from ? formatDisplayDate(from) : '...';
-        const toLabel   = to   ? formatDisplayDate(to)   : '...';
-        document.getElementById('dateRangeLabel').textContent = fromLabel + ' – ' + toLabel;
-        document.getElementById('dateRangeBtn').style.borderColor = '#2563eb';
-        document.getElementById('dateRangeBtn').style.color = '#2563eb';
+
+    if (!from || !to) {
+        Toast.fire({ icon: 'warning', title: 'Please select both from and to dates.' });
+        return;
     }
+    if (from > to) {
+        Toast.fire({ icon: 'warning', title: 'From date cannot be after to date.' });
+        return;
+    }
+
+    const fromLabel = formatDisplayDate(from);
+    const toLabel   = formatDisplayDate(to);
+    document.getElementById('dateRangeLabel').textContent = fromLabel + ' – ' + toLabel;
+    document.getElementById('dateRangeBtn').style.borderColor = '#2563eb';
+    document.getElementById('dateRangeBtn').style.color = '#2563eb';
+
     document.getElementById('datePickerPopup').classList.remove('open');
     filterTable();
 }
