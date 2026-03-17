@@ -32,6 +32,11 @@ public class NoteController {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    private void keepForm(RedirectAttributes redirect, String title, String content) {
+        redirect.addFlashAttribute("title", title);
+        redirect.addFlashAttribute("content", content);
+    }
+
     @GetMapping("/note")
     public String notePage(Model model) {
 
@@ -78,30 +83,35 @@ public class NoteController {
         // CHECK SHIFT
         if (shiftId == null) {
             redirect.addFlashAttribute("errorMessage", "Please select shift!");
+            keepForm(redirect, title, content);
             return "redirect:/hr/note";
         }
 
         // CHECK TITLE EMPTY
         if (title == null || title.trim().isEmpty()) {
             redirect.addFlashAttribute("errorMessage", "Title cannot be empty!");
+            keepForm(redirect, title, content);
             return "redirect:/hr/note";
         }
 
         // CHECK CONTENT EMPTY
         if (content == null || content.trim().isEmpty()) {
             redirect.addFlashAttribute("errorMessage", "Content cannot be empty!");
+            keepForm(redirect, title, content);
             return "redirect:/hr/note";
         }
 
         // CHECK TITLE LENGTH
         if (title.length() > 255) {
             redirect.addFlashAttribute("errorMessage", "Title is too long (max 255 characters)!");
+            keepForm(redirect, title, content);
             return "redirect:/hr/note";
         }
 
         // CHECK CONTENT LENGTH
         if (content.length() > 255) {
             redirect.addFlashAttribute("errorMessage", "Content is too long (max 255 characters)!");
+            keepForm(redirect, title, content);
             return "redirect:/hr/note";
         }
 
