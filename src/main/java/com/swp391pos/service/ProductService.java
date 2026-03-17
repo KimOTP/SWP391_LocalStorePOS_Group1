@@ -246,7 +246,6 @@ public class ProductService {
         List<Combo> listCombo = null;
 
         if (newQuantity <= 0) {
-            // ✅ Fetch ProductStatus từ DB thay vì setId trực tiếp
             ProductStatus outOfStockStatus = productStatusRepository.findById(3).get();
             inventory.getProduct().setStatus(outOfStockStatus);
 
@@ -257,17 +256,15 @@ public class ProductService {
 
         } else {
             if (inventory.getProduct().getStatus().getProductStatusId() == 3) {
-                // ✅ Tương tự, fetch trước rồi set
                 ProductStatus activeStatus = productStatusRepository.findById(1).get();
                 inventory.getProduct().setStatus(activeStatus);
             }
         }
 
-        // ✅ Nên save inventory/product ở đây nếu chưa có cascade
         inventoryRepository.save(inventory);
 
         if (listCombo != null) {
-            comboRepository.saveAll(listCombo); // dùng saveAll cho gọn
+            comboRepository.saveAll(listCombo);
         }
     }
 }
