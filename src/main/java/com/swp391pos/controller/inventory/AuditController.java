@@ -39,10 +39,10 @@ public class AuditController {
             List<Map<String, Object>> items = mapper.readValue(auditDataJson, new TypeReference<>(){});
 
             auditService.saveAuditSession(items, account);
-            ra.addFlashAttribute("message", "Audit session submitted successfully!");
+            ra.addFlashAttribute("notification", "Audit session submitted successfully!");
             ra.addFlashAttribute("status", "success");
         } catch (Exception e) {
-            ra.addFlashAttribute("message", "Error: " + e.getMessage());
+            ra.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
             ra.addFlashAttribute("status", "error");
         }
         return "redirect:/audit/add";

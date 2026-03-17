@@ -53,10 +53,10 @@ public class StockInController {
             List<StockInItemDTO> items = mapper.readValue(itemsJson, new TypeReference<List<StockInItemDTO>>() {});
             stockInService.createRequest(supplierId, items, account);
 
-            ra.addFlashAttribute("message", "Stock-in request created successfully!");
+            ra.addFlashAttribute("notification", "Stock-in request created successfully!");
             ra.addFlashAttribute("status", "success");
         } catch (Exception e) {
-            ra.addFlashAttribute("message", "Error: " + e.getMessage());
+            ra.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
             ra.addFlashAttribute("status", "danger");
         }
         return "redirect:/inventory/dashboard"; // Quay về Dashboard sau khi tạo xong
@@ -97,10 +97,10 @@ public class StockInController {
             List<Map<String, Object>> actualData = mapper.readValue(actualDataJson, new TypeReference<>() {});
 
             stockInService.processStaffInput(stockInId, actualData, staff);
-            ra.addFlashAttribute("message", "Stock-in data submitted for approval!");
+            ra.addFlashAttribute("notification", "Stock-in data submitted for approval!");
             ra.addFlashAttribute("status", "success");
         } catch (Exception e) {
-            ra.addFlashAttribute("message", "Error: " + e.getMessage());
+            ra.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
             ra.addFlashAttribute("status", "danger");
         }
         return "redirect:/stockIn/notifications";

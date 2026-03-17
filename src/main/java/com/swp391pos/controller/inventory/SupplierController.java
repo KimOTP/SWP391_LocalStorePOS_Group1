@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/suppliers")
@@ -21,20 +22,35 @@ public class SupplierController {
     }
 
     @PostMapping("/add")
-    public String createSupplier(@ModelAttribute Supplier supplier) {
-        supplierService.saveSupplier(supplier);
+    public String createSupplier(@ModelAttribute Supplier supplier,RedirectAttributes ra) {
+        try {
+            supplierService.saveSupplier(supplier);
+            ra.addFlashAttribute("notification", "Supplier has been successfully created");
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/suppliers";
     }
 
     @PostMapping("/update")
-    public String updateSupplier(@ModelAttribute Supplier supplier) {
-        supplierService.updateSupplier(supplier);
+    public String updateSupplier(@ModelAttribute Supplier supplier, RedirectAttributes ra) {
+        try {
+            supplierService.updateSupplier(supplier);
+            ra.addFlashAttribute("notification", "Supplier updated successfully!");
+        }catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/suppliers";
     }
 
     @GetMapping("/delete/{id}")
-    public String removeSupplier(@PathVariable Integer id) {
-        supplierService.deleteSupplier(id);
+    public String removeSupplier(@PathVariable Integer id, RedirectAttributes ra) {
+        try {
+            supplierService.deleteSupplier(id);
+            ra.addFlashAttribute("notification", "Supplier has been successfully deleted!");
+        }catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/suppliers";
     }
 }
