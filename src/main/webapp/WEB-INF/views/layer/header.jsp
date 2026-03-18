@@ -337,7 +337,7 @@
     updateClock();
 </script>
 <script>
-    // Global Toast mixin for SweetAlert2
+    document.addEventListener('DOMContentLoaded', function () {
     const Toast = Swal.mixin({
         toast: true,
         position: 'top',
