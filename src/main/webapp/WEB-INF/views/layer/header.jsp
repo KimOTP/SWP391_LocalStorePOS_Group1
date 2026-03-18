@@ -338,21 +338,22 @@
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer);
-                toast.addEventListener('mouseleave', Swal.resumeTimer);
-            },
-            customClass: { popup: 'rounded-3 border-0' },
-            showClass: { popup: 'animate__animated animate__fadeInDown' },
-            hideClass: { popup: 'animate__animated animate__fadeOutUp' }
-        });
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
+        },
+        customClass: { popup: 'rounded-3 border-0' },
+        showClass: { popup: 'animate__animated animate__fadeInDown' },
+        hideClass: { popup: 'animate__animated animate__fadeOutUp' }
+    });
 
+    document.addEventListener('DOMContentLoaded', function () {
         // Lỗi từ Filter (session)
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('authError') === '1') {

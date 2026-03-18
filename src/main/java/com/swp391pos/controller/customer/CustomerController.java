@@ -176,7 +176,8 @@ public class CustomerController {
             redirectAttributes.addFlashAttribute("notification", "The point configuration has been successfully updated.!");
         } catch (Exception e) {
             e.printStackTrace();
-            redirectAttributes.addFlashAttribute("errorMessage", "Configuration update error.");
+            //redirectAttributes.addFlashAttribute("errorMessage", "Configuration update error.");
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
 
         return "redirect:/customer";

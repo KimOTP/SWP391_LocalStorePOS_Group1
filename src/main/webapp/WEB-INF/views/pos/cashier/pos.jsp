@@ -82,7 +82,7 @@
                         <div class="product-card combo-card"
                              data-price="${combo.totalPrice}"
                              data-id="COMBO_${combo.comboId}"
-                             data-sku="SKU-COM-${combo.comboId}"
+                             data-sku="${combo.comboId}"
                              onclick="addToCart('COMBO_${combo.comboId}','${combo.comboName}','${combo.totalPrice}','combo')">
                             <div class="product-img">
                                 <img src="${combo.imageUrl}" alt="${combo.comboName}"
@@ -109,7 +109,7 @@
                     <div class="product-card"
                          data-price="${p.price}"
                          data-id="${p.productId}"
-                         data-sku="SKU-PROD-${p.productId}"
+                         data-sku="${p.productId}"
                          onclick="addToCart('${p.productId}','${p.productName}','${p.price}','${p.unit}')">
                         <div class="product-img">
                             <img src="${p.imageUrl}" alt="${p.productName}"

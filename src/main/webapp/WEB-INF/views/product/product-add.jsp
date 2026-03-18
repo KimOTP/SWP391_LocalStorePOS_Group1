@@ -32,7 +32,9 @@
                             </div>
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Product Name</label>
-                                <input type="text" name="productName" class="form-control input-custom" placeholder="Enter name..." required>
+                                <input type="text" name="productName" class="form-control input-custom"
+                                       placeholder="Enter name..."
+                                       required minlength="1" maxlength="64">
                             </div>
 
                                     <%-- Custom Category Dropdown --%>
@@ -52,6 +54,8 @@
                                            <input type="hidden" name="categoryId" id="selectedCategoryId" required>
                                        </div>
                                    </div>
+                                   <input type="hidden" name="categoryId" id="selectedCategoryId">
+
 
                                    <%-- Custom Unit Dropdown --%>
                                    <div class="mb-0">
@@ -67,9 +71,10 @@
                                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectUnit('Unit')">Unit</a></li>
                                                <li><a class="dropdown-item" href="javascript:void(0)" onclick="selectUnit('Bottle')">Bottle</a></li>
                                            </ul>
-                                           <input type="hidden" name="unit" id="selectedUnit" value="">
+                                           <input type="hidden" name="unit" id="selectedUnit" value="" required>
                                        </div>
                                    </div>
+
                                </div>
 
                         <%-- Cột 2: Attributes & Dynamic Status --%>
@@ -81,7 +86,9 @@
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Selling Price</label>
                                 <div class="input-group-custom">
-                                    <input type="number" name="price" class="form-control input-custom" placeholder="0">
+                                    <input type="number" name="price" class="form-control input-custom"
+                                           placeholder="0"
+                                           required min="0">
                                     <span class="currency-suffix">đ</span>
                                 </div>
                             </div>
@@ -93,7 +100,7 @@
                                         <c:if test="${st.productStatusId != 3 && st.productStatusId != 1}">
                                             <div class="status-item">
                                                 <input type="radio" name="statusId" id="st-${st.productStatusId}"
-                                                       value="${st.productStatusId}" ${loop.first ? 'checked' : ''}>
+                                                       value="${st.productStatusId}" required ${loop.first ? 'checked' : ''}>
                                                 <label for="st-${st.productStatusId}">${st.productStatusName}</label>
                                             </div>
                                         </c:if>
@@ -133,6 +140,38 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<c:url value='/resources/js/product/product-app.js' />"></script>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            let isValid = true;
+
+            // Xóa lỗi cũ
+            document.querySelectorAll('.error-msg').forEach(el => el.remove());
+
+            // Validate Category
+            const categoryId = document.getElementById('selectedCategoryId').value;
+            if (!categoryId) {
+                showError('selectedCategoryId', 'Please select a category.');
+                isValid = false;
+            }
+
+            // Validate Unit
+            const unit = document.getElementById('selectedUnit').value;
+            if (!unit) {
+                showError('selectedUnit', 'Please select a unit.');
+                isValid = false;
+            }
+
+            if (!isValid) e.preventDefault();
+        });
+
+        function showError(elementId, message) {
+            const el = document.createElement('div');
+            el.className = 'text-danger small mt-1 error-msg';
+            el.innerText = message;
+            document.getElementById(elementId).closest('.mb-4, .mb-0').appendChild(el);
+        }
+    </script>
 </body>
 </body>
 </html>

@@ -298,28 +298,28 @@
         <div class="modal-content border-0 shadow">
 
             <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold fs-4">Import dữ liệu từ Excel</h5>
+                <h5 class="modal-title fw-bold fs-4">Import from Excel</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
             <div class="modal-body pt-4 pb-2">
                 <div class="mb-4">
                     <a href="/promotion/template" class="btn btn-outline-success w-100 rounded-3 py-2 fw-medium">
-                        <i class="fa-solid fa-download me-2"></i> Tải xuống file mẫu
+                        <i class="fa-solid fa-download me-2"></i> Download sample file
                     </a>
                 </div>
 
                 <hr class="text-muted opacity-25">
 
                 <div class="mb-3">
-                    <label class="form-label fw-medium">Chọn file Excel (.xlsx, .xls):</label>
+                    <label class="form-label fw-medium">Choose file Excel (.xlsx, .xls):</label>
                     <input class="form-control" type="file" id="excelFile" accept=".xlsx, .xls">
                 </div>
             </div>
 
             <div class="modal-footer border-0 pt-0">
-                <button type="button" class="btn btn-secondary rounded-3 px-4" data-bs-dismiss="modal">Hủy</button>
-                <button type="button" class="btn btn-primary rounded-3 px-4" id="btnConfirmImport" onclick="uploadExcel(${promotion.promotionId})">Xác nhận Import</button>
+                <button type="button" class="btn btn-secondary rounded-3 px-4" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary rounded-3 px-4" id="btnConfirmImport" onclick="uploadExcel(${promotion.promotionId})">Confirm Import</button>
             </div>
         </div>
     </div>

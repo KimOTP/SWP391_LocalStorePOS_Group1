@@ -37,7 +37,6 @@ public class PaymentService {
 
     private static final int FALLBACK_THRESHOLD_SECONDS = 30;
 
-    // [FIX #1] Gộp lại thành 1 bộ field duy nhất, đặt tên thống nhất
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
     private final PaymentGateway paymentGateway;
@@ -125,13 +124,19 @@ public class PaymentService {
 
         // vì @ManyToOne đã load sẵn (hoặc lazy load khi access)
         Order order = payment.getOrder();
-        order.setPaidAt(LocalDateTime.now());
-        // Nếu có setOrderStatus thì set ở đây:
-        // order.setOrderStatus(orderStatusRepository.findByName("PAID"));
+        boolean isFirstPaymentForOrder = order.getPaidAt() == null;
+        if (isFirstPaymentForOrder) {
+            order.setPaidAt(LocalDateTime.now());
+            // Nếu có setOrderStatus thì set ở đây:
+            // order.setOrderStatus(orderStatusRepository.findByName("PAID"));
+            orderRepository.save(order);
+        }
 
         paymentRepository.save(payment);
-        orderRepository.save(order);
-        deductStockAfterPayment(order.getOrderId());
+
+        if (isFirstPaymentForOrder) {
+            deductStockAfterPayment(order.getOrderId());
+        }
     }
 
 
@@ -159,9 +164,15 @@ public class PaymentService {
             payment.setPaidAt(LocalDateTime.now());
             payment.setAmountPaid(payment.getAmount());
             if (order != null) {
-                order.setPaidAt(LocalDateTime.now());
-                orderRepository.save(order);
-                deductStockAfterPayment(order.getOrderId());
+                boolean isFirstPaymentForOrder = order.getPaidAt() == null;
+                if (isFirstPaymentForOrder) {
+                    order.setPaidAt(LocalDateTime.now());
+                    orderRepository.save(order);
+                }
+
+                if (isFirstPaymentForOrder) {
+                    deductStockAfterPayment(order.getOrderId());
+                }
 
                 // Tạo PosReceipt cho thanh toán online (QR/Banking)
                 boolean receiptExists = posReceiptRepository
@@ -241,9 +252,12 @@ public class PaymentService {
 
                 Order order = payment.getOrder();
                 if (order != null) {
-                    order.setPaidAt(LocalDateTime.now());
-                    orderRepository.save(order);
-                    deductStockAfterPayment(order.getOrderId());
+                    boolean isFirstPaymentForOrder = order.getPaidAt() == null;
+                    if (isFirstPaymentForOrder) {
+                        order.setPaidAt(LocalDateTime.now());
+                        orderRepository.save(order);
+                        deductStockAfterPayment(order.getOrderId());
+                    }
                 }
             }
 
@@ -311,21 +325,48 @@ public class PaymentService {
     public void deductStockAfterPayment(Long orderId) {
         List<OrderItem> items = orderItemRepository.findByOrder_OrderId(orderId);
         for (OrderItem item : items) {
-            if (item.getProduct() == null) continue;
-
-            String productId = item.getProduct().getProductId();
-            Inventory inventory = inventoryRepository.findByProductId(productId);
-            if (inventory == null) {
-                log.warn("[Stock] Inventory not found for productId={}", productId);
-                continue;
+            if (item.getProduct() != null) {
+                deductProductStock(item.getProduct().getProductId(), item.getQuantity());
+            } else if (item.getCombo() != null) {
+                for (com.swp391pos.entity.ComboDetail cd : item.getCombo().getComboDetails()) {
+                    if (cd.getProduct() != null) {
+                        deductProductStock(cd.getProduct().getProductId(), cd.getQuantity() * item.getQuantity());
+                    }
+                }
             }
-
-            int newQty = Math.max(0, inventory.getCurrentQuantity() - item.getQuantity());
-            inventory.setCurrentQuantity(newQty);
-            inventoryRepository.save(inventory);
-
-            productService.updateStockAndSyncStatus(productId, newQty);
-            log.info("[Stock] Product {} deducted by {}, new qty={}", productId, item.getQuantity(), newQty);
         }
+    }
+
+    private void deductProductStock(String productId, int quantityToDeduct) {
+        Optional<Inventory> inventoryOpt = inventoryRepository.findById(productId);
+        Inventory inventory;
+
+        if (inventoryOpt.isEmpty()) {
+            log.warn("[Stock] Inventory not found for productId={}, attempting to create default record", productId);
+            try {
+                com.swp391pos.entity.Product product = productService.getProductById(productId);
+                if (product == null) {
+                    log.error("[Stock] Cannot create inventory: Product {} not found", productId);
+                    return;
+                }
+                inventory = new Inventory();
+                inventory.setProduct(product);
+                inventory.setCurrentQuantity(0);
+                inventory = inventoryRepository.save(inventory);
+                log.info("[Stock] Created missing inventory record for product {}", productId);
+            } catch (Exception e) {
+                log.error("[Stock] Failed to create inventory for product {}: {}", productId, e.getMessage());
+                return;
+            }
+        } else {
+            inventory = inventoryOpt.get();
+        }
+
+        int newQty = Math.max(0, inventory.getCurrentQuantity() - quantityToDeduct);
+        inventory.setCurrentQuantity(newQty);
+        inventoryRepository.save(inventory);
+
+        productService.updateStockAndSyncStatus(productId, newQty);
+        log.info("[Stock] Product {} deducted by {}, new qty={}", productId, quantityToDeduct, newQty);
     }
 }

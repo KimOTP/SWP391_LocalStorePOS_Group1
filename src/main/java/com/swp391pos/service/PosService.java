@@ -65,6 +65,7 @@ public class PosService {
                     lineDiscount = lineOriginalTotal.multiply(percent);
                     pItem.setPromotionNote("- " + appliedPromo.getDiscountValue() + "%");
                 }
+                pItem.setPromotionId(appliedPromo.getPromotion().getPromotionId());
             }
 
             pItem.setDiscountAmount(lineDiscount);
