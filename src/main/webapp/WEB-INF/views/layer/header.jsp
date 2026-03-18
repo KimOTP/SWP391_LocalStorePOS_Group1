@@ -353,7 +353,6 @@
         hideClass: { popup: 'animate__animated animate__fadeOutUp' }
     });
 
-    document.addEventListener('DOMContentLoaded', function () {
         // Lỗi từ Filter (session)
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('authError') === '1') {
