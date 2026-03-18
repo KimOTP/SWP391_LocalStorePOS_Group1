@@ -49,7 +49,10 @@ function viewDetail(receiptNumber) {
             return res.json();
         })
         .then(data => populateModal(data))
-        .catch(() => populateModalFromRow(receiptNumber));
+        .catch(() => {
+            Toast.fire({ icon: 'info', title: 'Loading data from local table...' });
+            populateModalFromRow(receiptNumber);
+        });
 
     document.getElementById('detailModal').classList.add('open');
 }
@@ -65,6 +68,7 @@ function populateModal(data) {
     document.getElementById('detailPayment').textContent  = resolvePaymentLabel(data.paymentMethod);
     document.getElementById('detailSubtotal').textContent = formatCurrency(data.subtotal);
     document.getElementById('detailDiscount').textContent = formatCurrency(data.discount);
+    document.getElementById('detailPromotion').textContent = data.promotionNames || '—';
 
     // Big total = subtotal - discount
     const subtotal = data.subtotal  != null ? Number(data.subtotal)  : 0;
@@ -296,13 +300,22 @@ function toggleDatePicker(e) {
 function applyDateFilter() {
     const from = document.getElementById('dateFrom').value;
     const to   = document.getElementById('dateTo').value;
-    if (from || to) {
-        const fromLabel = from ? formatDisplayDate(from) : '...';
-        const toLabel   = to   ? formatDisplayDate(to)   : '...';
-        document.getElementById('dateRangeLabel').textContent = fromLabel + ' – ' + toLabel;
-        document.getElementById('dateRangeBtn').style.borderColor = '#2563eb';
-        document.getElementById('dateRangeBtn').style.color = '#2563eb';
+
+    if (!from || !to) {
+        Toast.fire({ icon: 'warning', title: 'Please select both from and to dates.' });
+        return;
     }
+    if (from > to) {
+        Toast.fire({ icon: 'warning', title: 'From date cannot be after to date.' });
+        return;
+    }
+
+    const fromLabel = formatDisplayDate(from);
+    const toLabel   = formatDisplayDate(to);
+    document.getElementById('dateRangeLabel').textContent = fromLabel + ' – ' + toLabel;
+    document.getElementById('dateRangeBtn').style.borderColor = '#2563eb';
+    document.getElementById('dateRangeBtn').style.color = '#2563eb';
+
     document.getElementById('datePickerPopup').classList.remove('open');
     filterTable();
 }
@@ -376,7 +389,7 @@ function formatCurrency(val) {
 
 function resolvePaymentLabel(method) {
     if (!method) return '—';
-    const map = { CASH: 'Cashing', BANKING: 'Banking', QR: 'QR' };
+    const map = { CASH: 'Cashing', BANKING: 'Banking' };
     return map[method.toUpperCase()] || method;
 }
 

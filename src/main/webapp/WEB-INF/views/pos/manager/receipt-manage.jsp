@@ -98,7 +98,6 @@
                     <div class="pos-dropdown-item" onclick="selectPayment('', 'All payment methods')">All payment methods</div>
                     <div class="pos-dropdown-item" onclick="selectPayment('CASH', 'Cashing')">Cashing</div>
                     <div class="pos-dropdown-item" onclick="selectPayment('BANKING', 'Banking')">Banking</div>
-                    <div class="pos-dropdown-item" onclick="selectPayment('QR', 'QR')">QR</div>
                 </div>
             </div>
             <input type="hidden" id="paymentFilter" value="">
@@ -185,11 +184,7 @@
                                     <i class="fa-solid fa-building-columns"></i> Banking
                                 </span>
                             </c:when>
-                            <c:when test="${r.paymentMethod == 'QR'}">
-                                <span class="payment-badge qr">
-                                    <i class="fa-solid fa-qrcode"></i> QR
-                                </span>
-                            </c:when>
+
                             <c:otherwise>
                                 <span class="payment-badge cash">
                                     ${not empty r.paymentMethod ? r.paymentMethod : '—'}
@@ -331,6 +326,10 @@
                     <div class="payment-summary-row">
                         <span>Total discount of goods:</span>
                         <span id="detailDiscount">—</span>
+                    </div>
+                    <div class="payment-summary-row">
+                        <span>Promotion name:</span>
+                        <span id="detailPromotion" style="color:#6366f1; font-weight:500;">—</span>
                     </div>
                 </div>
             </div>
