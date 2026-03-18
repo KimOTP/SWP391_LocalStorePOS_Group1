@@ -115,10 +115,6 @@
                                         <label for="st-pending">Pending Approval</label>
                                     </div>
                                     <div class="status-item">
-                                        <input type="radio" name="statusCombo" id="st-active" value="ACTIVE" checked>
-                                        <label for="st-active">Active</label>
-                                    </div>
-                                    <div class="status-item">
                                         <input type="radio" name="statusCombo" id="st-discontinued" value="DISCONTINUED">
                                         <label for="st-discontinued">Discontinued</label>
                                     </div>
