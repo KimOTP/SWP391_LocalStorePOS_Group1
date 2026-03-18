@@ -164,6 +164,19 @@ function cancelAddCustomer() {
     setCustState('notfound');
 }
 
+// Đưa cấu hình Toast ra ngoài phạm vi toàn cục để các hàm khác cũng dùng được
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+});
+
 async function saveNewCustomer() {
     const phone    = document.getElementById('newCustPhone').value.trim();
     const fullName = document.getElementById('newCustName').value.trim();
@@ -586,6 +599,11 @@ function showQrStatus(state) {
 function buildPayload(method, customerPaid, totalPaid, changeAmount) {
     const pts       = parseInt(document.getElementById('usePoints')?.value || '0');
     const pointsVND = pts * (getPointConfig().redemptionValue || 1000);
+
+    // Xử lý ID khách hàng: Nếu rỗng thì trả về null để Backend không bị lỗi
+    const rawCustomerId = document.getElementById('customerId') ?. value;
+    const customerIdStr = rawCustomerId ? rawCustomerId.trim() : null;
+
     return {
         orderId       : window.orderId,
         paymentMethod : method,                      // 'CASH' hoặc 'BANKING'
@@ -593,6 +611,7 @@ function buildPayload(method, customerPaid, totalPaid, changeAmount) {
         discount      : discountAmt,
         loyaltyUsed   : pointsVND,
         totalPaid     : totalPaid,
+        pointsUsed    : pts,
         changeAmount  : changeAmount,
         note          : document.getElementById('orderNote')?.value || '',
         customerPhone : document.getElementById('customerPhone')?.value || '',
