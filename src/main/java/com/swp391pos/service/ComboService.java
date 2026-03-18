@@ -39,18 +39,13 @@ public class ComboService {
     @Autowired
     private InventoryRepository inventoryRepository;
 
-    /**
-     * Lưu Combo kèm theo danh sách sản phẩm chi tiết (Giống logic addProduct)
-     */
     @Transactional
     public boolean addCombo(Combo combo, List<String> productIds, List<Integer> quantities, MultipartFile imageFile) {
         try {
-            // 1. Tự động tạo mã SKU cho Combo (giữ nguyên)
             if (combo.getComboId() == null || combo.getComboId().isEmpty()) {
                 combo.setComboId(generateSku());
             }
-
-            // 2. Xử lý Upload ảnh (giữ nguyên)
+            // 2. Xử lý Upload ảnh
             if (imageFile != null && !imageFile.isEmpty()) {
                 Map uploadResult = cloudinary.uploader().upload(imageFile.getBytes(),
                         ObjectUtils.asMap("folder", "combos"));
@@ -58,7 +53,7 @@ public class ComboService {
                 combo.setImageUrl(imageUrl);
             }
 
-            // 3. Lưu Combo Master
+            // 3. Lưu Combo
             Combo savedCombo = comboRepository.save(combo);
 
             // 4. Lưu danh sách chi tiết ComboDetail với Số Lượng thực tế
@@ -140,9 +135,7 @@ public class ComboService {
         // statuses sẽ là danh sách như ["ACTIVE", "PENDING_APPROVAL"]
         return comboRepository.findByStatusComboIn(statuses);
     }
-    /**
-     * Tự động sinh mã SKU: SKU-COM-00?
-     */
+
     public String generateSku() {
         String lastSku = comboRepository.findLastSku();
         int nextNumber = 1;

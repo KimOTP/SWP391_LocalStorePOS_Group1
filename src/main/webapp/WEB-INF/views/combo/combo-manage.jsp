@@ -204,6 +204,7 @@
                                                 <i class="fa-regular fa-trash-can me-2" style="width: 18px;"></i>Delete
                                             </a>
                                         </li>
+
                                     </ul>
                                 </div>
                             </td>

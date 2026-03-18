@@ -73,7 +73,7 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
             }
             boolean isAllowed = uri.contains("/dashboard")
                     || uri.contains("/layer")
-                    ||uri.contains("/stockIn/add")
+                    || uri.contains("/stockIn/add")
                     || uri.contains("/stockIn/details")
                     || uri.contains("/hr/cashier_profile")
                     || uri.contains("/stockOut/add")
@@ -86,6 +86,7 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
                     || uri.contains("/hr/notification/read/")
                     || uri.contains("/hr/note")
                     || uri.contains("/hr/note/view/");
+
 
             if (!isAllowed) {
                 handleAccessDenied(request, response, "Access Denied !");
