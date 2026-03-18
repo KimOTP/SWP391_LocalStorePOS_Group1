@@ -32,7 +32,7 @@ public class ApprovalController {
                                @RequestParam boolean approve, HttpSession session, RedirectAttributes ra) {
         Account acc = (Account) session.getAttribute("loggedInAccount");
         try {
-        approvalService.processApproval(type, id, approve, acc);
+        approvalService.processApproval(type, id, approve, acc, ra);
         ra.addFlashAttribute("notification", "Product status updated successfully!");
         }catch(Exception e) {
             ra.addFlashAttribute("errorMessage", e.getMessage());
