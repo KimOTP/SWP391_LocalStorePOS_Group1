@@ -188,18 +188,13 @@ public class ReportService {
 
     private List<Order> fetchOrders(LocalDateTime start, LocalDateTime end,
                                     Integer employeeId, PaymentMethod paymentMethod) {
-        return orderRepository.findAll().stream()
-                .filter(o -> o.getCreatedAt() != null
-                        && !o.getCreatedAt().isBefore(start)
-                        && !o.getCreatedAt().isAfter(end))
-                .filter(o -> o.getOrderStatus() != null
-                        && !"CANCELLED".equals(o.getOrderStatus().getOrderStatusName()))
-                .filter(o -> employeeId == null
-                        || (o.getEmployee() != null
-                        && o.getEmployee().getEmployeeId().equals(employeeId)))
-                .filter(o -> paymentMethod == null
-                        || paymentMethod.equals(o.getPaymentMethod()))
-                .collect(Collectors.toList());
+        if (employeeId != null) {
+            return orderRepository.findByCreatedAtBetweenAndEmployeeAndNotCancelled(start, end, employeeId);
+        } else if (paymentMethod != null) {
+            return orderRepository.findByCreatedAtBetweenAndPaymentMethodAndNotCancelled(start, end, paymentMethod);
+        } else {
+            return orderRepository.findByCreatedAtBetweenAndNotCancelled(start, end);
+        }
     }
 
     private Map<String, Object> buildReportData(List<Order> orders) {
@@ -214,25 +209,30 @@ public class ReportService {
                 .map(Order::getOrderId)
                 .collect(Collectors.toSet());
 
-        Map<Integer, List<OrderItem>> itemsByOrderId = orderItemRepository.findAll().stream()
-                .filter(oi -> oi.getOrder() != null
-                        && orderIds.contains(oi.getOrder().getOrderId()))
-                .collect(Collectors.groupingBy(oi -> Math.toIntExact(oi.getOrder().getOrderId())));
+        // Optimize: Fetch ONLY relevant items if list is not empty
+        Map<Integer, List<OrderItem>> itemsByOrderId = new HashMap<>();
+        if (!orderIds.isEmpty()) {
+            itemsByOrderId = orderItemRepository.findByOrder_OrderIdIn(orderIds).stream()
+                    .filter(oi -> oi.getOrder() != null)
+                    .collect(Collectors.groupingBy(oi -> Math.toIntExact(oi.getOrder().getOrderId())));
+        }
 
-        int totalItems = itemsByOrderId.values().stream()
-                .mapToInt(List::size)
+        // Sum of quantities SOLD for a more accurate "Avg. Value / Unit"
+        int totalQuantitySold = itemsByOrderId.values().stream()
+                .flatMap(List::stream)
+                .mapToInt(OrderItem::getQuantity)
                 .sum();
 
         BigDecimal avgPerUnit = BigDecimal.ZERO;
-        if (totalItems > 0) {
-            avgPerUnit = totalRevenue.divide(BigDecimal.valueOf(totalItems), 0, RoundingMode.HALF_UP);
+        if (totalQuantitySold > 0) {
+            avgPerUnit = totalRevenue.divide(BigDecimal.valueOf(totalQuantitySold), 0, RoundingMode.HALF_UP);
         }
 
         String bestSelling = getBestSellingProduct(itemsByOrderId);
 
         report.put("totalRevenue",        totalRevenue);
         report.put("totalOrders",         orders.size());
-        report.put("totalItems",          totalItems);
+        report.put("totalItems",          totalQuantitySold); // Update key to reflect quantity if needed
         report.put("averageValuePerUnit", avgPerUnit);
         report.put("bestSellingProduct",  bestSelling);
         report.put("orders",              orders);
@@ -244,8 +244,14 @@ public class ReportService {
         Map<String, Integer> salesCount = new HashMap<>();
         itemsByOrderId.values().forEach(items ->
                 items.forEach(item -> {
+                    String name = null;
                     if (item.getProduct() != null) {
-                        String name = item.getProduct().getProductName();
+                        name = item.getProduct().getProductName();
+                    } else if (item.getCombo() != null) {
+                        name = item.getCombo().getComboName();
+                    }
+
+                    if (name != null) {
                         salesCount.merge(name, item.getQuantity(), Integer::sum);
                     }
                 })

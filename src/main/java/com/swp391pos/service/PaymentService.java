@@ -37,7 +37,6 @@ public class PaymentService {
 
     private static final int FALLBACK_THRESHOLD_SECONDS = 30;
 
-    // [FIX #1] Gộp lại thành 1 bộ field duy nhất, đặt tên thống nhất
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
     private final PaymentGateway paymentGateway;
@@ -339,10 +338,28 @@ public class PaymentService {
     }
 
     private void deductProductStock(String productId, int quantityToDeduct) {
-        Inventory inventory = inventoryRepository.findByProductId(productId);
-        if (inventory == null) {
-            log.warn("[Stock] Inventory not found for productId={}", productId);
-            return;
+        Optional<Inventory> inventoryOpt = inventoryRepository.findById(productId);
+        Inventory inventory;
+
+        if (inventoryOpt.isEmpty()) {
+            log.warn("[Stock] Inventory not found for productId={}, attempting to create default record", productId);
+            try {
+                com.swp391pos.entity.Product product = productService.getProductById(productId);
+                if (product == null) {
+                    log.error("[Stock] Cannot create inventory: Product {} not found", productId);
+                    return;
+                }
+                inventory = new Inventory();
+                inventory.setProduct(product);
+                inventory.setCurrentQuantity(0);
+                inventory = inventoryRepository.save(inventory);
+                log.info("[Stock] Created missing inventory record for product {}", productId);
+            } catch (Exception e) {
+                log.error("[Stock] Failed to create inventory for product {}: {}", productId, e.getMessage());
+                return;
+            }
+        } else {
+            inventory = inventoryOpt.get();
         }
 
         int newQty = Math.max(0, inventory.getCurrentQuantity() - quantityToDeduct);

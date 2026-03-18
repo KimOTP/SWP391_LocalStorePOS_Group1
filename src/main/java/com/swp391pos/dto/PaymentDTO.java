@@ -29,6 +29,7 @@ public class PaymentDTO {
         private BigDecimal discountAmount; // Số tiền được giảm (Tổng)
         private BigDecimal finalLineTotal; // Tổng tiền sau giảm của dòng này
         private String promotionNote; // Ghi chú: "Giảm 10%", "Giảm 20k", v.v.
+        private Integer promotionId; // Thêm để lưu vào OrderPromotion
     }
 
     // 3. Class chứa tổng hợp hóa đơn ĐÃ TÍNH KHUYẾN MÃI (Góc trái dưới màn Payment)

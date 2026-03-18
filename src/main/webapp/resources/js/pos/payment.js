@@ -169,7 +169,7 @@ async function saveNewCustomer() {
     const fullName = document.getElementById('newCustName').value.trim();
 
     if (!fullName) {
-        showToast('Please enter customer name', 'error');
+        Toast.fire({ icon: 'error', title: 'Please enter customer name' });
         return;
     }
 
@@ -201,12 +201,12 @@ async function saveNewCustomer() {
             updateTotals();
 
             setCustState('found');
-            showToast('Customer added successfully!', 'success');
+            Toast.fire({ icon: 'success', title: 'Customer added successfully!' });
         } else {
-            showToast(data.message || 'Failed to add customer', 'error');
+            Toast.fire({ icon: 'error', title: data.errorMessage || 'Failed to add customer' });
         }
     } catch(e) {
-        showToast('Error: ' + e.message, 'error');
+        Toast.fire({ icon: 'error', title: e.message });
     } finally {
         saveBtn.disabled = false;
         saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
@@ -392,7 +392,7 @@ async function confirmCashPayment() {
     const change = Math.max(0, paid - net);
 
     if (paid < net) {
-        showToast('Số tiền khách đưa chưa đủ!', 'error');
+        Toast.fire({ icon: 'error', title: 'Số tiền khách đưa chưa đủ!' });
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Pay';
         return;
@@ -408,13 +408,13 @@ async function confirmCashPayment() {
         });
         const data = await res.json();
         if (data.success) {
-            showToast('Payment successful!', 'success');
+            Toast.fire({ icon: 'success', title: 'Payment successful!' });
             setTimeout(() => { window.location.href = (window.contextPath || '') + '/pos'; }, 1200);
         } else {
-            throw new Error(data.message || 'Payment failed');
+            throw new Error(data.errorMessage || 'Payment failed');
         }
     } catch (err) {
-        showToast('Error: ' + err.message, 'error');
+        Toast.fire({ icon: 'error', title: err.message });
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Pay';
     }
@@ -430,7 +430,7 @@ async function confirmBankingPayment() {
     const bank = window.bankSettings || {};
 
     if (!bank.accNumber) {
-        showToast('Please configure bank account first', 'error');
+        Toast.fire({ icon: 'error', title: 'Please configure bank account first' });
         return;
     }
 
@@ -458,7 +458,7 @@ async function confirmBankingPayment() {
             showPayOSQr(qrData.qrCodeUrl);
         }
     } catch(e) {
-        showToast('Cannot create payment session: ' + e.message, 'error');
+        Toast.fire({ icon: 'error', title: 'Cannot create payment session: ' + e.message });
         btn.disabled  = false;
         btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Pay';
         showQrStatus('timeout');
@@ -466,7 +466,7 @@ async function confirmBankingPayment() {
     }
 
     if (!qrSessionId) {
-        showToast('No payment session returned from server', 'error');
+        Toast.fire({ icon: 'error', title: 'No payment session returned from server' });
         btn.disabled  = false;
         btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Pay';
         showQrStatus('timeout');
@@ -499,10 +499,10 @@ async function confirmBankingPayment() {
                 const confData = await confRes.json();
                 if (confData.success) {
                     showQrStatus('success');
-                    showToast('Banking payment confirmed!', 'success');
+                    Toast.fire({ icon: 'success', title: 'Banking payment confirmed!' });
                     setTimeout(() => { window.location.href = (window.contextPath || '') + '/pos'; }, 1500);
                 } else {
-                    throw new Error(confData.message || 'Confirm failed');
+                    throw new Error(confData.errorMessage || 'Confirm failed');
                 }
                 return;
             }
@@ -512,7 +512,7 @@ async function confirmBankingPayment() {
                 showQrStatus('timeout');
                 btn.disabled  = false;
                 btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Pay';
-                showToast('Payment ' + status.toLowerCase() + ' — please try again', 'error');
+                Toast.fire({ icon: 'error', title: 'Payment ' + status.toLowerCase() + ' — please try again' });
                 return;
             }
         } catch(e) {
@@ -520,7 +520,7 @@ async function confirmBankingPayment() {
             showQrStatus('timeout');
             btn.disabled  = false;
             btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Confirm paid';
-            showToast('Error: ' + e.message + ' — click "Confirm paid" manually', 'error');
+            Toast.fire({ icon: 'error', title: e.message + ' — click "Confirm paid" manually' });
         }
 
         if (attempts >= MAX_ATTEMPTS) {
@@ -528,7 +528,7 @@ async function confirmBankingPayment() {
             showQrStatus('timeout');
             btn.disabled  = false;
             btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Confirm paid';
-            showToast('Timeout — click "Confirm paid" after transfer completes', 'error');
+            Toast.fire({ icon: 'error', title: 'Timeout — click "Confirm paid" after transfer completes' });
         }
     }, 3000);
 }
@@ -601,21 +601,6 @@ function buildPayload(method, customerPaid, totalPaid, changeAmount) {
     };
 }
 
-/* ── Toast ── */
-function showToast(msg, type) {
-    const t = document.createElement('div');
-    t.textContent = msg;
-    t.style.cssText = [
-        'position:fixed','bottom:24px','right:24px',
-        'padding:10px 22px','border-radius:9px',
-        'font-family:Inter,sans-serif','font-size:.875rem','font-weight:600',
-        'color:#fff','z-index:9999','box-shadow:0 4px 14px rgba(0,0,0,.15)',
-        'background:' + (type === 'success' ? '#10b981' : '#ef4444'),
-        'transition:opacity .3s'
-    ].join(';');
-    document.body.appendChild(t);
-    setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300); }, 2700);
-}
 
 /* ── Load order items từ session JSON ── */
 async function loadOrderItems() {

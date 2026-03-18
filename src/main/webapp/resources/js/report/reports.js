@@ -41,11 +41,11 @@ function applyFilter() {
     var paymentMethod = payEl     ? payEl.value     : '';
 
     if (!startDate || !endDate) {
-        alert('Please select a start date and end date.');
+        Toast.fire({ icon: 'warning', title: 'Please select a start date and end date.' });
         return;
     }
     if (startDate > endDate) {
-        alert('Start date cannot be after end date.');
+        Toast.fire({ icon: 'warning', title: 'Start date cannot be after end date.' });
         return;
     }
 
@@ -100,7 +100,7 @@ function exportExcel() {
     var s = document.getElementById('startDate').value;
     var e = document.getElementById('endDate').value;
     if (!s || !e) {
-        alert('Please select a date range before exporting.');
+        Toast.fire({ icon: 'warning', title: 'Please select a date range before exporting.' });
         return;
     }
 
@@ -155,21 +155,19 @@ function doPost(url, params) {
             updateSummary(json.data);
             updateTable(json.data.orders || []);
         } else {
-            alert(json.message || 'Failed to load report.');
+            Toast.fire({ icon: 'error', title: json.errorMessage || 'Failed to load report.' });
         }
     })
-    .catch(function () { alert('Network connection error.'); })
+    .catch(function () { Toast.fire({ icon: 'error', title: 'Network connection error.' }); })
     .finally(function () { showLoading(false); });
 }
 
 // ── Update summary cards ─────────────────────────────────────
 function updateSummary(d) {
-    setEl('totalRevenue',        fmtVND(d.totalRevenue));
+    setEl('totalSales',           fmtVND(d.totalRevenue));
     setEl('totalOrders',         d.totalOrders != null ? d.totalOrders : 0);
     setEl('averageValuePerUnit', fmtVND(d.averageValuePerUnit));
     setEl('bestSellingProduct',  d.bestSellingProduct || 'N/A');
-    var b = document.getElementById('orderCountBadge');
-    if (b) b.textContent = (d.totalOrders != null ? d.totalOrders : 0) + ' orders';
 }
 
 // ── Update order table ───────────────────────────────────────

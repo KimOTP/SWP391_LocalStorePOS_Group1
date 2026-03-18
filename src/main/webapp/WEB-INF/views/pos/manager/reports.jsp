@@ -55,55 +55,69 @@
 
         <div id="filterBody" class="rpt-filter-body" style="display: none;">
 
-            <%-- Date range --%>
-            <div class="rpt-filter-date-row">
-                <i class="bi bi-calendar3"></i>
-                <label class="rpt-filter-group-label mb-0 me-1">From:</label>
-                <input type="date" id="startDate" class="rpt-date-inp">
-                <span class="mx-1">—</span>
-                <label class="rpt-filter-group-label mb-0 me-1">To:</label>
-                <input type="date" id="endDate" class="rpt-date-inp">
-            </div>
-
-            <%-- Cashier filter — only shows employees with CASHIER role --%>
-            <div class="rpt-filter-group">
-                <div class="rpt-filter-group-label">Cashier</div>
-                <div class="rpt-radio-row">
-                    <label class="rpt-radio-lbl">
-                        <input type="radio" name="cashierFilter" value="" checked> All
-                    </label>
-                    <c:forEach var="emp" items="${cashiers}">
-                        <label class="rpt-radio-lbl">
-                            <input type="radio" name="cashierFilter" value="${emp.employeeId}">
-                            ${fn:escapeXml(emp.fullName)}
-                        </label>
-                    </c:forEach>
+            <div class="row g-4">
+                <%-- Date range --%>
+                <div class="col-md-12">
+                    <div class="rpt-filter-group mb-0">
+                        <div class="rpt-filter-group-label"><i class="bi bi-calendar-range me-1"></i> Time Period</div>
+                        <div class="rpt-filter-date-row mb-0">
+                            <label class="mb-0 me-2 fw-medium">From</label>
+                            <input type="date" id="startDate" class="rpt-date-inp">
+                            <span class="mx-2 text-muted">—</span>
+                            <label class="mb-0 me-2 fw-medium">To</label>
+                            <input type="date" id="endDate" class="rpt-date-inp">
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <%-- Payment method --%>
-            <div class="rpt-filter-group">
-                <div class="rpt-filter-group-label">Payment Method</div>
-                <div class="rpt-radio-row">
-                    <label class="rpt-radio-lbl">
-                        <input type="radio" name="paymentFilter" value="" checked> All
-                    </label>
-                    <label class="rpt-radio-lbl">
-                        <input type="radio" name="paymentFilter" value="CASH"> Cash
-                    </label>
-                    <label class="rpt-radio-lbl">
-                        <input type="radio" name="paymentFilter" value="BANKING"> Bank Transfer
-                    </label>
+                <%-- Cashier filter --%>
+                <div class="col-md-6">
+                    <div class="rpt-filter-group mb-0">
+                        <div class="rpt-filter-group-label"><i class="bi bi-person-badge me-1"></i> Cashier</div>
+                        <div class="rpt-radio-row">
+                            <label class="rpt-radio-lbl">
+                                <input type="radio" name="cashierFilter" value="" checked>
+                                <span class="ms-1">All Staff</span>
+                            </label>
+                            <c:forEach var="emp" items="${cashiers}">
+                                <label class="rpt-radio-lbl">
+                                    <input type="radio" name="cashierFilter" value="${emp.employeeId}">
+                                    <span class="ms-1">${fn:escapeXml(emp.fullName)}</span>
+                                </label>
+                            </c:forEach>
+                        </div>
+                    </div>
+                </div>
+
+                <%-- Payment method --%>
+                <div class="col-md-6">
+                    <div class="rpt-filter-group mb-0">
+                        <div class="rpt-filter-group-label"><i class="bi bi-credit-card me-1"></i> Payment Method</div>
+                        <div class="rpt-radio-row">
+                            <label class="rpt-radio-lbl">
+                                <input type="radio" name="paymentFilter" value="" checked>
+                                <span class="ms-1">All Methods</span>
+                            </label>
+                            <label class="rpt-radio-lbl">
+                                <input type="radio" name="paymentFilter" value="CASH">
+                                <i class="bi bi-cash text-success"></i> <span class="ms-1">Cash</span>
+                            </label>
+                            <label class="rpt-radio-lbl">
+                                <input type="radio" name="paymentFilter" value="BANKING">
+                                <i class="bi bi-bank text-primary"></i> <span class="ms-1">Bank Transfer</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <%-- Apply / Reset buttons --%>
             <div class="rpt-filter-foot">
-                <button class="rpt-btn" onclick="applyFilter()">
-                    <i class="bi bi-check2"></i> Apply
+                <button class="rpt-btn rpt-btn-primary" onclick="applyFilter()">
+                    <i class="bi bi-funnel-fill"></i> Apply Filter
                 </button>
                 <button class="rpt-btn rpt-btn-ghost" onclick="resetFilter()">
-                    <i class="bi bi-x-circle"></i> Reset
+                    <i class="bi bi-arrow-counterclockwise"></i> Reset
                 </button>
             </div>
 
@@ -112,34 +126,35 @@
 
     <%-- ── DATE BAR ── --%>
     <div class="rpt-date-bar" id="dateBar">${currentDateFormatted}</div>
-
     <%-- ── SUMMARY CARDS ── --%>
     <div class="rpt-cards">
 
         <div class="rpt-card">
             <div class="rpt-card-row">
-                <span class="rpt-card-lbl">Total Revenue</span>
-                <i class="bi bi-cash-coin rpt-card-ico"></i>
+                <span class="rpt-card-lbl">Total Sales</span>
+                <i class="bi bi-cash-stack rpt-card-ico text-success"></i>
             </div>
-            <div class="rpt-card-val" id="totalRevenue">
-                <fmt:formatNumber value="${totalRevenue}" pattern="#,##0"/> ₫
+            <div class="rpt-card-val" id="totalSales">
+                <fmt:formatNumber value="${totalSales}" pattern="#,##0"/> ₫
             </div>
             <div class="rpt-card-hint">&nbsp;</div>
         </div>
 
         <div class="rpt-card">
             <div class="rpt-card-row">
-                <span class="rpt-card-lbl">Total Orders</span>
-                <i class="bi bi-cart3 rpt-card-ico"></i>
+                <span class="rpt-card-lbl">Transactions</span>
+                <i class="bi bi-receipt rpt-card-ico text-warning"></i>
             </div>
-            <div class="rpt-card-val" id="totalOrders">${totalOrders}</div>
+            <div class="rpt-card-val" id="totalOrders">
+                ${totalOrders}
+            </div>
             <div class="rpt-card-hint">&nbsp;</div>
         </div>
 
         <div class="rpt-card">
             <div class="rpt-card-row">
                 <span class="rpt-card-lbl">Avg. Value / Unit</span>
-                <i class="bi bi-calculator rpt-card-ico"></i>
+                <i class="bi bi-calculator rpt-card-ico text-info"></i>
             </div>
             <div class="rpt-card-val" id="averageValuePerUnit">
                 <fmt:formatNumber value="${averageValuePerUnit}" pattern="#,##0"/> ₫
@@ -150,7 +165,7 @@
         <div class="rpt-card">
             <div class="rpt-card-row">
                 <span class="rpt-card-lbl">Best-Selling Product</span>
-                <i class="bi bi-trophy rpt-card-ico"></i>
+                <i class="bi bi-trophy rpt-card-ico" style="color: #eab308;"></i>
             </div>
             <div class="rpt-card-val rpt-card-val--text" id="bestSellingProduct">
                 ${not empty bestSellingProduct ? fn:escapeXml(bestSellingProduct) : 'N/A'}
@@ -164,7 +179,6 @@
     <div class="rpt-table-wrap">
         <div class="rpt-table-bar">
             <span><i class="bi bi-list-ul me-1"></i>Order Details</span>
-            <span id="orderCountBadge">${totalOrders} orders</span>
         </div>
         <div class="table-responsive">
             <table class="table table-sm table-hover rpt-table mb-0">
