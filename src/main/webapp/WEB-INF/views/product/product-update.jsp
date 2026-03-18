@@ -25,6 +25,7 @@
 
         <div class="card border-0 shadow-sm">
             <form action="${pageContext.request.contextPath}/products/do-update" method="POST" enctype="multipart/form-data">
+             <input type="hidden" name="oldId" value="${product.productId}" />
                 <div class="card-body p-5">
                     <div class="row g-5">
 
@@ -32,8 +33,8 @@
                         <div class="col-md-4 border-end">
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Product Code (SKU)</label>
-                                <input type="text" name="productName" class="form-control input-custom"
-                                       value="${product.productName}" placeholder="Enter name..."
+                                <input type="text" name="productId" class="form-control input-custom"
+                                       value="${product.productId}" placeholder="Enter SKU..."
                                        required minlength="1" maxlength="64">
                             </div>
                             <div class="mb-4">
