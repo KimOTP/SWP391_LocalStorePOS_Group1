@@ -29,17 +29,6 @@ public class StockInService {
                 .map(s -> Map.of("email", s.getEmail()))
                 .orElse(null);
     }
-
-    public Map<String, Object> getProductDetails(String sku) {
-        Product product = productRepo.findProductByProductId(sku);
-        if (product == null) return null;
-
-        Inventory inventory = inventoryRepo.findById(sku).orElse(null);
-        Map<String, Object> response = new HashMap<>();
-        response.put("productName", product.getProductName());
-        response.put("unitCost", (inventory != null) ? inventory.getUnitCost() : BigDecimal.ZERO);
-        return response;
-    }
     
     public List<Inventory> getPrioritizedInventory() {
         return inventoryRepo.findAll().stream()
@@ -111,33 +100,44 @@ public class StockInService {
         return stockInRepo.findByStatusId(1);
     }
 
-    // Stock-in process
     public StockIn getStockInForProcessing(Integer id) {
         return stockInRepo.findByStockInId(id);
     }
 
-    @Transactional
     public void processStaffInput(Integer stockInId, List<Map<String, Object>> actualData, Account staffAccount) {
         StockIn si = stockInRepo.findById(stockInId).orElseThrow();
         TransactionStatus status = transactionStatusRepo.findById(2)
                 .orElseThrow(() -> new RuntimeException("Status not found"));
+
         si.setStaff(staffAccount.getEmployee());
         si.setReceivedAt(LocalDateTime.now());
         si.setStatus(status);
         stockInRepo.save(si);
 
         for (Map<String, Object> data : actualData) {
-            StockInDetail detail = detailRepo.findById(Long.parseLong(data.get("detailId").toString())).get();
-            detail.setReceivedQuantity(Integer.parseInt(data.get("actualQty").toString()));
+            StockInDetail detail = detailRepo.findById(Long.parseLong(data.get("detailId").toString()))
+                    .orElseThrow(() -> new RuntimeException("Detail not found"));
+
+            int actualQty = Integer.parseInt(data.get("actualQty").toString());
+            detail.setReceivedQuantity(actualQty);
             detailRepo.save(detail);
+
+            String productId = detail.getProduct().getProductId();
+            Inventory inv = inventoryRepo.findById(productId).orElse(null);
+            if (inv != null) {
+                BigDecimal currentCost = inv.getUnitCost();
+                BigDecimal newCost = detail.getUnitCost();
+                if ((currentCost == null || currentCost.compareTo(BigDecimal.ZERO) == 0)
+                        && newCost != null && newCost.compareTo(BigDecimal.ZERO) > 0) {
+
+                    inv.setUnitCost(newCost);
+                    inventoryRepo.save(inv);
+                }
+            }
         }
+
         String staffName = staffAccount.getEmployee().getFullName();
-        emailService.notifyNewAction(
-                "Stock-In Approval",
-                "STK-",
-                si.getStockInId(),
-                staffName
-        );
+        emailService.notifyNewAction("Stock-In Approval", "STK-", si.getStockInId(), staffName);
     }
 
     //stock-in detail
