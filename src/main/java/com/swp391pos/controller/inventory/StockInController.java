@@ -68,13 +68,6 @@ public class StockInController {
         }
         return "redirect:/inventory/dashboard"; // Quay về Dashboard sau khi tạo xong
     }
-
-    @GetMapping("/product-info")
-    @ResponseBody
-    public ResponseEntity<?> getSingleProductInfo(@RequestParam String sku) {
-        Map<String, Object> data = stockInService.getProductDetails(sku);
-        return (data != null) ? ResponseEntity.ok(data) : ResponseEntity.notFound().build();
-    }
     //Stock In Notification For Inventory Staff
     @GetMapping("/notifications")
     public String showNotifications(Model model) {

@@ -26,14 +26,6 @@
         border: 1px solid #dc2626 !important;
     }
 </style>
-
-<style>
-    .input-actual.is-invalid {
-        background-color: #fef2f2;
-        border: 1px solid #dc2626 !important;
-    }
-</style>
-
 <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>

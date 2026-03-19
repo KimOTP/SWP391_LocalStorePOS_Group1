@@ -73,7 +73,6 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
             }
             boolean isAllowed = uri.contains("/dashboard")
                     || uri.contains("/layer")
-                    || uri.contains("/stockIn/add")
                     || uri.contains("/stockIn/details")
                     || uri.contains("/hr/cashier_profile")
                     || uri.contains("/stockOut/add")
@@ -85,7 +84,13 @@ public class RoleAuthorizationFilter extends OncePerRequestFilter {
                     || uri.contains("/stockIn/notifications")
                     || uri.contains("/hr/notification/read/")
                     || uri.contains("/hr/note")
-                    || uri.contains("/hr/note/view/");
+                    || uri.contains("/hr/note/view/")
+                    || uri.contains("/audit/api/products")
+                    || uri.contains("/stockIn/supplier-info")
+                    || uri.contains("/stockIn/api/all-prioritized")
+                    || uri.contains("/stockOut/search-products")
+                    || uri.contains("/stockIn/process")
+                    || uri.contains("/stockIn/submit-process");
 
 
             if (!isAllowed) {
