@@ -27,35 +27,55 @@ public class AuditService {
         session.setStaff(account.getEmployee());
         session.setAuditDate(LocalDateTime.now());
 
-        TransactionStatus status = statusRepo.findById(2).orElseThrow();
-        session.setStatus(status);
-
-        AuditSession savedSession = auditRepo.save(session);
+        boolean hasDiscrepancy = false;
+        List<AuditDetail> detailsToSave = new ArrayList<>();
 
         for (Map<String, Object> item : items) {
             AuditDetail detail = new AuditDetail();
-            detail.setAuditSession(savedSession);
 
-            // Lấy thông tin tồn kho hiện tại làm Expected Quantity
             String productId = (String) item.get("productId");
             Inventory inv = inventoryRepo.findByProductId(productId);
 
+            int expected = inv.getCurrentQuantity();
+            int actual = Integer.parseInt(item.get("actual").toString());
+
+            // Kiểm tra sai lệch
+            if (expected != actual) {
+                hasDiscrepancy = true;
+            }
+
             detail.setProduct(inv.getProduct());
-            detail.setExpectedQuantity(inv.getCurrentQuantity());
-            detail.setActualQuantity(Integer.parseInt(item.get("actual").toString()));
+            detail.setExpectedQuantity(expected);
+            detail.setActualQuantity(actual);
             detail.setDiscrepancyReason((String) item.get("note"));
             detail.setUnitCostAtAudit(inv.getUnitCost());
 
+            detailsToSave.add(detail);
+        }
+        if (!hasDiscrepancy) {
+            TransactionStatus completedStatus = statusRepo.findById(4)
+                    .orElseThrow(() -> new RuntimeException("Status Completed not found"));
+            session.setStatus(completedStatus);
+        } else {
+            TransactionStatus pendingStatus = statusRepo.findById(2)
+                    .orElseThrow(() -> new RuntimeException("Status Pending not found"));
+            session.setStatus(pendingStatus);
+        }
+        AuditSession savedSession = auditRepo.save(session);
+        for (AuditDetail detail : detailsToSave) {
+            detail.setAuditSession(savedSession);
             auditDetailRepo.save(detail);
         }
-        String staffName = account.getEmployee().getFullName();
 
-        emailService.notifyNewAction(
-                "Inventory Audit",
-                "AUD-",
-                savedSession.getAuditId(),
-                staffName
-        );
+        if (hasDiscrepancy) {
+            String staffName = account.getEmployee().getFullName();
+            emailService.notifyNewAction(
+                    "Inventory Audit (Discrepancy Detected)",
+                    "AUD-",
+                    savedSession.getAuditId(),
+                    staffName
+            );
+        }
     }
 
     public List<Map<String, Object>> getAllProductsWithStock() {
