@@ -22,13 +22,13 @@ public class Customer {
     private Long customerId;
 
     @Column(name = "phoneNumber", length = 15, nullable = false, unique = true)
-    @NotBlank(message = "Số điện thoại không được để trống")
-    @Pattern(regexp = "0\\d{9}", message = "Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0")
+    @NotBlank(message = "The phone number must not be left blank.")
+    @Pattern(regexp = "0\\d{9}", message = "Phone must be numeric or 10 digits")
     private String phoneNumber;
 
     @Column(name = "fullName", length = 100, nullable = false)
-    @NotBlank(message = "Tên khách hàng không được để trống")
-    @Size(min = 2, max = 50, message = "Tên phải từ 2 đến 50 ký tự")
+    @NotBlank(message = "Customer name cannot be left blank.")
+    @Size(min = 2, max = 50, message = "Names must be between 2 and 50 characters long.")
     private String fullName;
 
     // DEFAULT 0 trong SQL -> Gán = 0 trong Java
