@@ -329,6 +329,7 @@
 <script>
     window.userRole = '${sessionScope.account.employee.role}';
     window.contextPath = '${pageContext.request.contextPath}';
+    window.restorationData = ${not empty posCurrentOrderJson ? posCurrentOrderJson : 'null'};
 </script>
 <script src="${pageContext.request.contextPath}/resources/js/pos/pos.js"></script>
 </body>
