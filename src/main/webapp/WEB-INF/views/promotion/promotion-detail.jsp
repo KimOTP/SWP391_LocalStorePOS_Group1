@@ -322,8 +322,7 @@
         </div>
     </div>
 </div>
-<input type="hidden" id="serverSuccessMsg" value="${notification}">
-<input type="hidden" id="serverErrorMsg" value="${errorMessage}">
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/customer/customer.js"></script>
 
