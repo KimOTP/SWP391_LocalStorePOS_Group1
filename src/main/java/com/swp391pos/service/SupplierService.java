@@ -57,4 +57,11 @@ public class SupplierService {
     public boolean supplierExistStockIn(Integer supplierId) {
         return supplierRepository.existsStockInBySupplierId(supplierId);
     }
+    public boolean existByEmail(String email) {
+        return supplierRepository.existsByEmail(email);
+    }
+
+    public boolean existByEmailAndSupplierIdNot(String email, Integer supplierId) {
+        return supplierRepository.existsByEmailAndSupplierIdNot(email, supplierId);
+    }
 }

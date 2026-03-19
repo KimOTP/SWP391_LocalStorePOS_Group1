@@ -13,11 +13,19 @@
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="<c:url value='/resources/css/inventory/stock-in.css'/>">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .input-actual.is-invalid {
+            border-color: #dc2626 !important;
+            background-color: #fef2f2;
+        }
+    </style>
 
 </head>
 <body>
 <jsp:include page="../../layer/header.jsp" />
 <jsp:include page="../../layer/sidebar.jsp" />
+
+<input type="hidden" id="oldActualDataJson" value='${oldActualDataJson}'>
 
 <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">
