@@ -172,6 +172,8 @@ public class PromotionController {
             promotionDetailService.updatePromotionDetail(promoDetailId, promotionId, productId, minQuantity, discountValue, discountType);
             redirectAttributes.addFlashAttribute("notification", "Promotional product update successful!");
         } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            System.out.println(">>> SETTING errorMessage: " + e.getMessage()); // thêm dòng này
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();

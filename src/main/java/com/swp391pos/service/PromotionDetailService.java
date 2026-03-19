@@ -115,8 +115,15 @@ public class PromotionDetailService {
         if (discountType == PromotionDetail.DiscountType.PERCENT && discountValue.compareTo(new BigDecimal("100")) >= 0) {
             throw new IllegalArgumentException("The percentage discount must not exceed 100%.");
         }
-        if (discountType == PromotionDetail.DiscountType.AMOUNT && discountValue.compareTo(productPrice) >= 0) {
-            throw new IllegalArgumentException("The discount amount must not exceed the product's original price.");
+        if (discountType == PromotionDetail.DiscountType.AMOUNT) {
+            // ✅ Check null trước khi compareTo
+            if (productPrice == null) {
+                throw new IllegalArgumentException("Cannot validate: product price is not set.");
+            }
+            if (discountValue.compareTo(productPrice) >= 0) {
+                throw new IllegalArgumentException("The discount amount must not exceed the product's original price ("
+                        + productPrice + " đ).");
+            }
         }
     }
 
