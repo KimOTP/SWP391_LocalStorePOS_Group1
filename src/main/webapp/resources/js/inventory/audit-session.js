@@ -2,6 +2,20 @@ let selectedProducts = new Set();
 
 document.addEventListener('DOMContentLoaded', function() {
     // Xử lý thông báo từ Server
+    checkServerNotifications();
+
+    // 2. KHÔI PHỤC DỮ LIỆU CŨ (Nếu có lỗi từ Server)
+    const oldDataRaw = document.getElementById('oldAuditDataJson')?.value;
+    if (oldDataRaw && oldDataRaw !== "") {
+        try {
+            const oldItems = JSON.parse(oldDataRaw);
+            // Với mỗi item cũ, ta cần lấy lại thông tin sản phẩm để vẽ lại dòng
+            oldItems.forEach(item => {
+                recoverAuditRow(item.productId, item.actual, item.note);
+            });
+        } catch (e) { console.error("Data recovery failed", e); }
+    }
+
     const msgEl = document.getElementById('serverMessage');
     const statusEl = document.getElementById('serverStatus');
     if (msgEl && statusEl && msgEl.value.trim() !== "") {
@@ -25,6 +39,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+async function recoverAuditRow(sku, actual, note) {
+    try {
+        const response = await fetch('/audit/api/products'); // Lấy lại list sản phẩm để lấy Expected Stock
+        const products = await response.json();
+        const p = products.find(prod => prod.sku === sku);
+        if (p) {
+            // Tận dụng logic addSelectedItems nhưng nạp giá trị cũ
+            addSingleItemToTable(p, actual, note);
+        }
+    } catch (e) { console.error(e); }
+}
 
 // 1. Mở modal và nạp sản phẩm
 async function openMultiProductModal() {
@@ -148,6 +174,42 @@ function addSelectedItems() {
     updateDashboardStats();
 }
 
+function addSingleItemToTable(p, actual = "", note = "") {
+    const tbody = document.querySelector('#auditTable tbody');
+    const emptyRow = document.getElementById('emptyRow');
+    if (emptyRow) emptyRow.style.display = 'none';
+    if (selectedProducts.has(p.sku)) return;
+
+    const rowCount = tbody.querySelectorAll('tr:not(#emptyRow)').length + 1;
+    const rowHtml = `
+        <tr data-sku="${p.sku}" data-expected="${p.stock}">
+            <td class="td-cell text-center text-muted small row-index">${rowCount}</td>
+            <td class="td-cell">
+                <div class="fw-bold text-dark mb-1">${p.name}</div>
+                <span class="text-sku" style="font-size: 0.75rem;">#${p.sku}</span>
+            </td>
+            <td class="td-cell text-center"><span class="view-only-box border">${p.stock}</span></td>
+            <td class="td-cell text-center">
+                <input type="number" class="input-actual" value="${actual}" placeholder="0" oninput="calculateDiff(this)">
+            </td>
+            <td class="td-cell text-center fw-bold diff-val diff-zero">0</td>
+            <td class="td-cell">
+                <input type="text" class="form-control border-0 bg-light rounded-2 input-note px-3" value="${note}" placeholder="Note...">
+            </td>
+            <td class="td-cell text-center">
+                <button type="button" class="btn-delete-row shadow-sm" onclick="removeRow(this, '${p.sku}')">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+            </td>
+        </tr>`;
+    tbody.insertAdjacentHTML('beforeend', rowHtml);
+    selectedProducts.add(p.sku);
+
+    // Sau khi nạp xong, tính toán lại sai lệch ngay
+    const lastRow = tbody.lastElementChild;
+    calculateDiff(lastRow.querySelector('.input-actual'));
+}
+
 // 6. Tính toán sai lệch: Actual - Expected
 function calculateDiff(input) {
     const row = input.closest('tr');
@@ -234,21 +296,42 @@ function removeRow(btn, sku) {
 function submitAudit() {
     const rows = document.querySelectorAll('#auditTable tbody tr:not(#emptyRow)');
     if (rows.length === 0) {
-        Swal.fire({
-            title: 'Warning',
-            text: 'Please add products to audit!',
-            icon: 'warning',
-            confirmButtonColor: '#2563eb',
-            borderRadius: '16px'
-        });
+        Swal.fire({ title: 'Warning', text: 'Please add products to audit!', icon: 'warning' });
         return;
     }
 
-    const items = Array.from(rows).map(row => ({
-        productId: row.dataset.sku,
-        actual: row.querySelector('.input-actual').value || 0,
-        note: row.querySelector('.input-note').value
-    }));
+    let hasError = false;
+    const items = [];
+
+    rows.forEach(row => {
+        const actualInput = row.querySelector('.input-actual');
+        const actualVal = actualInput.value;
+
+        // VALIDATE: Không được để trống và không được âm
+        if (actualVal === "" || parseInt(actualVal) < 0) {
+            hasError = true;
+            actualInput.classList.add('is-invalid');
+            actualInput.style.borderColor = "#dc2626";
+        } else {
+            actualInput.classList.remove('is-invalid');
+            actualInput.style.borderColor = "";
+            items.push({
+                productId: row.dataset.sku,
+                actual: parseInt(actualVal),
+                note: row.querySelector('.input-note').value
+            });
+        }
+    });
+
+    if (hasError) {
+        Swal.fire({
+            title: 'Audit Error',
+            text: 'Actual count cannot be empty or negative!',
+            icon: 'error',
+            confirmButtonColor: '#dc2626'
+        });
+        return;
+    }
 
     Swal.fire({
         title: 'Confirm Audit?',
@@ -256,18 +339,11 @@ function submitAudit() {
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#2563eb',
-        cancelButtonColor: '#94a3b8',
-        confirmButtonText: '<i class="fa-solid fa-check-double me-2"></i>Yes, Submit',
-        cancelButtonText: 'Cancel',
-        borderRadius: '16px'
+        confirmButtonText: 'Yes, Submit'
     }).then((result) => {
         if (result.isConfirmed) {
-            const dataInput = document.getElementById('auditDataJson');
-            const auditForm = document.getElementById('auditForm');
-            if (dataInput && auditForm) {
-                dataInput.value = JSON.stringify(items);
-                auditForm.submit();
-            }
+            document.getElementById('auditDataJson').value = JSON.stringify(items);
+            document.getElementById('auditForm').submit();
         }
     });
 }

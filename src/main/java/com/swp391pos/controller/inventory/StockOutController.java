@@ -41,16 +41,26 @@ public class StockOutController {
             Account account = (Account) session.getAttribute("loggedInAccount");
             ObjectMapper mapper = new ObjectMapper();
             List<Map<String, Object>> items = mapper.readValue(itemsJson, new TypeReference<>(){});
+            for (Map<String, Object> item : items) {
+                int qty = Integer.parseInt(item.get("qty").toString());
+                if (qty <= 0) {
+                    throw new Exception("Quantity for product " + item.get("sku") + " must be positive.");
+                }
+            }
 
             stockOutService.createStockOut(generalNote, items, account);
 
             ra.addFlashAttribute("notification", "Stock-out request created!");
             ra.addFlashAttribute("status", "success");
+            return "redirect:/stockOut/add";
         } catch (Exception e) {
             ra.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
             ra.addFlashAttribute("status", "danger");
+
+            ra.addFlashAttribute("oldItemsJson", itemsJson);
+            ra.addFlashAttribute("oldGeneralNote", generalNote);
+            return "redirect:/stockOut/add";
         }
-        return "redirect:/stockOut/add";
     }
     @GetMapping("/details")
     public String viewStockOutDetail(@RequestParam Integer id, Model model) {

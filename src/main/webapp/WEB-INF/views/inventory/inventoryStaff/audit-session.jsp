@@ -16,8 +16,23 @@
 <jsp:include page="../../layer/header.jsp" />
 <jsp:include page="../../layer/sidebar.jsp" />
 
-<input type="hidden" id="serverMessage" value="${message}">
+<input type="hidden" id="serverMessage" value="${errorMessage}${notification}">
 <input type="hidden" id="serverStatus" value="${status}">
+<input type="hidden" id="oldAuditDataJson" value='${oldAuditDataJson}'>
+
+<style>
+    .input-actual.is-invalid {
+        background-color: #fef2f2;
+        border: 1px solid #dc2626 !important;
+    }
+</style>
+
+<style>
+    .input-actual.is-invalid {
+        background-color: #fef2f2;
+        border: 1px solid #dc2626 !important;
+    }
+</style>
 
 <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">

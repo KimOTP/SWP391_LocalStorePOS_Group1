@@ -16,8 +16,13 @@
 <jsp:include page="../../layer/header.jsp" />
 <jsp:include page="../../layer/sidebar.jsp" />
 
-<input type="hidden" id="serverMessage" value="${message}">
+<input type="hidden" id="serverMessage" value="${errorMessage}${notification}">
 <input type="hidden" id="serverStatus" value="${status}">
+<input type="hidden" id="oldItemsJson" value='${oldItemsJson}'>
+
+<input type="text" id="generalNote" class="form-control"
+       placeholder="Enter general reason for export..."
+       value="${oldGeneralNote}">
 
 <div class="main-content">
 
