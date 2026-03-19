@@ -91,6 +91,7 @@ public class CustomerService {
             }
         } else {
             // Đây là Thêm mới (ID null) -> Gán mặc định
+
             if (customer.getCurrentPoint() == null) customer.setCurrentPoint(0);
             if (customer.getTotalSpending() == null) customer.setTotalSpending(BigDecimal.ZERO);
             if (customer.getStatus() == null) customer.setStatus(1);

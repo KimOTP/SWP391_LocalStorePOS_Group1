@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/customer")
@@ -62,20 +63,22 @@ public class CustomerController {
         if (result.hasErrors()) {
             // Lấy lỗi đầu tiên ra để thông báo
             String errorMessage = result.getFieldError().getDefaultMessage();
-
             // Gửi thông báo lỗi về giao diện
             redirectAttributes.addFlashAttribute("errorMessage", errorMessage);
-
             // Quay về trang cũ
+            return "redirect:/customer";
+        }
+        // Kiểm tra trùng số điện thoại
+        Optional<Customer> existingCustomer = customerService.findByPhoneNumber(customer.getPhoneNumber());
+        if (existingCustomer.isPresent()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error: This phone number already exists in the system!");
             return "redirect:/customer";
         }
 
         // Nếu dữ liệu ngon lành -> Lưu vào DB
         customerService.saveCustomer(customer);
-
         // Thông báo thành công
         redirectAttributes.addFlashAttribute("notification", "Successfully added a customer!");
-
         return "redirect:/customer";
     }
     // Delete
@@ -105,7 +108,14 @@ public class CustomerController {
             // Quay về trang danh sách
             return "redirect:/customer";
         }
-
+        // Kiểm tra trùng số điện thoại khi update
+        Optional<Customer> existingCustomer = customerService.findByPhoneNumber(customer.getPhoneNumber());
+        // Nếu tìm thấy SĐT này, VÀ SĐT này thuộc về một ID khác với ID đang được cập nhật -> Báo lỗi
+        //.get() là hàm của Optional để lấy đối tượng customer ra
+        if (existingCustomer.isPresent() && !existingCustomer.get().getCustomerId().equals(customer.getCustomerId())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Update failed: This phone number is already used by another customer!");
+            return "redirect:/customer";
+        }
         //Nếu không có lỗi thì mới lưu
         try {
             // Lưu ý: customerService.saveCustomer sẽ tự xử lý việc giữ nguyên các field cũ (điểm, tổng tiền...)
