@@ -7,6 +7,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // 1. Xử lý thông báo từ server (SweetAlert2)
     checkServerNotifications();
 
+    const oldItemsJson = document.getElementById('oldItemsJson')?.value;
+    if (oldItemsJson && oldItemsJson !== "") {
+        try {
+            const items = JSON.parse(oldItemsJson);
+            items.forEach(item => {
+                // Tái tạo lại dòng dựa trên SKU (Cần gọi API lấy info sản phẩm)
+                autoSelectProduct(item.sku, item.qty, item.reason);
+            });
+        } catch (e) { console.error("Recovery failed", e); }
+    }
+
     // 2. Khởi tạo Modal an toàn (Chống kẹt nền xám)
     const modalElement = document.getElementById('productModal');
     if (modalElement) {
@@ -204,65 +215,76 @@ function removeRow(btn) {
 // Submit Form
 function submitStockOut() {
     const rows = document.querySelectorAll('#stockOutTable tbody tr:not(#emptyRow)');
-
     if (rows.length === 0) {
-        Swal.fire({
-            title: 'Warning',
-            text: 'Please add at least one product to export!',
-            icon: 'warning',
-            confirmButtonColor: '#2563eb',
-            borderRadius: '16px'
-        });
+        Swal.fire({ title: 'Warning', text: 'Please add at least one product!', icon: 'warning' });
+        return;
+    }
+
+    let hasError = false;
+    let errorMsg = "";
+    const data = [];
+
+    rows.forEach(row => {
+        const sku = row.getAttribute('data-sku');
+        const qtyInput = row.querySelector('.input-actual');
+        const reasonInput = row.querySelector('.input-reason');
+        const currentStock = parseInt(row.querySelector('.stock-badge').innerText);
+        const qty = parseInt(qtyInput.value);
+
+        // VALIDATION LOGIC
+        if (isNaN(qty) || qty <= 0) {
+            hasError = true;
+            errorMsg = "Quantity must be greater than 0.";
+            row.classList.add('table-danger');
+        } else if (qty > currentStock) {
+            hasError = true;
+            errorMsg = "Export quantity exceeds current stock!";
+            row.classList.add('table-danger');
+        } else {
+            row.classList.remove('table-danger');
+            data.push({
+                sku: sku,
+                qty: qty,
+                reason: reasonInput.value
+            });
+        }
+    });
+
+    if (hasError) {
+        Swal.fire({ title: 'Export Error', text: errorMsg, icon: 'error', confirmButtonColor: '#dc2626' });
         return;
     }
 
     Swal.fire({
         title: 'Confirm Export?',
-        text: "Are you sure you want to process this stock-out transaction?",
+        text: "Proceed with this transaction?",
         icon: 'question',
         showCancelButton: true,
-        confirmButtonColor: '#2563eb',
-        cancelButtonColor: '#94a3b8',
-        confirmButtonText: '<i class="fa-solid fa-check me-2"></i>Yes, Confirm',
-        cancelButtonText: 'Cancel',
-        borderRadius: '16px'
+        confirmButtonText: 'Yes, Confirm'
     }).then((result) => {
         if (result.isConfirmed) {
-            try {
-                const data = [];
-                rows.forEach(row => {
-                    data.push({
-                        sku: row.getAttribute('data-sku'),
-                        qty: row.querySelector('.input-actual').value,
-                        reason: row.querySelector('.input-reason').value
-                    });
-                });
-
-                document.getElementById('formNote').value = document.getElementById('generalNote').value;
-                document.getElementById('formItems').value = JSON.stringify(data);
-                document.getElementById('submitForm').submit();
-            } catch (error) {
-                Swal.fire('Error', 'An error occurred while preparing data.', 'error');
-            }
+            document.getElementById('formNote').value = document.getElementById('generalNote').value;
+            document.getElementById('formItems').value = JSON.stringify(data);
+            document.getElementById('submitForm').submit();
         }
     });
 }
 
 // Tự động chọn từ URL
-async function autoSelectProduct(id) {
+async function autoSelectProduct(id, oldQty = 1, oldReason = "") {
     try {
         const response = await fetch(`/stockOut/search-products?term=${encodeURIComponent(id)}`);
         const data = await response.json();
-
-        if (data && data.length > 0) {
-            const targetProduct = data.find(p => p.sku === id);
-            if (targetProduct) {
-                appendRowToMainTable(targetProduct);
+        const target = data.find(p => p.sku === id);
+        if (target) {
+            appendRowToMainTable(target);
+            const row = document.querySelector(`tr[data-sku="${id}"]`);
+            if(row) {
+                row.querySelector('.input-actual').value = oldQty;
+                row.querySelector('.input-reason').value = oldReason;
             }
         }
-    } catch (error) {
-        console.error("Auto select failed:", error);
-    }
+    } catch (e) { console.error(e); }
 }
 
 function checkServerNotifications() {

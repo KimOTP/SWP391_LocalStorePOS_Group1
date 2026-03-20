@@ -1,35 +1,66 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Check for success/error messages from the server upon page load
     checkServerNotifications();
+
+    // Logic to restore old values if server returns an error
+    const oldDataRaw = document.getElementById('oldActualDataJson')?.value;
+    if (oldDataRaw && oldDataRaw !== "") {
+        try {
+            const oldData = JSON.parse(oldDataRaw);
+            oldData.forEach(item => {
+                // Find the row by detailId and update the input
+                const row = document.querySelector(`tr[data-detail-id="${item.detailId}"]`);
+                if (row) {
+                    const input = row.querySelector('.input-actual');
+                    if (input) input.value = item.actualQty;
+                }
+            });
+        } catch (e) {
+            console.error("Error restoring old data:", e);
+        }
+    }
 });
 
 window.submitStockIn = function() {
     const rows = document.querySelectorAll('#processTable tbody tr');
     const data = [];
+    let hasError = false;
 
     rows.forEach(row => {
         const detailId = row.getAttribute('data-detail-id');
         const actualQtyInput = row.querySelector('.input-actual');
 
         if (detailId && actualQtyInput) {
-            data.push({
-                detailId: detailId,
-                actualQty: actualQtyInput.value // Matches your backend variable name
-            });
+            const val = parseFloat(actualQtyInput.value);
+
+            // Validate negative value
+            if (isNaN(val) || val < 0) {
+                hasError = true;
+                actualQtyInput.classList.add('is-invalid'); // Add red border
+            } else {
+                actualQtyInput.classList.remove('is-invalid');
+                data.push({
+                    detailId: detailId,
+                    actualQty: val
+                });
+            }
         }
     });
 
-    if (data.length === 0) {
+    if (hasError) {
         Swal.fire({
             icon: 'error',
-            title: 'Data Error',
-            text: 'No items found to submit!',
-            confirmButtonColor: '#2563eb'
+            title: 'Import Error',
+            text: 'Actual quantity cannot be negative. Please check the highlighted fields.',
+            confirmButtonColor: '#dc2626'
         });
         return;
     }
 
-    // Step 1: Confirmation Popup
+    if (data.length === 0) {
+        Swal.fire({ icon: 'error', title: 'Data Error', text: 'No items found to submit!' });
+        return;
+    }
+
     Swal.fire({
         title: 'Confirm Stock-In?',
         text: "Are you sure you want to verify the actual received quantities?",
@@ -37,28 +68,12 @@ window.submitStockIn = function() {
         showCancelButton: true,
         confirmButtonColor: '#2563eb',
         cancelButtonColor: '#64748b',
-        confirmButtonText: 'Yes, Confirm Stock-In',
-        cancelButtonText: 'Review Again'
+        confirmButtonText: 'Yes, Confirm',
+        cancelButtonText: 'Cancel'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Step 2: Success Animation before redirect
-            Swal.fire({
-                title: 'Submitting Request...',
-                text: 'Updating inventory data, please wait.',
-                icon: 'success',
-                showConfirmButton: false,
-                timer: 1500,
-                timerProgressBar: true,
-                didOpen: () => {
-                    Swal.showLoading();
-                    // Pack data into the hidden input
-                    document.getElementById('actualDataJson').value = JSON.stringify(data);
-                },
-                willClose: () => {
-                    // Step 3: Final Form Submission
-                    document.getElementById('submitForm').submit();
-                }
-            });
+            document.getElementById('actualDataJson').value = JSON.stringify(data);
+            document.getElementById('submitForm').submit();
         }
     });
 };

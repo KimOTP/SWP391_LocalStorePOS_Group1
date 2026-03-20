@@ -24,6 +24,9 @@ public class SupplierController {
     @PostMapping("/add")
     public String createSupplier(@ModelAttribute Supplier supplier,RedirectAttributes ra) {
         try {
+            if (supplierService.existByEmail(supplier.getEmail())) {
+                throw new RuntimeException("Email already in use!");
+            }
             supplierService.saveSupplier(supplier);
             ra.addFlashAttribute("notification", "Supplier has been successfully created");
         } catch (Exception e) {
@@ -35,6 +38,9 @@ public class SupplierController {
     @PostMapping("/update")
     public String updateSupplier(@ModelAttribute Supplier supplier, RedirectAttributes ra) {
         try {
+            if (supplierService.existByEmailAndSupplierIdNot(supplier.getEmail(), supplier.getSupplierId())) {
+                throw new RuntimeException("Update email already in use!");
+            }
             supplierService.updateSupplier(supplier);
             ra.addFlashAttribute("notification", "Supplier updated successfully!");
         }catch (Exception e) {

@@ -145,6 +145,17 @@
             </div>
 
             <div class="app-wrapper">
+
+                <a href="/stockIn/add" class="app-card">
+                    <div class="app-icon-wrapper bg-info text-white">
+                        <i class="fa-solid fa-file-invoice"></i>
+                    </div>
+                    <div class="app-title">Request Order</div>
+                    <div class="app-desc">Purchase Requests</div>
+                </a>
+            </div>
+
+            <div class="app-wrapper">
                 
                 <a href="/hr/manager_profile" class="app-card">
                     <div class="app-icon-wrapper bg-dark text-white">
@@ -210,16 +221,6 @@
                             <div class="app-desc">Stock Control</div>
                         </a>
                     </div>
-            <div class="app-wrapper">
-                
-                <a href="/stockIn/add" class="app-card">
-                    <div class="app-icon-wrapper bg-info text-white">
-                        <i class="fa-solid fa-file-invoice"></i>
-                    </div>
-                    <div class="app-title">Request Order</div>
-                    <div class="app-desc">Purchase Requests</div>
-                </a>
-            </div>
 
             <div class="app-wrapper">
                 

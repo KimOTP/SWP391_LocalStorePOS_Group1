@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface InventoryRepository extends JpaRepository<Inventory, String> {
     Inventory findByProductId(String productId);
-    @Query("SELECT COUNT(i) FROM Inventory i WHERE i.currentQuantity <= i.minThreshold")
+    @Query("SELECT COUNT(i) FROM Inventory i WHERE i.currentQuantity < i.minThreshold")
     long countLowStock();
 
     @Query("SELECT SUM(i.currentQuantity * i.product.price) FROM Inventory i")
