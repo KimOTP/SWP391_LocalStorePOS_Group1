@@ -94,7 +94,7 @@ public class PromotionDetailService {
         Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new RuntimeException("Cannot find promotion"));
         Product product = productRepository.findProductByProductId(productId);
         PromotionDetail.DiscountType discountType = PromotionDetail.DiscountType.valueOf(discountTypeStr);
-
+        //kiem tra logic giảm giá 1 cách hợp lệ không quá lố
         validateDiscount(discountValue, discountType, product.getPrice());
 
         PromotionDetail detail = new PromotionDetail();
@@ -140,7 +140,7 @@ public class PromotionDetailService {
             // Tạo dòng Header (Dòng 0)
             Row headerRow = sheet.createRow(0);
 
-            // Định dạng chữ đậm cho Header
+            // Định dạng style đậm cho Header
             CellStyle headerStyle = workbook.createCellStyle();
             Font font = workbook.createFont();
             font.setBold(true);
