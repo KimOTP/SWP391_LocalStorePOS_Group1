@@ -165,7 +165,7 @@
                             <div class="dropdown">
                                 <button class="btn btn-light btn-sm rounded-circle shadow-none"
                                         type="button" data-bs-toggle="dropdown"
-                                        aria-expanded="false"
+                                        data-bs-boundary="viewport" aria-expanded="false"
                                         style="width:32px;height:32px;">
                                     <i class="fa-solid fa-ellipsis-vertical"></i>
                                 </button>
