@@ -94,7 +94,7 @@ public class PromotionDetailService {
         Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new RuntimeException("Cannot find promotion"));
         Product product = productRepository.findProductByProductId(productId);
         PromotionDetail.DiscountType discountType = PromotionDetail.DiscountType.valueOf(discountTypeStr);
-
+        //kiem tra logic giảm giá 1 cách hợp lệ không quá lố
         validateDiscount(discountValue, discountType, product.getPrice());
 
         PromotionDetail detail = new PromotionDetail();
@@ -115,8 +115,15 @@ public class PromotionDetailService {
         if (discountType == PromotionDetail.DiscountType.PERCENT && discountValue.compareTo(new BigDecimal("100")) >= 0) {
             throw new IllegalArgumentException("The percentage discount must not exceed 100%.");
         }
-        if (discountType == PromotionDetail.DiscountType.AMOUNT && discountValue.compareTo(productPrice) >= 0) {
-            throw new IllegalArgumentException("The discount amount must not exceed the product's original price.");
+        if (discountType == PromotionDetail.DiscountType.AMOUNT) {
+            // ✅ Check null trước khi compareTo
+            if (productPrice == null) {
+                throw new IllegalArgumentException("Cannot validate: product price is not set.");
+            }
+            if (discountValue.compareTo(productPrice) >= 0) {
+                throw new IllegalArgumentException("The discount amount must not exceed the product's original price ("
+                        + productPrice + " đ).");
+            }
         }
     }
 
@@ -133,7 +140,7 @@ public class PromotionDetailService {
             // Tạo dòng Header (Dòng 0)
             Row headerRow = sheet.createRow(0);
 
-            // Định dạng chữ đậm cho Header
+            // Định dạng style đậm cho Header
             CellStyle headerStyle = workbook.createCellStyle();
             Font font = workbook.createFont();
             font.setBold(true);

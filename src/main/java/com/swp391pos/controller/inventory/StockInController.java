@@ -51,6 +51,11 @@ public class StockInController {
             Account account = (Account) session.getAttribute("loggedInAccount");
             ObjectMapper mapper = new ObjectMapper();
             List<StockInItemDTO> items = mapper.readValue(itemsJson, new TypeReference<List<StockInItemDTO>>() {});
+            for(StockInItemDTO item : items) {
+                if(item.getQty() <= 0 || item.getPrice().doubleValue() < 0) {
+                    throw new Exception("Quantity or Price is not valid.");
+                }
+            }
             stockInService.createRequest(supplierId, items, account);
 
             ra.addFlashAttribute("notification", "Stock-in request created successfully!");
@@ -58,15 +63,10 @@ public class StockInController {
         } catch (Exception e) {
             ra.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
             ra.addFlashAttribute("status", "danger");
+            ra.addFlashAttribute("oldItemsJson", itemsJson);
+            ra.addFlashAttribute("oldSupplierId", supplierId);
         }
         return "redirect:/inventory/dashboard"; // Quay về Dashboard sau khi tạo xong
-    }
-
-    @GetMapping("/product-info")
-    @ResponseBody
-    public ResponseEntity<?> getSingleProductInfo(@RequestParam String sku) {
-        Map<String, Object> data = stockInService.getProductDetails(sku);
-        return (data != null) ? ResponseEntity.ok(data) : ResponseEntity.notFound().build();
     }
     //Stock In Notification For Inventory Staff
     @GetMapping("/notifications")
@@ -95,6 +95,12 @@ public class StockInController {
             Account staff = (Account) session.getAttribute("loggedInAccount");
             ObjectMapper mapper = new ObjectMapper();
             List<Map<String, Object>> actualData = mapper.readValue(actualDataJson, new TypeReference<>() {});
+            for (Map<String, Object> item : actualData) {
+                double actualQty = Double.parseDouble(item.get("actualQty").toString());
+                if (actualQty < 0) {
+                    throw new Exception("Actual quantity cannot be negative.");
+                }
+            }
 
             stockInService.processStaffInput(stockInId, actualData, staff);
             ra.addFlashAttribute("notification", "Stock-in data submitted for approval!");
@@ -102,6 +108,8 @@ public class StockInController {
         } catch (Exception e) {
             ra.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
             ra.addFlashAttribute("status", "danger");
+            ra.addFlashAttribute("oldActualDataJson", actualDataJson);
+            return "redirect:/stockIn/process?id=" + stockInId;
         }
         return "redirect:/stockIn/notifications";
     }

@@ -201,7 +201,7 @@
                             <div class="dropdown">
                                 <button class="btn btn-light btn-sm rounded-circle shadow-none"
                                         type="button" data-bs-toggle="dropdown"
-                                        data-bs-boundary="document" aria-expanded="false"
+                                        data-bs-boundary="viewport" aria-expanded="false"
                                         style="width:32px;height:32px;">
                                     <i class="fa-solid fa-ellipsis-vertical"></i>
                                 </button>
@@ -250,11 +250,11 @@
                 <div class="modal-body pt-3 px-4">
                     <div class="mb-3">
                         <label class="form-label fw-bold text-muted small">Name:</label>
-                        <input type="text" class="form-control py-2" name="fullName" placeholder="Enter name..." required>
+                        <input type="text" class="form-control py-2" name="fullName" placeholder="Enter name..." required title="Please enter customer name">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold text-muted small">Phone Number:</label>
-                        <input type="text" class="form-control py-2" name="phoneNumber" placeholder="Phone number..." required>
+                        <input type="text" class="form-control py-2" name="phoneNumber" placeholder="Phone number..." required title="Please enter phone number">
                     </div>
                     <div class="mb-4">
                         <label class="form-label fw-bold text-muted small">Status:</label>
@@ -286,11 +286,11 @@
                     <input type="hidden" id="editId" name="customerId">
                     <div class="mb-3">
                         <label class="form-label fw-bold text-muted small">Name:</label>
-                        <input type="text" class="form-control py-2" id="editName" name="fullName" required>
+                        <input type="text" class="form-control py-2" id="editName" name="fullName" required title="Please enter customer name">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold text-muted small">Phone Number:</label>
-                        <input type="text" class="form-control py-2" id="editPhone" name="phoneNumber" required>
+                        <input type="text" class="form-control py-2" id="editPhone" name="phoneNumber" required title="Please enter phone number">
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold text-muted small">Status:</label>
@@ -351,7 +351,7 @@
                         <div class="d-flex align-items-center bg-light p-2 rounded-3">
                             <input type="number" name="maxRedeemPercent" id="confMaxPercent"
                                    class="form-control fw-bold text-center border-0 py-2 shadow-sm"
-                                   style="background-color:#fff9c4;width:120px;" max="100" required>
+                                   style="background-color:#fff9c4;width:120px;" required>
                             <span class="fw-bold mx-3">% of Total Bill</span>
                         </div>
                     </div>
@@ -425,8 +425,7 @@
     </div>
 </div>
 
-<input type="hidden" id="serverSuccessMsg" value="${success}">
-<input type="hidden" id="serverErrorMsg" value="${error}">
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/customer/customer.js"></script>
 

@@ -28,7 +28,42 @@ document.addEventListener('DOMContentLoaded', function() {
             renderModalTable(filtered);
         });
     }
+    const oldItemsRaw = document.getElementById('oldItemsJson').value;
+    const oldSupplierId = document.getElementById('oldSupplierId').value;
+
+    if (oldItemsRaw && oldItemsRaw !== "") {
+        try {
+            const oldItems = JSON.parse(oldItemsRaw);
+            oldItems.forEach(item => {
+                appendRowFromOldData(item);
+            });
+            if (oldSupplierId) {
+                document.getElementById('supplierSelect').value = oldSupplierId;
+            }
+            updateSummary();
+        } catch (e) {
+            console.error("Lỗi nạp lại dữ liệu cũ", e);
+        }
+    }
 });
+
+async function appendRowFromOldData(oldItem) {
+    try {
+        const response = await fetch(`/stockIn/product-info?sku=${oldItem.sku}`);
+        if (response.ok) {
+            const productInfo = await response.json();
+            appendRowToMainTable(productInfo, oldItem.qty);
+            const lastRow = document.querySelector(`#stockInBody tr[data-sku="${oldItem.sku}"]`);
+            if (lastRow) {
+                const priceInput = lastRow.querySelector('.price-input');
+                priceInput.value = oldItem.price;
+                calculateRow(priceInput);
+            }
+        }
+    } catch (err) {
+        console.error("Không thể khôi phục dòng: " + oldItem.sku);
+    }
+}
 
 async function fetchProducts() {
     try {
@@ -260,6 +295,36 @@ function submitStockIn() {
     }
     if (rows.length === 0) {
         Swal.fire({ title: 'Warning', text: 'Please add at least one product to restock!', icon: 'warning', confirmButtonColor: '#2563eb' });
+        return;
+    }
+    let hasError = false;
+    const data = [];
+
+    rows.forEach(row => {
+        const qty = parseInt(row.querySelector('.qty-input').value) || 0;
+        const price = parseFloat(row.querySelector('.price-input').value) || 0;
+        const itemName = row.querySelector('.fw-bold').innerText;
+
+        if (qty <= 0 || price < 0) {
+            hasError = true;
+            row.classList.add('table-danger'); // Bôi đỏ dòng lỗi
+        } else {
+            row.classList.remove('table-danger');
+            data.push({
+                sku: row.getAttribute('data-sku'),
+                qty: qty,
+                price: price
+            });
+        }
+    });
+
+    if (hasError) {
+        Swal.fire({
+            title: 'Error to create Order Request',
+            text: 'Quantity of each product must > 0 0 và unitcost cannot be negative . Please recheck !',
+            icon: 'error',
+            confirmButtonColor: '#dc2626'
+        });
         return;
     }
 

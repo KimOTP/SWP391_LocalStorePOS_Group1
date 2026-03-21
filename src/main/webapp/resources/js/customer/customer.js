@@ -54,7 +54,7 @@ function confirmDelete(url, itemName) {
 // Đưa cấu hình Toast ra ngoài phạm vi toàn cục để các hàm khác cũng dùng được
 const Toast = Swal.mixin({
     toast: true,
-    position: 'top-end',
+    position: 'top',
     showConfirmButton: false,
     timer: 3000,
     timerProgressBar: true,
@@ -64,20 +64,6 @@ const Toast = Swal.mixin({
     }
 });
 
-// Hệ thống TOAST thông báo (SWEETALERT2)
-document.addEventListener("DOMContentLoaded", function() {
-    // Tìm thẻ hidden chứa tin nhắn từ Server gửi xuống
-    // Dùng dấu '?.' để tránh bị lỗi Javascript nếu trang nào đó không có thẻ này
-    const successMsg = document.getElementById('serverSuccessMsg')?.value;
-    const errorMsg = document.getElementById('serverErrorMsg')?.value;
-    // Có chữ bên trong thì bật Toast lên
-    if (successMsg && successMsg.trim() !== "") {
-            Toast.fire({ icon: 'success', title: successMsg });
-        }
-    if (errorMsg && errorMsg.trim() !== "") {
-            Toast.fire({ icon: 'error', title: errorMsg });
-    }
-});
 
 
 
@@ -201,7 +187,7 @@ function openConfigModal() {
             configModal.show();
         })
         .catch(error => {
-            console.error('Lỗi load config:', error);
+            console.error('Error load config:', error);
             // Vẫn hiện modal dù lỗi để người dùng nhập tay
             var configModal = new bootstrap.Modal(document.getElementById('configPointModal'));
             configModal.show();

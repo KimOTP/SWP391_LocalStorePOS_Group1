@@ -20,8 +20,10 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
 
     List<Supplier> findBySupplierNameContainingIgnoreCase(String name);
 
-    String getSupplierBySupplierId(Integer supplierId);
-
     @Query("SELECT COUNT(si) > 0 FROM StockIn si WHERE si.supplier.supplierId = :supplierId")
     boolean existsStockInBySupplierId(@Param("supplierId") Integer supplierId);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByEmailAndSupplierIdNot(String email, Integer supplierId);
 }

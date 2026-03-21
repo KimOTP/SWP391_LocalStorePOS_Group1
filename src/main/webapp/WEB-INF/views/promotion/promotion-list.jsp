@@ -163,7 +163,7 @@
                             <div class="dropdown">
                                 <button class="btn btn-light btn-sm rounded-circle shadow-none"
                                         type="button" data-bs-toggle="dropdown"
-                                        data-bs-boundary="document" aria-expanded="false"
+                                        data-bs-boundary="viewport" aria-expanded="false"
                                         style="width:32px;height:32px;">
                                     <i class="fa-solid fa-ellipsis-vertical"></i>
                                 </button>
@@ -297,8 +297,6 @@
     </div>
 </div>
 
-<input type="hidden" id="serverSuccessMsg" value="${success}">
-<input type="hidden" id="serverErrorMsg" value="${error}">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="${pageContext.request.contextPath}/resources/js/customer/customer.js"></script>
 

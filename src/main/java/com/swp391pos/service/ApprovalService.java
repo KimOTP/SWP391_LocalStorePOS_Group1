@@ -5,6 +5,7 @@ import com.swp391pos.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class ApprovalService {
     @Autowired private ProductService productService;
 
     @Transactional
-    public void processApproval(String type, Integer id, boolean isApproved, Account approverAccount) {
+    public void processApproval(String type, Integer id, boolean isApproved, Account approverAccount ,RedirectAttributes ra) {
         TransactionStatus newStatus = statusRepo.findById(isApproved ? 4 : 3)
                 .orElseThrow(() -> new RuntimeException("Status not found"));
         Employee approver = approverAccount.getEmployee();
@@ -68,19 +69,31 @@ public class ApprovalService {
             // 4. Xử lý AUDIT (Kiểm kê - Cân bằng kho)
         } else if ("Audit".equalsIgnoreCase(type)) {
             AuditSession au = auditRepo.findById(id).orElseThrow();
-            au.setStatus(newStatus);
             au.setApprover(approver);
 
-            if (isApproved) {
-                for (AuditDetail d : au.getDetails()) {
-                    Inventory inv = inventoryRepo.findByProductId(d.getProduct().getProductId());
-                    if (inv != null) {
-                        inv.setCurrentQuantity(d.getActualQuantity());
-                        inventoryRepo.save(inv);
+            AuditSession latestAudit = auditRepo.getLatestAuditSession();
+
+            boolean isLatest = latestAudit != null && au.getAuditId().equals(latestAudit.getAuditId());
+            if (!isLatest) {
+                TransactionStatus rejectStatus = statusRepo.findById(3)
+                        .orElseThrow(() -> new RuntimeException("Reject status not found"));
+                au.setStatus(rejectStatus);
+                auditRepo.save(au);
+
+                ra.addFlashAttribute("errorMessage", "This is an outdated audit session. The system only allows approving the latest audit. It has been automatically rejected.");
+            } else {
+                au.setStatus(newStatus);
+                if (isApproved) {
+                    for (AuditDetail d : au.getDetails()) {
+                        Inventory inv = inventoryRepo.findByProductId(d.getProduct().getProductId());
+                        if (inv != null) {
+                            inv.setCurrentQuantity(d.getActualQuantity());
+                            inventoryRepo.save(inv);
+                        }
                     }
                 }
+                auditRepo.save(au);
             }
-            auditRepo.save(au);
         }
     }
 

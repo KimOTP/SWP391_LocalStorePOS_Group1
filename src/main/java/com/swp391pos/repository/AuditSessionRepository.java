@@ -12,5 +12,6 @@ public interface AuditSessionRepository extends JpaRepository<AuditSession, Inte
     @Query("SELECT a FROM AuditSession a WHERE a.status.transactionStatusId = :statusId")
     List<AuditSession> findByStatusId(@Param("statusId") Integer statusId);
     AuditSession findByAuditId(int auditId);
-
+    @Query("SELECT a FROM AuditSession a ORDER BY a.auditDate DESC LIMIT 1")
+    AuditSession getLatestAuditSession();
 }

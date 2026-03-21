@@ -17,6 +17,8 @@
 
 <input type="hidden" id="serverMessage" value="${message}">
 <input type="hidden" id="serverStatus" value="${status}">
+<input type="hidden" id="oldItemsJson" value='${oldItemsJson}'>
+<input type="hidden" id="oldSupplierId" value="${oldSupplierId}">
 
 <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -166,6 +168,7 @@
 <form id="submitForm" action="<c:url value='/stockIn/stock-in'/>" method="POST">
     <input type="hidden" name="supplierId" id="formSupplierId">
     <input type="hidden" name="itemsJson" id="formItems">
+
     <c:if test="${_csrf != null}">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
     </c:if>

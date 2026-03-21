@@ -37,6 +37,12 @@ public class AuditController {
             Account account = (Account) session.getAttribute("loggedInAccount");
             ObjectMapper mapper = new ObjectMapper();
             List<Map<String, Object>> items = mapper.readValue(auditDataJson, new TypeReference<>(){});
+            for (Map<String, Object> item : items) {
+                int actual = Integer.parseInt(item.get("actual").toString());
+                if (actual < 0) {
+                    throw new Exception("Actual count cannot be negative for product: " + item.get("productId"));
+                }
+            }
 
             auditService.saveAuditSession(items, account);
             ra.addFlashAttribute("notification", "Audit session submitted successfully!");
@@ -44,6 +50,7 @@ public class AuditController {
         } catch (Exception e) {
             ra.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
             ra.addFlashAttribute("status", "error");
+            ra.addFlashAttribute("oldAuditDataJson", auditDataJson);
         }
         return "redirect:/audit/add";
     }

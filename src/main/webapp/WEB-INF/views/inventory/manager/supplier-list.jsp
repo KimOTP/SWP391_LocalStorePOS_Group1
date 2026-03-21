@@ -145,11 +145,11 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-muted">ADDRESS</label>
-                        <input type="text" name="contactName" class="form-control">
+                        <input type="text" name="contactName" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-muted">EMAIL</label>
-                        <input type="email" name="email" class="form-control">
+                        <input type="email" name="email" class="form-control" required pattern=".+@gmail\.com$" title="Please input correct email format (user@gmail.com)">
                     </div>
                 </div>
                 <div class="modal-footer border-0">
@@ -176,11 +176,11 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-muted">ADDRESS</label>
-                        <input type="text" name="contactName" id="editAddress" class="form-control">
+                        <input type="text" name="contactName" id="editAddress" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label small fw-bold text-muted">EMAIL</label>
-                        <input type="email" name="email" id="editEmail" class="form-control">
+                        <input type="email" name="email" id="editEmail" class="form-control " required pattern=".+@gmail\.com$" title="Please input correct email format (user@gmail.com)">
                     </div>
                 </div>
                 <div class="modal-footer border-0">
