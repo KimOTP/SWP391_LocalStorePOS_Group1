@@ -32,7 +32,15 @@
                             </div>
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Combo Name</label>
-                                <input type="text" name="comboName" class="form-control input-custom" value="${combo.comboName}" required>
+                                <%-- Combo Name --%>
+                                <input type="text" name="comboName" class="form-control input-custom"
+                                       value="${combo.comboName}"
+                                       required
+                                       minlength="3"
+                                       maxlength="100"
+                                       pattern=".*\S.*"
+                                       title="Combo name cannot be only whitespace"
+                                       oninput="this.value = this.value.replace(/^\s+/, '')">
                             </div>
 
                             <div class="mb-3">
@@ -108,7 +116,12 @@
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Combo Selling Price</label>
                                 <div class="input-group-custom">
-                                    <input type="number" id="sellingPrice" name="totalPrice" class="form-control input-custom" value="${combo.totalPrice}" required>
+                                    <%-- Selling Price --%>
+                                    <input type="number" id="sellingPrice" name="totalPrice"
+                                           class="form-control input-custom"
+                                           value="${combo.totalPrice}"
+                                           required
+                                           min="1000">
                                     <span class="currency-suffix">đ</span>
                                 </div>
                             </div>
@@ -149,7 +162,10 @@
                                     </div>
                                 </div>
                             </div>
-                            <input type="file" name="imageFile" id="imageInput" class="d-none" accept="image/*">
+                            <%-- Image --%>
+                            <input type="file" name="imageFile" id="imageInput"
+                                   class="d-none"
+                                   accept="image/jpeg, image/png, image/webp">
                             <input type="hidden" name="existingImageUrl" value="${combo.imageUrl}">
 
                             <div class="quick-actions-panel mt-4">
