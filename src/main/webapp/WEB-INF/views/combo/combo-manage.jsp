@@ -200,7 +200,7 @@
                                         <li>
                                             <a class="dropdown-item rounded-2 py-2 text-danger btn-delete-combo"
                                                href="javascript:void(0)"
-                                               data-url="<c:url value='/products/delete/${p.productId}'/>">
+                                               data-url="<c:url value='/combos/delete/${c.comboId}'/>">
                                                 <i class="fa-regular fa-trash-can me-2" style="width: 18px;"></i>Delete
                                             </a>
                                         </li>

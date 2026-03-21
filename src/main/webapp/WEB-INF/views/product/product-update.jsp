@@ -34,13 +34,13 @@
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Product Code (SKU)</label>
                                 <input type="text" name="productId" class="form-control input-custom"
-                                       value="${product.productId}" placeholder="Enter SKU..."
-                                       required minlength="1" maxlength="64">
+                                       value="${product.productId}" placeholder="Enter SKU...">
                             </div>
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Product Name</label>
                                 <input type="text" name="productName" class="form-control input-custom"
-                                       value="${product.productName}" placeholder="Enter name...">
+                                       value="${product.productName}" placeholder="Enter name..."
+                                       required minlength="1" maxlength="64">
                             </div>
 
                             <%-- Custom Category Dropdown --%>
