@@ -142,7 +142,7 @@
 
         <div class="rpt-card">
             <div class="rpt-card-row">
-                <span class="rpt-card-lbl">Transactions</span>
+                <span class="rpt-card-lbl">Total Order</span>
                 <i class="bi bi-receipt rpt-card-ico text-warning"></i>
             </div>
             <div class="rpt-card-val" id="totalOrders">
