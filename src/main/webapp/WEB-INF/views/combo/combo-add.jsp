@@ -32,7 +32,15 @@
                             </div>
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Combo Name</label>
-                                <input type="text" name="comboName" class="form-control input-custom" placeholder="e.g. Family Pack" required>
+                                <%-- Combo Name --%>
+                                <input type="text" name="comboName" class="form-control input-custom"
+                                       placeholder="e.g. Family Pack"
+                                       required
+                                       minlength="3"
+                                       maxlength="100"
+                                       pattern=".*\S.*"
+                                       title="Combo name cannot be only whitespace"
+                                       oninput="this.value = this.value.replace(/^\s+/, '')">
                             </div>
 
                            <div class="mb-3">
@@ -102,7 +110,12 @@
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Combo Selling Price</label>
                                 <div class="input-group-custom">
-                                    <input type="number" id="sellingPrice" name="totalPrice" class="form-control input-custom" placeholder="0" required>
+                                    <%-- Selling Price --%>
+                                    <input type="number" id="sellingPrice" name="totalPrice"
+                                           class="form-control input-custom"
+                                           placeholder="0"
+                                           required
+                                           min="1000">
                                     <span class="currency-suffix">đ</span>
                                 </div>
                             </div>
@@ -132,7 +145,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <input type="file" name="imageFile" id="imageInput" class="d-none" accept="image/*">
+                            <input type="file" name="imageFile" id="imageInput"
+                                   class="d-none"
+                                   accept="image/jpeg, image/png, image/webp">
 
                             <div class="quick-actions-panel mt-4">
                                 <label class="form-label text-muted fw-bold small d-block mb-3">Quick Discount</label>

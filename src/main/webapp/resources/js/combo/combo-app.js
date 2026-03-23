@@ -156,8 +156,21 @@ function applyAllFilters() {
         row.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
     });
 }
+function applyDiscount(percent) {
+    const original = parseFloat(document.getElementById('originalPrice').value) || 0;
+    if (original === 0) {
+        alert('⚠ Please add products first before applying discount.');
+        return;
+    }
+    const discounted = Math.round(original * (1 - percent / 100));
+    document.getElementById('sellingPrice').value = discounted;
+
+    // Xóa trạng thái lỗi nếu có
+    document.getElementById('sellingPrice').classList.remove('is-invalid');
+}
 
 // --- 5. Global Functions ---
+window.applyDiscount = applyDiscount;
 window.addProductToCombo = addProductToCombo;
 window.updateQuantity = updateQuantity;
 window.removeProduct = removeProduct;
@@ -251,6 +264,63 @@ function initDeleteConfirmation() {
     });
 }
 
+
+function initFormValidation() {
+    const form = document.getElementById('comboForm');
+    if (!form) return; // trang manage không có form → skip
+
+    form.addEventListener('submit', function (e) {
+
+        // 1. Ít nhất 1 sản phẩm
+        if (selectedProducts.length < 1) {
+            e.preventDefault();
+            // Hiện lỗi ngay dưới danh sách sản phẩm
+            let errEl = document.getElementById('productError');
+            if (!errEl) {
+                errEl = document.createElement('div');
+                errEl.id = 'productError';
+                errEl.className = 'text-danger small mt-1';
+                document.getElementById('selectedProductsList').after(errEl);
+            }
+            errEl.textContent = '⚠ Please add at least 1 product to the combo.';
+            return;
+        }
+
+        // 2. Selling price không được vượt original price
+        const original = parseFloat(document.getElementById('originalPrice').value) || 0;
+        const selling  = parseFloat(document.getElementById('sellingPrice').value)  || 0;
+        if (selling > original) {
+            e.preventDefault();
+            const sp = document.getElementById('sellingPrice');
+            sp.classList.add('is-invalid');
+            let fb = sp.parentElement.querySelector('.invalid-feedback');
+            if (!fb) {
+                fb = document.createElement('div');
+                fb.className = 'invalid-feedback';
+                sp.parentElement.appendChild(fb);
+            }
+            fb.textContent = `Selling price cannot exceed original price (${original.toLocaleString()}đ).`;
+            return;
+        }
+
+        // 3. Image size <= 5MB
+        const imageInput = document.getElementById('imageInput');
+        if (imageInput.files.length > 0) {
+            const fileSizeMB = imageInput.files[0].size / (1024 * 1024);
+            if (fileSizeMB > 5) {
+                e.preventDefault();
+                alert('⚠ Image must be smaller than 5MB.');
+                return;
+            }
+        }
+    });
+
+    // Xóa lỗi selling price khi user gõ lại
+    document.getElementById('sellingPrice')?.addEventListener('input', function () {
+        this.classList.remove('is-invalid');
+    });
+}
+
 // --- 6. Khởi tạo ---
 document.addEventListener('DOMContentLoaded', function() {
     initImagePreview();
@@ -260,6 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initViewComboModal();
     initTableDropdowns();
     initDeleteConfirmation();
+    initFormValidation();
 
     const dataBridge = document.getElementById('combo-data-bridge');
     if (dataBridge && dataBridge.getAttribute('data-is-update') === 'true') {

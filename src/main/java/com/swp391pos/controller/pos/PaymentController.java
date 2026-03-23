@@ -198,7 +198,7 @@ public class PaymentController {
             Integer pointsUsed = (rawPts != null && !String.valueOf(rawPts).trim().isEmpty())
                     ? Integer.valueOf(String.valueOf(rawPts).trim()) : 0;
             //Call service
-            customerService.updateCustomerAfterPayment(orderId, customerId, totalPaid, pointsUsed);
+            customerService.updateCustomerAfterPayment(orderId, customerId, totalPaid , pointsUsed);
 
             session.removeAttribute(SESSION_CART_ORDER_JSON);
 
