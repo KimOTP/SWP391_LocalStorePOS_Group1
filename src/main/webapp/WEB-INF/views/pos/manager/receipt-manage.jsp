@@ -146,7 +146,8 @@
                     data-status="${r.orderStatus}"
                     data-payment="${r.paymentMethod}"
                     data-customer="${r.customerName}"
-                    data-cashier="${r.cashierName}">
+                    data-cashier="${r.cashierName}"
+                    data-date="${r.createdAt}">
 
                     <%-- Invoice code --%>
                     <td><span class="invoice-code">${r.receiptNumber}</span></td>
