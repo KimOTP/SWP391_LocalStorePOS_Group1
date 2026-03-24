@@ -83,11 +83,9 @@ public class CustomerService {
                 if (customer.getCurrentPoint() == null) {
                     customer.setCurrentPoint(oldCustomer.getCurrentPoint());
                 }
-                // Nếu form edit không gửi tổng tiền (null), thì giữ nguyên tiền cũ
-                if (customer.getTotalSpending() == null) {
                     customer.setTotalSpending(oldCustomer.getTotalSpending());
-                }
-                // Giữ nguyên ngày tạo, v.v...
+                    customer.setLastTransactionDate(oldCustomer.getLastTransactionDate());
+                    customer.setCreatedAt(oldCustomer.getCreatedAt());
             }
         } else {
             // Đây là Thêm mới (ID null) -> Gán mặc định
