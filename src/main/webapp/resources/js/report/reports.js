@@ -190,7 +190,7 @@ function updateTable(orders) {
             '<td>' + payLabel(pmStr) + '</td>' +
             '<td>' + fmtVND(o.totalAmount) + '</td>' +
             '<td>' + fmtDT(o.createdAt) + '</td>' +
-            '<td>' + (o.orderStatus ? escHtml(o.orderStatus.orderStatusName) : '') + '</td>' +
+            '<td>' + statusBadge(o.orderStatus ? (o.orderStatus.orderStatusName || String(o.orderStatus)) : null) + '</td>' +
             '</tr>';
     }).join('');
 }
@@ -246,4 +246,18 @@ function escHtml(s) {
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;');
+}
+
+function statusBadge(status) {
+    if (!status) return '<span>—</span>';
+    var map = {
+        'PAID':            { label: 'Paid',            color: '#16a34a', bg: '#f0fdf4', border: '#86efac' },
+        'CANCELLED':       { label: 'Cancelled',       color: '#dc2626', bg: '#fef2f2', border: '#fca5a5' },
+        'PENDING_PAYMENT': { label: 'Pending Payment', color: '#d97706', bg: '#fffbeb', border: '#fcd34d' },
+        'DRAFT':           { label: 'Draft',           color: '#6b7280', bg: '#f9fafb', border: '#d1d5db' }
+    };
+    var s = map[status.toUpperCase()] || { label: status, color: '#6b7280', bg: '#f9fafb', border: '#d1d5db' };
+    return '<span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;' +
+           'color:' + s.color + ';background:' + s.bg + ';border:1px solid ' + s.border + '">' +
+           escHtml(s.label) + '</span>';
 }
