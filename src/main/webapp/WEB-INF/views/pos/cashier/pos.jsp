@@ -327,8 +327,15 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    window.userRole = '${sessionScope.account.employee.role}';
+    window.userRole    = '${sessionScope.account.employee.role}';
     window.contextPath = '${pageContext.request.contextPath}';
+</script>
+<%-- Safe JSON injection — avoids JS string escaping issues with product names --%>
+<script type="application/json" id="posRestoreData">
+{
+  "cartJson"  : ${not empty restoreCartJson ? restoreCartJson : "[]"},
+  "orderId"   : "${not empty restoreOrderId ? restoreOrderId : ""}"
+}
 </script>
 <script src="${pageContext.request.contextPath}/resources/js/pos/pos.js"></script>
 </body>

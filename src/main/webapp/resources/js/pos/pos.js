@@ -3,6 +3,7 @@
    ============================================================ */
 
 let cart = [];
+let restoredOrderId = null; // set khi user back từ trang payment
 
 /* ── Utilities ── */
 function formatVND(amount) {
@@ -78,6 +79,7 @@ function removeFromCart(id) {
 
 function clearCart() {
     cart = [];
+    restoredOrderId = null;
     renderCart();
 }
 
@@ -339,7 +341,14 @@ async function goToPayment() {
     };
 
     try {
-        const res  = await fetch((window.contextPath || '') + '/pos/api/checkout', {
+        // Nếu đang restore từ order cũ → update order đó, không tạo mới
+        const endpoint = restoredOrderId
+            ? (window.contextPath || '') + '/pos/api/update-order'
+            : (window.contextPath || '') + '/pos/api/checkout';
+
+        if (restoredOrderId) payload.orderId = restoredOrderId;
+
+        const res  = await fetch(endpoint, {
             method : 'POST',
             headers: { 'Content-Type': 'application/json' },
             body   : JSON.stringify(payload)
@@ -347,6 +356,7 @@ async function goToPayment() {
         const data = await res.json();
 
         if (data.success) {
+            restoredOrderId = null;
             window.location.href = (window.contextPath || '') + '/pos/payment?orderId=' + data.orderId;
         } else {
             throw new Error(data.errorMessage || 'Checkout failed');
@@ -364,6 +374,39 @@ async function goToPayment() {
    EVENT LISTENERS
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
+
+    // ── Restore cart nếu user back từ trang payment ──────────────────
+    // Đọc từ <script type="application/json" id="posRestoreData"> — an toàn với mọi ký tự đặc biệt
+    try {
+        const restoreEl = document.getElementById('posRestoreData');
+        if (restoreEl) {
+            const restoreData = JSON.parse(restoreEl.textContent || '{}');
+            const items = Array.isArray(restoreData.cartJson) ? restoreData.cartJson : [];
+            const rawId = (restoreData.orderId || '').trim();
+
+            if (items.length > 0 && rawId) {
+                restoredOrderId = rawId;
+                items.forEach(item => {
+                    const id    = String(item.productId || '');
+                    const name  = String(item.productName || '');
+                    const price = parseFloat(item.unitPrice) || 0;
+                    const qty   = parseInt(item.quantity)    || 1;
+                    const unit  = String(item.unit || '');
+
+                    if (!id) return;
+                    const existing = cart.find(c => c.id === id);
+                    if (existing) { existing.qty = qty; }
+                    else { cart.push({ id, name, price, unit, qty }); }
+                });
+                renderCart();
+                setTimeout(() => {
+                    Toast.fire({ icon: 'info', title: 'Cart restored — you can edit before paying again.' });
+                }, 400);
+            }
+        }
+    } catch(e) {
+        console.warn('Cart restore failed:', e);
+    }
 
     initPriceDropdown();
 
