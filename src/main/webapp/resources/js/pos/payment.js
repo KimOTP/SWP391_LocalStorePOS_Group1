@@ -182,7 +182,7 @@ function cancelAddCustomer() {
 // Đưa cấu hình Toast ra ngoài phạm vi toàn cục để các hàm khác cũng dùng được
 const Toast = Swal.mixin({
     toast: true,
-    position: 'top-end',
+    position: 'top',
     showConfirmButton: false,
     timer: 3000,
     timerProgressBar: true,
