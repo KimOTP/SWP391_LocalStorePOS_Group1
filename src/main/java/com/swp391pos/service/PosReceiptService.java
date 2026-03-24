@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -216,8 +217,56 @@ public class PosReceiptService {
        Export Excel
        ---------------------------------------------------------------- */
 
-    public void exportToExcel(HttpServletResponse response) throws IOException {
-        List<PosReceipt> receipts = getAllReceipts();
+    /* ----------------------------------------------------------------
+       Filtered receipt list for export
+       ---------------------------------------------------------------- */
+    public List<PosReceipt> getFilteredReceipts(String search, String payment,
+                                                String from, String to) {
+        List<PosReceipt> all = getAllReceipts();
+        String searchLc = (search != null && !search.isBlank()) ? search.toLowerCase() : null;
+        String pmFilter  = (payment != null && !payment.isBlank()) ? payment.toUpperCase() : null;
+
+        LocalDate fromDate = null;
+        LocalDate toDate   = null;
+        try { if (from != null && !from.isBlank()) fromDate = LocalDate.parse(from); } catch (DateTimeParseException ignored) {}
+        try { if (to   != null && !to.isBlank())   toDate   = LocalDate.parse(to);   } catch (DateTimeParseException ignored) {}
+
+        final LocalDate fd = fromDate;
+        final LocalDate td = toDate;
+
+        return all.stream().filter(r -> {
+            // Search filter (receipt number, customer name, cashier name)
+            if (searchLc != null) {
+                String rn  = r.getReceiptNumber() != null ? r.getReceiptNumber().toLowerCase() : "";
+                String cust = r.getOrder() != null && r.getOrder().getCustomer() != null
+                        ? r.getOrder().getCustomer().getFullName().toLowerCase() : "";
+                String cash = r.getOrder() != null && r.getOrder().getEmployee() != null
+                        ? r.getOrder().getEmployee().getFullName().toLowerCase() : "";
+                if (!rn.contains(searchLc) && !cust.contains(searchLc) && !cash.contains(searchLc))
+                    return false;
+            }
+            // Payment filter
+            if (pmFilter != null && r.getOrder() != null) {
+                String pm = r.getOrder().getPaymentMethod() != null
+                        ? r.getOrder().getPaymentMethod().name() : "";
+                if (!pm.equals(pmFilter)) return false;
+            }
+            // Date filter (based on order createdAt)
+            if ((fd != null || td != null) && r.getOrder() != null) {
+                LocalDateTime createdAt = r.getOrder().getCreatedAt();
+                if (createdAt == null) return false;
+                LocalDate rowDate = createdAt.toLocalDate();
+                if (fd != null && rowDate.isBefore(fd)) return false;
+                if (td != null && rowDate.isAfter(td))  return false;
+            }
+            return true;
+        }).collect(Collectors.toList());
+    }
+
+    public void exportToExcel(HttpServletResponse response,
+                              String search, String payment,
+                              String from, String to) throws IOException {
+        List<PosReceipt> receipts = getFilteredReceipts(search, payment, from, to);
 
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Receipts");
