@@ -2,6 +2,15 @@
    RECEIPT.JS – Manage Receipt page logic
    ============================================================ */
 
+// Notification
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true
+  });
+
 /* ============================================================
    3-DOT ACTION MENU
    ============================================================ */
