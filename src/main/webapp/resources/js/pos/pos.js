@@ -5,6 +5,19 @@
 let cart = [];
 let restoredOrderId = null; // set khi user back từ trang payment
 
+/* ── Toast (SweetAlert2 mixin) ── */
+const Toast = Swal.mixin({
+    toast            : true,
+    position         : 'top',
+    showConfirmButton: false,
+    timer            : 3000,
+    timerProgressBar : true,
+    didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer);
+        toast.addEventListener('mouseleave', Swal.resumeTimer);
+    }
+});
+
 /* ── Utilities ── */
 function formatVND(amount) {
     return parseFloat(amount).toLocaleString('vi-VN') + 'đ';
