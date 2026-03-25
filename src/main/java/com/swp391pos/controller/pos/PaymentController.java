@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 public class PaymentController {
 
     private static final String SESSION_CART_ORDER_JSON = "posCurrentOrderJson";
+    private static final String SESSION_CURRENT_ORDER_ID  = "posCurrentOrderId";
 
     private final PaymentService paymentService;
     private final OrderService orderService;
@@ -201,6 +202,7 @@ public class PaymentController {
             customerService.updateCustomerAfterPayment(orderId, customerId, totalPaid , pointsUsed);
 
             session.removeAttribute(SESSION_CART_ORDER_JSON);
+            session.removeAttribute(SESSION_CURRENT_ORDER_ID);
 
             resp.put("success", true);
             resp.put("orderId", orderId);
