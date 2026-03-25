@@ -331,6 +331,7 @@
 <script>
     window.userRole    = '${sessionScope.account.employee.role}';
     window.contextPath = '${pageContext.request.contextPath}';
+    window.restorationData = ${not empty posCurrentOrderJson ? posCurrentOrderJson : 'null'};
 </script>
 <%-- Safe JSON injection — avoids JS string escaping issues with product names --%>
 <script type="application/json" id="posRestoreData">
