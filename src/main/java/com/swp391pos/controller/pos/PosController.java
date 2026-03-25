@@ -161,7 +161,7 @@ public class PosController {
             m.put("price",    p.getPrice());
             m.put("imageUrl", p.getImageUrl());
             m.put("unit",     p.getUnit());
-            m.put("status",   p.getStatus() != null ? p.getStatus().toString() : "ACTIVE");
+            m.put("status",   p.getStatus() != null && p.getStatus().getProductStatusName() != null ? p.getStatus().getProductStatusName().toUpperCase() : "ACTIVE");
             return m;
         }).collect(Collectors.toList());
     }

@@ -158,20 +158,25 @@ function renderProductGrid(products) {
         return;
     }
     products.forEach(p => {
+        const id    = p.id    || p.productId;
+        const name  = p.name  || p.productName;
+        const price = p.price || p.salePrice || p.sellingPrice;
+        const unit  = p.unit  || p.unitName  || '';
+
         if (p.status && p.status !== 'ACTIVE') return; // only ACTIVE
         const card = document.createElement('div');
         card.className = 'product-card';
-        card.dataset.price = p.price;
-        card.dataset.sku = p.id; // p.id already contains SKU-PROD-
-        card.setAttribute('onclick', 'addToCart(\'' + p.id + '\',\'' + escapeAttr(p.name) + '\',' + p.price + ',\'' + escapeAttr(p.unit || '') + '\')');
+        card.dataset.price = price;
+        card.dataset.sku = id; // p.id already contains SKU-PROD-
+        card.setAttribute('onclick', 'addToCart(\'' + id + '\',\'' + escapeAttr(name) + '\',' + price + ',\'' + escapeAttr(unit || '') + '\')');
         card.innerHTML =
             '<div class="product-img">' +
                 '<img src="' + (p.imageUrl || '/resources/img/no-image.jpg') + '"' +
-                ' alt="' + escapeAttr(p.name) + '" onerror="this.src=\'/resources/img/no-image.jpg\'"/>' +
+                ' alt="' + escapeAttr(name) + '" onerror="this.src=\'/resources/img/no-image.jpg\'"/>' +
             '</div>' +
-            '<div class="product-name">' + p.name + '</div>' +
-            '<div class="product-unit">' + (p.unit || '') + '</div>' +
-            '<div class="product-price">' + formatVND(p.price) + '</div>' +
+            '<div class="product-name">' + name + '</div>' +
+            '<div class="product-unit">' + (unit || '') + '</div>' +
+            '<div class="product-price">' + formatVND(price) + '</div>' +
             '<div class="add-btn">+</div>';
         grid.appendChild(card);
     });
@@ -184,8 +189,14 @@ async function loadProducts(categoryId = null) {
             ? (window.contextPath || '') + '/pos/api/products?categoryId=' + categoryId
             : (window.contextPath || '') + '/pos/api/products';
         const res = await fetch(url);
-        renderProductGrid(await res.json());
-    } catch (e) { console.error('Error loading products:', e); }
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        renderProductGrid(Array.isArray(data) ? data : (data.content || data.data || []));
+    } catch (e) {
+        console.error('Error loading products:', e);
+        document.getElementById('productGrid').innerHTML =
+            '<p style="text-align:center;width:100%;padding:20px;color:#e74c3c;grid-column:1/-1;">Không thể tải sản phẩm.</p>';
+    }
 }
 
 /* ============================================================
@@ -237,24 +248,28 @@ function applyFilters() {
     const box = document.getElementById('mainSearchBox') || document.querySelector('.search-box');
     const q   = (box ? box.value.trim().toLowerCase() : '');
 
-    document.querySelectorAll('.product-card, .combo-card').forEach(card => {
-        // --- search match ---
+    // --- Product cards: search + price filter (category filter handled by loadProducts) ---
+    document.querySelectorAll('.product-card:not(.combo-card)').forEach(card => {
         const name = (card.querySelector('.product-name')?.textContent || '').toLowerCase();
         const sku  = (card.dataset.sku || '').toLowerCase();
         const searchOk = !q || name.includes(q) || sku.includes(q);
 
-        // --- price match ---
-        const price   = parseFloat(card.dataset.price) || 0;
+        const price = parseFloat(card.dataset.price) || 0;
         let priceOk = true;
         if (priceMin > 0 || priceMax > 0) {
-            if (priceMax > 0) {
-                priceOk = (price >= priceMin && price <= priceMax);
-            } else {
-                priceOk = (price >= priceMin);
-            }
+            priceOk = priceMax > 0
+                ? (price >= priceMin && price <= priceMax)
+                : (price >= priceMin);
         }
 
         card.style.display = (searchOk && priceOk) ? '' : 'none';
+    });
+
+    // --- Combo cards: search only, never hidden by category or price filter ---
+    document.querySelectorAll('.combo-card').forEach(card => {
+        const name = (card.querySelector('.product-name')?.textContent || '').toLowerCase();
+        const sku  = (card.dataset.sku || '').toLowerCase();
+        card.style.display = (!q || name.includes(q) || sku.includes(q)) ? '' : 'none';
     });
 }
 
@@ -507,6 +522,10 @@ function selectCategory(id, name) {
     document.getElementById('selectedCategoryText').innerText = name;
     document.getElementById('categoryDropdown').classList.remove('active');
     loadProducts(id || null);
+    // Khi reset về "All", hiện lại tất cả combo cards
+    if (!id) {
+        document.querySelectorAll('.combo-card').forEach(c => c.style.display = '');
+    }
 }
 
 /* ============================================================

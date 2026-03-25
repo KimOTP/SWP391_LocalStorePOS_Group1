@@ -36,16 +36,18 @@
         <!-- Category Dropdown -->
         <div class="pos-dropdown" id="categoryDropdown">
             <div class="pos-dropdown-selected" onclick="toggleCategoryDropdown()">
-                <span id="selectedCategoryText">Select category</span>
+                <span id="selectedCategoryText">Select Product Category</span>
                 <span class="pos-dropdown-arrow"></span>
             </div>
             <div class="pos-dropdown-menu" id="categoryMenu">
-                <div class="pos-dropdown-item" onclick="selectCategory('', 'Select category')">
+                <div class="pos-dropdown-item" onclick="selectCategory('', 'Select Product Category')">
                     All categories
                 </div>
                 <c:forEach var="c" items="${categories}">
                     <div class="pos-dropdown-item"
-                         onclick="selectCategory('${c.categoryId}', '${c.categoryName}')">
+                         data-cat-id="${c.categoryId}"
+                         data-cat-name="${c.categoryName}"
+                         onclick="selectCategory(this.dataset.catId, this.dataset.catName)">
                         ${c.categoryName}
                     </div>
                 </c:forEach>
