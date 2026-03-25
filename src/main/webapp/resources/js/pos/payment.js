@@ -405,7 +405,7 @@ async function confirmCashPayment() {
     const change = Math.max(0, paid - net);
 
     if (paid < net) {
-        Toast.fire({ icon: 'error', title: 'Số tiền khách đưa chưa đủ!' });
+        Toast.fire({ icon: 'error', title: 'The amount of money the customer gave wasn't enough!' });
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Pay';
         return;

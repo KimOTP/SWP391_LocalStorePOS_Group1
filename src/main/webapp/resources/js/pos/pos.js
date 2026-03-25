@@ -3,6 +3,7 @@
    ============================================================ */
 
 let cart = [];
+let currentOrderId = null;
 
 /* ── Utilities ── */
 function formatVND(amount) {
@@ -78,6 +79,7 @@ function removeFromCart(id) {
 
 function clearCart() {
     cart = [];
+    currentOrderId = null;
     renderCart();
 }
 
@@ -335,7 +337,8 @@ async function goToPayment() {
             quantity   : i.qty,
             unit       : i.unit || ''
         })),
-        totalAmount: totalAmount
+        totalAmount: totalAmount,
+        orderId: currentOrderId
     };
 
     try {
@@ -433,6 +436,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updatePreview();
     initBankDropdown();
+
+    // Restore cart if session data exists
+        if (window.restorationData && window.restorationData.length > 0 && cart.length === 0) {
+            cart = window.restorationData.map(item => ({
+                id: item.productId,
+                name: item.productName,
+                price: item.unitPrice,
+                qty: item.quantity,
+                unit: item.unit
+            }));
+            currentOrderId = window.restorationData[0].orderId;
+            renderCart();
+        }
 });
 
 document.getElementById('categorySelect')?.addEventListener('change', function () {

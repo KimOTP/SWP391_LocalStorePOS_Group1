@@ -177,7 +177,22 @@ public class PosController {
             double totalAmount = ((Number) body.getOrDefault("totalAmount", 0)).doubleValue();
 
             // ── Tạo Order DRAFT ──
-            Order order = new Order();
+            Order order;
+            Object existingOrderId = body.get("orderId");
+            if (existingOrderId != null && !String.valueOf(existingOrderId).isEmpty()) {
+                Long orderId = Long.valueOf(String.valueOf(existingOrderId));
+                order = orderService.findById(orderId);
+                // Chỉ cho phép cập nhật nếu order đang ở trạng thái DRAFT
+                if (order.getOrderStatus() == null ||
+                        !"DRAFT".equals(order.getOrderStatus().getOrderStatusName().name())) {
+                    order = new Order(); // Nếu không phải DRAFT thì tạo mới
+                } else {
+                    // Xoá OrderItems cũ để add lại từ đầu (tránh trùng lặp hoặc sót)
+                    orderItemService.deleteByOrder(order);
+                }
+            } else {
+                order = new Order();
+            }
             order.setCreatedAt(LocalDateTime.now());
             order.setTotalAmount(BigDecimal.valueOf(totalAmount));
             order.setOrderStatus(orderStatusService.findByOrderStatusName(
