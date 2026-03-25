@@ -400,6 +400,15 @@ async function cancelOrder() {
 
 /* ── Confirm payment ── */
 async function confirmPayment() {
+    // Chặn thanh toán nếu khách hàng đang chọn là Inactive
+    if (currentCustomer !== null && parseInt(currentCustomer.status) === 0) {
+        Toast.fire({
+            icon : 'error',
+            title: 'Cannot process payment — this customer account is inactive.'
+        });
+        return;
+    }
+
     const method = currentMethod;
 
     if (method === 'bank') {
@@ -420,7 +429,7 @@ async function confirmCashPayment() {
     const change = Math.max(0, paid - net);
 
     if (paid < net) {
-        Toast.fire({ icon: 'error', title: 'The amount of money the customer gave wasn't enough!' });
+        Toast.fire({ icon: 'error', title: "The amount of money the customer gave wasn't enough!" });
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Pay';
         return;

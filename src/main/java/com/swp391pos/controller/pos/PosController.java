@@ -525,6 +525,7 @@ public class PosController {
                     info.put("phoneNumber",   c.getPhoneNumber());
                     info.put("currentPoint",  c.getCurrentPoint());
                     info.put("totalSpending", c.getTotalSpending());
+                    info.put("status",        c.getStatus() != null ? c.getStatus() : 1);
                     resp.put("customer", info);
                 },
                 () -> resp.put("found", false)
