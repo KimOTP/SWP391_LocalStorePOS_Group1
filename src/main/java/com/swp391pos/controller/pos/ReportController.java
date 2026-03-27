@@ -1,6 +1,7 @@
 package com.swp391pos.controller.pos;
 
 import com.swp391pos.entity.Employee;
+import com.swp391pos.entity.Order;
 import com.swp391pos.enums.PaymentMethod;
 import com.swp391pos.service.ReportService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -175,10 +177,55 @@ public class ReportController {
     private Map<String, Object> successResponse(Object data) {
         Map<String, Object> r = new HashMap<>();
         r.put("success", true);
-        r.put("data", data);
+        // If data is a report map containing raw Order entities, convert orders to safe DTOs
+        if (data instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> reportMap = new HashMap<>((Map<String, Object>) data);
+            Object ordersObj = reportMap.get("orders");
+            if (ordersObj instanceof List) {
+                @SuppressWarnings("unchecked")
+                List<Order> orders = (List<Order>) ordersObj;
+                reportMap.put("orders", toOrderDtoList(orders));
+            }
+            r.put("data", reportMap);
+        } else {
+            r.put("data", data);
+        }
         return r;
     }
 
+    /** Convert Order entity list to plain Map list — avoids @JsonIgnore fields being lost */
+    private List<Map<String, Object>> toOrderDtoList(List<Order> orders) {
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Order o : orders) {
+            Map<String, Object> dto = new HashMap<>();
+            dto.put("orderId",       o.getOrderId());
+            dto.put("totalAmount",   o.getTotalAmount());
+            dto.put("createdAt",     o.getCreatedAt() != null ? o.getCreatedAt().toString() : null);
+            dto.put("paymentMethod", o.getPaymentMethod() != null ? o.getPaymentMethod().name() : null);
+
+            // Employee (cashier) — normally @JsonIgnore, so we manually map it
+            if (o.getEmployee() != null) {
+                Map<String, Object> emp = new HashMap<>();
+                emp.put("fullName", o.getEmployee().getFullName());
+                dto.put("employee", emp);
+            } else {
+                dto.put("employee", null);
+            }
+
+            // OrderStatus — normally @JsonIgnore, so we manually map it
+            if (o.getOrderStatus() != null && o.getOrderStatus().getOrderStatusName() != null) {
+                Map<String, Object> st = new HashMap<>();
+                st.put("orderStatusName", o.getOrderStatus().getOrderStatusName().name());
+                dto.put("orderStatus", st);
+            } else {
+                dto.put("orderStatus", null);
+            }
+
+            result.add(dto);
+        }
+        return result;
+    }
     private Map<String, Object> errorResponse(String message) {
         Map<String, Object> r = new HashMap<>();
         r.put("success", false);
