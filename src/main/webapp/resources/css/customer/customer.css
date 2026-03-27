@@ -398,7 +398,9 @@ body {
 .search-box-date {
      width: 200px !important;
  }
-
+/*
 .dropdown-menu {
     position: fixed !important;   Thoát khỏi stacking context của table
 }
+dòng này gây lệch drop down
+*/

@@ -205,7 +205,7 @@
                                         style="width:32px;height:32px;">
                                     <i class="fa-solid fa-ellipsis-vertical"></i>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-1">
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-1" style="min-width:160px; border-radius:12px; z-index:1060;">
                                     <li>
                                         <a class="dropdown-item" href="#"
                                            onclick="openDetailModal('${cust.customerId}','${cust.fullName}','${cust.phoneNumber}','${cust.currentPoint}','${cust.totalSpending}','${cust.lastTransactionDate}')">
