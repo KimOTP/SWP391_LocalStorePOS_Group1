@@ -86,7 +86,7 @@ public class CustomerController {
     @GetMapping("/delete/{id}")
     public String deleteCustomer(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
-            customerService.deleteById(id);
+            customerService.deleteById(id); // Dữ liệu nào không có lquan bên bảng khác thì xóa được
             redirectAttributes.addFlashAttribute("notification", "Customer successfully deleted!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: Cannot delete this customer.");
@@ -108,6 +108,7 @@ public class CustomerController {
             redirectAttributes.addFlashAttribute("errorMessage", "Update failed: " + errorMessage);
             return "redirect:/customer";
         }
+
         // Kiểm tra trùng số điện thoại khi update
         Optional<Customer> existingCustomer = customerService.findByPhoneNumber(customer.getPhoneNumber());
         // Nếu tìm thấy SĐT này, VÀ SĐT này thuộc về một ID khác với ID đang được cập nhật -> Báo lỗi
