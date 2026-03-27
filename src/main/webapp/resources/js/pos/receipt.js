@@ -2,6 +2,15 @@
    RECEIPT.JS – Manage Receipt page logic
    ============================================================ */
 
+// Notification
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true
+  });
+
 /* ============================================================
    3-DOT ACTION MENU
    ============================================================ */
@@ -285,7 +294,19 @@ function toggleAll(master) {
 function loadReceipts() { location.reload(); }
 
 function exportExcel() {
-    window.location.href = '/pos/receipts/export-excel';
+    const search  = (document.getElementById('searchInput')?.value || '').trim();
+    const payment = (document.getElementById('paymentFilter')?.value || '');
+    const from    = (document.getElementById('dateFrom')?.value || '');
+    const to      = (document.getElementById('dateTo')?.value   || '');
+
+    const params = new URLSearchParams();
+    if (search)  params.set('search',  search);
+    if (payment) params.set('payment', payment);
+    if (from)    params.set('from',    from);
+    if (to)      params.set('to',      to);
+
+    const qs = params.toString();
+    window.location.href = '/pos/receipts/export-excel' + (qs ? '?' + qs : '');
 }
 
 /* ============================================================

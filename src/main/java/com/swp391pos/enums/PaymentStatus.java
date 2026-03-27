@@ -9,6 +9,6 @@ public enum PaymentStatus {
     PAID,
     FAILED,
     CANCELLED,
-    EXPIRED,  // [Blind spot #5] them EXPIRED cho timeout
+    EXPIRED,
     EXTRA
 }

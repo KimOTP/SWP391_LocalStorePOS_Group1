@@ -9,6 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/pos/pos.css">
 </head>
 <body>
@@ -34,16 +36,18 @@
         <!-- Category Dropdown -->
         <div class="pos-dropdown" id="categoryDropdown">
             <div class="pos-dropdown-selected" onclick="toggleCategoryDropdown()">
-                <span id="selectedCategoryText">Select category</span>
+                <span id="selectedCategoryText">Select Product Category</span>
                 <span class="pos-dropdown-arrow"></span>
             </div>
             <div class="pos-dropdown-menu" id="categoryMenu">
-                <div class="pos-dropdown-item" onclick="selectCategory('', 'Select category')">
+                <div class="pos-dropdown-item" onclick="selectCategory('', 'Select Product Category')">
                     All categories
                 </div>
                 <c:forEach var="c" items="${categories}">
                     <div class="pos-dropdown-item"
-                         onclick="selectCategory('${c.categoryId}', '${c.categoryName}')">
+                         data-cat-id="${c.categoryId}"
+                         data-cat-name="${c.categoryName}"
+                         onclick="selectCategory(this.dataset.catId, this.dataset.catName)">
                         ${c.categoryName}
                     </div>
                 </c:forEach>
@@ -327,8 +331,16 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    window.userRole = '${sessionScope.account.employee.role}';
+    window.userRole    = '${sessionScope.account.employee.role}';
     window.contextPath = '${pageContext.request.contextPath}';
+    window.restorationData = ${not empty posCurrentOrderJson ? posCurrentOrderJson : 'null'};
+</script>
+<%-- Safe JSON injection — avoids JS string escaping issues with product names --%>
+<script type="application/json" id="posRestoreData">
+{
+  "cartJson"  : ${not empty restoreCartJson ? restoreCartJson : "[]"},
+  "orderId"   : "${not empty restoreOrderId ? restoreOrderId : ""}"
+}
 </script>
 <script src="${pageContext.request.contextPath}/resources/js/pos/pos.js"></script>
 </body>

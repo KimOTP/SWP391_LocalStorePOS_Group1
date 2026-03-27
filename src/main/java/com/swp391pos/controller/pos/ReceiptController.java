@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Map;
 import java.util.List;
 
@@ -113,7 +114,12 @@ public class ReceiptController {
        GET /pos/receipts/export-excel  →  download Excel
        -------------------------------------------------------- */
     @GetMapping("/export-excel")
-    public void exportExcel(HttpServletResponse response) throws Exception {
-        posReceiptService.exportToExcel(response);
+    public void exportExcel(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String payment,
+            @RequestParam(required = false) String from,
+            @RequestParam(required = false) String to,
+            HttpServletResponse response) throws Exception {
+        posReceiptService.exportToExcel(response, search, payment, from, to);
     }
 }

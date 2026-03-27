@@ -63,6 +63,7 @@ public class PosController {
      * Hoặc gọi GET /pos/api/cart-items để nhận trực tiếp JSON response.
      */
     private static final String SESSION_CART_ORDER_JSON = "posCurrentOrderJson";
+    private static final String SESSION_CURRENT_ORDER_ID  = "posCurrentOrderId";
 
     /* ── Helper: Product.status là entity ProductStatus, check productStatusName = "Active" ── */
     private boolean isActive(com.swp391pos.entity.ProductStatus st) {
@@ -110,6 +111,14 @@ public class PosController {
         }
         model.addAttribute("templateSettings", printTemplate);
 
+        // ── Restore cart nếu user back từ trang payment ──
+        String cartJson = (String) session.getAttribute(SESSION_CART_ORDER_JSON);
+        Long   pendingOrderId = (Long) session.getAttribute(SESSION_CURRENT_ORDER_ID);
+        if (cartJson != null && !cartJson.isBlank() && pendingOrderId != null) {
+            model.addAttribute("restoreCartJson",    cartJson);
+            model.addAttribute("restoreOrderId",     pendingOrderId);
+        }
+
         return "pos/cashier/pos";
     }
 
@@ -152,7 +161,7 @@ public class PosController {
             m.put("price",    p.getPrice());
             m.put("imageUrl", p.getImageUrl());
             m.put("unit",     p.getUnit());
-            m.put("status",   p.getStatus() != null ? p.getStatus().toString() : "ACTIVE");
+            m.put("status",   p.getStatus() != null && p.getStatus().getProductStatusName() != null ? p.getStatus().getProductStatusName().toUpperCase() : "ACTIVE");
             return m;
         }).collect(Collectors.toList());
     }
@@ -177,7 +186,22 @@ public class PosController {
             double totalAmount = ((Number) body.getOrDefault("totalAmount", 0)).doubleValue();
 
             // ── Tạo Order DRAFT ──
-            Order order = new Order();
+            Order order;
+            Object existingOrderId = body.get("orderId");
+            if (existingOrderId != null && !String.valueOf(existingOrderId).isEmpty()) {
+                Long orderId = Long.valueOf(String.valueOf(existingOrderId));
+                order = orderService.findById(orderId);
+                // Chỉ cho phép cập nhật nếu order đang ở trạng thái DRAFT
+                if (order.getOrderStatus() == null ||
+                        !"DRAFT".equals(order.getOrderStatus().getOrderStatusName().name())) {
+                    order = new Order(); // Nếu không phải DRAFT thì tạo mới
+                } else {
+                    // Xoá OrderItems cũ để add lại từ đầu (tránh trùng lặp hoặc sót)
+                    orderItemService.deleteByOrder(order);
+                }
+            } else {
+                order = new Order();
+            }
             order.setCreatedAt(LocalDateTime.now());
             order.setTotalAmount(BigDecimal.valueOf(totalAmount));
             order.setOrderStatus(orderStatusService.findByOrderStatusName(
@@ -258,6 +282,7 @@ public class PosController {
             //
             String orderItemsJson = objectMapper.writeValueAsString(orderItemJsonList);
             session.setAttribute(SESSION_CART_ORDER_JSON, orderItemsJson);
+            session.setAttribute(SESSION_CURRENT_ORDER_ID,  saved.getOrderId());
 
             resp.put("success", true);
             resp.put("orderId", saved.getOrderId());
@@ -316,6 +341,7 @@ public class PosController {
             orderService.save(order);
 
             session.removeAttribute(SESSION_CART_ORDER_JSON);
+            session.removeAttribute(SESSION_CURRENT_ORDER_ID);
 
             resp.put("success", true);
             return ResponseEntity.ok(resp);
@@ -327,8 +353,91 @@ public class PosController {
     }
 
     /* ================================================================
-       PRINT TEMPLATE SETTINGS
+       UPDATE ORDER (dùng khi user back từ payment và sửa cart)
+       POST /pos/api/update-order
+       Body: { orderId, items: [...], totalAmount }
        ================================================================ */
+    @PostMapping("/api/update-order")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateOrder(
+            @RequestBody Map<String, Object> body,
+            HttpSession session) {
+
+        Map<String, Object> resp = new HashMap<>();
+        try {
+            Long orderId = Long.valueOf(String.valueOf(body.get("orderId")));
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> items =
+                    (List<Map<String, Object>>) body.get("items");
+            double totalAmount = ((Number) body.getOrDefault("totalAmount", 0)).doubleValue();
+
+            Order order = orderService.findById(orderId);
+
+            // Xoá hết OrderItem cũ rồi tạo lại từ cart mới
+            orderItemService.deleteByOrder(order);
+
+            order.setTotalAmount(BigDecimal.valueOf(totalAmount));
+            orderService.save(order);
+
+            List<Map<String, Object>> orderItemJsonList = new ArrayList<>();
+
+            for (Map<String, Object> item : items) {
+                OrderItem oi = new OrderItem();
+                oi.setOrder(order);
+
+                Object pid    = item.get("productId");
+                String pidStr = String.valueOf(pid);
+
+                if (pidStr.startsWith("COMBO_")) {
+                    String comboId = pidStr.replace("COMBO_", "");
+                    Combo combo = comboService.getComboById(comboId);
+                    oi.setCombo(combo);
+                } else {
+                    Product product = productRepository.findProductByProductId(pidStr);
+                    oi.setProduct(product);
+                }
+
+                int        qty       = ((Number) item.getOrDefault("quantity", 1)).intValue();
+                BigDecimal unitPrice = BigDecimal.valueOf(
+                        ((Number) item.getOrDefault("price", 0)).doubleValue());
+
+                oi.setQuantity(qty);
+                oi.setUnitPrice(unitPrice);
+                oi.setSubtotal(unitPrice.multiply(BigDecimal.valueOf(qty)));
+
+                OrderItem savedItem = orderItemService.save(oi);
+
+                Map<String, Object> dto = new LinkedHashMap<>();
+                dto.put("orderItemId",  savedItem.getOrderItemId());
+                dto.put("orderId",      orderId);
+                dto.put("productId",    pid);
+                dto.put("productName",  item.getOrDefault("productName", ""));
+                dto.put("unit",         item.getOrDefault("unit", ""));
+                dto.put("quantity",     qty);
+                dto.put("unitPrice",    unitPrice);
+                dto.put("lineTotal",    unitPrice.multiply(BigDecimal.valueOf(qty)));
+                orderItemJsonList.add(dto);
+            }
+
+            String orderItemsJson = objectMapper.writeValueAsString(orderItemJsonList);
+            session.setAttribute(SESSION_CART_ORDER_JSON, orderItemsJson);
+            session.setAttribute(SESSION_CURRENT_ORDER_ID, orderId);
+
+            resp.put("success", true);
+            resp.put("orderId", orderId);
+            return ResponseEntity.ok(resp);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            resp.put("success", false);
+            resp.put("errorMessage", ex.getMessage());
+            return ResponseEntity.status(500).body(resp);
+        }
+    }
+
+    /* ================================================================
+   PRINT TEMPLATE SETTINGS
+   ================================================================ */
     @PostMapping("/api/print-template")
     @ResponseBody
     public ResponseEntity<Map<String, Object>> savePrintTemplate(
@@ -416,6 +525,7 @@ public class PosController {
                     info.put("phoneNumber",   c.getPhoneNumber());
                     info.put("currentPoint",  c.getCurrentPoint());
                     info.put("totalSpending", c.getTotalSpending());
+                    info.put("status",        c.getStatus() != null ? c.getStatus() : 1);
                     resp.put("customer", info);
                 },
                 () -> resp.put("found", false)

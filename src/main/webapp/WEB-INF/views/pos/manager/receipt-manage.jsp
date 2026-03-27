@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Receipt</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/pos/pos.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/pos/receipt.css">
@@ -146,7 +147,8 @@
                     data-status="${r.orderStatus}"
                     data-payment="${r.paymentMethod}"
                     data-customer="${r.customerName}"
-                    data-cashier="${r.cashierName}">
+                    data-cashier="${r.cashierName}"
+                    data-date="${r.createdAt}">
 
                     <%-- Invoice code --%>
                     <td><span class="invoice-code">${r.receiptNumber}</span></td>
