@@ -103,7 +103,7 @@
     background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
     border-radius: 16px !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
 }
 
@@ -111,6 +111,8 @@
     border: none !important;
     border-radius: 0 !important;
     box-shadow: none !important;
+    max-height: 400px;
+    overflow-y: auto !important;
 }
 
 .thead-row {

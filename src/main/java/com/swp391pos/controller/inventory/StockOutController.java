@@ -42,9 +42,14 @@ public class StockOutController {
             ObjectMapper mapper = new ObjectMapper();
             List<Map<String, Object>> items = mapper.readValue(itemsJson, new TypeReference<>(){});
             for (Map<String, Object> item : items) {
+                String sku = item.get("sku").toString();
                 int qty = Integer.parseInt(item.get("qty").toString());
                 if (qty <= 0) {
                     throw new Exception("Quantity for product " + item.get("sku") + " must be positive.");
+                }
+                int availableStock = stockOutService.getCurrentStockBySku(sku);
+                if (qty > availableStock) {
+                    throw new Exception("Insufficient stock for product " + sku + ". Available: " + availableStock + ", Requested: " + qty);
                 }
             }
 
