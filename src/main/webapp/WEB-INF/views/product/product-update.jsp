@@ -151,8 +151,10 @@
             </form>
         </div>
     </div>
+
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
  <script src="<c:url value='/resources/js/product/product-app.js' />"></script>
+
  <script>
      document.querySelector('form').addEventListener('submit', function(e) {
          let isValid = true;

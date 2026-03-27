@@ -1,14 +1,12 @@
 package com.swp391pos.controller.product;
 
 import com.swp391pos.entity.Combo;
-import com.swp391pos.entity.Product;
 import com.swp391pos.service.ComboService;
 import com.swp391pos.service.ProductService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -33,10 +31,9 @@ public class ComboController {
 
         List<Combo> combos;
         if (statuses != null && !statuses.isEmpty()) {
-            // Lọc theo danh sách trạng thái được chọn
+            // lọc theo trạng thái
             combos = comboService.getCombosByStatuses(statuses);
         } else {
-            // Hiển thị tất cả nếu không chọn filter
             combos = comboService.getAllCombos();
         }
         model.addAttribute("selectedStatuses", statuses);
@@ -50,8 +47,8 @@ public class ComboController {
     @GetMapping("/add")
     public String showAddForm(Model model) {
         model.addAttribute("combo", new Combo());
-        model.addAttribute("nextSku", comboService.generateSku()); // Gợi ý SKU ra UI
-        model.addAttribute("products", productService.getAllProducts()); // Cho dropdown list
+        model.addAttribute("nextSku", comboService.generateSku()); // gợi ý SKU ra UI
+        model.addAttribute("products", productService.getAllProducts());
         return "combo/combo-add";
     }
 
@@ -61,7 +58,7 @@ public class ComboController {
                            @RequestParam("quantities") List<Integer> quantities,
                            @RequestParam("imageFile") MultipartFile imageFile) {
         try {
-            // Truyền thêm list quantities vào service
+            // truyền thêm list quantities vào service
             comboService.addCombo(combo, productIds, quantities, imageFile);
             return "redirect:/combos/manage?success";
         } catch (Exception e) {
@@ -78,7 +75,7 @@ public class ComboController {
         }
         model.addAttribute("combo", combo);
         model.addAttribute("products", productService.getAllProducts());
-        return "combo/combo-update"; // Trỏ đến file JSP bạn vừa tạo
+        return "combo/combo-update";
     }
 
     @PostMapping("/update")

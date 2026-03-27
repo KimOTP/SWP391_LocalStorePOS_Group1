@@ -47,14 +47,14 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    @Transactional(rollbackFor = Exception.class) // Đảm bảo rollback nếu có lỗi bất kỳ
+    @Transactional(rollbackFor = Exception.class) // rollback nếu có lỗi
     public void addProduct(Product product, MultipartFile imageFile, Integer statusId, Integer categoryId) {
-        // 1. Xử lý logic Attribute mặc định
+        // xử lý logic Attribute mặc định
         if (product.getAttribute() == null || product.getAttribute().trim().isEmpty()) {
             product.setAttribute("ORIGIN");
         }
 
-        // 2. Kiểm tra trùng lặp
+        // kiểm tra trùng lặp
         boolean isDuplicate = productRepository.existsByProductNameAndCategory_CategoryIdAndAttribute(
                 product.getProductName(),
                 categoryId,
@@ -66,17 +66,17 @@ public class ProductService {
         }
 
         try {
-            // 3. Tự động tạo mã SKU
+            // tự động tạo mã SKU
             product.setProductId(generateSku());
 
-            // 4. Xử lý Upload ảnh
+            // upload ảnh
             if (imageFile != null && !imageFile.isEmpty()) {
                 Map uploadResult = cloudinary.uploader().upload(imageFile.getBytes(),
                         ObjectUtils.asMap("folder", "products"));
                 product.setImageUrl((String) uploadResult.get("url"));
             }
 
-            // 5. Thiết lập Category & Status
+            // thiết lập category & status
             Category cat = new Category();
             cat.setCategoryId(categoryId);
             product.setCategory(cat);
@@ -85,19 +85,17 @@ public class ProductService {
             stat.setProductStatusId(statusId);
             product.setStatus(stat);
 
-            // 6. Lưu dữ liệu
             Product savedProduct = productRepository.save(product);
             inventoryService.createInventoryWithProduct(savedProduct);
 
         } catch (IOException e) {
             throw new RuntimeException("Failed to upload image!");
         } catch (Exception e) {
-            // Ném các lỗi runtime khác để Controller bắt
             throw new RuntimeException("Failed to add product!");
         }
     }
 
-    // Format: SKU-PROD-00?
+    // format: SKU-PROD-00%
     private String generateSku() {
         String lastSku = productRepository.findLastSku();
         int nextNumber = 1;
@@ -129,7 +127,7 @@ public class ProductService {
             throw new RuntimeException("Product not found");
         }
 
-        // Upload image
+        // upload image
         if (imageFile != null && !imageFile.isEmpty()) {
             Map uploadResult = cloudinary.uploader().upload(
                     imageFile.getBytes(),
@@ -140,17 +138,17 @@ public class ProductService {
             product.setImageUrl(oldProduct.getImageUrl());
         }
 
-        // Default attribute
+        // default attribute
         if (product.getAttribute() == null || product.getAttribute().isEmpty()) {
             product.setAttribute("ORIGIN");
         }
 
-        // Set category
+        // set category
         Category cat = new Category();
         cat.setCategoryId(categoryId);
         product.setCategory(cat);
 
-        // Set status
+        // set status
         ProductStatus stat = new ProductStatus();
         stat.setProductStatusId(statusId);
 
@@ -193,7 +191,7 @@ public class ProductService {
 
 
     public List<Product> searchProductManager(String kw, List<String> sIds, List<String> cNames, List<String> units, Sort sort) {
-        // Xử lý nếu List rỗng thì truyền null vào Repository để bỏ qua điều kiện lọc
+        // xử lý nếu List rỗng thì truyền null vào Repository để bỏ qua điều kiện lọc
         List<String> statuses = (sIds != null && sIds.isEmpty()) ? null : sIds;
         List<String> categories = (cNames != null && cNames.isEmpty()) ? null : cNames;
         List<String> unitList = (units != null && units.isEmpty()) ? null : units;
@@ -210,11 +208,11 @@ public class ProductService {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Products");
 
-        // 1. Tạo Header (Dòng tiêu đề)
+        // tạo header
         Row headerRow = sheet.createRow(0);
         String[] columns = {"SKU", "Product Name", "Category", "Attribute", "Unit", "Price", "Status"};
 
-        // Style cho Header
+        // style cho header
         CellStyle headerStyle = workbook.createCellStyle();
         Font font = workbook.createFont();
         font.setBold(true);
@@ -226,7 +224,7 @@ public class ProductService {
             cell.setCellStyle(headerStyle);
         }
 
-        // 2. Đổ dữ liệu từ danh sách products vào các dòng tiếp theo
+        // lấy dữ liệu từ danh sách products vào các dòng
         int rowIdx = 1;
         for (Product p : products) {
             Row row = sheet.createRow(rowIdx++);
@@ -239,7 +237,7 @@ public class ProductService {
             row.createCell(6).setCellValue(p.getStatus().getProductStatusName());
         }
 
-        // 3. Xuất file về trình duyệt
+        // xuất file
         workbook.write(response.getOutputStream());
         workbook.close();
     }

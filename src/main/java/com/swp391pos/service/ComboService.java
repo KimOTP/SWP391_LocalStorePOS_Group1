@@ -45,7 +45,7 @@ public class ComboService {
             if (combo.getComboId() == null || combo.getComboId().isEmpty()) {
                 combo.setComboId(generateSku());
             }
-            // 2. Xử lý Upload ảnh
+            // upload ảnh
             if (imageFile != null && !imageFile.isEmpty()) {
                 Map uploadResult = cloudinary.uploader().upload(imageFile.getBytes(),
                         ObjectUtils.asMap("folder", "combos"));
@@ -53,14 +53,13 @@ public class ComboService {
                 combo.setImageUrl(imageUrl);
             }
 
-            // 3. Lưu Combo
             Combo savedCombo = comboRepository.save(combo);
 
-            // 4. Lưu danh sách chi tiết ComboDetail với Số Lượng thực tế
+            // lưu danh sách chi tiết ComboDetail với quantity
             if (productIds != null && !productIds.isEmpty()) {
                 for (int i = 0; i < productIds.size(); i++) {
                     String pId = productIds.get(i);
-                    // Lấy quantity tương ứng từ mảng quantities, nếu lỗi thì mặc định là 1
+                    // lấy quantity tương ứng từ mảng quantities, nếu lỗi thì mặc định là 1
                     Integer qty = (quantities != null && quantities.size() > i) ? quantities.get(i) : 1;
 
                     Product product = productRepository.findProductByProductId(pId);
@@ -68,7 +67,7 @@ public class ComboService {
                         ComboDetail detail = new ComboDetail();
                         detail.setCombo(savedCombo);
                         detail.setProduct(product);
-                        detail.setQuantity(qty); // Lưu số lượng người dùng đã chọn (+/-)
+                        detail.setQuantity(qty); // lưu số lượng người dùng đã chọn (+/-)
                         comboDetailRepository.save(detail);
                     }
                 }
@@ -83,13 +82,13 @@ public class ComboService {
     @Transactional
     public boolean updateCombo(Combo combo, List<String> productIds, List<Integer> quantities,
                                MultipartFile imageFile, String existingImageUrl) throws Exception{
-            // 1. Xử lý hình ảnh
+            // xử lý hình ảnh
             if (imageFile != null && !imageFile.isEmpty()) {
                 Map uploadResult = cloudinary.uploader().upload(imageFile.getBytes(),
                         ObjectUtils.asMap("folder", "combos"));
                 combo.setImageUrl((String) uploadResult.get("url"));
             } else {
-                // Nếu không chọn ảnh mới, giữ lại ảnh cũ từ trường hidden
+                // nếu không chọn ảnh mới, giữ lại ảnh cũ từ trường hidden
                 combo.setImageUrl(existingImageUrl);
             }
 
@@ -109,13 +108,13 @@ public class ComboService {
                 }
             }
         }
-            // 2. Lưu thông tin Combo (Master)
+            // lưu thông tin Combo
             Combo savedCombo = comboRepository.save(combo);
 
-            // 3. Xóa toàn bộ chi tiết sản phẩm cũ của Combo này
+            // xóa toàn bộ chi tiết sản phẩm cũ của Combo này
             comboDetailRepository.deleteByCombo(savedCombo);
 
-            // 4. Lưu lại danh sách sản phẩm mới
+            // lưu lại danh sách mới
             if (productIds != null && !productIds.isEmpty()) {
                 for (int i = 0; i < productIds.size(); i++) {
                     Product product = productRepository.findProductByProductId(productIds.get(i));
@@ -132,7 +131,7 @@ public class ComboService {
     }
 
     public List<Combo> getCombosByStatuses(List<String> statuses) {
-        // statuses sẽ là danh sách như ["ACTIVE", "PENDING_APPROVAL"]
+        // statuses sẽ là list như ["ACTIVE", "PENDING_APPROVAL"]
         return comboRepository.findByStatusComboIn(statuses);
     }
 
@@ -162,8 +161,6 @@ public class ComboService {
     @Transactional
     public boolean deleteCombo(String id) {
         try {
-            // Xóa chi tiết trước nếu không dùng CascadeType.ALL
-            // comboDetailRepository.deleteByComboId(id);
             comboRepository.deleteById(id);
             return true;
         } catch (Exception e) {
@@ -177,11 +174,11 @@ public class ComboService {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Combos");
 
-        // 1. Tạo Header (Dòng tiêu đề)
+        // tạo header
         Row headerRow = sheet.createRow(0);
         String[] columns = {"SKU", "Combo Name", "Include Products", "Total Price", "Status"};
 
-        // Style cho Header
+        // style cho header
         CellStyle headerStyle = workbook.createCellStyle();
         Font font = workbook.createFont();
         font.setBold(true);
@@ -193,7 +190,7 @@ public class ComboService {
             cell.setCellStyle(headerStyle);
         }
 
-        // 2. Đổ dữ liệu từ danh sách combos vào các dòng tiếp theo
+        // đổ dữ liệu từ danh sách combos vào các dòng
         int rowIdx = 1;
         for (Combo c : combos) {
             Row row = sheet.createRow(rowIdx++);
@@ -213,12 +210,10 @@ public class ComboService {
             row.createCell(4).setCellValue(c.getStatusCombo().toString());
         }
 
-        // 3. Xuất file về trình duyệt
+        // xuất file
         workbook.write(response.getOutputStream());
         workbook.close();
     }
-
-    // --- Các hàm phục vụ thống kê (Stat Cards) ---
 
     public long countTotal() {
         return comboRepository.count();
