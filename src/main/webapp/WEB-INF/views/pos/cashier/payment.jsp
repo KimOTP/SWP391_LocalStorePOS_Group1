@@ -410,6 +410,38 @@ window.contextPath  = PAGE_DATA.contextPath;
 window.summaryData  = PAGE_DATA.summary;
 window.bankSettings = PAGE_DATA.bank;
 window.pointConfig  = PAGE_DATA.pointConfig;
+
+// Fallback bankSettings từ cookie nếu session bị mất (logout/login) ──
+(function () {
+    const b = window.bankSettings || {};
+    const sessionEmpty = !b.bankName && !b.accNumber && !b.accName;
+
+    function getCookie(name) {
+        const match = document.cookie.match('(?:^|;)\\s*' + name + '=([^;]*)');
+        return match ? decodeURIComponent(match[1]) : null;
+    }
+
+    if (sessionEmpty) {
+        // Đọc từ cookie pos_bank_config
+        const raw = getCookie('pos_bank_config');
+        if (raw) {
+            try {
+                const saved = JSON.parse(raw);
+                window.bankSettings = saved;
+                PAGE_DATA.bank = saved;
+            } catch(e) {}
+        }
+    } else {
+        // Session có config → ghi đè cookie để luôn mới nhất
+        const val = encodeURIComponent(JSON.stringify({
+            bankName  : b.bankName  || '',
+            accNumber : b.accNumber || '',
+            accName   : b.accName   || ''
+        }));
+        // Max-Age 30 ngày
+        document.cookie = 'pos_bank_config=' + val + '; path=/; max-age=2592000; SameSite=Lax';
+    }
+})();
 </script>
 <script src="${pageContext.request.contextPath}/resources/js/pos/payment.js"></script>
 

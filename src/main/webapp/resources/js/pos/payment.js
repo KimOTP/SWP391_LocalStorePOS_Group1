@@ -104,6 +104,8 @@ function lookupCustomer(phone) {
                 const c = data.customer;
                 currentCustomer = c;
 
+                const isActive = (c.status === undefined || c.status === null || parseInt(c.status) === 1);
+
                 // Điền thông tin vào state FOUND
                 document.getElementById('custFoundName').textContent   = c.fullName   || '–';
                 document.getElementById('custFoundPhone').textContent  = c.phoneNumber || phone;
@@ -112,11 +114,22 @@ function lookupCustomer(phone) {
                 document.getElementById('customerName').value          = c.fullName   || '';
                 document.getElementById('customerId').value            = c.customerId || '';
 
-                loyaltyAvail = parseInt(c.currentPoint || 0);
-                document.getElementById('loyaltyPoints') && (document.getElementById('loyaltyPoints').value = loyaltyAvail + ' pts');
-                document.getElementById('usePoints').max               = loyaltyAvail;
+                // Áp dụng style tùy theo trạng thái khách hàng
+                applyCustomerStatusStyle(isActive);
 
-                populateCustomerPoints();
+                if (isActive) {
+                    loyaltyAvail = parseInt(c.currentPoint || 0);
+                    document.getElementById('loyaltyPoints') && (document.getElementById('loyaltyPoints').value = loyaltyAvail + ' pts');
+                    document.getElementById('usePoints').max = loyaltyAvail;
+                    populateCustomerPoints();
+                } else {
+                    // Khách Inactive: reset điểm, lock toàn bộ loyalty section
+                    loyaltyAvail = 0;
+                    loyaltyUsed  = 0;
+                    lockLoyaltySectionForInactive();
+                    updateTotals();
+                }
+
                 setCustState('found');
             } else {
                 currentCustomer = null;
@@ -137,6 +150,8 @@ function lookupCustomer(phone) {
 
 function clearCustomer() {
     currentCustomer = null;
+    // Reset inactive styles
+    applyCustomerStatusStyle(true);
     document.getElementById('customerPhone').value = '';
     document.getElementById('customerId').value    = '';
     const nameEl = document.getElementById('customerName');
@@ -167,7 +182,7 @@ function cancelAddCustomer() {
 // Đưa cấu hình Toast ra ngoài phạm vi toàn cục để các hàm khác cũng dùng được
 const Toast = Swal.mixin({
     toast: true,
-    position: 'top-end',
+    position: 'top',
     showConfirmButton: false,
     timer: 3000,
     timerProgressBar: true,
@@ -385,6 +400,15 @@ async function cancelOrder() {
 
 /* ── Confirm payment ── */
 async function confirmPayment() {
+    // Chặn thanh toán nếu khách hàng đang chọn là Inactive
+    if (currentCustomer !== null && parseInt(currentCustomer.status) === 0) {
+        Toast.fire({
+            icon : 'error',
+            title: 'Cannot process payment — this customer account is inactive.'
+        });
+        return;
+    }
+
     const method = currentMethod;
 
     if (method === 'bank') {
@@ -405,7 +429,7 @@ async function confirmCashPayment() {
     const change = Math.max(0, paid - net);
 
     if (paid < net) {
-        Toast.fire({ icon: 'error', title: 'The amount of money the customer gave wasn't enough!' });
+        Toast.fire({ icon: 'error', title: "The amount of money the customer gave wasn't enough!" });
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-check me-1"></i> Pay';
         return;
@@ -647,6 +671,82 @@ async function loadOrderItems() {
     } catch(e) {
         console.error('Failed to load order items:', e);
     }
+}
+
+/* ── Customer status helpers ── */
+function applyCustomerStatusStyle(isActive) {
+    const card = document.querySelector('#custStateFound .cust-found-card');
+    const pointSummary = document.querySelector('#custStateFound .cust-point-summary');
+
+    // Xóa badge cũ nếu có
+    const oldBadge = document.getElementById('custStatusBadge');
+    if (oldBadge) oldBadge.remove();
+
+    if (isActive) {
+        if (card) {
+            card.style.border = '';
+            card.style.background = '';
+        }
+        if (pointSummary) pointSummary.style.opacity = '';
+    } else {
+        // Viền đỏ + background nhạt cho card
+        if (card) {
+            card.style.border = '2px solid #ef4444';
+            card.style.background = '#fff5f5';
+        }
+        // Thêm badge INACTIVE vào card
+        if (card) {
+            const badge = document.createElement('span');
+            badge.id = 'custStatusBadge';
+            badge.innerHTML = '<i class="fa-solid fa-ban" style="margin-right:4px"></i>Inactive';
+            badge.style.cssText = [
+                'display:inline-flex','align-items:center',
+                'font-size:0.7rem','font-weight:700',
+                'color:#dc2626','background:#fee2e2',
+                'border:1px solid #fca5a5',
+                'border-radius:20px','padding:2px 8px',
+                'margin-left:auto','white-space:nowrap','flex-shrink:0'
+            ].join(';');
+            const clearBtn = card.querySelector('.cust-clear-btn');
+            if (clearBtn) card.insertBefore(badge, clearBtn);
+            else card.appendChild(badge);
+        }
+        if (pointSummary) pointSummary.style.opacity = '0.4';
+    }
+}
+
+function lockLoyaltySectionForInactive() {
+    const useEl = document.getElementById('usePoints');
+    if (useEl) {
+        useEl.value = '';
+        useEl.disabled = true;
+        useEl.placeholder = 'Account inactive';
+    }
+
+    const pointDisplayEl = document.getElementById('custPointDisplay');
+    if (pointDisplayEl) pointDisplayEl.textContent = '–';
+
+    const maxRedeemEl = document.getElementById('custMaxRedeemDisplay');
+    if (maxRedeemEl) {
+        maxRedeemEl.textContent = 'N/A — account inactive';
+        maxRedeemEl.style.color = '#ef4444';
+    }
+
+    const configHintEl = document.getElementById('custPointConfigHint');
+    if (configHintEl) {
+        configHintEl.innerHTML =
+            '<i class="fa-solid fa-lock" style="color:#ef4444;margin-right:4px"></i>' +
+            '<span style="color:#ef4444;font-weight:600">This account is inactive. Loyalty points are disabled.</span>';
+    }
+
+    const availEl = document.getElementById('loyaltyAvail');
+    if (availEl) availEl.textContent = '= 0đ';
+
+    const warnEl = document.getElementById('custPointWarn');
+    if (warnEl) warnEl.style.display = 'none';
+
+    const foundPtsEl = document.getElementById('custFoundPoints');
+    if (foundPtsEl) foundPtsEl.textContent = '–';
 }
 
 /* ── INIT ── */

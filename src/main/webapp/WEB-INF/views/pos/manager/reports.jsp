@@ -142,7 +142,7 @@
 
         <div class="rpt-card">
             <div class="rpt-card-row">
-                <span class="rpt-card-lbl">Transactions</span>
+                <span class="rpt-card-lbl">Total Order</span>
                 <i class="bi bi-receipt rpt-card-ico text-warning"></i>
             </div>
             <div class="rpt-card-val" id="totalOrders">
@@ -217,7 +217,24 @@
                                 <td><fmt:formatNumber value="${order.totalAmount}" pattern="#,##0"/> ₫</td>
                                 <td>${fn:replace(fn:substring(order.createdAt, 0, 16), 'T', ' ')}</td>
                                 <td>
-                                    <span class="rpt-status-badge">${order.orderStatus.orderStatusName}</span>
+                                    <c:set var="sName" value="${order.orderStatus.orderStatusName}"/>
+                                    <c:choose>
+                                        <c:when test="${sName == 'PAID'}">
+                                            <span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;color:#16a34a;background:#f0fdf4;border:1px solid #86efac">Paid</span>
+                                        </c:when>
+                                        <c:when test="${sName == 'CANCELLED'}">
+                                            <span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;color:#dc2626;background:#fef2f2;border:1px solid #fca5a5">Cancelled</span>
+                                        </c:when>
+                                        <c:when test="${sName == 'PENDING_PAYMENT'}">
+                                            <span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;color:#d97706;background:#fffbeb;border:1px solid #fcd34d">Pending Payment</span>
+                                        </c:when>
+                                        <c:when test="${sName == 'DRAFT'}">
+                                            <span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;color:#6b7280;background:#f9fafb;border:1px solid #d1d5db">Draft</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;color:#6b7280;background:#f9fafb;border:1px solid #d1d5db">${sName}</span>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </td>
                             </tr>
                         </c:forEach>
