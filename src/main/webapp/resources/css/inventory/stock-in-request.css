@@ -1,3 +1,19 @@
+#productPickerModal thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #f1f5f9;
+}
+.product-table-card table {
+    border-radius: 16px;
+    overflow: hidden;
+}
+.table-hover > tbody > tr {
+    transition: all 0.15s ease;
+}
+.table-primary {
+    background-color: #dbeafe !important;
+}
 /* --- 1. Tổng thể nội dung --- */
 .main-content {
     background-color: #f8fafc !important;
@@ -62,8 +78,17 @@
     background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
     border-radius: 16px !important;
-    overflow: hidden !important;
+    overflow: visible !important; /* ✅ FIX SCROLL */
     box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
+}
+.modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+#productPickerModal .table-responsive {
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 .table-responsive {
