@@ -1,0 +1,343 @@
+package com.swp391pos.service;
+
+import com.swp391pos.entity.PosReceipt;
+import com.swp391pos.entity.OrderPromotion;
+import com.swp391pos.enums.OrderStatusName;
+import com.swp391pos.enums.PaymentMethod;
+import com.swp391pos.repository.PosReceiptRepository;
+import com.swp391pos.repository.OrderItemRepository;
+import com.swp391pos.repository.OrderPromotionRepository;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@Service
+public class PosReceiptService {
+
+    @Autowired
+    private PosReceiptRepository posReceiptRepository;
+
+    @Autowired
+    private OrderItemRepository orderItemRepository;
+
+    @Autowired
+    private OrderPromotionRepository orderPromotionRepository;
+
+    private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter DATETIME_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+    /* ----------------------------------------------------------------
+       Basic queries
+       ---------------------------------------------------------------- */
+
+    public List<PosReceipt> getAllReceipts() {
+        return posReceiptRepository.findAllWithDetails();
+    }
+
+    public PosReceipt save(PosReceipt receipt) {
+        return posReceiptRepository.save(receipt);
+    }
+    public List<Map<String, Object>> getAllReceiptRows() {
+        return posReceiptRepository.findAllWithDetails().stream().map(r -> {
+            Map<String, Object> row = new HashMap<>();
+            row.put("receiptNumber", r.getReceiptNumber());
+            row.put("printedAt", r.getPrintedAt() != null
+                    ? r.getPrintedAt().format(DATETIME_FMT) : "—");
+            row.put("printedBy", r.getPrintedBy() != null
+                    ? r.getPrintedBy().getFullName() : "—");
+
+            var order = r.getOrder();
+            if (order != null) {
+                row.put("orderId", order.getOrderId());
+                row.put("createdAt", order.getCreatedAt() != null
+                        ? order.getCreatedAt().format(DATE_FMT) : "—");
+                row.put("customerName", order.getCustomer() != null
+                        ? order.getCustomer().getFullName() : "Guest");
+                row.put("cashierName", order.getEmployee() != null
+                        ? order.getEmployee().getFullName() : "—");
+                row.put("paymentMethod", order.getPaymentMethod() != null
+                        ? order.getPaymentMethod().name() : "—");
+                row.put("totalAmount", order.getTotalAmount());
+                row.put("discountAmount", order.getDiscountAmount());
+                OrderStatusName statusEnum = order.getOrderStatus() != null
+                        ? order.getOrderStatus().getOrderStatusName() : null;
+                row.put("orderStatus", statusEnum != null ? statusEnum.name() : "—");
+                row.put("statusLabel", resolveStatusLabel(statusEnum));
+            }
+            return row;
+        }).toList();
+    }
+
+    public PosReceipt getByReceiptNumber(String receiptNumber) {
+        return posReceiptRepository.findByReceiptNumber(receiptNumber).orElse(null);
+    }
+
+    /* ----------------------------------------------------------------
+       Stat counts
+       ---------------------------------------------------------------- */
+
+    public long countAll() {
+        return posReceiptRepository.count();
+    }
+
+    /**
+     * @param statusName – OrderStatusName enum value, e.g. OrderStatusName.PENDING
+     */
+    public long countByOrderStatus(OrderStatusName statusName) {
+        return posReceiptRepository.countByOrderStatusName(statusName);
+    }
+
+    public long countToday() {
+        LocalDateTime start = LocalDate.now().atStartOfDay();
+        LocalDateTime end   = start.plusDays(1);
+        return posReceiptRepository.countByPrintedAtBetween(start, end);
+    }
+
+    public BigDecimal sumRevenue() {
+        BigDecimal total = posReceiptRepository.sumRevenueByOrderStatusName(OrderStatusName.PAID);
+        return total != null ? total : BigDecimal.ZERO;
+    }
+
+    /* ----------------------------------------------------------------
+       Detail map – returned as JSON from the API endpoint
+       ---------------------------------------------------------------- */
+
+    public Map<String, Object> getDetailByReceiptNumber(String receiptNumber) {
+        PosReceipt receipt = getByReceiptNumber(receiptNumber);
+        if (receipt == null) return null;
+
+        Map<String, Object> detail = new HashMap<>();
+
+        // PosReceipt fields
+        detail.put("receiptNumber", receipt.getReceiptNumber());
+        detail.put("printedAt", receipt.getPrintedAt() != null
+                ? receipt.getPrintedAt().format(DATETIME_FMT) : "—");
+        detail.put("printedBy", receipt.getPrintedBy() != null
+                ? receipt.getPrintedBy().getFullName() : "—");
+
+        // Order fields
+        var order = receipt.getOrder();
+        if (order != null) {
+            // Status label from OrderStatus.orderStatusName (enum OrderStatusName)
+            OrderStatusName statusEnum = order.getOrderStatus() != null
+                    ? order.getOrderStatus().getOrderStatusName() : null;
+            String statusName = statusEnum != null ? statusEnum.name() : "—";
+            detail.put("orderStatus",   statusName);
+            detail.put("statusLabel",   resolveStatusLabel(statusEnum));
+
+            // Payment method (enum)
+            PaymentMethod pm = order.getPaymentMethod();
+            detail.put("paymentMethod", pm != null ? pm.name() : "—");
+
+            // Customer (nullable – walk-in guest allowed)
+            detail.put("customerName", order.getCustomer() != null
+                    ? order.getCustomer().getFullName() : "Guest");
+
+            // Promotions
+            List<OrderPromotion> orderPromos = orderPromotionRepository.findByOrder_OrderId(order.getOrderId());
+            String promotionNames = orderPromos.stream()
+                    .map(op -> op.getPromotion().getPromoName())
+                    .distinct()
+                    .collect(Collectors.joining(", "));
+            detail.put("promotionNames", promotionNames.isEmpty() ? "—" : promotionNames);
+
+            // Cashier from Order.employee
+            detail.put("cashierName", order.getEmployee() != null
+                    ? order.getEmployee().getFullName() : "—");
+
+            // Created date
+            detail.put("createdAt", order.getCreatedAt() != null
+                    ? order.getCreatedAt().format(DATE_FMT) : "—");
+
+            // Amounts (BigDecimal – serialized as number in JSON)
+            detail.put("subtotal",  order.getTotalAmount());
+            detail.put("discount",  order.getDiscountAmount() != null
+                    ? order.getDiscountAmount() : BigDecimal.ZERO);
+
+            // NOTE: Order entity has no customerPayment / changeAmount columns.
+            // Set to null so the modal shows "—" for those fields.
+            detail.put("customerPayment", null);
+            detail.put("change",          null);
+
+            // Order items – load từ OrderItem theo orderId
+            detail.put("orderId", order.getOrderId());
+            detail.put("items", getOrderItemsByOrderId(order.getOrderId()));
+        }
+
+        return detail;
+    }
+
+    /* ----------------------------------------------------------------
+       Order items by orderId – dùng cho detail modal
+       ---------------------------------------------------------------- */
+
+    public List<Map<String, Object>> getOrderItemsByOrderId(Long orderId) {
+        if (orderId == null) return List.of();
+        List<Map<String, Object>> result = new ArrayList<>();
+        orderItemRepository.findByOrder_OrderId(orderId).forEach(item -> {
+            Map<String, Object> map = new HashMap<>();
+
+            if (item.getProduct() != null) {
+                // San pham don le
+                map.put("productName", item.getProduct().getProductName());
+                map.put("unit",        item.getProduct().getUnit() != null
+                        ? item.getProduct().getUnit() : "—");
+            } else if (item.getCombo() != null) {
+                // Combo
+                map.put("productName", item.getCombo().getComboName());
+                map.put("unit",        "Combo");
+            } else {
+                map.put("productName", "—");
+                map.put("unit",        "—");
+            }
+
+            map.put("unitPrice",   item.getUnitPrice());
+            map.put("quantity",    item.getQuantity());
+            map.put("totalAmount", item.getSubtotal());
+            result.add(map);
+        });
+        return result;
+    }
+
+    /* ----------------------------------------------------------------
+       Export Excel
+       ---------------------------------------------------------------- */
+
+    /* ----------------------------------------------------------------
+       Filtered receipt list for export
+       ---------------------------------------------------------------- */
+    public List<PosReceipt> getFilteredReceipts(String search, String payment,
+                                                String from, String to) {
+        List<PosReceipt> all = getAllReceipts();
+        String searchLc = (search != null && !search.isBlank()) ? search.toLowerCase() : null;
+        String pmFilter  = (payment != null && !payment.isBlank()) ? payment.toUpperCase() : null;
+
+        LocalDate fromDate = null;
+        LocalDate toDate   = null;
+        try { if (from != null && !from.isBlank()) fromDate = LocalDate.parse(from); } catch (DateTimeParseException ignored) {}
+        try { if (to   != null && !to.isBlank())   toDate   = LocalDate.parse(to);   } catch (DateTimeParseException ignored) {}
+
+        final LocalDate fd = fromDate;
+        final LocalDate td = toDate;
+
+        return all.stream().filter(r -> {
+            // Search filter (receipt number, customer name, cashier name)
+            if (searchLc != null) {
+                String rn  = r.getReceiptNumber() != null ? r.getReceiptNumber().toLowerCase() : "";
+                String cust = r.getOrder() != null && r.getOrder().getCustomer() != null
+                        ? r.getOrder().getCustomer().getFullName().toLowerCase() : "";
+                String cash = r.getOrder() != null && r.getOrder().getEmployee() != null
+                        ? r.getOrder().getEmployee().getFullName().toLowerCase() : "";
+                if (!rn.contains(searchLc) && !cust.contains(searchLc) && !cash.contains(searchLc))
+                    return false;
+            }
+            // Payment filter
+            if (pmFilter != null && r.getOrder() != null) {
+                String pm = r.getOrder().getPaymentMethod() != null
+                        ? r.getOrder().getPaymentMethod().name() : "";
+                if (!pm.equals(pmFilter)) return false;
+            }
+            // Date filter (based on order createdAt)
+            if ((fd != null || td != null) && r.getOrder() != null) {
+                LocalDateTime createdAt = r.getOrder().getCreatedAt();
+                if (createdAt == null) return false;
+                LocalDate rowDate = createdAt.toLocalDate();
+                if (fd != null && rowDate.isBefore(fd)) return false;
+                if (td != null && rowDate.isAfter(td))  return false;
+            }
+            return true;
+        }).collect(Collectors.toList());
+    }
+
+    public void exportToExcel(HttpServletResponse response,
+                              String search, String payment,
+                              String from, String to) throws IOException {
+        List<PosReceipt> receipts = getFilteredReceipts(search, payment, from, to);
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Receipts");
+
+            // Header
+            String[] cols = {
+                    "Receipt Number", "Printed At", "Printed By",
+                    "Order ID", "Customer", "Cashier",
+                    "Payment Method", "Total Amount", "Discount", "Status"
+            };
+            Row header = sheet.createRow(0);
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font font = workbook.createFont();
+            font.setBold(true);
+            headerStyle.setFont(font);
+            for (int i = 0; i < cols.length; i++) {
+                Cell cell = header.createCell(i);
+                cell.setCellValue(cols[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            // Data rows
+            int rowIdx = 1;
+            for (PosReceipt r : receipts) {
+                Row row = sheet.createRow(rowIdx++);
+                row.createCell(0).setCellValue(r.getReceiptNumber());
+                row.createCell(1).setCellValue(r.getPrintedAt() != null
+                        ? r.getPrintedAt().format(DATETIME_FMT) : "");
+                row.createCell(2).setCellValue(r.getPrintedBy() != null
+                        ? r.getPrintedBy().getFullName() : "");
+
+                var order = r.getOrder();
+                if (order != null) {
+                    row.createCell(3).setCellValue(
+                            order.getOrderId() != null ? order.getOrderId() : 0);
+                    row.createCell(4).setCellValue(order.getCustomer() != null
+                            ? order.getCustomer().getFullName() : "Guest");
+                    row.createCell(5).setCellValue(order.getEmployee() != null
+                            ? order.getEmployee().getFullName() : "");
+                    row.createCell(6).setCellValue(order.getPaymentMethod() != null
+                            ? order.getPaymentMethod().name() : "");
+                    row.createCell(7).setCellValue(order.getTotalAmount() != null
+                            ? order.getTotalAmount().doubleValue() : 0);
+                    row.createCell(8).setCellValue(order.getDiscountAmount() != null
+                            ? order.getDiscountAmount().doubleValue() : 0);
+                    row.createCell(9).setCellValue(order.getOrderStatus() != null
+                            ? order.getOrderStatus().getOrderStatusName().name() : "");
+                }
+            }
+
+            for (int i = 0; i < cols.length; i++) sheet.autoSizeColumn(i);
+
+            response.setContentType(
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            response.setHeader("Content-Disposition",
+                    "attachment; filename=receipts.xlsx");
+            workbook.write(response.getOutputStream());
+        }
+    }
+
+    /* ----------------------------------------------------------------
+       Helpers
+       ---------------------------------------------------------------- */
+
+    private String resolveStatusLabel(OrderStatusName status) {
+        if (status == null) return "—";
+        return switch (status) {
+            case DRAFT -> "Create order";
+            case PAID -> "Payment has been made.";
+            case PENDING_PAYMENT   -> "Awaiting confirmation";
+            case CANCELLED -> "Cancelled";
+        };
+    }
+}

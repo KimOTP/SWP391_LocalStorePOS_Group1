@@ -1,0 +1,77 @@
+package com.swp391pos.controller.inventory;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.swp391pos.entity.Account;
+import com.swp391pos.entity.StockOut;
+import com.swp391pos.service.StockOutService;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
+import java.util.Map;
+
+@Controller
+@RequestMapping("/stockOut")
+public class StockOutController {
+    @Autowired
+    private StockOutService stockOutService;
+
+    @GetMapping("/add")
+    public String showAddPage(Model model) {
+        return "inventory/inventoryStaff/stock-out";
+    }
+
+    @GetMapping("/search-products")
+    @ResponseBody
+    public List<Map<String, Object>> searchProducts(@RequestParam(required = false, defaultValue = "") String term) {
+        return stockOutService.searchProductsWithStock(term);
+    }
+
+    @PostMapping("/submit")
+    public String submitStockOut(
+            @RequestParam String generalNote,
+            @RequestParam String itemsJson,
+            HttpSession session, RedirectAttributes ra) {
+        try {
+            Account account = (Account) session.getAttribute("loggedInAccount");
+            ObjectMapper mapper = new ObjectMapper();
+            List<Map<String, Object>> items = mapper.readValue(itemsJson, new TypeReference<>(){});
+            for (Map<String, Object> item : items) {
+                String sku = item.get("sku").toString();
+                int qty = Integer.parseInt(item.get("qty").toString());
+                if (qty <= 0) {
+                    throw new Exception("Quantity for product " + item.get("sku") + " must be positive.");
+                }
+                int availableStock = stockOutService.getCurrentStockBySku(sku);
+                if (qty > availableStock) {
+                    throw new Exception("Insufficient stock for product " + sku + ". Available: " + availableStock + ", Requested: " + qty);
+                }
+            }
+
+            stockOutService.createStockOut(generalNote, items, account);
+
+            ra.addFlashAttribute("notification", "Stock-out request created!");
+            ra.addFlashAttribute("status", "success");
+            return "redirect:/stockOut/add";
+        } catch (Exception e) {
+            ra.addFlashAttribute("errorMessage", "Error: " + e.getMessage());
+            ra.addFlashAttribute("status", "danger");
+
+            ra.addFlashAttribute("oldItemsJson", itemsJson);
+            ra.addFlashAttribute("oldGeneralNote", generalNote);
+            return "redirect:/stockOut/add";
+        }
+    }
+    @GetMapping("/details")
+    public String viewStockOutDetail(@RequestParam Integer id, Model model) {
+        // Lấy thông tin StockOut kèm theo list Details
+        StockOut stockOut = stockOutService.getStockOutById(id);
+        model.addAttribute("stockOut", stockOut);
+        return "inventory/inventoryStaff/stock-out-detail";
+    }
+}

@@ -1,0 +1,209 @@
+/* =============================================
+   Product Detail Modal / Fragment Styles
+   ============================================= */
+
+/* Wrapper: 2-column layout */
+.product-detail-wrapper {
+    display: flex !important;
+    gap: 0 !important;
+    min-height: 420px !important;
+}
+
+/* ---- Left Column: Image ---- */
+.product-detail-image-col {
+    flex: 0 0 42% !important;
+    background-color: #f8fafc !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 32px !important;
+    border-right: 1px solid #f1f5f9 !important;
+}
+
+.product-detail-image-box {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 320px !important;
+    aspect-ratio: 1 / 1 !important;
+}
+
+.product-detail-img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 14px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07) !important;
+}
+
+/* Status badge overlaid on image */
+.product-detail-status-badge {
+    position: absolute !important;
+    top: 14px !important;
+    left: 14px !important;
+    padding: 5px 12px !important;
+    border-radius: 999px !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    backdrop-filter: blur(4px) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+}
+
+.product-detail-status-badge::before {
+    content: "" !important;
+    width: 6px !important;
+    height: 6px !important;
+    border-radius: 50% !important;
+}
+
+/* reuse existing status colors */
+.product-detail-status-badge.status-active       { background: #dcfce7 !important; color: #16a34a !important; }
+.product-detail-status-badge.status-active::before       { background: #16a34a !important; }
+.product-detail-status-badge.status-outstock     { background: #fee2e2 !important; color: #dc2626 !important; }
+.product-detail-status-badge.status-outstock::before     { background: #dc2626 !important; }
+.product-detail-status-badge.status-pending      { background: #fef9c3 !important; color: #ca8a04 !important; }
+.product-detail-status-badge.status-pending::before      { background: #ca8a04 !important; }
+.product-detail-status-badge.status-discontinued { background: #e2e8f0 !important; color: #475569 !important; }
+.product-detail-status-badge.status-discontinued::before { background: #475569 !important; }
+
+/* ---- Right Column: Info ---- */
+.product-detail-info-col {
+    flex: 1 !important;
+    padding: 32px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+}
+
+/* Category + SKU row */
+.product-detail-meta {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin-bottom: 10px !important;
+}
+
+.product-detail-category-badge {
+    background: rgba(37, 99, 235, 0.08) !important;
+    color: #2563eb !important;
+    padding: 4px 12px !important;
+    border-radius: 999px !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+}
+
+.product-detail-sku {
+    color: #94a3b8 !important;
+    font-size: 0.82rem !important;
+    font-family: 'Monaco', 'Consolas', monospace !important;
+}
+
+/* Product name */
+.product-detail-name {
+    font-size: 1.75rem !important;
+    font-weight: 800 !important;
+    color: #1e293b !important;
+    line-height: 1.2 !important;
+    margin-bottom: 14px !important;
+}
+
+/* Price */
+.product-detail-price {
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+    color: #059669 !important;
+    margin-bottom: 20px !important;
+}
+
+/* Divider */
+.product-detail-divider {
+    width: 100% !important;
+    height: 1px !important;
+    background: #f1f5f9 !important;
+    margin-bottom: 20px !important;
+}
+
+/* Specs section */
+.product-detail-specs {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    flex: 1 !important;
+}
+
+.product-detail-specs-title {
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #94a3b8 !important;
+    margin-bottom: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+.product-detail-spec-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 10px 0 !important;
+    border-bottom: 1px solid #f8fafc !important;
+}
+
+.product-detail-spec-row:last-child {
+    border-bottom: none !important;
+}
+
+.product-detail-spec-label {
+    color: #94a3b8 !important;
+    font-size: 0.85rem !important;
+}
+
+.product-detail-spec-value {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+}
+
+/* Action buttons */
+.product-detail-actions {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin-top: 24px !important;
+    padding-top: 20px !important;
+    border-top: 1px solid #f1f5f9 !important;
+}
+
+.product-detail-btn-edit {
+    flex: 1 !important;
+    justify-content: center !important;
+    border-radius: 10px !important;
+    height: 42px !important;
+}
+
+.product-detail-btn-delete {
+    width: 42px !important;
+    height: 42px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 10px !important;
+    border: 1px solid #fee2e2 !important;
+    background: #fff !important;
+    color: #dc2626 !important;
+    font-size: 1rem !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    text-decoration: none !important;
+}
+
+.product-detail-btn-delete:hover {
+    background: #fee2e2 !important;
+    border-color: #dc2626 !important;
+    color: #dc2626 !important;
+}

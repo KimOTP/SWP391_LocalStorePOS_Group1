@@ -1,0 +1,132 @@
+/* --- 1. Tổng thể nội dung --- */
+.main-content {
+    background-color: #f8fafc;
+    padding: 30px 20px;
+    margin-top: 70px;
+    margin-left: 80px;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#sidebar.expanded ~ .main-content {
+    margin-left: 260px;
+}
+
+/* --- 2. Thẻ Thông tin (Info Card) --- */
+.info-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.info-label {
+    font-size: 0.75rem;
+    color: #64748b;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.info-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+/* --- 3. Bảng xử lý --- */
+.table-section {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 24px;
+}
+
+.table thead th {
+    background-color: #f8fafc;
+    border-bottom: 2px solid #e2e8f0;
+    color: #64748b;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 16px;
+}
+
+.text-sku {
+    color: #2563eb !important;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* Ô nhập số lượng thực tế */
+.input-actual {
+    width: 100px;
+    height: 38px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    text-align: center;
+    font-weight: 700;
+    color: #2563eb;
+    transition: all 0.2s;
+}
+
+.input-actual:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    outline: none;
+}
+
+/* Badge số lượng dự kiến */
+.expected-badge {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+/* Trạng thái */
+.status-badge {
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: #fffbeb;
+    color: #d97706; /* Màu vàng Pending Approval */
+    border: 1px solid #fef3c7;
+}
+
+/* --- 4. Buttons --- */
+.btn-confirm {
+    background-color: #2563eb;
+    color: #fff !important;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-confirm:hover {
+    background-color: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-cancel {
+    background-color: #ffffff;
+    color: #64748b !important;
+    border: 1px solid #e2e8f0;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-cancel:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}

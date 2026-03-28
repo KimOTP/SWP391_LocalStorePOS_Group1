@@ -1,0 +1,28 @@
+/* Import base styles từ product-manage.css */
+@import url('../product/product-manage.css');
+
+/* =============================================
+   Combo-specific overrides & additions
+   ============================================= */
+
+/* --- Stat Card màu riêng cho Combo --- */
+.stat-icon-combo-total { background: rgba(99, 102, 241, 0.10) !important; color: #6366f1 !important; }
+.stat-icon-combo-active { background: rgba(22, 163, 74, 0.08) !important; color: #16a34a !important; }
+
+.text-combo-total  { color: #6366f1 !important; }
+.text-combo-active { color: #16a34a !important; }
+
+/* --- Combo products list trong td --- */
+.combo-products-list {
+    font-size: 0.82rem !important;
+    color: #64748b !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    max-width: 320px !important;
+}
+
+.bnt-filter{
+    width: 170px;
+}

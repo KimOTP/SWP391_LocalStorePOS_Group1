@@ -1,0 +1,357 @@
+// Biến toàn cục để quản lý danh sách sản phẩm trong Combo
+let selectedProducts = [];
+
+//  xử lý Xem trước ảnh
+function initImagePreview() {
+    const imageInput = document.getElementById('imageInput');
+    const container = document.getElementById('previewContainer');
+    if (imageInput && container) {
+        imageInput.addEventListener('change', function(evt) {
+            const file = evt.target.files[0];
+            if (file) {
+                if (!file.type.startsWith('image/')) {
+                    alert("Please select image!");
+                    return;
+                }
+                const imgUrl = URL.createObjectURL(file);
+                container.innerHTML = '';
+                const newImg = document.createElement('img');
+                newImg.src = imgUrl;
+                newImg.className = "img-fluid rounded";
+                container.appendChild(newImg);
+                newImg.onload = () => URL.revokeObjectURL(imgUrl);
+            }
+        });
+    }
+}
+
+//  logic Tìm kiếm sản phẩm trong Dropdown (Trang Add/Update)
+function initProductSearch() {
+    const searchInput = document.getElementById('productSearchInside');
+    const productItems = document.querySelectorAll('.product-item-li');
+    const noResult = document.getElementById('noProductFound');
+    const dropdownBtn = document.getElementById('dropdownProductBtn');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const keyword = this.value.toLowerCase().trim();
+            let hasResult = false;
+            productItems.forEach(item => {
+                const productName = item.querySelector('.p-name').textContent.toLowerCase();
+                if (productName.includes(keyword) || item.textContent.toLowerCase().includes(keyword)) {
+                    item.classList.remove('d-none');
+                    hasResult = true;
+                } else {
+                    item.classList.add('d-none');
+                }
+            });
+            noResult.classList.toggle('d-none', hasResult);
+        });
+        if (dropdownBtn) {
+            dropdownBtn.addEventListener('shown.bs.dropdown', () => searchInput.focus());
+        }
+    }
+}
+
+//  thêm/Xóa/Sửa số lượng sản phẩm Combo
+function addProductToCombo(id, name, price) {
+    const existing = selectedProducts.find(p => p.id === id);
+    if (existing) { existing.quantity += 1; }
+    else { selectedProducts.push({ id, name, price, quantity: 1 }); }
+    renderProductList();
+    calculateTotal();
+}
+
+function updateQuantity(id, delta) {
+    const product = selectedProducts.find(p => p.id === id);
+    if (product) {
+        product.quantity += delta;
+        if (product.quantity <= 0) { removeProduct(id); }
+        else { renderProductList(); calculateTotal(); }
+    }
+}
+
+function removeProduct(id) {
+    selectedProducts = selectedProducts.filter(p => p.id !== id);
+    renderProductList();
+    calculateTotal();
+}
+
+function renderProductList() {
+    const container = document.getElementById('selectedProductsList');
+    if (!container) return;
+    if (selectedProducts.length === 0) {
+        container.innerHTML = `<div class="text-center py-4 text-muted small">No products added yet</div>`;
+        return;
+    }
+    container.innerHTML = selectedProducts.map(p => `
+        <div class="selected-item p-3 mb-2 rounded bg-white shadow-sm border">
+            <div class="d-flex justify-content-between mb-2">
+                <div class="fw-bold small">${p.name}</div>
+                <i class="fa-solid fa-trash-can text-danger cursor-pointer" onclick="removeProduct('${p.id}')"></i>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center bg-light rounded p-1">
+                    <button type="button" class="btn btn-sm py-0" onclick="updateQuantity('${p.id}', -1)">-</button>
+                    <input type="text" class="text-center border-0 bg-transparent" value="${p.quantity}" readonly style="width:30px">
+                    <button type="button" class="btn btn-sm py-0" onclick="updateQuantity('${p.id}', 1)">+</button>
+                </div>
+                <div class="text-primary fw-bold">${(p.price * p.quantity).toLocaleString()}đ</div>
+            </div>
+            <input type="hidden" name="productIds" value="${p.id}">
+            <input type="hidden" name="quantities" value="${p.quantity}">
+        </div>
+    `).join('');
+}
+
+function calculateTotal() {
+    const originalPriceInput = document.getElementById('originalPrice');
+    const sellingPriceInput = document.getElementById('sellingPrice');
+    if (!originalPriceInput) return;
+    const total = selectedProducts.reduce((sum, p) => sum + (p.price * p.quantity), 0);
+    originalPriceInput.value = total;
+    const isUpdate = document.getElementById('combo-data-bridge')?.getAttribute('data-is-update') === 'true';
+    if (!isUpdate || total === 0) { if(sellingPriceInput) sellingPriceInput.value = total; }
+}
+
+// bộ lọc bảng Manage (Client-side)
+function initStatusFilter() {
+    const checkboxes = document.querySelectorAll('.status-cb');
+    if (checkboxes.length === 0) return;
+
+    // Ngăn đóng dropdown khi chọn
+    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        menu.addEventListener('click', (e) => e.stopPropagation());
+    });
+
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', applyAllFilters);
+    });
+}
+
+function initTableSearch() {
+    const searchInput = document.getElementById('comboSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', applyAllFilters);
+    }
+}
+
+function applyAllFilters() {
+    const searchInput = document.getElementById('comboSearchInput');
+    const keyword = searchInput ? searchInput.value.toLowerCase().trim() : "";
+    const selectedStatuses = Array.from(document.querySelectorAll('.status-cb:checked')).map(cb => cb.value);
+
+    const rows = document.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        const comboName = row.querySelector('.product-name').textContent.toLowerCase();
+        const comboId = row.querySelector('td:first-child').textContent.toLowerCase();
+
+        // Lấy từ data-status mà mình đã sửa ở JSP
+        const statusBadge = row.querySelector('.status-text');
+        const rowStatus = statusBadge ? statusBadge.getAttribute('data-status') : '';
+
+        const matchesSearch = comboName.includes(keyword) || comboId.includes(keyword);
+        const matchesStatus = selectedStatuses.length === 0 || selectedStatuses.includes(rowStatus);
+
+        row.style.display = (matchesSearch && matchesStatus) ? '' : 'none';
+    });
+}
+function applyDiscount(percent) {
+    const original = parseFloat(document.getElementById('originalPrice').value) || 0;
+    if (original === 0) {
+        alert('⚠ Please add products first before applying discount.');
+        return;
+    }
+    const discounted = Math.round(original * (1 - percent / 100));
+    document.getElementById('sellingPrice').value = discounted;
+
+    // Xóa trạng thái lỗi nếu có
+    document.getElementById('sellingPrice').classList.remove('is-invalid');
+}
+
+//  Global Functions 
+window.applyDiscount = applyDiscount;
+window.addProductToCombo = addProductToCombo;
+window.updateQuantity = updateQuantity;
+window.removeProduct = removeProduct;
+window.confirmDelete = function(id, url) {
+    if(confirm("Are you sure you want to delete combo " + id + "?")) window.location.href = url;
+};
+
+//Hàm xử lý hiện Modal Chi tiết Combo
+function initViewComboModal() {
+    const viewButtons = document.querySelectorAll('.btn-view-combo');
+    const modalBody = document.getElementById('comboModalBody');
+    // Khởi tạo instance của Bootstrap Modal
+    const modalElement = document.getElementById('comboDetailModal');
+    if (!modalElement) return;
+    const myModal = new bootstrap.Modal(modalElement);
+
+    viewButtons.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const comboId = this.getAttribute('data-id');
+
+            // đóng tất cả dropdown đang mở trước khi show modal
+            document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
+                const toggle = menu.previousElementSibling;
+                if (toggle) bootstrap.Dropdown.getInstance(toggle)?.hide();
+                menu.classList.remove('show');
+            });
+            document.querySelectorAll('[data-bs-toggle="dropdown"].show').forEach(el => {
+                el.classList.remove('show');
+                el.setAttribute('aria-expanded', 'false');
+            });
+
+            // hiển thị trạng thái loading trong khi chờ server
+            modalBody.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2 text-muted">Đang tải dữ liệu...</p>
+                </div>`;
+
+            // mở Modal
+            myModal.show();
+
+            // fetch dữ liệu từ Controller
+            fetch(`/combos/detail-fragment/${comboId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error("Không thể tải dữ liệu combo");
+                    return response.text();
+                })
+                .then(html => {
+                    //đổ nội dung HTML vào Modal Body
+                    modalBody.innerHTML = html;
+                })
+                .catch(err => {
+                    modalBody.innerHTML = `
+                        <div class="alert alert-danger m-3">
+                            <i class="fa-solid fa-triangle-exclamation me-2"></i>
+                            Lỗi: ${err.message}
+                        </div>`;
+                    console.error("Fetch error:", err);
+                });
+        });
+    });
+}
+// Xử lý Xác nhận xóa bằng Popup (SweetAlert2)
+function initDeleteConfirmation() {
+    const deleteButtons = document.querySelectorAll('.btn-delete-combo');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault(); // Chặn link mặc định
+            const deleteUrl = this.getAttribute('data-url');
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you really want to delete this combo? This action cannot be undone!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Yes, delete it!',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                borderRadius: '15px'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = deleteUrl;
+                }
+            });
+        });
+    });
+}
+
+
+function initFormValidation() {
+    const form = document.getElementById('comboForm');
+    if (!form) return; // trang manage không có form → skip
+
+    form.addEventListener('submit', function (e) {
+
+        // it nhất 1 sản phẩm
+        if (selectedProducts.length < 1) {
+            e.preventDefault();
+            // Hiện lỗi ngay dưới danh sách sản phẩm
+            let errEl = document.getElementById('productError');
+            if (!errEl) {
+                errEl = document.createElement('div');
+                errEl.id = 'productError';
+                errEl.className = 'text-danger small mt-1';
+                document.getElementById('selectedProductsList').after(errEl);
+            }
+            errEl.textContent = 'Please add at least 1 product to the combo.';
+            return;
+        }
+
+        // selling price không được vượt original price
+        const original = parseFloat(document.getElementById('originalPrice').value) || 0;
+        const selling  = parseFloat(document.getElementById('sellingPrice').value)  || 0;
+        if (selling > original) {
+            e.preventDefault();
+            const sp = document.getElementById('sellingPrice');
+            sp.classList.add('is-invalid');
+            let fb = sp.parentElement.querySelector('.invalid-feedback');
+            if (!fb) {
+                fb = document.createElement('div');
+                fb.className = 'invalid-feedback';
+                sp.parentElement.appendChild(fb);
+            }
+            fb.textContent = `Selling price cannot exceed original price (${original.toLocaleString()}đ).`;
+            return;
+        }
+
+        // image size <= 5MB
+        const imageInput = document.getElementById('imageInput');
+        if (imageInput.files.length > 0) {
+            const fileSizeMB = imageInput.files[0].size / (1024 * 1024);
+            if (fileSizeMB > 5) {
+                e.preventDefault();
+                alert('Image must be smaller than 5MB.');
+                return;
+            }
+        }
+    });
+
+    // Xóa lỗi selling price khi user gõ lại
+    document.getElementById('sellingPrice')?.addEventListener('input', function () {
+        this.classList.remove('is-invalid');
+    });
+}
+
+//  khởi tạo
+document.addEventListener('DOMContentLoaded', function() {
+    initImagePreview();
+    initProductSearch();
+    initStatusFilter();
+    initTableSearch();
+    initViewComboModal();
+    initTableDropdowns();
+    initDeleteConfirmation();
+    initFormValidation();
+
+    const dataBridge = document.getElementById('combo-data-bridge');
+    if (dataBridge && dataBridge.getAttribute('data-is-update') === 'true') {
+        try {
+            selectedProducts = JSON.parse(dataBridge.getAttribute('data-details'));
+            renderProductList();
+        } catch (e) { console.error("Parse error", e); }
+    }
+});
+
+//  fix dropdown bị khuất bởi overflow của table
+function initTableDropdowns() {
+    // Với mỗi dropdown button trong bảng, tạo Bootstrap Dropdown với strategy 'fixed'
+    document.querySelectorAll('.product-table-card [data-bs-toggle="dropdown"]').forEach(btn => {
+        new bootstrap.Dropdown(btn, {
+            popperConfig: {
+                strategy: 'fixed',
+                modifiers: [
+                    { name: 'flip', options: { fallbackPlacements: ['top-end'] } },
+                    { name: 'preventOverflow', options: { boundary: 'viewport' } }
+                ]
+            }
+        });
+    });
+}

@@ -1,0 +1,246 @@
+package com.swp391pos.service;
+
+import com.swp391pos.entity.Product;
+import com.swp391pos.entity.Promotion;
+import com.swp391pos.entity.PromotionDetail;
+import com.swp391pos.repository.ProductRepository;
+import com.swp391pos.repository.PromotionDetailRepository;
+import com.swp391pos.repository.PromotionRepository;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.aspectj.weaver.ast.Call;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Service
+public class PromotionDetailService {
+    @Autowired
+    private PromotionDetailRepository promotionDetailRepository;
+    @Autowired
+    private PromotionRepository promotionRepository;
+    @Autowired
+    private ProductRepository productRepository;
+
+    public List<PromotionDetail> searchDetails(Integer promotionId, String keyword, String productName, String discountTypeStr) {
+        String pName = (productName != null && !productName.isEmpty()) ? productName : null;
+
+        PromotionDetail.DiscountType discountType = null;
+        if (discountTypeStr != null && !discountTypeStr.isEmpty()) {
+            try {
+                discountType = PromotionDetail.DiscountType.valueOf(discountTypeStr);
+            } catch (IllegalArgumentException e) {}
+        }
+
+        return promotionDetailRepository.searchDetails(promotionId, keyword, pName, discountType);
+    }
+
+    public List<String> getProductNamesInPromotion(Integer promotionId) {
+        return promotionDetailRepository.findDistinctProductNamesByPromotionId(promotionId);
+    }
+
+    public void savePromotionDetail(PromotionDetail detail) {
+        promotionDetailRepository.save(detail);
+    }
+
+    private boolean isDuplicatePair(Integer promotionId, String productId, Integer minQuantity, Long excludeDetailId) {
+        return promotionDetailRepository
+                .findByPromotion_PromotionId(promotionId)
+                .stream()
+                .anyMatch(d -> (excludeDetailId == null || !d.getPromoDetailId().equals(excludeDetailId))
+                        && d.getProduct().getProductId().equals(productId)
+                        && d.getMinQuantity().equals(minQuantity));
+    }
+
+    public void addPromotionDetail(Integer promotionId, String productId, Integer minQuantity, BigDecimal discountValue, String discountTypeStr) {
+        // Add — không có record nào cần exclude nên truyền null
+        if (isDuplicatePair(promotionId, productId, minQuantity, null)) {
+            throw new IllegalArgumentException("This product with minQuantity="
+                    + minQuantity + " already exists in this promotion.");
+        }
+
+        Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new RuntimeException("Cannot find promotion"));
+        Product product = productRepository.findProductByProductId(productId);
+        PromotionDetail.DiscountType discountType = PromotionDetail.DiscountType.valueOf(discountTypeStr);
+
+        validateDiscount(discountValue, discountType, product.getPrice());
+
+        PromotionDetail detail = new PromotionDetail();
+        detail.setPromotion(promotion);
+        detail.setProduct(product);
+        detail.setMinQuantity(minQuantity);
+        detail.setDiscountValue(discountValue);
+        detail.setDiscountType(discountType);
+
+        promotionDetailRepository.save(detail);
+    }
+
+    public void updatePromotionDetail(Long promoDetailId, Integer promotionId, String productId, Integer minQuantity, BigDecimal discountValue, String discountTypeStr) {
+        // Update — exclude chính record đang sửa
+        if (isDuplicatePair(promotionId, productId, minQuantity, promoDetailId)) {
+            throw new IllegalArgumentException("This product with minQuantity="
+                    + minQuantity + " already exists in this promotion.");
+        }
+
+        Promotion promotion = promotionRepository.findById(promotionId).orElseThrow(() -> new RuntimeException("Cannot find promotion"));
+        Product product = productRepository.findProductByProductId(productId);
+        PromotionDetail.DiscountType discountType = PromotionDetail.DiscountType.valueOf(discountTypeStr);
+        //kiem tra logic giảm giá 1 cách hợp lệ không quá lố
+        validateDiscount(discountValue, discountType, product.getPrice());
+
+        PromotionDetail detail = new PromotionDetail();
+        detail.setPromoDetailId(promoDetailId);
+        detail.setPromotion(promotion);
+        detail.setProduct(product);
+        detail.setMinQuantity(minQuantity);
+        detail.setDiscountValue(discountValue);
+        detail.setDiscountType(discountType);
+
+        promotionDetailRepository.save(detail);
+    }
+
+    private void validateDiscount(BigDecimal discountValue, PromotionDetail.DiscountType discountType, BigDecimal productPrice) {
+        if (discountValue.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("The discount must be greater than 0.");
+        }
+        if (discountType == PromotionDetail.DiscountType.PERCENT && discountValue.compareTo(new BigDecimal("100")) >= 0) {
+            throw new IllegalArgumentException("The percentage discount must not exceed 100%.");
+        }
+        if (discountType == PromotionDetail.DiscountType.AMOUNT) {
+            // ✅ Check null trước khi compareTo
+            if (productPrice == null) {
+                throw new IllegalArgumentException("Cannot validate: product price is not set.");
+            }
+            if (discountValue.compareTo(productPrice) >= 0) {
+                throw new IllegalArgumentException("The discount amount must not exceed the product's original price ("
+                        + productPrice + " đ).");
+            }
+        }
+    }
+
+    public void deletePromotionDetail(Long promoDetailId) {
+        promotionDetailRepository.deleteById(promoDetailId);
+    }
+
+
+    //Gen File excel mẫu cho uesr tải xuống
+    public byte[] generateExcelTemplate() throws IOException {
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Template");
+
+            // Tạo dòng Header (Dòng 0)
+            Row headerRow = sheet.createRow(0);
+
+            // Định dạng style đậm cho Header
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font font = workbook.createFont();
+            font.setBold(true);
+            headerStyle.setFont(font);
+
+            // Tạo các cột
+            String[] headers = {"ProductId", "DiscountValue", "DiscountType (AMOUNT/PERCENT)", "MinQuantity"};
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+                sheet.autoSizeColumn(i); // Tự động căn chỉnh độ rộng cột
+            }
+
+            // Ghi ra mảng byte để gửi về client
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            workbook.write(outputStream);
+            return outputStream.toByteArray();
+        }
+    }
+    //Xử lí File excel admin up lên
+    public void importPromotionDetails(int promotionId, MultipartFile file) throws Exception {
+
+        Promotion promotion = promotionRepository.findById(promotionId);
+        if (promotion == null) {
+            throw new RuntimeException("Cannot find promotion");
+        }
+
+        // Lấy các cặp đã có trong DB
+        Set<String> existingPairs = promotionDetailRepository
+                .findByPromotion_PromotionId(promotionId)
+                .stream()
+                .map(d -> d.getProduct().getProductId() + "_" + d.getMinQuantity())
+                .collect(Collectors.toSet());
+
+        // Set check trùng trong file
+        Set<String> seenInFile = new HashSet<>();
+
+
+        try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
+            Sheet sheet = workbook.getSheetAt(0);
+            //Khoi tao list
+            List<PromotionDetail> listDetail = new ArrayList<>();
+            //Duyet tung row
+            for (int i=1; i<= sheet.getLastRowNum();i++) {
+                //Lấy dòng đấy ra
+                Row row = sheet.getRow(i);
+                //Nếu không có dữ liệu nào thì bỏ qua
+                if(row == null) continue;
+                //Lấy productId
+                Cell productIdCell = row.getCell(0);
+                //Check exist ?
+                if(productIdCell==null) continue;
+                //Check loại dữ liệu của ô đấy
+                String productId = "";
+                if(productIdCell.getCellType() == CellType.STRING) {
+                    productId = productIdCell.getStringCellValue();
+                } else if (productIdCell.getCellType() == CellType.NUMERIC) {
+                    productId = String.valueOf(productIdCell.getNumericCellValue());
+                }
+
+                //Lấy product
+                Product product = productRepository.findProductByProductId(productId);
+                //check exist ?
+                if(product == null) {
+                    throw new RuntimeException("Cannot find product " + productId + " in line " + (i + 1));
+                }
+                BigDecimal disCountValue = BigDecimal.valueOf(row.getCell(1).getNumericCellValue());
+                String discountType = row.getCell(2).getStringCellValue().trim().toUpperCase();
+                int minQuantity = (int)row.getCell(3).getNumericCellValue();
+
+                // Thêm check trùng cặp
+                String pairKey = productId + "_" + minQuantity;
+                // Check trùng trong file
+                if (seenInFile.contains(pairKey)) {
+                    throw new RuntimeException("Duplicate product " + productId
+                            + " with minQuantity=" + minQuantity + " at row " + (i + 1) + " in the file.");
+                }
+                seenInFile.add(pairKey);
+                //Check trùng với DB
+                if (existingPairs.contains(pairKey)) {
+                    throw new RuntimeException("Product " + productId
+                            + " with minQuantity=" + minQuantity + " already exists in this promotion.");
+                }
+
+                //Validate detail promotion
+                PromotionDetail.DiscountType typeEnum = PromotionDetail.DiscountType.valueOf(discountType);
+                validateDiscount(disCountValue, typeEnum, product.getPrice());
+
+                PromotionDetail detail = new PromotionDetail();
+                detail.setPromotion(promotion);
+                detail.setProduct(product);
+                detail.setDiscountValue(disCountValue);
+                detail.setDiscountType(PromotionDetail.DiscountType.valueOf(discountType));
+                detail.setMinQuantity(minQuantity);
+
+                listDetail.add(detail);
+            }
+            promotionDetailRepository.saveAll(listDetail);
+        }
+
+    }
+}

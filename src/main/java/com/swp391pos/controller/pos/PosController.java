@@ -1,0 +1,574 @@
+package com.swp391pos.controller.pos;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.swp391pos.entity.*;
+import com.swp391pos.enums.OrderStatusName;
+import com.swp391pos.repository.*;
+import com.swp391pos.service.*;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Controller
+@RequestMapping("/pos")
+@RequiredArgsConstructor
+public class PosController {
+
+    private final ProductRepository  productRepository;
+    private final ProductService     productService;
+    private final OrderService       orderService;
+    private final OrderItemService   orderItemService;
+    private final OrderStatusService orderStatusService;
+    private final PromotionService   promotionService;
+    private final CategoryService    categoryService;
+    private final ComboService       comboService;
+    private final InventoryService   inventoryService;
+    private final EmployeeService    employeeService;
+    private final CustomerService    customerService;
+    private final ObjectMapper       objectMapper;   // Spring Boot tự tạo bean này
+
+    private static final String SESSION_PRINT_TEMPLATE  = "posPrintTemplate";
+    private static final String SESSION_BANK_CONFIG      = "posBankConfig";
+
+    /**
+     * Key session chứa JSON của order items để module khác đọc.
+     *
+     * Format JSON được lưu:
+     * [
+     *   {
+     *     "orderItemId" : 10,
+     *     "orderId"     : 5,
+     *     "productId"   : 3,
+     *     "productName" : "Pepsi 330ml",
+     *     "unit"        : "Chai",
+     *     "quantity"    : 2,
+     *     "unitPrice"   : 10000.00,
+     *     "lineTotal"   : 20000.00
+     *   },
+     *   ...
+     * ]
+     *
+     * Module khác đọc bằng cách:
+     *   String json = (String) session.getAttribute("posCurrentOrderJson");
+     *   List<Map> items = objectMapper.readValue(json, List.class);
+     *
+     * Hoặc gọi GET /pos/api/cart-items để nhận trực tiếp JSON response.
+     */
+    private static final String SESSION_CART_ORDER_JSON = "posCurrentOrderJson";
+    private static final String SESSION_CURRENT_ORDER_ID  = "posCurrentOrderId";
+
+    /* ── Helper: Product.status là entity ProductStatus, check productStatusName = "Active" ── */
+    private boolean isActive(com.swp391pos.entity.ProductStatus st) {
+        if (st == null) return false;
+        return "Active".equals(st.getProductStatusName());
+    }
+
+    /* ================================================================
+       POS MAIN PAGE
+       ================================================================ */
+    @GetMapping("")
+    public String showPOS(Model model, HttpSession session) {
+        // Filter only ACTIVE products
+        // Product.status là @ManyToOne ProductStatus entity (không phải enum).
+        // Product.status là entity ProductStatus có field productStatusName = "Active"
+        List<com.swp391pos.entity.Product> activeProducts = productService.getAllProducts().stream()
+                .filter(p -> {
+                    com.swp391pos.entity.ProductStatus st = p.getStatus();
+                    if (st == null) return false;
+                    return "Active".equals(st.getProductStatusName());
+                })
+                .collect(Collectors.toList());
+        model.addAttribute("products", activeProducts);
+        model.addAttribute("categories", categoryService.getAllCategories());
+
+        // Combo.statusCombo là enum Combo.Status { DISCONTINUED, ACTIVE, PENDING_APPROVAL }
+        // Chỉ hiển thị combo có statusCombo == ACTIVE (null → ẩn)
+        List<com.swp391pos.entity.Combo> activeCombos = comboService.getAllCombos().stream()
+                .filter(c -> com.swp391pos.entity.Combo.Status.ACTIVE == c.getStatusCombo())
+                .collect(Collectors.toList());
+        model.addAttribute("combos", activeCombos);
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> printTemplate = (Map<String, String>) session.getAttribute(SESSION_PRINT_TEMPLATE);
+        if (printTemplate == null) {
+            printTemplate = new HashMap<>();
+            printTemplate.put("paperSize", "58mm");
+            printTemplate.put("fontSize",  "12");
+            printTemplate.put("title",     "Sales invoice");
+            printTemplate.put("thanks",    "Thank you for your purchase.");
+            printTemplate.put("company",   "Local store POS system");
+            printTemplate.put("address",   "123 Đường ABC, Hòa Lạc, thành phố Hà Nội");
+            printTemplate.put("phone",     "0956328396");
+            printTemplate.put("email",     "info@gmail.com");
+        }
+        model.addAttribute("templateSettings", printTemplate);
+
+        // ── Restore cart nếu user back từ trang payment ──
+        String cartJson = (String) session.getAttribute(SESSION_CART_ORDER_JSON);
+        Long   pendingOrderId = (Long) session.getAttribute(SESSION_CURRENT_ORDER_ID);
+        if (cartJson != null && !cartJson.isBlank() && pendingOrderId != null) {
+            model.addAttribute("restoreCartJson",    cartJson);
+            model.addAttribute("restoreOrderId",     pendingOrderId);
+        }
+
+        return "pos/cashier/pos";
+    }
+
+    /* ================================================================
+       PRODUCT APIS
+       ================================================================ */
+    @GetMapping("/api/products")
+    @ResponseBody
+    public List<Map<String, Object>> getProductsByCategory(
+            @RequestParam(required = false) String categoryId) {
+
+        List<Product> products = categoryId != null && !categoryId.isEmpty()
+                ? productService.getAllProducts().stream()
+                .filter(p -> p.getCategory() != null &&
+                        String.valueOf(p.getCategory().getCategoryId()).equals(categoryId) &&
+                        isActive(p.getStatus()))
+                .collect(Collectors.toList())
+                : productService.getAllProducts().stream()
+                .filter(p -> isActive(p.getStatus()))
+                .collect(Collectors.toList());
+
+        return toProductDtoList(products);
+    }
+
+    @GetMapping("/api/search")
+    @ResponseBody
+    public List<Map<String, Object>> searchProducts(@RequestParam String query) {
+        List<Product> products = productRepository.findAll().stream()
+                .filter(p -> isActive(p.getStatus()) &&
+                        p.getProductName().toLowerCase().contains(query.toLowerCase()))
+                .collect(Collectors.toList());
+        return toProductDtoList(products);
+    }
+
+    private List<Map<String, Object>> toProductDtoList(List<Product> products) {
+        return products.stream().map(p -> {
+            Map<String, Object> m = new HashMap<>();
+            m.put("id",       p.getProductId());
+            m.put("name",     p.getProductName());
+            m.put("price",    p.getPrice());
+            m.put("imageUrl", p.getImageUrl());
+            m.put("unit",     p.getUnit());
+            m.put("status",   p.getStatus() != null && p.getStatus().getProductStatusName() != null ? p.getStatus().getProductStatusName().toUpperCase() : "ACTIVE");
+            return m;
+        }).collect(Collectors.toList());
+    }
+
+    /* ================================================================
+       CHECKOUT
+       POST /pos/api/checkout
+       Body: { items: [{productId, productName, price, quantity, unit}], totalAmount }
+       ================================================================ */
+    @PostMapping("/api/checkout")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> checkout(
+            @RequestBody Map<String, Object> body,
+            HttpSession session) {
+
+        Map<String, Object> resp = new HashMap<>();
+        try {
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> items =
+                    (List<Map<String, Object>>) body.get("items");
+
+            double totalAmount = ((Number) body.getOrDefault("totalAmount", 0)).doubleValue();
+
+            // ── Tạo Order DRAFT ──
+            Order order;
+            Object existingOrderId = body.get("orderId");
+            if (existingOrderId != null && !String.valueOf(existingOrderId).isEmpty()) {
+                Long orderId = Long.valueOf(String.valueOf(existingOrderId));
+                order = orderService.findById(orderId);
+                // Chỉ cho phép cập nhật nếu order đang ở trạng thái DRAFT
+                if (order.getOrderStatus() == null ||
+                        !"DRAFT".equals(order.getOrderStatus().getOrderStatusName().name())) {
+                    order = new Order(); // Nếu không phải DRAFT thì tạo mới
+                } else {
+                    // Xoá OrderItems cũ để add lại từ đầu (tránh trùng lặp hoặc sót)
+                    orderItemService.deleteByOrder(order);
+                }
+            } else {
+                order = new Order();
+            }
+            order.setCreatedAt(LocalDateTime.now());
+            order.setTotalAmount(BigDecimal.valueOf(totalAmount));
+            order.setOrderStatus(orderStatusService.findByOrderStatusName(
+                    OrderStatusName.valueOf("DRAFT")));
+
+            Object account = session.getAttribute("account");
+            if (account instanceof Account) {
+                order.setEmployee(((Account) account).getEmployee());
+            }
+
+            Order saved = orderService.save(order);
+
+            // ── Tạo từng OrderItem và build DTO map song song ──
+            List<Map<String, Object>> orderItemJsonList = new ArrayList<>();
+
+            for (Map<String, Object> item : items) {
+
+                // Lưu entity vào DB
+                OrderItem oi = new OrderItem();
+                oi.setOrder(saved);
+
+                Object pid    = item.get("productId");
+                String pidStr = String.valueOf(pid);
+
+                if (pidStr.startsWith("COMBO_")) {
+                    String comboId = pidStr.replace("COMBO_", "");
+                    Combo combo = comboService.getComboById(comboId);
+                    oi.setCombo(combo);
+                } else {
+                    Product product = productRepository.findProductByProductId(pidStr);
+                    oi.setProduct(product);
+                }
+
+                int        qty       = ((Number) item.getOrDefault("quantity", 1)).intValue();
+                BigDecimal unitPrice = BigDecimal.valueOf(
+                        ((Number) item.getOrDefault("price", 0)).doubleValue());
+
+                oi.setQuantity(qty);
+                oi.setUnitPrice(unitPrice);
+                oi.setSubtotal(unitPrice.multiply(BigDecimal.valueOf(qty)));
+
+                OrderItem savedItem = orderItemService.save(oi);
+
+                // Build DTO – chỉ chứa giá trị thuần, không chứa entity lồng nhau.
+                // Lý do: tránh LazyInitializationException khi Jackson serialize
+                // các quan hệ @ManyToOne/@OneToMany chưa được load.
+                Map<String, Object> dto = new LinkedHashMap<>();
+                dto.put("orderItemId",  savedItem.getOrderItemId());
+                dto.put("orderId",      saved.getOrderId());
+                dto.put("productId",    pid);
+                dto.put("productName",  item.getOrDefault("productName", ""));
+                dto.put("unit",         item.getOrDefault("unit", ""));
+                dto.put("quantity",     qty);
+                dto.put("unitPrice",    unitPrice);
+                dto.put("lineTotal",    unitPrice.multiply(BigDecimal.valueOf(qty)));
+
+                orderItemJsonList.add(dto);
+            }
+
+            // ── Serialize sang JSON String rồi lưu vào session ──
+            //
+            // Tại sao JSON String thay vì List<OrderItem> entity?
+            //
+            // 1. TRÁNH LazyInitializationException
+            //    Entity chứa @ManyToOne Product, @ManyToOne Order v.v.
+            //    Khi Hibernate session đóng (sau khi request checkout kết thúc),
+            //    Jackson không thể serialize các quan hệ lazy → exception.
+            //    JSON String đã được tạo trong cùng request → an toàn.
+            //
+            // 2. PROMOTION MODULE ĐỌC DỄ HƠN
+            //    Module khác chỉ cần:
+            //      String json = (String) session.getAttribute("posCurrentOrderJson");
+            //      List<Map> items = objectMapper.readValue(json, List.class);
+            //    Không cần import entity, không cần Spring context của POS module.
+            //
+            // 3. DỄ DEBUG
+            //    Có thể log thẳng giá trị session ra console để kiểm tra.
+            //
+            String orderItemsJson = objectMapper.writeValueAsString(orderItemJsonList);
+            session.setAttribute(SESSION_CART_ORDER_JSON, orderItemsJson);
+            session.setAttribute(SESSION_CURRENT_ORDER_ID,  saved.getOrderId());
+
+            resp.put("success", true);
+            resp.put("orderId", saved.getOrderId());
+            return ResponseEntity.ok(resp);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            resp.put("success", false);
+            resp.put("errorMessage", ex.getMessage());
+            return ResponseEntity.status(500).body(resp);
+        }
+    }
+
+    /* ================================================================
+       ENDPOINT ĐỌC JSON CHO PROMOTION MODULE
+       GET /pos/api/cart-items
+       Promotion controller gọi endpoint này thay vì đọc session trực tiếp.
+       ================================================================ */
+    @GetMapping("/api/cart-items")
+    @ResponseBody
+    public ResponseEntity<Object> getCartItemsJson(HttpSession session) {
+        String json = (String) session.getAttribute(SESSION_CART_ORDER_JSON);
+
+        // Không có cart → trả về mảng rỗng, không lỗi
+        if (json == null || json.isBlank()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+
+        try {
+            // Parse String → List<Map> rồi để Spring tự serialize lại thành JSON response
+            Object parsed = objectMapper.readValue(json, List.class);
+            return ResponseEntity.ok(parsed);
+        } catch (Exception ex) {
+            return ResponseEntity.status(500)
+                    .body(Map.of("error", "Failed to parse cart items: " + ex.getMessage()));
+        }
+    }
+
+    /* ================================================================
+       CANCEL ORDER
+       POST /pos/api/order/{orderId}/cancel
+       ================================================================ */
+    @PostMapping("/api/order/{orderId}/cancel")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> cancelOrder(
+            @PathVariable Long orderId,
+            HttpSession session) {
+
+        Map<String, Object> resp = new HashMap<>();
+        try {
+            Order order = orderService.findById(orderId);
+
+            OrderStatus cancelled = orderStatusService.findByOrderStatusName(
+                    OrderStatusName.valueOf("CANCELLED"));
+            order.setOrderStatus(cancelled);
+            orderService.save(order);
+
+            session.removeAttribute(SESSION_CART_ORDER_JSON);
+            session.removeAttribute(SESSION_CURRENT_ORDER_ID);
+
+            resp.put("success", true);
+            return ResponseEntity.ok(resp);
+        } catch (Exception ex) {
+            resp.put("success", false);
+            resp.put("errorMessage", ex.getMessage());
+            return ResponseEntity.status(500).body(resp);
+        }
+    }
+
+    /* ================================================================
+       UPDATE ORDER (dùng khi user back từ payment và sửa cart)
+       POST /pos/api/update-order
+       Body: { orderId, items: [...], totalAmount }
+       ================================================================ */
+    @PostMapping("/api/update-order")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> updateOrder(
+            @RequestBody Map<String, Object> body,
+            HttpSession session) {
+
+        Map<String, Object> resp = new HashMap<>();
+        try {
+            Long orderId = Long.valueOf(String.valueOf(body.get("orderId")));
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> items =
+                    (List<Map<String, Object>>) body.get("items");
+            double totalAmount = ((Number) body.getOrDefault("totalAmount", 0)).doubleValue();
+
+            Order order = orderService.findById(orderId);
+
+            // Xoá hết OrderItem cũ rồi tạo lại từ cart mới
+            orderItemService.deleteByOrder(order);
+
+            order.setTotalAmount(BigDecimal.valueOf(totalAmount));
+            orderService.save(order);
+
+            List<Map<String, Object>> orderItemJsonList = new ArrayList<>();
+
+            for (Map<String, Object> item : items) {
+                OrderItem oi = new OrderItem();
+                oi.setOrder(order);
+
+                Object pid    = item.get("productId");
+                String pidStr = String.valueOf(pid);
+
+                if (pidStr.startsWith("COMBO_")) {
+                    String comboId = pidStr.replace("COMBO_", "");
+                    Combo combo = comboService.getComboById(comboId);
+                    oi.setCombo(combo);
+                } else {
+                    Product product = productRepository.findProductByProductId(pidStr);
+                    oi.setProduct(product);
+                }
+
+                int        qty       = ((Number) item.getOrDefault("quantity", 1)).intValue();
+                BigDecimal unitPrice = BigDecimal.valueOf(
+                        ((Number) item.getOrDefault("price", 0)).doubleValue());
+
+                oi.setQuantity(qty);
+                oi.setUnitPrice(unitPrice);
+                oi.setSubtotal(unitPrice.multiply(BigDecimal.valueOf(qty)));
+
+                OrderItem savedItem = orderItemService.save(oi);
+
+                Map<String, Object> dto = new LinkedHashMap<>();
+                dto.put("orderItemId",  savedItem.getOrderItemId());
+                dto.put("orderId",      orderId);
+                dto.put("productId",    pid);
+                dto.put("productName",  item.getOrDefault("productName", ""));
+                dto.put("unit",         item.getOrDefault("unit", ""));
+                dto.put("quantity",     qty);
+                dto.put("unitPrice",    unitPrice);
+                dto.put("lineTotal",    unitPrice.multiply(BigDecimal.valueOf(qty)));
+                orderItemJsonList.add(dto);
+            }
+
+            String orderItemsJson = objectMapper.writeValueAsString(orderItemJsonList);
+            session.setAttribute(SESSION_CART_ORDER_JSON, orderItemsJson);
+            session.setAttribute(SESSION_CURRENT_ORDER_ID, orderId);
+
+            resp.put("success", true);
+            resp.put("orderId", orderId);
+            return ResponseEntity.ok(resp);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            resp.put("success", false);
+            resp.put("errorMessage", ex.getMessage());
+            return ResponseEntity.status(500).body(resp);
+        }
+    }
+
+    /* ================================================================
+   PRINT TEMPLATE SETTINGS
+   ================================================================ */
+    @PostMapping("/api/print-template")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> savePrintTemplate(
+            @RequestBody Map<String, String> settings,
+            HttpSession session) {
+
+        List<String> required = Arrays.asList(
+                "paperSize","fontSize","title","thanks","company","address","phone","email");
+        for (String k : required) {
+            if (!settings.containsKey(k) || settings.get(k).isBlank()) {
+                Map<String, Object> err = new HashMap<>();
+                err.put("success", false);
+                err.put("errorMessage", "Missing: " + k);
+                return ResponseEntity.badRequest().body(err);
+            }
+        }
+        session.setAttribute(SESSION_PRINT_TEMPLATE, new HashMap<>(settings));
+
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("success", true);
+        return ResponseEntity.ok(resp);
+    }
+
+    /* ================================================================
+       BANK CONFIG
+       POST /pos/api/bank-config
+       ================================================================ */
+    @PostMapping("/api/bank-config")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> saveBankConfig(
+            @RequestBody Map<String, String> settings,
+            HttpSession session) {
+
+        List<String> required = Arrays.asList("bankCode", "accountNumber", "accountName");
+        for (String k : required) {
+            if (!settings.containsKey(k) || settings.get(k).isBlank()) {
+                Map<String, Object> err = new HashMap<>();
+                err.put("success", false);
+                err.put("errorMessage", "Missing: " + k);
+                return ResponseEntity.badRequest().body(err);
+            }
+        }
+        session.setAttribute(SESSION_BANK_CONFIG, new HashMap<>(settings));
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("success", true);
+        return ResponseEntity.ok(resp);
+    }
+
+    @GetMapping("/api/bank-config")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getBankConfig(HttpSession session) {
+        @SuppressWarnings("unchecked")
+        Map<String, String> s = (Map<String, String>) session.getAttribute(SESSION_BANK_CONFIG);
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("success", s != null);
+        if (s != null) resp.put("settings", s);
+        return ResponseEntity.ok(resp);
+    }
+
+    @GetMapping("/api/print-template")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> getPrintTemplate(HttpSession session) {
+        @SuppressWarnings("unchecked")
+        Map<String, String> s = (Map<String, String>) session.getAttribute(SESSION_PRINT_TEMPLATE);
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("success", s != null);
+        if (s != null) resp.put("settings", s);
+        return ResponseEntity.ok(resp);
+    }
+
+    /* ================================================================
+       CUSTOMER LOOKUP BY PHONE
+       GET /pos/api/customer?phone=0xxxxxxxxx
+       ================================================================ */
+    @GetMapping("/api/customer")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> lookupCustomer(@RequestParam String phone) {
+        Map<String, Object> resp = new HashMap<>();
+        customerService.findByPhoneNumber(phone).ifPresentOrElse(
+                c -> {
+                    resp.put("found", true);
+                    Map<String, Object> info = new HashMap<>();
+                    info.put("customerId",    c.getCustomerId());
+                    info.put("fullName",      c.getFullName());
+                    info.put("phoneNumber",   c.getPhoneNumber());
+                    info.put("currentPoint",  c.getCurrentPoint());
+                    info.put("totalSpending", c.getTotalSpending());
+                    info.put("status",        c.getStatus() != null ? c.getStatus() : 1);
+                    resp.put("customer", info);
+                },
+                () -> resp.put("found", false)
+        );
+        return ResponseEntity.ok(resp);
+    }
+
+    /* ================================================================
+       QUICK-ADD CUSTOMER FROM POS
+       POST /pos/api/customer/quick-add
+       Body: { phone, fullName }
+       ================================================================ */
+    @PostMapping("/api/customer/quick-add")
+    @ResponseBody
+    public ResponseEntity<Map<String, Object>> quickAddCustomer(@RequestBody Map<String, String> body) {
+        Map<String, Object> resp = new HashMap<>();
+        try {
+            String phone    = body.getOrDefault("phone", "").trim();
+            String fullName = body.getOrDefault("fullName", "").trim();
+            if (phone.isEmpty() || fullName.isEmpty()) {
+                resp.put("success", false);
+                resp.put("errorMessage", "Phone and name are required");
+                return ResponseEntity.badRequest().body(resp);
+            }
+            // Check duplicate
+            if (customerService.findByPhoneNumber(phone).isPresent()) {
+                resp.put("success", false);
+                resp.put("errorMessage", "Phone number already exists");
+                return ResponseEntity.badRequest().body(resp);
+            }
+            Customer saved = customerService.saveQuick(phone, fullName);
+            resp.put("success", true);
+            Map<String, Object> info = new HashMap<>();
+            info.put("customerId",   saved.getCustomerId());
+            info.put("fullName",     saved.getFullName());
+            info.put("phoneNumber",  saved.getPhoneNumber());
+            info.put("currentPoint", saved.getCurrentPoint());
+            resp.put("customer", info);
+            return ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            resp.put("success", false);
+            resp.put("errorMessage", e.getMessage());
+            return ResponseEntity.status(500).body(resp);
+        }
+    }
+}

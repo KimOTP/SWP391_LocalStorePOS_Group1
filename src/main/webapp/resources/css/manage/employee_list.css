@@ -1,0 +1,602 @@
+/* =========================
+   MAIN LAYOUT
+========================= */
+.main-content {
+    background-color: #f8fafc !important;
+    padding: 30px 40px !important;
+    margin-top: 70px !important;
+    margin-left: 80px;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: margin-left;
+}
+
+#sidebar.expanded ~ .main-content {
+    margin-left: 260px !important;
+}
+
+
+/* =========================
+   PROFILE WRAPPER -> CARD STYLE
+========================= */
+.profile-wrapper {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    min-height: calc(100vh - 100px);
+}
+
+
+/* =========================
+   TITLES
+========================= */
+.section-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 6px;
+}
+
+.section-subtitle {
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    margin-bottom: 25px;
+}
+
+.section-divider {
+    margin: 35px 0 20px;
+    font-weight: 700;
+    font-size: 16px;
+    color: #1e293b;
+}
+
+
+/* =========================
+   INFO SECTION
+========================= */
+.info-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #64748b;
+    margin-bottom: 6px;
+}
+
+.info-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 14px;
+    margin-bottom: 18px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.info-box:hover {
+    border-color: #2563eb;
+    background: #ffffff;
+}
+
+.info-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    height: 100%;
+    color: #1e293b;
+}
+
+
+/* =========================
+   BUTTONS (Modern Style)
+========================= */
+.btn-change,
+.btn-primary,
+.btn-primary1 {
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    height: 38px;
+    padding: 0 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-change:hover,
+.btn-primary:hover,
+.btn-primary1:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.btn-change:active,
+.btn-primary:active,
+.btn-primary1:active {
+    transform: scale(0.96);
+}
+
+/* Warning */
+.btn-warning {
+    background-color: #f59e0b;
+    color: #fff;
+    border: none;
+    height: 38px;
+    padding: 0 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-warning:hover {
+    background-color: #d97706;
+    transform: translateY(-1px);
+}
+
+/* Danger */
+.btn-danger {
+    background-color: #dc2626;
+    color: #fff;
+    border: none;
+    height: 38px;
+    padding: 0 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+    background-color: #b91c1c;
+    transform: translateY(-1px);
+}
+
+
+/* =========================
+   LINKS
+========================= */
+.link-detail {
+    font-size: 14px;
+    color: #2563eb;
+    text-decoration: none;
+    margin-left: 8px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.link-detail:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+
+/* =========================
+   SUCCESS
+========================= */
+.success-text {
+    font-size: 13px;
+    color: #16a34a;
+    margin-top: 8px;
+}
+
+
+/* =========================
+   BACK LINK
+========================= */
+.back-link {
+    display: inline-block;
+    float: right;
+
+    background-color: #ffffff;
+    color: #64748b;
+
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 600;
+
+    border-radius: 10px;
+    border: 1px solid #cbd5e1;
+
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.back-link:hover {
+    background-color: #f8fafc;
+    color: #1e293b;
+
+    border-color: #94a3b8;
+
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+}
+
+.back-link:hover {
+    background-color: #f8fafc;
+    color: #1e293b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+
+/* =========================
+   TABLE MODERN STYLE
+========================= */
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background: #f8fafc;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 12px;
+    color: #475569;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.table tbody td {
+    padding: 12px;
+    font-size: 14px;
+    color: #334155;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.table th,
+.table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+
+/* =========================
+   PAGINATION
+========================= */
+.page-active {
+    background-color: #2563eb !important;;
+    color: white !important;
+    border: none;
+    font-weight: 600;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+}
+
+/* Select box custom*/
+
+
+/* Status active và deactive*/
+.status-active {
+    background: #ecfdf5;
+    color: #059669;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-active::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #10b981;
+}
+
+.status-deactive {
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-deactive::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #dc2626;
+}
+
+/* Pending */
+.status-pending {
+    background: #fffbeb;
+    color: #d97706;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-pending::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #f59e0b;
+}
+
+/* Absent */
+.status-absent {
+    background: #f3f4f6;
+    color: #4b5563;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.status-absent::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #6b7280;
+}
+
+/* Button Edit/Save/Cancel */
+.btn-action {
+    height: 38px;
+    padding: 0 18px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+/* EDIT */
+.btn-edit {
+    background: #2563eb;
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #1d4ed8;
+}
+
+/* SAVE */
+.btn-save {
+    background: #f59e0b;
+    color: white;
+}
+
+.btn-save:hover {
+    background: #d97706;
+}
+
+/* CANCEL */
+.btn-cancel {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background: #dc2626;
+}
+
+/* Custom Dropdown*/
+
+/* DROPDOWN */
+
+.dropdown-custom{
+    position:relative;
+    cursor:pointer;
+}
+
+.dropdown-selected{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.dropdown-arrow{
+    font-size:12px;
+    color:#64748b;
+}
+
+.profile-wrapper .dropdown-menu{
+    position:absolute;
+    top:45px;
+    left:0;
+    width:100%;
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.08);
+    display:none;
+    z-index:100;
+}
+
+.profile-wrapper .dropdown-menu div{
+    padding:10px 14px;
+    cursor:pointer;
+}
+
+.profile-wrapper .dropdown-menu div:hover{
+    background:#f1f5f9;
+}
+
+
+/* DATE MENU */
+
+.date-menu{
+    padding:10px;
+}
+
+.date-picker{
+    width:100%;
+    border:none;
+    outline:none;
+    font-size:14px;
+}
+
+.calendar-menu{
+    position:absolute;
+    top:48px;
+    right:0;
+    width:260px;
+    background:white;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    padding:12px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+    display:none;
+    z-index:100;
+}
+
+/* header */
+
+.calendar-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+    font-weight:600;
+}
+
+.calendar-header button{
+    border:none;
+    background:none;
+    font-size:18px;
+    cursor:pointer;
+}
+
+/* weekday */
+
+.calendar-days{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    font-size:10px;
+    text-align:center;
+    color:#94a3b8;
+    margin-bottom:6px;
+}
+
+/* dates */
+
+.calendar-dates{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:4px;
+}
+
+.calendar-dates div{
+    text-align:center;
+    padding:6px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.calendar-dates div:hover{
+    background:#eff6ff;
+    color:#2563eb;
+}
+
+.calendar-selected{
+    background:#2563eb;
+    color:white;
+}
+
+/* footer */
+
+.calendar-footer{
+    display:flex;
+    justify-content:space-between;
+    margin-top:10px;
+    font-size:12px;
+}
+
+.calendar-footer button{
+    border:none;
+    background:none;
+    color:#2563eb;
+    cursor:pointer;
+}
+
+/* SHIFT EDIT INPUT */
+
+.shift-input{
+
+    width:100%;
+    padding:8px 12px;
+
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+
+    background:#f8fafc;
+
+    font-size:14px;
+
+    transition:all 0.2s ease;
+}
+
+/* focus */
+
+.shift-input:focus{
+
+    outline:none;
+
+    border-color:#3b82f6;
+
+    background:white;
+
+    box-shadow:0 0 0 2px rgba(59,130,246,0.15);
+}
+
+/* time icon alignment */
+
+.shift-input[type="time"]{
+
+    cursor:pointer;
+}
+
+.shift-input{
+    width:174px;
+}
