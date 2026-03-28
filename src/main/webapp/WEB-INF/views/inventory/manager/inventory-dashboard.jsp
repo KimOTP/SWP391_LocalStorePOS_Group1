@@ -111,7 +111,12 @@
                 <th class="th-cell">Product Name</th>
                 <th class="th-cell text-center" style="width: 140px;">In Stock</th>
                 <th class="th-cell text-center" style="width: 140px;">Min Stock</th>
-                <th class="th-cell text-end" style="width: 180px;">Total Value</th>
+
+                <c:if test="${sessionScope.role == 'MANAGER'}">
+                    <th class="th-cell text-center" style="width: 140px;">Input Price</th>
+                    <th class="th-cell text-end" style="width: 180px;">Total Value</th>
+                </c:if>
+
                 <th class="th-cell text-center" style="width: 140px;">Status</th>
                 <th class="th-cell text-center" style="width: 80px;">Actions</th>
             </tr>
@@ -126,15 +131,25 @@
                         </div>
                     </td>
                     <td class="td-cell align-middle fw-bold text-dark">${i.product.productName}</td>
-                    <td class="td-cell align-middle text-center fw-bold text-primary fs-6">${i.currentQuantity}</td>
+                    <td class="td-cell align-middle text-center fw-bold text-primary fs-6">
+                            ${i.currentQuantity}
+                    </td>
                     <td class="td-cell align-middle text-center">
-                            <span class="badge border text-dark px-3 py-2 fw-normal bg-light" style="font-size: 0.85rem;">
-                                    ${i.minThreshold}
-                            </span>
+    <span class="badge border text-dark px-3 py-2 fw-normal bg-light">
+            ${i.minThreshold}
+    </span>
                     </td>
-                    <td class="td-cell align-middle text-end fw-bold text-success">
-                        <fmt:formatNumber value="${i.currentQuantity * i.product.price}" pattern="#,##0 VND"/>
-                    </td>
+
+                    <c:if test="${sessionScope.role == 'MANAGER'}">
+
+                        <td class="td-cell align-middle text-center">
+                            <fmt:formatNumber value="${i.product.price}" pattern="#,##0 VND"/>
+                        </td>
+
+                        <td class="td-cell align-middle text-end fw-bold text-success">
+                            <fmt:formatNumber value="${i.currentQuantity * i.product.price}" pattern="#,##0 VND"/>
+                        </td>
+                    </c:if>
                     <td class="td-cell align-middle text-center">
                             <span class="status-badge ${isLow ? 'status-outstock' : 'status-active'}">
                                     ${isLow ? 'Warning' : 'Enough'}
