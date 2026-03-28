@@ -26,6 +26,10 @@ public class InventoryService {
         return stats;
     }
 
+    public java.util.Optional<Inventory> findById(String productId) {
+        return inventoryRepo.findById(productId);
+    }
+
     public List<Inventory> getInventoryList(String keyword) {
         if (keyword != null && !keyword.isEmpty()) {
             return inventoryRepo.searchInventory(keyword);

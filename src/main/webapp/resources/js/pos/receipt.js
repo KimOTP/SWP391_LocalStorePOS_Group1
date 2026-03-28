@@ -29,10 +29,20 @@ function toggleMenu(btn) {
     if (!isOpen) {
         // Position the fixed menu below the button
         const rect = btn.getBoundingClientRect();
-        menu.style.top  = (rect.bottom + 6) + 'px';
-        menu.style.left = (rect.right - menu.offsetWidth || rect.right - 170) + 'px';
-        // After rendering, correct position using actual width
+        
+        // Wait for class "open" (display: block) then measure height
         requestAnimationFrame(() => {
+            const menuHeight = menu.offsetHeight || 100;
+            const spaceBelow = window.innerHeight - rect.bottom;
+            
+            if (spaceBelow < menuHeight + 10) {
+                // Not enough space below, show above
+                menu.style.top = (rect.top - menuHeight - 6) + 'px';
+            } else {
+                // Enough space below
+                menu.style.top = (rect.bottom + 6) + 'px';
+            }
+            
             menu.style.left = (rect.right - menu.offsetWidth) + 'px';
         });
     }
