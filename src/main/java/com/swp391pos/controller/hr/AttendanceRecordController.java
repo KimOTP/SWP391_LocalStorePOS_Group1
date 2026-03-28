@@ -2,7 +2,6 @@ package com.swp391pos.controller.hr;
 
 import com.swp391pos.entity.Account;
 import com.swp391pos.entity.Attendance;
-import com.swp391pos.entity.Employee;
 import com.swp391pos.service.AttendanceService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +30,6 @@ public class AttendanceRecordController {
         if (account == null || account.getEmployee() == null) {
             return "redirect:/login";
         }
-
-//        Employee employee = account.getEmployee();
 
         Pageable pageable = PageRequest.of(page, 5);
 

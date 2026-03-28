@@ -50,7 +50,7 @@ public class ChangeInformationController {
                                     HttpSession session,
                                     RedirectAttributes redirectAttributes) {
 
-        // ❌ Full name quá 100 ký tự
+        //Full name quá 100 ký tự
         if (fullName.length() > 100) {
             redirectAttributes.addFlashAttribute("errorMessage", "Full name must not exceed 100 characters!");
             return "redirect:/hr/change_information";
@@ -69,7 +69,7 @@ public class ChangeInformationController {
 
         boolean hasChange = false;
 
-        // ❌ Username trùng
+        //Username trùng
         Optional<Account> existingUsername = accountRepository.findByUsername(username);
         if (existingUsername.isPresent() &&
                 !Objects.equals(existingUsername.get().getAccountId(), account.getAccountId())) {
@@ -78,7 +78,7 @@ public class ChangeInformationController {
             return "redirect:/hr/change_information";
         }
 
-        // ❌ Email trùng
+        //Email trùng
         Optional<Account> existingEmail = accountRepository.findByEmployee_Email(email);
         if (existingEmail.isPresent() &&
                 !Objects.equals(existingEmail.get().getAccountId(), account.getAccountId())) {

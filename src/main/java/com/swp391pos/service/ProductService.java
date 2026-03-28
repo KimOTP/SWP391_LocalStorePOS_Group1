@@ -21,8 +21,6 @@ import java.util.Optional;
 @Service
 public class ProductService {
 
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ProductService.class);
-
     @Autowired
     private ProductRepository productRepository;
 
@@ -40,6 +38,7 @@ public class ProductService {
 
     @Autowired
     private Cloudinary cloudinary;
+
     @Autowired
     private ComboRepository comboRepository;
 
@@ -47,7 +46,7 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    @Transactional(rollbackFor = Exception.class) // rollback nếu có lỗi
+    @Transactional(rollbackFor = Exception.class)
     public void addProduct(Product product, MultipartFile imageFile, Integer statusId, Integer categoryId) {
         // xử lý logic Attribute mặc định
         if (product.getAttribute() == null || product.getAttribute().trim().isEmpty()) {
@@ -96,7 +95,7 @@ public class ProductService {
     }
 
     // format: SKU-PROD-00%
-    private String generateSku() {
+    public String generateSku() {
         String lastSku = productRepository.findLastSku();
         int nextNumber = 1;
         if (lastSku != null && lastSku.contains("-")) {
@@ -116,7 +115,6 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    @Transactional
     public boolean updateProduct(String oldId, Product product, MultipartFile imageFile,
                                  Integer statusId, Integer categoryId) throws Exception {
 
@@ -126,7 +124,6 @@ public class ProductService {
         if (oldProduct == null) {
             throw new RuntimeException("Product not found");
         }
-
         // upload image
         if (imageFile != null && !imageFile.isEmpty()) {
             Map uploadResult = cloudinary.uploader().upload(
@@ -160,10 +157,7 @@ public class ProductService {
         }
 
         product.setStatus(stat);
-
         productRepository.save(product);
-
-
         return true;
     }
 
@@ -187,16 +181,6 @@ public class ProductService {
 
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
-    }
-
-
-    public List<Product> searchProductManager(String kw, List<String> sIds, List<String> cNames, List<String> units, Sort sort) {
-        // xử lý nếu List rỗng thì truyền null vào Repository để bỏ qua điều kiện lọc
-        List<String> statuses = (sIds != null && sIds.isEmpty()) ? null : sIds;
-        List<String> categories = (cNames != null && cNames.isEmpty()) ? null : cNames;
-        List<String> unitList = (units != null && units.isEmpty()) ? null : units;
-
-        return productRepository.searchProductManager(kw, statuses, categories, unitList, sort);
     }
 
     public List<String> getAllDistinctUnits() {
@@ -246,7 +230,6 @@ public class ProductService {
     public void updateStockAndSyncStatus(String productId, int newQuantity) {
         Optional<Inventory> inventoryOpt = inventoryRepository.findById(productId);
         if (inventoryOpt.isEmpty()) {
-            log.warn("[Stock] Sync failed: Inventory not found for productId={}", productId);
             return;
         }
 

@@ -34,9 +34,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     boolean existsByEmailAndEmployeeIdNot(String email, Integer employeeId);
 
-    @Query("SELECT e FROM Employee e WHERE e.employeeId = :id")
-    Employee getEmployeeByEmployeeId(@Param("id") Integer id);
-
     @Query("SELECT e.email FROM Employee e WHERE e.role = 'MANAGER'")
     List<String> findAllManagerEmails();
 

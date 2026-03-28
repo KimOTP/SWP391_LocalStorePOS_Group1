@@ -48,17 +48,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
     );
 
     @Query("""
-        SELECT a FROM Attendance a
-        WHERE a.employee = :employee
-        AND a.workDate BETWEEN :from AND :to
-    """)
-    List<Attendance> findHistory(
-            @Param("employee") Employee employee,
-            @Param("from") LocalDate from,
-            @Param("to") LocalDate to
-    );
-
-    @Query("""
     SELECT a FROM Attendance a
     WHERE
         (:fullName IS NULL OR LOWER(a.employee.fullName) LIKE LOWER(CONCAT('%', :fullName, '%')))
@@ -112,14 +101,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Integer>
             Employee employee,
             LocalDate workDate
     );
-
-    @Query("""
-       SELECT a.shift.shiftName
-       FROM Attendance a
-       WHERE a.employee.employeeId = :empId
-       ORDER BY a.workDate DESC
-    """)
-        List<String> findLatestShift(Integer empId, Pageable pageable);
 
     Optional<Attendance>
     findByEmployeeEmployeeIdAndWorkDate(

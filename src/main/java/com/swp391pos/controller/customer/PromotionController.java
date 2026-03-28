@@ -196,6 +196,7 @@ public class PromotionController {
         }
         return "redirect:/promotion/detail?id=" + promotionId;
     }
+
     // User tải file excel mẫu xuống
     @GetMapping("/template")
     public ResponseEntity<byte[]> downloadTemplate() {
