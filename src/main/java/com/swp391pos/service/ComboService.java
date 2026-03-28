@@ -176,7 +176,7 @@ public class ComboService {
 
         // tạo header
         Row headerRow = sheet.createRow(0);
-        String[] columns = {"SKU", "Combo Name", "Include Products", "Total Price", "Status"};
+        String[] columns = {"SKU", "Combo Name", "Include Products", "Total Price", "Status", "ImgUrl"};
 
         // style cho header
         CellStyle headerStyle = workbook.createCellStyle();
@@ -208,6 +208,7 @@ public class ComboService {
 
             row.createCell(3).setCellValue(c.getTotalPrice().toString());
             row.createCell(4).setCellValue(c.getStatusCombo().toString());
+            row.createCell(5).setCellValue(c.getImageUrl());
         }
 
         // xuất file
