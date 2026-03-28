@@ -44,17 +44,10 @@ public class ProductController {
                 : Sort.by(sortField).descending();
 
         // Gọi Service để lọc và sắp xếp từ Database
-        List<Product> list = productService.searchProductManager(keyword, statusNames, categoryNames, units, sort);
+        List<Product> list = productService.getAllProducts();
 
         // Đổ dữ liệu sản phẩm ra bảng
         model.addAttribute("listProducts", list);
-        model.addAttribute("totalCount", list.size());
-
-        // Gửi ngược lại các giá trị lọc để giữ trạng thái Checkbox/Search trên giao diện
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("selectedStatuses", statusNames);
-        model.addAttribute("selectedCategories", categoryNames);
-        model.addAttribute("selectedUnits", units);
 
         // Gửi thông tin Sort để hiển thị Icon mũi tên trên Header
         model.addAttribute("sortField", sortField);
@@ -80,6 +73,8 @@ public class ProductController {
     // 1. Add
     @GetMapping("/add")
     public String showAddForm(Model model) {
+
+        model.addAttribute("nextSku", productService.generateSku()); // gợi ý SKU ra UI
         model.addAttribute("product", new Product());
         model.addAttribute("categories", productService.getAllCategories());
         model.addAttribute("statuses", productService.getAllProductStatuses());

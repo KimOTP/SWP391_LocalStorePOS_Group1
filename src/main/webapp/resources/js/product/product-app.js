@@ -131,19 +131,6 @@ function initDeleteConfirmation() {
     });
 }
 
-function selectCategory(id, name) {
-    document.getElementById('categoryLabel').innerText = name;
-    document.getElementById('selectedCategoryId').value = id;
-    // Thêm hiệu ứng đổi màu chữ
-    document.getElementById('categoryLabel').style.color = '#1e293b';
-}
-
-function selectUnit(unitName) {
-    document.getElementById('unitLabel').innerText = unitName;
-    document.getElementById('selectedUnit').value = unitName;
-    document.getElementById('unitLabel').style.color = '#1e293b';
-}
-
 // Khởi tạo tất cả khi trang tải xong
 document.addEventListener('DOMContentLoaded', function() {
     initImagePreview();

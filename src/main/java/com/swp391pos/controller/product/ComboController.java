@@ -4,6 +4,7 @@ import com.swp391pos.entity.Combo;
 import com.swp391pos.service.ComboService;
 import com.swp391pos.service.ProductService;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,26 +18,16 @@ import java.util.List;
 @RequestMapping("/combos")
 public class ComboController {
 
-    private final ComboService comboService;
-    private final ProductService productService;
+    @Autowired
+    private ComboService comboService;
 
-    public ComboController(ComboService comboService, ProductService productService) {
-        this.comboService = comboService;
-        this.productService = productService;
-    }
+    @Autowired
+    private ProductService productService;
+
 
     @GetMapping("/manage")
-    public String manage(@RequestParam(value = "status", required = false) List<String> statuses,
-                         Model model) {
+    public String manage(Model model) {
 
-        List<Combo> combos;
-        if (statuses != null && !statuses.isEmpty()) {
-            // lọc theo trạng thái
-            combos = comboService.getCombosByStatuses(statuses);
-        } else {
-            combos = comboService.getAllCombos();
-        }
-        model.addAttribute("selectedStatuses", statuses);
         model.addAttribute("listCombos", comboService.getAllCombos());
         model.addAttribute("totalCombos", comboService.countTotal());
         model.addAttribute("activeCount", comboService.countByStatus(Combo.Status.ACTIVE));

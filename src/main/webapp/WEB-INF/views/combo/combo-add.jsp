@@ -27,8 +27,8 @@
                         <%-- Cột 1: Combo Info & Product Selection --%>
                         <div class="col-md-4 border-end">
                             <div class="mb-4">
-                                <label class="form-label text-muted fw-bold small">Combo ID</label>
-                                <input type="text" name="comboId" class="form-control input-custom" placeholder="CB-XXXX" readonly>
+                                <label class="form-label text-muted fw-bold small">Combo Code (SKU) - Auto Generate</label>
+                                <input type="text" name="comboId" class="form-control input-custom" value = "${nextSku}" readonly>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label text-muted fw-bold small">Combo Name</label>
