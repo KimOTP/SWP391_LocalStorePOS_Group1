@@ -21,8 +21,6 @@ import java.util.Optional;
 @Service
 public class ProductService {
 
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ProductService.class);
-
     @Autowired
     private ProductRepository productRepository;
 
@@ -246,7 +244,6 @@ public class ProductService {
     public void updateStockAndSyncStatus(String productId, int newQuantity) {
         Optional<Inventory> inventoryOpt = inventoryRepository.findById(productId);
         if (inventoryOpt.isEmpty()) {
-            log.warn("[Stock] Sync failed: Inventory not found for productId={}", productId);
             return;
         }
 

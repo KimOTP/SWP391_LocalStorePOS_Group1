@@ -292,8 +292,8 @@ function applyFilters() {
     const box = document.getElementById('mainSearchBox') || document.querySelector('.search-box');
     const q   = (box ? box.value.trim().toLowerCase() : '');
 
-    // --- Product cards: search + price filter (category filter handled by loadProducts) ---
-    document.querySelectorAll('.product-card:not(.combo-card)').forEach(card => {
+    // --- All product cards (including combos): search + price filter ---
+    document.querySelectorAll('.product-card').forEach(card => {
         const name = (card.querySelector('.product-name')?.textContent || '').toLowerCase();
         const sku  = (card.dataset.sku || '').toLowerCase();
         const searchOk = !q || name.includes(q) || sku.includes(q);
@@ -307,13 +307,6 @@ function applyFilters() {
         }
 
         card.style.display = (searchOk && priceOk) ? '' : 'none';
-    });
-
-    // --- Combo cards: search only, never hidden by category or price filter ---
-    document.querySelectorAll('.combo-card').forEach(card => {
-        const name = (card.querySelector('.product-name')?.textContent || '').toLowerCase();
-        const sku  = (card.dataset.sku || '').toLowerCase();
-        card.style.display = (!q || name.includes(q) || sku.includes(q)) ? '' : 'none';
     });
 }
 
