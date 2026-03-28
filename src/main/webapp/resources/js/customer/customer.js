@@ -18,14 +18,14 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // Hàm mở Modal Edit và điền dữ liệu cũ vào
 function openEditModal(id, name, phone, status, point) {
-    // 1. Gán giá trị vào các ô input trong Modal Edit
+    // Gán giá trị vào các ô input trong Modal Edit
     document.getElementById('editId').value = id;
     document.getElementById('editName').value = name;
     document.getElementById('editPhone').value = phone;
     document.getElementById('editStatus').value = status;
     document.getElementById('editPoint').value = point;
 
-    // 2. Hiển thị Modal lên
+    // Hiển thị Modal lên
     var editModal = new bootstrap.Modal(document.getElementById('editCustomerModal'));
     editModal.show();
 }
@@ -113,7 +113,7 @@ function openDetailModal(id, name, phone, point, spending, lastDate) {
                     historyTableBody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">No transaction history found.</td></tr>';
                 } else {
                     data.forEach(item => {
-                        // 1. XỬ LÝ DỮ LIỆU TỪ ORDER (QUAN TRỌNG)
+                        // XỬ LÝ DỮ LIỆU TỪ ORDER (QUAN TRỌNG)
                         let orderIdDisplay = '-';
                         let dateDisplay = '-';
                         let totalAmountDisplay = '-';
@@ -139,7 +139,7 @@ function openDetailModal(id, name, phone, point, spending, lastDate) {
                             dateDisplay = new Date(item.createdAt).toLocaleString('vi-VN');
                         }
 
-                        // 2. XỬ LÝ ĐIỂM (POINT)
+                        // XỬ LÝ ĐIỂM (POINT)
                         // Logic: Action EARN hoặc số dương là màu xanh, USE hoặc số âm là màu đỏ
                         let pointClass = item.pointAmount >= 0 ? 'text-success' : 'text-danger';
                         let pointSign = item.pointAmount > 0 ? '+' : '';
@@ -165,7 +165,7 @@ function openDetailModal(id, name, phone, point, spending, lastDate) {
                 historyTableBody.innerHTML = '<tr><td colspan="4" class="text-center text-danger">Failed to load history.</td></tr>';
             });
 
-    // 3. Hiện Modal
+    // Hiện Modal
     new bootstrap.Modal(document.getElementById('detailCustomerModal')).show();
 }
 
@@ -195,12 +195,12 @@ function openConfigModal() {
 }
 
 function openEditPromotionModal(id, name, status, startDate, endDate) {
-    // 1. Điền ID, Name, Status
+    // Điền ID, Name, Status
     document.getElementById('editPromoId').value = id;
     document.getElementById('editPromoName').value = name;
     document.getElementById('editStatus').value = status;
 
-    // 2. Xử lý ngày tháng (Cắt chuỗi lấy 10 ký tự đầu: yyyy-MM-dd)
+    // Xử lý ngày tháng (Cắt chuỗi lấy 10 ký tự đầu: yyyy-MM-dd)
     if (startDate && startDate.length >= 10) {
         document.getElementById('editStartDate').value = startDate.substring(0, 10);
     }
@@ -208,7 +208,7 @@ function openEditPromotionModal(id, name, status, startDate, endDate) {
         document.getElementById('editEndDate').value = endDate.substring(0, 10);
     }
 
-    // 3. Hiện Modal
+    // Hiện Modal
     var editModal = new bootstrap.Modal(document.getElementById('editPromotionModal'));
     editModal.show();
 }
