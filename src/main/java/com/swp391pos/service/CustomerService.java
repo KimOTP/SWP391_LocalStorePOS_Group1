@@ -29,6 +29,7 @@ public class CustomerService {
         return customerRepository.findAll();
     }
     //các hàm thống kê ở màn customer-management
+    //total cus
     public long getTotalCustomers() {
         return customerRepository.count();
     }
@@ -36,10 +37,12 @@ public class CustomerService {
         Long points = customerRepository.sumTotalPoints();
         return (points != null) ? points : 0L;
     }
+    //total spending
     public BigDecimal getTotalSpending() {
         BigDecimal total = customerRepository.sumTotalSpending();
         return (total != null) ? total : BigDecimal.ZERO;
     }
+    //average
     public BigDecimal getAverageSpending() {
         long count = getTotalCustomers();
         BigDecimal total = getTotalSpending();
@@ -75,7 +78,7 @@ public class CustomerService {
     }
 
     public void saveCustomer(Customer customer) {
-        // Nếu ID tồn tại -> Đây là Update -> Cần lấy dữ liệu cũ để giữ lại Điểm và Tổng tiền (nếu form không gửi lên)
+        // Nếu ID tồn tại -> là Update -> lấy dữ liệu cũ để giữ lại Điểm và Tổng tiền (nếu form không gửi lên)
         if (customer.getCustomerId() != null) {
             Customer oldCustomer = customerRepository.findById(customer.getCustomerId()).orElse(null);
             if (oldCustomer != null) {

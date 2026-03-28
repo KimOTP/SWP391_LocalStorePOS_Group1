@@ -15,15 +15,6 @@ public interface ShiftChangeRequestRepository
             Pageable pageable
     );
 
-    @Query("""
-           SELECT r FROM ShiftChangeRequest r
-           JOIN FETCH r.employee
-           JOIN FETCH r.currentShift
-           JOIN FETCH r.requestedShift
-           LEFT JOIN FETCH r.manager
-           """)
-    Page<ShiftChangeRequest> findAllWithDetails(Pageable pageable);
-
     @Query(value = """
         SELECT r FROM ShiftChangeRequest r
         LEFT JOIN r.employee e
