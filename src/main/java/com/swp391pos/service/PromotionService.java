@@ -46,7 +46,6 @@ public class PromotionService {
         } catch (Exception e) {
             return 0; // Trả 0 nếu sai
         }
-
     }
 
     // Hàm thêm mới hoặc cập nhật
@@ -85,8 +84,6 @@ public class PromotionService {
         return promotionRepository.findById(id).orElse(null);
     }
 
-    // Tác vụ chạy ngầm: 0 giây, 0 phút, 0 giờ mỗi ngày (Đúng nửa đêm)
-    //@Scheduled(cron = "0 0 0 * * ?")
     @Scheduled(fixedRate = 60000)
     @Transactional
     public void autoExpirePromotions() {
@@ -95,15 +92,15 @@ public class PromotionService {
         // Tìm tất cả promotion đang ACTIVE nhưng ngày kết thúc < hôm nay
         List<Promotion> expiredPromotions = promotionRepository.findByStatusAndEndDateBefore(Promotion.PromotionStatus.ACTIVE, today);
 
-        // 2. Nếu tìm thấy, đổi hết sang EXPIRED
+        // Nếu tìm thấy, đổi hết sang EXPIRED
         if (!expiredPromotions.isEmpty()) {
             for (Promotion p : expiredPromotions) {
                 p.setStatus(Promotion.PromotionStatus.EXPIRED);
             }
-            // 3. Lưu lại vào Database một loạt
+            // Lưu lại vào Database một loạt
             promotionRepository.saveAll(expiredPromotions);
 
-            System.out.println("Đã cập nhật tự động " + expiredPromotions.size() + " khuyến mãi sang EXPIRED.");
+            System.out.println("Auto updated " + expiredPromotions.size() + " to EXPIRED.");
         }
     }
 }

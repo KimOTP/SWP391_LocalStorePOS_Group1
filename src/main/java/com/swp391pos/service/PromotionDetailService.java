@@ -116,7 +116,7 @@ public class PromotionDetailService {
             throw new IllegalArgumentException("The percentage discount must not exceed 100%.");
         }
         if (discountType == PromotionDetail.DiscountType.AMOUNT) {
-            // ✅ Check null trước khi compareTo
+            // Check null trước khi compareTo
             if (productPrice == null) {
                 throw new IllegalArgumentException("Cannot validate: product price is not set.");
             }
