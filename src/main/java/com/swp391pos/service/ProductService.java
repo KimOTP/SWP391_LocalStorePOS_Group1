@@ -210,7 +210,7 @@ public class ProductService {
 
         // tạo header
         Row headerRow = sheet.createRow(0);
-        String[] columns = {"SKU", "Product Name", "Category", "Attribute", "Unit", "Price", "Status"};
+        String[] columns = {"SKU", "Product Name", "Category", "Attribute", "Unit", "Price", "Status", "ImgUrl"};
 
         // style cho header
         CellStyle headerStyle = workbook.createCellStyle();
@@ -235,6 +235,7 @@ public class ProductService {
             row.createCell(4).setCellValue(p.getUnit());
             row.createCell(5).setCellValue(String.valueOf(p.getPrice()));
             row.createCell(6).setCellValue(p.getStatus().getProductStatusName());
+            row.createCell(7).setCellValue(p.getImageUrl());
         }
 
         // xuất file
