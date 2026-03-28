@@ -65,27 +65,6 @@ public class AttendanceService {
         }
     }
 
-    // Lấy attendance hôm nay
-    public List<Attendance> getTodayAttendance() {
-
-        LocalDate today = LocalDate.now();
-
-        List<Attendance> list =
-                attendanceRepository
-                        .findByWorkDate(today, Pageable.unpaged())
-                        .getContent();
-
-        for (Attendance attendance : list) {
-            save(attendance); // cập nhật lại trạng thái
-        }
-
-        //Loại bỏ MANAGER
-        list.removeIf(a ->
-                a.getEmployee().getRole().equals("MANAGER"));
-
-        return list;
-    }
-
     public Page<Attendance> getAttendancePage(
             String fullName,
             String shiftName,
@@ -138,9 +117,6 @@ public class AttendanceService {
         return attendanceRepository.findById(id).orElseThrow();
     }
 
-    public WorkShift findShiftById(Integer id) {
-        return workShiftRepository.findById(id).orElseThrow();
-    }
 
     public void save(Attendance attendance) {
 
@@ -243,48 +219,6 @@ public class AttendanceService {
                 }
             }
         }
-    }
-
-    public List<Attendance> searchAttendance(
-            String fullName,
-            String shiftName,
-            String status
-    ) {
-
-        List<Attendance> list = getTodayAttendance();
-
-        if (fullName != null && !fullName.isBlank()) {
-            list = list.stream()
-                    .filter(a -> a.getEmployee()
-                            .getFullName()
-                            .toLowerCase()
-                            .contains(fullName.toLowerCase()))
-                    .toList();
-        }
-
-        if (shiftName != null && !shiftName.isBlank()) {
-            list = list.stream()
-                    .filter(a -> a.getShift()
-                            .getShiftName()
-                            .equalsIgnoreCase(shiftName))
-                    .toList();
-        }
-
-        if (status != null && !status.isBlank()) {
-
-            list = list.stream().filter(a -> {
-
-                if (status.equals("Expired")) return a.getAutoCheckout();
-                if (status.equals("Late")) return a.getIsLate();
-                if (status.equals("Early Leave")) return a.getIsEarlyLeave();
-                if (status.equals("Normal"))
-                    return !a.getIsLate() && !a.getIsEarlyLeave() && !a.getAutoCheckout();
-
-                return true;
-            }).toList();
-        }
-
-        return list;
     }
 
     //Cập nhât attendance và shift tương lai
