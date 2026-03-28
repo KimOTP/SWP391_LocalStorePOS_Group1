@@ -216,7 +216,7 @@
 
                             <%-- Sortable: SKU --%>
                             <th class="th-cell">
-                                <a href="?sortField=productId&sortDir=${reverseSortDir}${not empty param.keyword ? '&keyword='.concat(param.keyword) : ''}"
+                                <a href="?sortField=productId&sortDir=${reverseSortDir}"
                                    class="text-decoration-none th-link">
                                     SKU
                                     <i class="fa-solid ${sortField == 'productId'

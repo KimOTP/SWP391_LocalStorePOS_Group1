@@ -26,30 +26,9 @@ public interface ProductRepository extends JpaRepository<Product,Integer> {
     @Query("SELECT DISTINCT p.unit FROM Product p WHERE p.unit IS NOT NULL")
     List<String> findAllDistinctUnits();
 
-
-    @Query("SELECT p FROM Product p WHERE " +
-            "(:kw IS NULL OR LOWER(p.productName) LIKE LOWER(CONCAT('%', :kw, '%')) OR p.productId LIKE %:kw%) AND " +
-            "(:sIds IS NULL OR p.status.productStatusName IN :sIds) AND " +
-            "(:cNames IS NULL OR p.category.categoryName IN :cNames) AND " +
-            "(:units IS NULL OR p.unit IN :units)")
-    List<Product> searchProductManager(
-            @Param("kw") String keyword,
-            @Param("sIds") List<String> statusNames,
-            @Param("cNames") List<String> categoryNames,
-            @Param("units") List<String> units,
-            Sort sort
-    );
-
-    @Query(value = "SELECT DISTINCT p.* FROM Product p " +
-            "JOIN StockInDetail sid ON p.productId = sid.productId " +
-            "JOIN StockIn si ON sid.stockInId = si.stockInId " +
-            "JOIN Supplier s ON si.supplierId = s.supplierId " +
-            "WHERE s.supplierName = :supplierName", nativeQuery = true)
-    List<Product> searchBySupplierName(@Param("supplierName") String supplierName);
-
     List<Product> findByProductNameContainingIgnoreCase(String productName);
 
-        // Tìm sản phẩm dựa trên tên, ID danh mục và thuộc tính
-        boolean existsByProductNameAndCategory_CategoryIdAndAttribute(String name, Integer categoryId, String attribute);
+        // Tìm sản phẩm dựa trên tên, category và thuộc tính
+    boolean existsByProductNameAndCategory_CategoryIdAndAttribute(String name, Integer categoryId, String attribute);
 
 }
