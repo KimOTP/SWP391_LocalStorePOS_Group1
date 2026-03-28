@@ -263,8 +263,7 @@ function submitStockOut() {
         confirmButtonText: 'Yes, Confirm'
     }).then((result) => {
         if (result.isConfirmed) {
-            document.getElementById('formNote').value = document.getElementById('generalNote').value;
-            document.getElementById('formItems').value = JSON.stringify(data);
+            document.getElementById('formNote').value = document.getElementById('userGeneralNote').value;            document.getElementById('formItems').value = JSON.stringify(data);
             document.getElementById('submitForm').submit();
         }
     });

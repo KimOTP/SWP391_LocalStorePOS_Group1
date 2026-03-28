@@ -183,6 +183,8 @@
     justify-content: center !important;
     line-height: 1.5 !important;
     margin: 0 !important;
+    white-space: nowrap !important;
+    display: inline-block !important;
 }
 
 /* Status Badges */

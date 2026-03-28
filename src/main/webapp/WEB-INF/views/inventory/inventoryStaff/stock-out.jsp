@@ -66,7 +66,7 @@
                     <label class="info-label">General Reason/Note</label>
                     <div class="search-box-standalone w-100" style="background: #f8fafc;">
                         <i class="fa-regular fa-note-sticky search-icon"></i>
-                        <input type="text" id="generalNote" class="form-control" placeholder="Enter general reason for export...">
+                        <input type="text" id="userGeneralNote" class="form-control" placeholder="Enter general reason for export...">
                     </div>
                 </div>
             </div>
