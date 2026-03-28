@@ -1,6 +1,7 @@
 package com.swp391pos.controller.pos;
 
-import com.swp391pos.dto.PaymentDTO;
+
+import com.swp391pos.dto.PaymentDTO.*;
 import com.swp391pos.dto.PaymentRequest;
 import com.swp391pos.dto.PaymentResponse;
 import com.swp391pos.entity.*;
@@ -57,17 +58,17 @@ public class PaymentController {
 
         List<OrderItem> items = orderItemService.findByOrder(order);
 
-        List<PaymentDTO.OrderItemDTO> cartItems = items.stream()
+        List<OrderItemDTO> cartItems = items.stream() //stream để xử lý tuần tự từng phần tử trong list
                 .filter(oi -> oi.getProduct() != null) // chỉ lấy product, bỏ qua combo
                 .map(oi -> {
-                    PaymentDTO.OrderItemDTO dto = new PaymentDTO.OrderItemDTO();
+                    OrderItemDTO dto = new OrderItemDTO();
                     dto.setOrderId(order.getOrderId());
                     dto.setProductId(oi.getProduct().getProductId());
                     dto.setQuantity(oi.getQuantity());
                     return dto;
-                }).collect(Collectors.toList());
+                }).collect(Collectors.toList()); //gom thành list
 
-        PaymentDTO.PaymentSummary summary = posService.calculatePromotion(cartItems);
+        PaymentSummary summary = posService.calculatePromotion(cartItems);
         Map<String, String> pointConfig = systemSettingService.getAllSettings();
         //Gửi cho Vanh cấu hình điểm
         model.addAttribute("pointConfig", pointConfig);
@@ -166,19 +167,19 @@ public class PaymentController {
                 // Record applied promotions to OrderPromotion table
                 try {
                     List<OrderItem> currentItems = orderItemService.findByOrder(order);
-                    List<PaymentDTO.OrderItemDTO> cartItems = currentItems.stream()
+                    List<OrderItemDTO> cartItems = currentItems.stream()
                             .filter(oi -> oi.getProduct() != null)
                             .map(oi -> {
-                                PaymentDTO.OrderItemDTO dto = new PaymentDTO.OrderItemDTO();
+                                OrderItemDTO dto = new OrderItemDTO();
                                 dto.setOrderId(order.getOrderId());
                                 dto.setProductId(oi.getProduct().getProductId());
                                 dto.setQuantity(oi.getQuantity());
                                 return dto;
                             }).collect(Collectors.toList());
 
-                    PaymentDTO.PaymentSummary summary = posService.calculatePromotion(cartItems);
+                    PaymentSummary summary = posService.calculatePromotion(cartItems);
                     if (summary.getItems() != null) {
-                        for (PaymentDTO.PaymentItem pi : summary.getItems()) {
+                        for (PaymentItem pi : summary.getItems()) {
                             if (pi.getPromotionId() != null && pi.getDiscountAmount().compareTo(BigDecimal.ZERO) > 0) {
                                 promotionRepository.findById(pi.getPromotionId()).ifPresent(promo -> {
                                     OrderPromotion op = new OrderPromotion();
