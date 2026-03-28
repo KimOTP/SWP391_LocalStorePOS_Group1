@@ -47,10 +47,20 @@ function increaseQty(id) {
     if (!item) return;
     item.qty++;
     // Update in-place (no full re-render)
-    const qtyEl   = document.getElementById('qty-num-' + id);
-    const priceEl = document.getElementById('item-price-' + id);
-    if (qtyEl)   { qtyEl.textContent = item.qty; qtyEl.classList.remove('bump'); void qtyEl.offsetWidth; qtyEl.classList.add('bump'); }
-    if (priceEl) { priceEl.textContent = formatVND(item.price * item.qty); priceEl.classList.remove('bump'); void priceEl.offsetWidth; priceEl.classList.add('bump'); }
+    const qtyInput = document.getElementById('qty-input-' + id);
+    const priceEl  = document.getElementById('item-price-' + id);
+    if (qtyInput) {
+        qtyInput.value = item.qty;
+        qtyInput.classList.remove('bump');
+        void qtyInput.offsetWidth;
+        qtyInput.classList.add('bump');
+    }
+    if (priceEl) {
+        priceEl.textContent = formatVND(item.price * item.qty);
+        priceEl.classList.remove('bump');
+        void priceEl.offsetWidth;
+        priceEl.classList.add('bump');
+    }
     // Update total + badge only
     updateCartSummary();
 }
@@ -60,14 +70,45 @@ function decreaseQty(id) {
     if (!item) return;
     if (item.qty > 1) {
         item.qty--;
-        const qtyEl   = document.getElementById('qty-num-' + id);
-        const priceEl = document.getElementById('item-price-' + id);
-        if (qtyEl)   { qtyEl.textContent = item.qty; qtyEl.classList.remove('bump'); void qtyEl.offsetWidth; qtyEl.classList.add('bump'); }
-        if (priceEl) { priceEl.textContent = formatVND(item.price * item.qty); priceEl.classList.remove('bump'); void priceEl.offsetWidth; priceEl.classList.add('bump'); }
+        const qtyInput = document.getElementById('qty-input-' + id);
+        const priceEl  = document.getElementById('item-price-' + id);
+        if (qtyInput) {
+            qtyInput.value = item.qty;
+            qtyInput.classList.remove('bump');
+            void qtyInput.offsetWidth;
+            qtyInput.classList.add('bump');
+        }
+        if (priceEl) {
+            priceEl.textContent = formatVND(item.price * item.qty);
+            priceEl.classList.remove('bump');
+            void priceEl.offsetWidth;
+            priceEl.classList.add('bump');
+        }
         updateCartSummary();
     } else {
         removeFromCart(id);
     }
+}
+
+function updateQty(id, val) {
+    let newQty = parseInt(val);
+    const item = cart.find(i => i.id === id);
+    if (!item) return;
+
+    if (isNaN(newQty) || newQty < 1) {
+        newQty = 1;
+    }
+
+    item.qty = newQty;
+    
+    // Update display
+    const qtyInput = document.getElementById('qty-input-' + id);
+    const priceEl  = document.getElementById('item-price-' + id);
+    
+    if (qtyInput) qtyInput.value = item.qty;
+    if (priceEl)  priceEl.textContent = formatVND(item.price * item.qty);
+    
+    updateCartSummary();
 }
 
 function updateCartSummary() {
@@ -118,7 +159,10 @@ function renderCart() {
                 '</div>' +
                 '<div class="item-qty-controls">' +
                     '<button class="qty-btn" onclick="decreaseQty(\'' + i.id + '\')">−</button>' +
-                    '<span class="qty-num" id="qty-num-' + i.id + '">' + i.qty + '</span>' +
+                    '<input type="number" class="qty-input" id="qty-input-' + i.id + '" ' +
+                           'value="' + i.qty + '" min="1" ' +
+                           'onchange="updateQty(\'' + i.id + '\', this.value)" ' +
+                           'onkeypress="if(event.key===\'Enter\') this.blur()">' +
                     '<button class="qty-btn" onclick="increaseQty(\'' + i.id + '\')">+</button>' +
                 '</div>' +
                 '<span class="item-price" id="item-price-' + i.id + '">' + formatVND(i.price * i.qty) + '</span>' +
