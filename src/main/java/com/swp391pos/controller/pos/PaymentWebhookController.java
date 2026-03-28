@@ -25,7 +25,7 @@ public class PaymentWebhookController {
     @PostMapping("/webhook")
     public ResponseEntity<?> handleWebhook(@RequestBody WebhookPayload payload) {
 
-        // [FIX] Verify chu ky truoc khi xu ly - bat buoc ve bao mat
+        //Verify chu ky truoc khi xu ly
         if (!payOSVerifier.verify(payload)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

@@ -304,23 +304,6 @@ public class PaymentService {
     }
 
     // -------------------------------------------------------------------------
-    // cancelPayment
-    // -------------------------------------------------------------------------
-
-    @Transactional
-    public void cancelPayment(String paymentSessionId) {
-        Payment payment = paymentRepository.findByPaymentSessionId(paymentSessionId)
-                .orElseThrow(() -> new RuntimeException("Payment not found: " + paymentSessionId));
-
-        if (PaymentStatus.PAID.equals(payment.getPaymentStatus())) {
-            throw new IllegalStateException("Cannot cancel a PAID payment");
-        }
-
-        payment.setPaymentStatus(PaymentStatus.CANCELLED);
-        paymentRepository.save(payment);
-    }
-
-    // -------------------------------------------------------------------------
     // Expire stale payments — chạy mỗi 1 phút
     // -------------------------------------------------------------------------
 
@@ -328,7 +311,7 @@ public class PaymentService {
     @Transactional
     public void expireStalePayments() {
         LocalDateTime cutoff = LocalDateTime.now();
-        // [FIX #7] findByPaymentStatusAndExpiredAtBefore (đúng field name trong Payment entity)
+
         List<Payment> stale = paymentRepository.findByPaymentStatusAndExpiredAtBefore(
                 PaymentStatus.PENDING, cutoff);
 
