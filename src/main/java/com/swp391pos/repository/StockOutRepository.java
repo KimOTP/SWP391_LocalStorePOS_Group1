@@ -14,4 +14,5 @@ public interface StockOutRepository extends JpaRepository<StockOut, Integer> {
 
     @Query("SELECT COALESCE(SUM(d.quantity * d.costAtExport),0) FROM StockOut so JOIN so.details d WHERE so.status.transactionStatusId = :statusId")
     Double sumTotalValue(@Param("statusId") Integer statusId);
+
 }

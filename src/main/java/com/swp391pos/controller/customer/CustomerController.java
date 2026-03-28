@@ -68,6 +68,7 @@ public class CustomerController {
             // Quay về trang cũ
             return "redirect:/customer";
         }
+
         // Kiểm tra trùng số điện thoại
         Optional<Customer> existingCustomer = customerService.findByPhoneNumber(customer.getPhoneNumber());
         if (existingCustomer.isPresent()) {
@@ -75,7 +76,7 @@ public class CustomerController {
             return "redirect:/customer";
         }
 
-        // Nếu dữ liệu ngon lành -> Lưu vào DB
+        // Nếu dữ liệu valid -> Lưu vào DB
         customerService.saveCustomer(customer);
         // Thông báo thành công
         redirectAttributes.addFlashAttribute("notification", "Successfully added a customer!");
@@ -85,7 +86,7 @@ public class CustomerController {
     @GetMapping("/delete/{id}")
     public String deleteCustomer(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
         try {
-            customerService.deleteById(id);
+            customerService.deleteById(id); // Dữ liệu nào không có lquan bên bảng khác thì xóa được
             redirectAttributes.addFlashAttribute("notification", "Customer successfully deleted!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error: Cannot delete this customer.");
@@ -103,23 +104,21 @@ public class CustomerController {
         if (result.hasErrors()) {
             // Lấy lỗi đầu tiên ra để thông báo
             String errorMessage = result.getFieldError().getDefaultMessage();
-            // Báo lỗi đỏ ra màn hình
+            // Báo lỗi
             redirectAttributes.addFlashAttribute("errorMessage", "Update failed: " + errorMessage);
-            // Quay về trang danh sách
             return "redirect:/customer";
         }
+
         // Kiểm tra trùng số điện thoại khi update
         Optional<Customer> existingCustomer = customerService.findByPhoneNumber(customer.getPhoneNumber());
         // Nếu tìm thấy SĐT này, VÀ SĐT này thuộc về một ID khác với ID đang được cập nhật -> Báo lỗi
-        //.get() là hàm của Optional để lấy đối tượng customer ra
         if (existingCustomer.isPresent() && !existingCustomer.get().getCustomerId().equals(customer.getCustomerId())) {
             redirectAttributes.addFlashAttribute("errorMessage", "Update failed: This phone number is already used by another customer!");
             return "redirect:/customer";
         }
         //Nếu không có lỗi thì mới lưu
         try {
-            // Lưu ý: customerService.saveCustomer sẽ tự xử lý việc giữ nguyên các field cũ (điểm, tổng tiền...)
-            // nếu bạn code hàm save cẩn thận, hoặc JPA sẽ tự merge dựa trên ID.
+            //SaveCustomer sẽ xử lý việc giữ nguyên các field cũ
             customerService.saveCustomer(customer);
             redirectAttributes.addFlashAttribute("notification", "Information updated successfully.!");
         } catch (Exception e) {
@@ -133,8 +132,10 @@ public class CustomerController {
     @GetMapping("/{id}/history")
     @ResponseBody
     public List<PointHistory> getCustomerHistory(@PathVariable Long id) {
+        // Lấy ra entity
         Customer customer = customerService.findById(id);
         if (customer != null) {
+            //Lấy table point history
             return customer.getPointHistories();
         }
         return new ArrayList<>();

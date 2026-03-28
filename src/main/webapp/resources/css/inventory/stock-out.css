@@ -247,3 +247,11 @@
 .table-responsive::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
 .table-responsive::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 .table-responsive::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+.modal .product-table-card {
+    overflow: visible !important;
+}
+
+.modal .table-responsive {
+    max-height: 400px;
+    overflow-y: auto !important;
+}

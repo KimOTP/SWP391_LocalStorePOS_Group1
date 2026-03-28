@@ -199,6 +199,8 @@ public class AttendanceService {
     public void generateNext7DaysForAllEmployees() {
 
         LocalDate today = LocalDate.now();
+        LocalDate startDate = today.minusDays(6);
+        LocalDate endDate = today;
 
         List<Employee> employees = employeeRepository.findAll();
         List<WorkShift> shifts = workShiftRepository.findAll();
@@ -206,11 +208,6 @@ public class AttendanceService {
         if (shifts.isEmpty()) {
             throw new RuntimeException("No shift configured");
         }
-
-        WorkShift shift = shifts.stream()
-                .filter(s -> s.getShiftName().equalsIgnoreCase("Evening"))
-                .findFirst()
-                .orElse(shifts.get(0));
 
         for (int i = 0; i < 7; i++) {
 
@@ -220,6 +217,12 @@ public class AttendanceService {
 
                 if (employee.getRole().equals("MANAGER"))
                     continue;
+
+                WorkShift shift = attendanceRepository
+                        .findTopShiftByEmployee(employee, startDate, endDate)
+                        .stream()
+                        .findFirst()
+                        .orElse(shifts.get(0));
 
                 boolean exists =
                         attendanceRepository
