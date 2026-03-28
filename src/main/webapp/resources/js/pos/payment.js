@@ -485,6 +485,11 @@ async function confirmBankingPayment() {
             body   : JSON.stringify({ orderId: parseInt(window.orderId), amount: net })
         });
         const qrData = await qrRes.json();
+        
+        if (qrData.errorMessage) {
+            throw new Error(qrData.errorMessage);
+        }
+        
         qrSessionId  = qrData.paymentSessionId || null;
 
         // Dùng checkoutUrl để nhúng trang PayOS vào iframe

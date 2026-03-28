@@ -114,6 +114,15 @@ public class PaymentController {
 
             // Ghi nhận thanh toán và trừ kho nếu chưa từng đóng tiền
             boolean isFirstPaymentForOrder = order.getPaidAt() == null;
+            
+            if (isFirstPaymentForOrder) {
+                String validationError = paymentService.validateStockBeforePayment(orderId);
+                if (validationError != null) {
+                    resp.put("success", false);
+                    resp.put("errorMessage", validationError);
+                    return ResponseEntity.ok(resp);
+                }
+            }
 
             OrderStatus completed = orderStatusService.findByOrderStatusName(
                     OrderStatusName.valueOf("PAID"));
@@ -233,8 +242,12 @@ public class PaymentController {
 
     @PostMapping("/qr")
     @ResponseBody
-    public PaymentResponse createQR(@RequestBody PaymentRequest request) {
-        return paymentService.createQR(request);
+    public ResponseEntity<?> createQR(@RequestBody PaymentRequest request) {
+        String validationError = paymentService.validateStockBeforePayment(request.getOrderId());
+        if (validationError != null) {
+            return ResponseEntity.badRequest().body(Map.of("errorMessage", validationError));
+        }
+        return ResponseEntity.ok(paymentService.createQR(request));
     }
 
     /* ================================================================
