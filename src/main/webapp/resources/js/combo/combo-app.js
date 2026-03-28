@@ -1,7 +1,7 @@
 // Biến toàn cục để quản lý danh sách sản phẩm trong Combo
 let selectedProducts = [];
 
-// --- 1. Xử lý Xem trước ảnh ---
+//  xử lý Xem trước ảnh
 function initImagePreview() {
     const imageInput = document.getElementById('imageInput');
     const container = document.getElementById('previewContainer');
@@ -25,7 +25,7 @@ function initImagePreview() {
     }
 }
 
-// --- 2. Logic Tìm kiếm sản phẩm trong Dropdown (Trang Add/Update) ---
+//  logic Tìm kiếm sản phẩm trong Dropdown (Trang Add/Update)
 function initProductSearch() {
     const searchInput = document.getElementById('productSearchInside');
     const productItems = document.querySelectorAll('.product-item-li');
@@ -53,7 +53,7 @@ function initProductSearch() {
     }
 }
 
-// --- 3. Thêm/Xóa/Sửa số lượng sản phẩm Combo ---
+//  thêm/Xóa/Sửa số lượng sản phẩm Combo
 function addProductToCombo(id, name, price) {
     const existing = selectedProducts.find(p => p.id === id);
     if (existing) { existing.quantity += 1; }
@@ -114,7 +114,7 @@ function calculateTotal() {
     if (!isUpdate || total === 0) { if(sellingPriceInput) sellingPriceInput.value = total; }
 }
 
-// --- 4. Bộ lọc bảng Manage (Client-side) ---
+// bộ lọc bảng Manage (Client-side)
 function initStatusFilter() {
     const checkboxes = document.querySelectorAll('.status-cb');
     if (checkboxes.length === 0) return;
@@ -169,7 +169,7 @@ function applyDiscount(percent) {
     document.getElementById('sellingPrice').classList.remove('is-invalid');
 }
 
-// --- 5. Global Functions ---
+//  Global Functions 
 window.applyDiscount = applyDiscount;
 window.addProductToCombo = addProductToCombo;
 window.updateQuantity = updateQuantity;
@@ -178,8 +178,7 @@ window.confirmDelete = function(id, url) {
     if(confirm("Are you sure you want to delete combo " + id + "?")) window.location.href = url;
 };
 
-// Thêm vào trong document.addEventListener('DOMContentLoaded', ...) hoặc bên ngoài
-// --- Hàm xử lý hiện Modal Chi tiết Combo ---
+//Hàm xử lý hiện Modal Chi tiết Combo
 function initViewComboModal() {
     const viewButtons = document.querySelectorAll('.btn-view-combo');
     const modalBody = document.getElementById('comboModalBody');
@@ -193,7 +192,7 @@ function initViewComboModal() {
             e.preventDefault();
             const comboId = this.getAttribute('data-id');
 
-            // 0. Đóng tất cả dropdown đang mở trước khi show modal
+            // đóng tất cả dropdown đang mở trước khi show modal
             document.querySelectorAll('.dropdown-menu.show').forEach(menu => {
                 const toggle = menu.previousElementSibling;
                 if (toggle) bootstrap.Dropdown.getInstance(toggle)?.hide();
@@ -204,24 +203,24 @@ function initViewComboModal() {
                 el.setAttribute('aria-expanded', 'false');
             });
 
-            // 1. Hiển thị trạng thái loading trong khi chờ server
+            // hiển thị trạng thái loading trong khi chờ server
             modalBody.innerHTML = `
                 <div class="text-center py-5">
                     <div class="spinner-border text-primary" role="status"></div>
                     <p class="mt-2 text-muted">Đang tải dữ liệu...</p>
                 </div>`;
 
-            // 2. Mở Modal
+            // mở Modal
             myModal.show();
 
-            // 3. Fetch dữ liệu từ Controller (đảm bảo đúng URL bạn đã định nghĩa ở Controller)
+            // fetch dữ liệu từ Controller
             fetch(`/combos/detail-fragment/${comboId}`)
                 .then(response => {
                     if (!response.ok) throw new Error("Không thể tải dữ liệu combo");
                     return response.text();
                 })
                 .then(html => {
-                    // 4. Đổ nội dung HTML vào Modal Body
+                    //đổ nội dung HTML vào Modal Body
                     modalBody.innerHTML = html;
                 })
                 .catch(err => {
@@ -235,7 +234,7 @@ function initViewComboModal() {
         });
     });
 }
-// --- 4. Xử lý Xác nhận xóa bằng Popup (SweetAlert2) ---
+// Xử lý Xác nhận xóa bằng Popup (SweetAlert2)
 function initDeleteConfirmation() {
     const deleteButtons = document.querySelectorAll('.btn-delete-combo');
 
@@ -271,7 +270,7 @@ function initFormValidation() {
 
     form.addEventListener('submit', function (e) {
 
-        // 1. Ít nhất 1 sản phẩm
+        // it nhất 1 sản phẩm
         if (selectedProducts.length < 1) {
             e.preventDefault();
             // Hiện lỗi ngay dưới danh sách sản phẩm
@@ -282,11 +281,11 @@ function initFormValidation() {
                 errEl.className = 'text-danger small mt-1';
                 document.getElementById('selectedProductsList').after(errEl);
             }
-            errEl.textContent = '⚠ Please add at least 1 product to the combo.';
+            errEl.textContent = 'Please add at least 1 product to the combo.';
             return;
         }
 
-        // 2. Selling price không được vượt original price
+        // selling price không được vượt original price
         const original = parseFloat(document.getElementById('originalPrice').value) || 0;
         const selling  = parseFloat(document.getElementById('sellingPrice').value)  || 0;
         if (selling > original) {
@@ -303,13 +302,13 @@ function initFormValidation() {
             return;
         }
 
-        // 3. Image size <= 5MB
+        // image size <= 5MB
         const imageInput = document.getElementById('imageInput');
         if (imageInput.files.length > 0) {
             const fileSizeMB = imageInput.files[0].size / (1024 * 1024);
             if (fileSizeMB > 5) {
                 e.preventDefault();
-                alert('⚠ Image must be smaller than 5MB.');
+                alert('Image must be smaller than 5MB.');
                 return;
             }
         }
@@ -321,7 +320,7 @@ function initFormValidation() {
     });
 }
 
-// --- 6. Khởi tạo ---
+//  khởi tạo
 document.addEventListener('DOMContentLoaded', function() {
     initImagePreview();
     initProductSearch();
@@ -341,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// --- 7. Fix dropdown bị khuất bởi overflow của table ---
+//  fix dropdown bị khuất bởi overflow của table
 function initTableDropdowns() {
     // Với mỗi dropdown button trong bảng, tạo Bootstrap Dropdown với strategy 'fixed'
     document.querySelectorAll('.product-table-card [data-bs-toggle="dropdown"]').forEach(btn => {

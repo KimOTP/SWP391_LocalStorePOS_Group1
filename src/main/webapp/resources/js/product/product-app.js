@@ -1,4 +1,4 @@
-// --- 1. Xử lý Xem trước ảnh (Add/Update) ---
+// 1. Xử lý Xem trước ảnh (Add/Update)
 function initImagePreview() {
     const imageInput = document.getElementById('imageInput');
     const container = document.getElementById('previewContainer');
@@ -28,7 +28,7 @@ function initImagePreview() {
     }
 }
 
-// --- 2. Xử lý Modal Xem chi tiết (Manage) ---
+// 2. Xử lý Modal Xem chi tiết (Manage)
 function initProductDetails() {
     const viewButtons = document.querySelectorAll('.btn-view-detail');
     const modalElement = document.getElementById('productDetailModal');
@@ -61,7 +61,7 @@ function initProductDetails() {
     }
 }
 
-// --- 3. Xử lý Lọc dữ liệu tại bảng (Client-side Filter) ---
+// 3. Xử lý Lọc dữ liệu tại bảng (Client-side Filter)
 function initTableFilter() {
     const searchInput = document.getElementById('jsSearchInput');
     const checkboxes = document.querySelectorAll('.filter-checkbox');
@@ -102,7 +102,7 @@ function initTableFilter() {
     });
 }
 
-// --- 4. Xử lý Xác nhận xóa bằng Popup (SweetAlert2) ---
+// 4. Xử lý Xác nhận xóa bằng Popup (SweetAlert2)
 function initDeleteConfirmation() {
     const deleteButtons = document.querySelectorAll('.btn-delete-confirm');
 
@@ -134,7 +134,7 @@ function initDeleteConfirmation() {
 function selectCategory(id, name) {
     document.getElementById('categoryLabel').innerText = name;
     document.getElementById('selectedCategoryId').value = id;
-    // Thêm hiệu ứng đổi màu chữ nếu cần
+    // Thêm hiệu ứng đổi màu chữ
     document.getElementById('categoryLabel').style.color = '#1e293b';
 }
 
@@ -144,10 +144,10 @@ function selectUnit(unitName) {
     document.getElementById('unitLabel').style.color = '#1e293b';
 }
 
-// --- 5. Khởi tạo tất cả khi trang tải xong ---
+// Khởi tạo tất cả khi trang tải xong
 document.addEventListener('DOMContentLoaded', function() {
     initImagePreview();
     initProductDetails();
     initTableFilter();
-    initDeleteConfirmation(); // Khởi tạo tính năng xóa
+    initDeleteConfirmation();
 });
