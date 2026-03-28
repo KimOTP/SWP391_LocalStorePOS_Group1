@@ -434,7 +434,32 @@ body {
     color: #334155;
 }
 .qty-btn:hover { background: #e2e8f0; }
-.qty-num { min-width: 20px; text-align: center; font-size: 0.85rem; font-weight: 600; }
+.qty-input {
+    width: 38px;
+    height: 24px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+    background: #f8fafc;
+    transition: all 0.2s;
+    font-family: var(--sb-font);
+}
+.qty-input:focus {
+    outline: none;
+    border-color: var(--sb-blue);
+    background: #fff;
+    box-shadow: 0 0 0 2px rgba(37,99,235,0.1);
+}
+/* Hide spinners */
+.qty-input::-webkit-inner-spin-button,
+.qty-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.qty-input { -moz-appearance: textfield; }
 
 .item-price {
     font-size: 0.83rem;

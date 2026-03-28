@@ -77,7 +77,7 @@ public class EmailService {
         }
     }
 
-    @Scheduled(cron = "0 00 8 * * ?")
+    @Scheduled(cron = "0 35 7 * * ?")
     public void sendScheduledLowStockAlert() {
         List<Inventory> lowStockItems = inventoryRepository.findAllLowStock();
         if (lowStockItems == null || lowStockItems.isEmpty()) return;

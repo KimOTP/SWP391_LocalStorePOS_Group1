@@ -44,6 +44,42 @@ public class PaymentService {
     private final OrderItemRepository orderItemRepository;
     private final InventoryRepository inventoryRepository;
     private final ProductService productService;
+    private final InventoryService inventoryService;
+    private final OrderItemService orderItemService;
+
+    // -------------------------------------------------------------------------
+    // validateStockBeforePayment
+    // -------------------------------------------------------------------------
+
+    @Transactional(readOnly = true)
+    public String validateStockBeforePayment(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+        if (order == null) return "Order not found";
+
+        List<OrderItem> items = orderItemService.findByOrder(order);
+        for (OrderItem item : items) {
+            if (item.getProduct() != null) {
+                String productId = item.getProduct().getProductId();
+                int required = item.getQuantity();
+                int current = inventoryService.findById(productId).map(i -> i.getCurrentQuantity()).orElse(0);
+                if (required > current) {
+                    return "Not enough inventory for " + item.getProduct().getProductName() + ". Available: " + current + ", Required: " + required;
+                }
+            } else if (item.getCombo() != null) {
+                for (com.swp391pos.entity.ComboDetail cd : item.getCombo().getComboDetails()) {
+                    if (cd.getProduct() != null) {
+                        String productId = cd.getProduct().getProductId();
+                        int required = cd.getQuantity() * item.getQuantity();
+                        int current = inventoryService.findById(productId).map(i -> i.getCurrentQuantity()).orElse(0);
+                        if (required > current) {
+                            return "Not enough inventory for " + cd.getProduct().getProductName() + " (in combo " + item.getCombo().getComboName() + "). Available: " + current + ", Required: " + required;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
     // -------------------------------------------------------------------------
     // CRUD cơ bản

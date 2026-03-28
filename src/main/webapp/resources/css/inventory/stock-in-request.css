@@ -82,15 +82,27 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.02) !important;
 }
 .modal-body {
-    max-height: 70vh;
-    overflow-y: auto;
+    max-height: none !important;
+    overflow-y: visible !important;
+    display: flex;
+    flex-direction: column;
 }
 
 #productPickerModal .table-responsive {
-    max-height: 400px;
-    overflow-y: auto;
+    max-height: 450px; /* Độ cao tối đa của danh sách sản phẩm */
+    overflow-y: auto !important;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
 }
 
+.modal-search-container {
+    position: sticky;
+    top: -1px;
+    z-index: 20;
+    background-color: #fff;
+    padding-bottom: 15px;
+    margin-top: -10px;
+}
 .table-responsive {
     border: none !important;
     border-radius: 0 !important;

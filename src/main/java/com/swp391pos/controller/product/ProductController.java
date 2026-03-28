@@ -38,36 +38,35 @@ public class ProductController {
             @RequestParam(defaultValue = "asc") String sortDir,
             Model model) {
 
-        // 1. Xử lý logic Sắp xếp (Sort)
-        // sortField phải khớp với tên thuộc tính trong Entity Product (vd: productName, price)
+        // Xử lý logic Sắp xếp (Sort)
         Sort sort = sortDir.equalsIgnoreCase("asc")
                 ? Sort.by(sortField).ascending()
                 : Sort.by(sortField).descending();
 
-        // 2. Gọi Service để lọc và sắp xếp từ Database
+        // Gọi Service để lọc và sắp xếp từ Database
         List<Product> list = productService.searchProductManager(keyword, statusNames, categoryNames, units, sort);
 
-        // 3. Đổ dữ liệu sản phẩm ra bảng
+        // Đổ dữ liệu sản phẩm ra bảng
         model.addAttribute("listProducts", list);
         model.addAttribute("totalCount", list.size());
 
-        // 4. Gửi ngược lại các giá trị lọc để giữ trạng thái Checkbox/Search trên giao diện
+        // Gửi ngược lại các giá trị lọc để giữ trạng thái Checkbox/Search trên giao diện
         model.addAttribute("keyword", keyword);
         model.addAttribute("selectedStatuses", statusNames);
         model.addAttribute("selectedCategories", categoryNames);
         model.addAttribute("selectedUnits", units);
 
-        // 5. Gửi thông tin Sort để hiển thị Icon mũi tên trên Header
+        // Gửi thông tin Sort để hiển thị Icon mũi tên trên Header
         model.addAttribute("sortField", sortField);
         model.addAttribute("sortDir", sortDir);
         model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
 
-        // 6. Lấy dữ liệu cho các bộ lọc Checkbox (Danh sách động từ DB)
+        // Lấy dữ liệu cho các bộ lọc Checkbox
         model.addAttribute("statuses", productService.getAllProductStatuses());
         model.addAttribute("categories", productService.getAllCategories());
         model.addAttribute("units", productService.getAllDistinctUnits());
 
-        // 7. Thống kê số liệu (Cards trên cùng)
+        // Thống kê số liệu
         model.addAttribute("totalProducts", productRepository.count());
         model.addAttribute("activeCount", productRepository.countByStatus_ProductStatusName("Active"));
         model.addAttribute("stopCount", productRepository.countByStatus_ProductStatusName("Discontinued"));
@@ -95,19 +94,18 @@ public class ProductController {
                              @RequestParam("categoryId") Integer categoryId,
                              RedirectAttributes redirectAttributes) {
         try {
-            // Gọi hàm void, nếu có lỗi nó sẽ nhảy xuống block catch
             productService.addProduct(product, imageFile, statusId, categoryId);
             redirectAttributes.addFlashAttribute("notification", "Product added successfully!");
             return "redirect:/products/manage";
 
         } catch (RuntimeException e) {
-            // Bắt lỗi nghiệp vụ (trùng lặp, lỗi upload...)
+            // lỗi (trùng lặp, lỗi upload...)
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/products/add";
 
         } catch (Exception e) {
-            // Bắt các lỗi không xác định khác
+            // lỗi không xác định khác
             redirectAttributes.addFlashAttribute("errorMessage", "An unexpected error occurred: " + e.getMessage());
             e.printStackTrace();
             return "redirect:/products/add";
@@ -118,7 +116,6 @@ public class ProductController {
     public String viewProduct(@PathVariable String id, Model model) {
         Product p = productService.getProductById(id);
         model.addAttribute("product", p);
-        // Trả về file jsp con chỉ chứa nội dung detail
         return "product/product-detail";
     }
 
