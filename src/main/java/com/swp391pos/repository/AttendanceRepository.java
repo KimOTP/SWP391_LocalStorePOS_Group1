@@ -2,6 +2,7 @@ package com.swp391pos.repository;
 
 import com.swp391pos.entity.Attendance;
 import com.swp391pos.entity.Employee;
+import com.swp391pos.entity.WorkShift;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,6 +15,22 @@ import java.util.Optional;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Integer> {
     Optional<Attendance> findByEmployeeAndWorkDate(Employee employee, LocalDate workDate);
+
+
+
+    @Query("""
+    SELECT a.shift
+    FROM Attendance a
+    WHERE a.employee = :employee
+      AND a.workDate BETWEEN :startDate AND :endDate
+    GROUP BY a.shift
+    ORDER BY COUNT(a.shift) DESC
+    """)
+    List<WorkShift> findTopShiftByEmployee(
+            Employee employee,
+            LocalDate startDate,
+            LocalDate endDate
+    );
 
     boolean existsByEmployeeAndWorkDate(Employee employee, LocalDate workDate);
 
