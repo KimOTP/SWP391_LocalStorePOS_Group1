@@ -302,7 +302,7 @@ function initFormValidation() {
             return;
         }
 
-        // image size <= 5MB
+
         const imageInput = document.getElementById('imageInput');
         if (imageInput.files.length > 0) {
             const fileSizeMB = imageInput.files[0].size / (1024 * 1024);
