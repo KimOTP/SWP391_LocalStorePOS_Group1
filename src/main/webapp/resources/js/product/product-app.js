@@ -130,6 +130,34 @@ function initDeleteConfirmation() {
         });
     });
 }
+function selectCategory(id, name) {
+    document.getElementById('categoryLabel').innerText = name;
+    document.getElementById('selectedCategoryId').value = id;
+    document.getElementById('categoryLabel').style.color = '#1e293b';
+}
+
+function selectUnit(unitName) {
+    document.getElementById('unitLabel').innerText = unitName;
+    document.getElementById('selectedUnit').value = unitName;
+    document.getElementById('unitLabel').style.color = '#1e293b';
+}
+function initFormValidation() {
+const form = document.getElementById('productForm');
+    if (!form) return;
+    form.addEventListener('submit', function (e) {
+    const imageInput = document.getElementById('imageInput');
+     if (imageInput.files.length > 0) {
+        const fileSizeMB = imageInput.files[0].size / (1024 * 1024);
+             if (fileSizeMB > 5) {
+                 e.preventDefault();
+                 alert('Image must be smaller than 5MB.');
+                 return;
+                }
+            }
+            });
+}
+
+
 
 // Khởi tạo tất cả khi trang tải xong
 document.addEventListener('DOMContentLoaded', function() {
@@ -137,4 +165,5 @@ document.addEventListener('DOMContentLoaded', function() {
     initProductDetails();
     initTableFilter();
     initDeleteConfirmation();
+    initFormValidation();
 });
