@@ -1,6 +1,7 @@
 package com.swp391pos.service;
 
 import com.swp391pos.entity.*;
+import com.swp391pos.enums.OrderStatusName;
 import com.swp391pos.enums.PaymentMethod;
 import com.swp391pos.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -201,6 +202,7 @@ public class ReportService {
         Map<String, Object> report = new LinkedHashMap<>();
 
         BigDecimal totalRevenue = orders.stream()
+                .filter(this::isPaidOrder)
                 .map(Order::getTotalAmount)
                 .filter(Objects::nonNull)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -238,6 +240,12 @@ public class ReportService {
         report.put("orders",              orders);
 
         return report;
+    }
+
+    private boolean isPaidOrder(Order order) {
+        return order != null
+                && order.getOrderStatus() != null
+                && order.getOrderStatus().getOrderStatusName() == OrderStatusName.PAID;
     }
 
     private String getBestSellingProduct(Map<Integer, List<OrderItem>> itemsByOrderId) {
